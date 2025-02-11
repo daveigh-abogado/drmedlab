@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'drmedlabs',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': '', #insert your root password here
         'HOST':'localhost',
         'PORT':'3306',
     }
