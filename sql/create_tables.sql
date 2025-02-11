@@ -2,11 +2,6 @@ Drop database drmedlabs;
 create database drmedlabs;
 use drmedlabs;
 
--- helper table to track the last assigned number per year, last_num gets updated every time a new patient is added
-CREATE TABLE patient_counter
-(year CHAR(2) PRIMARY KEY, -- stores last two digits of the year
-last_num INT NOT NULL DEFAULT 0); -- last assigned number
-
 CREATE TABLE patients 
 (patient_id INTEGER NOT NULL auto_increment,
  last_name VARCHAR(50) NOT NULL,
@@ -29,11 +24,6 @@ CREATE TABLE patients
  zip_code VARCHAR(4) CHECK (zip_code REGEXP '^[0-9]{4}$'),
  civil_status ENUM('Single', 'Married', 'Widowed', 'Other') NOT NULL DEFAULT 'Single',
  CONSTRAINT patient_pk PRIMARY KEY (patient_id));
-
--- helper table for lab_request id tracking and formatting
-CREATE TABLE lab_request_counters
-(yearmonth CHAR(3) PRIMARY KEY, -- year_month is a reserved keyword
-last_number INT NOT NULL DEFAULT 0);
 
 CREATE TABLE lab_request 
 (request_id	INTEGER NOT NULL auto_increment,
