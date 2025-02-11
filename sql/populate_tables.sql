@@ -40,9 +40,9 @@ NULL, NULL, NULL, NULL, 'Hyogo', NULL,
 -- lab requests
 INSERT INTO lab_request
 VALUES 
-(NULL, '250001', '2025-02-06', 'Dr. Adams', 'Email', 'Not Started'),
-(NULL, '250002', '2025-02-06', 'Dr. Baker', 'Pick-up', 'In Progress'),
-(NULL, '250003', '2025-02-06', 'Dr. Carter', 'Both', 'Completed');
+(NULL, '1', '2025-02-06', 'Dr. Adams', 'Email', 'Not Started'),
+(NULL, '2', '2025-02-06', 'Dr. Baker', 'Pick-up', 'In Progress'),
+(NULL, '3', '2025-02-06', 'Dr. Carter', 'Both', 'Completed');
 
 
 
