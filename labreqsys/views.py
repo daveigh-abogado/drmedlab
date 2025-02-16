@@ -1,4 +1,4 @@
 from django.shortcuts import render
 
-def login(request):
-    return render(request, 'labreqsys/login.html')
+def base(request):
+    return render(request, 'labreqsys/base.html')
