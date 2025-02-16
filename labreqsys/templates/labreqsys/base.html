@@ -9,10 +9,10 @@
 		{% tailwind_css %} <!--make sure you have a tailwind tag here-->
 	</head>
 
-    <body>
+    <body class="bg-gray-100">
 
             <!--Sidebar with Navbar-->
-        <nav class="fixed top-0 z-50 w-full bg-white">
+        <nav class="fixed top-0 z-50 w-full bg-white shadow-lg">
             <div class="px-3 py-3 lg:px-5 lg:pl-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center justify-start rtl:justify-end">
@@ -23,8 +23,8 @@
                     </svg>
                 </button>
                 <!--LOGO-->
-                <a href="" class="flex ms-2 md:me-24">
-                    <img src=" " class="h-8 me-3" alt="DRMed Logo" />
+                <a href="/" class="flex ms-2 md:me-24">
+                    <img src="{% static 'images/drmed_full.png' %}" class="h-8 me-3" alt="DRMed Logo" />
                 </a>
                 </div>
                 <div class="flex items-center">
@@ -33,7 +33,7 @@
                         <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
                         <span class="sr-only">Open user menu</span>
                         <!--user profile pic-->
-                        <img class="w-8 h-8 rounded-full" src="" alt="user photo">
+                        <img class="w-8 h-8 rounded-full" src="{% static 'images/receptionProfilePic.png' %}" alt="user photo">
                         </button>
                     </div>
 
@@ -56,19 +56,25 @@
         </nav>
         
         <!--sidebar-->
-        <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-            <div class="h-full px-3 pb-4 overflow-y-auto bg-gradient-to-tr from-blue-500  to-blue-900  ">
+        <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 bg-gradient-to-tr from-blue-500  to-blue-900 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+            <div class="h-full px-3 pb-4 pt-1 overflow-y-auto bg-gradient-to-tr from-blue-500  to-blue-900  ">
                 <ul class="space-y-2 font-medium">
-                <li>
-                    <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <span class="ms-3">Patient Record</span>
+                
+                    <li>
+                        <a href="#" class="flex text-xs items-center p-2 text-white rounded-lg dark:text-white group">
+                            <span class="ms-3">RECORDS</span>
+                        </a>
+                    </li>
+                    <li>
+                    <a href="#" class="flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
+                        <span class="ms-5">Patient Record</span>
                     </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <span class="flex-1 ms-3 whitespace-nowrap">Lab Request</span>
-                    </a>
-                </li>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
+                            <span class="flex-1 ms-5 whitespace-nowrap">Lab Request</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </aside>
@@ -78,4 +84,10 @@
     
 	
 </html>
+
+<script>
+    document.getElementById("patientRecordLink").addEventListener("click", function() {
+        this.classList.add("bg-blue-300", "text-blue-900");
+    });
+</script>
 
