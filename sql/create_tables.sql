@@ -1,11 +1,11 @@
 use drmedlabs;
 
-DROP TABLE patient;
 DROP TABLE lab_request;
-DROP TABLE template_form;
-DROP TABLE test_component;
-DROP TABLE template_section;
+DROP TABLE patient;
 DROP TABLE template_field;
+DROP TABLE template_section;
+DROP TABLE test_component;
+DROP TABLE template_form;
 DROP TABLE test_package;
 
 

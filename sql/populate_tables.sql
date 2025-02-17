@@ -1,4 +1,4 @@
-DELETE FROM patients;
+DELETE FROM patient;
 DELETE FROM lab_request;
 
 -- patients
