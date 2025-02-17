@@ -8,7 +8,6 @@ DROP TABLE test_component;
 DROP TABLE template_form;
 DROP TABLE test_package;
 
-
 CREATE TABLE patient
 (patient_id INTEGER NOT NULL auto_increment,
  last_name VARCHAR(50) NOT NULL,
@@ -30,7 +29,19 @@ CREATE TABLE patient
  province VARCHAR(50),
  zip_code VARCHAR(4) CHECK (zip_code REGEXP '^[0-9]{4}$'),
  civil_status ENUM('Single', 'Married', 'Widowed', 'Other') NOT NULL DEFAULT 'Single',
+ date_added DATE NOT NULL,
  CONSTRAINT patient_pk PRIMARY KEY (patient_id));
+
+-- Trigger to auto-generate date when row was added
+DELIMITER $$
+CREATE TRIGGER set_date_added
+BEFORE INSERT ON patient
+FOR EACH ROW
+BEGIN
+    SET NEW.date_added = CURRENT_DATE();
+END $$
+
+DELIMITER ;
 
 CREATE TABLE lab_request 
 (request_id	INTEGER NOT NULL auto_increment,
