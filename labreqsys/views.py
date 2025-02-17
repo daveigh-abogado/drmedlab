@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Patients, LabRequest
+from .models import Patient, LabRequest
 
 def view_labreqs(request):
     labreqs = LabRequest.objects.all()
@@ -8,4 +8,5 @@ def base(request):
     return render(request, 'labreqsys/base.html')
 
 def patientList(request):
-    return render(request, 'labreqsys/patientList.html')
+    patients = Patient.objects.all()
+    return render(request, 'labreqsys/patientList.html', {'patients':patients})

@@ -98,18 +98,24 @@
                 </ul>
             </div>
         </aside>
-
-        {% block content %}
-        {% endblock content %}
-
+        <div class="page_content">
+            {% block content %}
+            {% endblock content %}
+        </div>
     </body>
     
 	
 </html>
+<style>
+    .page_content{
+        padding-top: 5%;
+        padding-left: 20%;
+        padding-right: 5%;
+    }
+</style>
 
 <script>
     document.getElementById("patientRecordLink").addEventListener("click", function() {
         this.classList.add("bg-blue-300", "text-blue-900");
     });
 </script>
-

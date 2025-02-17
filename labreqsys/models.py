@@ -1,7 +1,7 @@
 from django.db import models
 
-class Patients(models.Model):
-    patient_id = models.CharField(primary_key=True, max_length=6)
+class Patient(models.Model):
+    patient_id = models.AutoField(primary_key=True)
     last_name = models.CharField(max_length=50)
     first_name = models.CharField(max_length=50)
     middle_initial = models.CharField(max_length=1, blank=True, null=True)
@@ -21,14 +21,15 @@ class Patients(models.Model):
     province = models.CharField(max_length=50, blank=True, null=True)
     zip_code = models.JSONField(blank=True, null=True)
     civil_status = models.CharField(max_length=7)
+    date_added = models.DateField()
 
     class Meta:
         managed = False
-        db_table = 'patients'
+        db_table = 'patient'
 
 class LabRequest(models.Model):
-    request_id = models.CharField(primary_key=True, max_length=6)
-    patient = models.ForeignKey('Patients', models.DO_NOTHING)
+    request_id = models.AutoField(primary_key=True)
+    patient = models.ForeignKey('Patient', models.DO_NOTHING)
     date_requested = models.DateField()
     physician = models.CharField(max_length=100, blank=True, null=True)
     mode_of_release = models.CharField(max_length=7)
@@ -37,3 +38,57 @@ class LabRequest(models.Model):
     class Meta:
         managed = False
         db_table = 'lab_request'
+
+
+class TemplateField(models.Model):
+    field_id = models.AutoField(primary_key=True)
+    section = models.ForeignKey('TemplateSection', models.DO_NOTHING)
+    label_name = models.CharField(max_length=255)
+    field_type = models.CharField(max_length=6)
+    field_fixed_value = models.JSONField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'template_field'
+
+
+class TemplateForm(models.Model):
+    template_id = models.AutoField(primary_key=True)
+    template_name = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'template_form'
+
+
+class TemplateSection(models.Model):
+    section_id = models.AutoField(primary_key=True)
+    template = models.ForeignKey(TemplateForm, models.DO_NOTHING)
+    section_name = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'template_section'
+
+
+class TestComponent(models.Model):
+    component_id = models.AutoField(primary_key=True)
+    template = models.ForeignKey(TemplateForm, models.DO_NOTHING)
+    test_code = models.CharField(max_length=20)
+    test_name = models.CharField(max_length=100)
+    component_price = models.JSONField()
+    category = models.CharField(max_length=50)
+
+    class Meta:
+        managed = False
+        db_table = 'test_component'
+
+
+class TestPackage(models.Model):
+    package_id = models.AutoField(primary_key=True)
+    package_name = models.CharField(max_length=100)
+    package_price = models.JSONField()
+
+    class Meta:
+        managed = False
+        db_table = 'test_package'
