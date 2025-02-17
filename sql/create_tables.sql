@@ -1,6 +1,6 @@
 use drmedlabs;
 
-DROP TABLE patients;
+DROP TABLE patient;
 DROP TABLE lab_request;
 DROP TABLE template_form;
 DROP TABLE test_component;
@@ -9,7 +9,7 @@ DROP TABLE template_field;
 DROP TABLE test_package;
 
 
-CREATE TABLE patients 
+CREATE TABLE patient
 (patient_id INTEGER NOT NULL auto_increment,
  last_name VARCHAR(50) NOT NULL,
  first_name VARCHAR(50) NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE lab_request
  mode_of_release ENUM('Pick-up', 'Email', 'Both') NOT NULL DEFAULT 'Pick-up',
  overall_status ENUM('Not Started', 'In Progress', 'Completed') NOT NULL DEFAULT 'Not Started',
  CONSTRAINT lab_request_pk PRIMARY KEY (request_id),
- CONSTRAINT lab_request_fk FOREIGN KEY (patient_id) REFERENCES patients(patient_id));
+ CONSTRAINT lab_request_fk FOREIGN KEY (patient_id) REFERENCES patient(patient_id));
 
 CREATE TABLE template_form
 (template_id INTEGER NOT NULL auto_increment,
