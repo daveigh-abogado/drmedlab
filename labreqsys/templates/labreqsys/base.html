@@ -7,9 +7,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		{% tailwind_css %} <!--make sure you have a tailwind tag here-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
+
 	</head>
 
     <body class="bg-gray-100">
+
+        {% block content %}
 
             <!--Sidebar with Navbar-->
         <nav class="fixed top-0 z-50 w-full bg-white shadow-lg">
@@ -67,18 +71,36 @@
                     </li>
                     <li>
                     <a href="#" class="flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
-                        <span class="ms-5">Patient Record</span>
+                        <span class="ms-5">Patient List</span>
                     </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
-                            <span class="flex-1 ms-5 whitespace-nowrap">Lab Request</span>
-                        </a>
+                        <button type="button" class="flex items-center w-64 p-2 text-base transition duration-100 group  text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
+                              <span class="ms-5 text-left rtl:text-right whitespace-nowrap">Lab Requests</span>
+                              <svg class="w-3 h-3 ms-5 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                              </svg>
+                        </button>
+                        <ul id="dropdown-example" class="hidden py-2 space-y-2">
+                              <li>
+                                 <a href="#" class=" ms-5 flex items-center w-full p-2  transition duration-75 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900">All Requests</a>
+                              </li>
+                              <li>
+                                 <a href="#" class=" ms-5 flex items-center w-full p-2  transition duration-75 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900">Not Started</a>
+                              </li>
+                              <li>
+                                 <a href="#" class=" ms-5 flex items-center w-full p-2 transition duration-75 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900">In Progress</a>
+                              </li>
+                              <li>
+                                <a href="#" class=" ms-5 flex items-center w-full p-2 transition duration-75 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900">Completed</a>
+                             </li>
+                        </ul>
                     </li>
                 </ul>
             </div>
         </aside>
-  
+
+        {% end block %}
 
     </body>
     
