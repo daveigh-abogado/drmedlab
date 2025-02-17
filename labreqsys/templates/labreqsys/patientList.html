@@ -4,29 +4,30 @@
 {% block content %}
 
 <h1>Patient List</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Patient ID</th>
-                <th>Last Name</th>
-                <th>Given Name</th>
-                <th>Email</th>
-                <th>Mobile No.</th>
-                <th>Landline No.</th>
-                <th>Date Added</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in patients %}
-            <tr>
-                <td>{{ p.patient_id }}</td>
-                <td>{{ p.last_name }}</td>
-                <td>{{ p.first_name }}</td>
-                <td>{{ p.email }}</td>
-                <td>{{ p.mobile_num }}</td>
-                <td>{{ p.landline_num }}</td>
-                <td>{{ p.date_added }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+<table>
+    <thead>
+        <tr>
+            <th>Patient ID</th>
+            <th>Last Name</th>
+            <th>Given Name</th>
+            <th>Email</th>
+            <th>Mobile No.</th>
+            <th>Landline No.</th>
+            <th>Date Added</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in patients %}
+        <tr>
+            <td><a href="{% url 'view_patient' pk=p.pk %}">{{ p.patient_id }}</a></td>
+            <td>{{ p.last_name }}</td>
+            <td>{{ p.first_name }}</td>
+            <td>{{ p.email }}</td>
+            <td>{{ p.mobile_num }}</td>
+            <td>{{ p.landline_num }}</td>
+            <td>{{ p.date_added }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock content %}
