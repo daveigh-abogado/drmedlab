@@ -43,3 +43,9 @@ VALUES
 (NULL, '1', '2025-02-06', 'Dr. Adams', 'Email', 'Not Started'),
 (NULL, '2', '2025-02-06', 'Dr. Baker', 'Pick-up', 'In Progress'),
 (NULL, '3', '2025-02-06', 'Dr. Carter', 'Both', 'Completed');
+
+INSERT INTO collection_log
+VALUES 
+(NULL, '3', 'Carlos Reyes', '2025-01-30 10:30:00', 'Email'),
+(NULL, '3', 'Carlos Reyes', '2025-02-01 12:00:00', 'Pick-up'),
+(NULL, '4', 'Charles Leclerc', '2025-02-18 16:20:00', 'Both');

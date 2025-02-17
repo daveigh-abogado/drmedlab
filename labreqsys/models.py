@@ -39,6 +39,16 @@ class LabRequest(models.Model):
         managed = False
         db_table = 'lab_request'
 
+class CollectionLog(models.Model):
+    collection_id = models.AutoField(primary_key=True)
+    request = models.ForeignKey('LabRequest', models.DO_NOTHING)
+    collected_by_customer = models.CharField(max_length=100)
+    time_collected = models.DateTimeField()
+    mode_of_collection = models.CharField(max_length=7)
+
+    class Meta:
+        managed = False
+        db_table = 'collection_log'
 
 class TemplateField(models.Model):
     field_id = models.AutoField(primary_key=True)

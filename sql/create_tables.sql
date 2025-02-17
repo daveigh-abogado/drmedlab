@@ -53,6 +53,15 @@ CREATE TABLE lab_request
  CONSTRAINT lab_request_pk PRIMARY KEY (request_id),
  CONSTRAINT lab_request_fk FOREIGN KEY (patient_id) REFERENCES patient(patient_id));
 
+CREATE TABLE collection_log 
+(collection_id	INTEGER NOT NULL auto_increment,
+ request_id INTEGER NOT NULL,
+ collected_by_customer VARCHAR(100) NOT NULL,
+ time_collected DATETIME NOT NULL,
+ mode_of_collection ENUM('Pick-up', 'Email', 'Both') NOT NULL DEFAULT 'Pick-up',
+ CONSTRAINT collection_log_pk PRIMARY KEY (collection_id),
+ CONSTRAINT collection_log_fk FOREIGN KEY (request_id) REFERENCES lab_request(request_id));
+
 CREATE TABLE template_form
 (template_id INTEGER NOT NULL auto_increment,
 template_name VARCHAR(255) NOT NULL,

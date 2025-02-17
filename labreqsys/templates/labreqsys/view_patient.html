@@ -1,0 +1,115 @@
+{% extends 'labreqsys/base.html' %}
+{% load static tailwind_tags %}
+
+{% block content %}
+<div class="breadbutton">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'patientList' %}">Patient List</a></li>
+        <li><a href="#" class="current">Patient Record</a></li>
+    </ul>
+    <div class="buttons">
+        <button>Edit Patient</button>
+        <button>Add Request</button>
+    </div>
+</div>
+
+<div>
+    <table>
+        <th>Patient ID</th>
+        <td><button class="pill">Pill Button</button></td>
+    </table>
+    <h1>Patient Information</h1>
+    <hr>
+    <table>
+        <tr>
+            <th>Patient Name</th>
+            <td>{{full_name}}</td>
+            <th>Mobile No.</th>
+            <td>{{patient.mobile_num}}</td>
+        </tr>
+        <tr>
+            <th>Sex</th>
+            <td>{{patient.sex}}</td>
+            <th>Landline No.</th>
+            <td>{{patient.landline_num}}</td>
+        </tr>
+        <tr>
+            <th>Civil Status</th>
+            <td>{{patient.civil_status}}</td>
+            <th>Email</th>
+            <td>{{patient.email}}</td>
+        </tr>
+        <tr>
+            <th>Age</th>
+            <td>{{age}}</td>
+            <th>Address</th>
+            <td>{{address}}</td>
+        </tr>
+        <tr>
+            <th>Birthday</th>
+            <td>{{patient.birthdate}}</td>
+        </tr>
+    </table>
+    <h1>ID</h1>
+    <hr>
+    <table>
+        <tr>
+            <th>PWD</th>
+            <td>{{patient.pwd_id_num}}</td>
+            <th>Senior Citizen</th>
+            <td>{{patient.senior_id_num}}</td>
+        </tr>
+    </table>
+    <h1>Laboratory Request Record</h1>
+    <hr>
+    <table>
+        <thead>
+            <tr>Date Requested</tr>
+            <tr>Request ID</tr>
+            <tr>Overall Status</tr>
+            <tr>Pick-Up Status</tr>
+            <tr>Email Status</tr>
+        </thead>
+        <tbody>
+            {% for r in requests %}
+                <tr>
+                    <td>{{ r.date_requested }}</td>
+                    <td>{{ r.request_id }}</td>
+                    <td>{{ r.overall_status }}</td>
+                    <td>{{ pickups }}</td> <!--this should be replace with a for loop noting collection logs-->
+                    <td>{{ emails }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}
+
+{% block styles %}
+<style>
+    ul.breadcrumb li {
+        display: inline;
+        font-size: 12px;
+    }
+    
+    ul.breadcrumb li+li:before {
+        color: black;
+        content: "/\00a0";
+    }
+
+    ul.breadcrumb .current {
+        color: #00BAFF;
+    }
+
+    .breadbutton{
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .pill{
+        border-radius: 16px;
+        background-color: #E9EAF0;
+    }
+
+</style>
+{% endblock styles %}
