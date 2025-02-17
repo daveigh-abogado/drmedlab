@@ -142,3 +142,6 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#uncomment the following line if you get the error seen in the setup document
+#NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd" 
