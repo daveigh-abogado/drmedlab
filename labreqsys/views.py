@@ -4,3 +4,8 @@ from .models import Patients, LabRequest
 def view_labreqs(request):
     labreqs = LabRequest.objects.all()
     return render(request, 'labreqsys/view_labreqs.html', {'labreqs':labreqs})
+def base(request):
+    return render(request, 'labreqsys/base.html')
+
+def patientList(request):
+    return render(request, 'labreqsys/patientList.html')
