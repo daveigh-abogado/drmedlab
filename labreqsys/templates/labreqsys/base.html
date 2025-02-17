@@ -13,7 +13,6 @@
 
     <body class="bg-gray-100">
 
-        {% block content %}
 
             <!--Sidebar with Navbar-->
         <nav class="fixed top-0 z-50 w-full bg-white shadow-lg">
@@ -70,7 +69,7 @@
                         </a>
                     </li>
                     <li>
-                    <a href="#" class="flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
+                    <a href="{% url 'patientList' %}" class="flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
                         <span class="ms-5">Patient List</span>
                     </a>
                     </li>
@@ -100,7 +99,8 @@
             </div>
         </aside>
 
-        {% end block %}
+        {% block content %}
+        {% endblock content %}
 
     </body>
     
