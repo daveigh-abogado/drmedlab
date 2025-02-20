@@ -63,3 +63,8 @@ VALUES
 (2, 'TC002', 'CBC w/ Platelet', 200.00, 'Blood Test'),
 (3, 'TC003', 'Fecalysis', 300.00, 'Stool Test'),
 (4, 'TC004', 'Xray - Chest PA', 400.00, 'Radiology');
+
+INSERT INTO test_package (package_name, package_price)
+VALUES 
+('Basic Package', 900.00),
+('Dengue Package', 2215.00);
