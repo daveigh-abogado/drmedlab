@@ -86,7 +86,7 @@ class TestComponent(models.Model):
     template = models.ForeignKey(TemplateForm, models.DO_NOTHING)
     test_code = models.CharField(max_length=20)
     test_name = models.CharField(max_length=100)
-    component_price = models.JSONField()
+    component_price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=50)
 
     class Meta:
@@ -97,7 +97,7 @@ class TestComponent(models.Model):
 class TestPackage(models.Model):
     package_id = models.AutoField(primary_key=True)
     package_name = models.CharField(max_length=100)
-    package_price = models.JSONField()
+    package_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         managed = False
