@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm
+from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage
 from datetime import date
 
 def view_labreqs(request):
@@ -16,7 +16,8 @@ def patientList(request):
 def add_labreq(request, pk):
     p = get_object_or_404(Patient, pk=pk)
     test_comps = TestComponent.objects.all()
-    return render(request, 'labreqsys/add_labreq.html', {'test_comps': test_comps, 'patient': p})
+    test_packages = TestPackage.objects.all()
+    return render(request, 'labreqsys/add_labreq.html', {'test_comps': test_comps, 'test_packages': test_packages, 'patient': p})
 
 def view_patient(request, pk):
     p = get_object_or_404(Patient, pk=pk)
@@ -37,9 +38,14 @@ def view_patient(request, pk):
 def summarize_labreq(request, pk):
     p = get_object_or_404(Patient, pk=pk)
     if(request.method=="POST"):
-        temp_list = request.POST.getlist('components')
+        temp_list_c = request.POST.getlist('components')
+        temp_list_p = request.POST.getlist('packages')
     components = []
-    for t in temp_list:
+    packages = []
+    for t in temp_list_c:
         temp = get_object_or_404(TestComponent, pk=t)
         components.append(temp)
-    return render(request, 'labreqsys/summarize_labreq.html', {'patient': p, 'components': components})
+    for t in temp_list_p:
+        temp = get_object_or_404(TestPackage, pk=t)
+        packages.append(temp)
+    return render(request, 'labreqsys/summarize_labreq.html', {'patient': p, 'components': components, 'packages': packages})

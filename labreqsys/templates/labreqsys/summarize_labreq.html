@@ -3,10 +3,17 @@
 
 {% block content %}
 <div class = "PatientInfo">
+    <h1>Packages</h1>
+    {% for p in packages %}
+        <p>{{ p.package_name }}</p>
+    {% endfor  %}
+
+    <h1>Components</h1>
     {% for c in components %}
         <p>{{ c.test_name }}</p>
     {% endfor  %}
 </div>
+<div></div>
 {% endblock content %}
 
 {% block styles %}

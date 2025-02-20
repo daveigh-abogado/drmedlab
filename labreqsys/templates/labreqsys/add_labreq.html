@@ -2,19 +2,54 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-<div class = "Component">
-    <h1>Select a Component</h1>
-    <hr>
-    <!-- insert search bar here -->
-     <form method= "POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
+
+<div class="tabs">
+    <button onclick="showTab(0)">Package</button>
+    <button onclick="showTab(1)">Component</button>
+</div>
+<form method= "POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
+    <div class="tab active" id="tab-0">
+        <h1>Select a Package</h1>
+        <hr>
+        <!-- insert search bar here-->
+        {% for pa in test_packages %}
+            <input type="checkbox" value={{ pa.pk }} id = "packages" name = "packages"> {{ pa.package_name }}
+        {% endfor %}
+    </div>
+    <div class="tab" id="tab-1">
+        <h1>Select a Component</h1>
+        <hr>
+        <!-- insert search bar here -->
         {% for c in test_comps %}
             <input type="checkbox" value={{ c.pk }} id = "components" name = "components"> {{ c.test_name }}
         {% endfor %}
-        <button type="submit">Submit</button>
-     </form>
-</div>
+    </div>
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    function showTab(index) {
+        document.querySelectorAll('.tab').forEach((tab, i) => {
+            tab.classList.toggle('active', i === index);
+        });
+    }
+</script>
 {% endblock content %}
 
 {% block styles %}
-<!--insert styles here-->
+<style>
+
+    .tab {
+        display: none;
+    }
+    .tab.active {
+        display: block;
+    }
+    .tabs {
+        display: flex; gap: 10px;
+    }
+    .tabs button {
+        padding: 10px; cursor: pointer;
+    }
+</style>
 {% endblock styles %}
