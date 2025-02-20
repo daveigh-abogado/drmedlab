@@ -49,3 +49,17 @@ VALUES
 (NULL, '3', 'Carlos Reyes', '2025-01-30 10:30:00', 'Email'),
 (NULL, '3', 'Carlos Reyes', '2025-02-01 12:00:00', 'Pick-up'),
 (NULL, '4', 'Charles Leclerc', '2025-02-18 16:20:00', 'Both');
+
+INSERT INTO template_form
+VALUES 
+(NULL, 'Urinalysis'),
+(NULL, 'CBC w/ Platelet'),
+(NULL, 'Fecalysis'),
+(NULL, 'Xray - Chest PA');
+
+INSERT INTO test_component (template_id, test_code, test_name, component_price, category)
+VALUES 
+(1, 'TC001', 'Urinalysis', 100.00, 'Urine Test'),
+(2, 'TC002', 'CBC w/ Platelet', 200.00, 'Blood Test'),
+(3, 'TC003', 'Fecalysis', 300.00, 'Stool Test'),
+(4, 'TC004', 'Xray - Chest PA', 400.00, 'Radiology');

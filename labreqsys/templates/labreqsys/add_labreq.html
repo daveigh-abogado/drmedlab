@@ -1,0 +1,20 @@
+{% extends 'labreqsys/base.html' %}
+{% load static tailwind_tags %}
+
+{% block content %}
+<div class = "Component">
+    <h1>Select a Component</h1>
+    <hr>
+    <!-- insert search bar here -->
+     <form method= "POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
+        {% for c in test_comps %}
+            <input type="checkbox" value={{ c.pk }} id = "components" name = "components"> {{ c.test_name }}
+        {% endfor %}
+        <button type="submit">Submit</button>
+     </form>
+</div>
+{% endblock content %}
+
+{% block styles %}
+<!--insert styles here-->
+{% endblock styles %}

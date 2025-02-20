@@ -1,0 +1,14 @@
+{% extends 'labreqsys/base.html' %}
+{% load static tailwind_tags %}
+
+{% block content %}
+<div class = "PatientInfo">
+    {% for c in components %}
+        <p>{{ c.test_name }}</p>
+    {% endfor  %}
+</div>
+{% endblock content %}
+
+{% block styles %}
+<!--insert styles here-->
+{% endblock styles %}
