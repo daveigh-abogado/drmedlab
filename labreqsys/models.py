@@ -35,6 +35,19 @@ class LabRequest(models.Model):
     mode_of_release = models.CharField(max_length=7)
     overall_status = models.CharField(max_length=11)
 
+    def get_request_details(self):
+        return {
+            'request_id': self.request_id,
+            'patient': self.patient,
+            'date_requested': self.date_requested,
+            'physician': self.physician,
+            'mode_of_release': self.mode_of_release,
+            'overall_status': self.overall_status,
+            'components': self.requestcomponent_set.all(),
+            'packages': self.requestpackage_set.all(),
+            'line_items': self.requestlineitem_set.all()
+        }
+
     class Meta:
         managed = False
         db_table = 'lab_request'

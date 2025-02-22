@@ -49,3 +49,8 @@ def summarize_labreq(request, pk):
         temp = get_object_or_404(TestPackage, pk=t)
         packages.append(temp)
     return render(request, 'labreqsys/summarize_labreq.html', {'patient': p, 'components': components, 'packages': packages})
+
+def view_individual_lab_request(request, request_id):
+    lab_request = get_object_or_404(LabRequest, pk=request_id)
+    request_details = lab_request.get_request_details()
+    return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details})
