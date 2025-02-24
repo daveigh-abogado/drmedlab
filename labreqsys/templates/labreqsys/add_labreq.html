@@ -45,13 +45,14 @@
 </div>
 
 <script>
+    let counter = 1;
+    const packageData = JSON.parse('{{ package_data|escapejs }}');
+
     function showTab(index) {
         document.querySelectorAll('.tab').forEach((tab, i) => {
             tab.classList.toggle('active', i === index);
         });
     }
-
-    const packageData = JSON.parse('{{ package_data|escapejs }}');
 
     function addOptions() {
         const selectedList = document.getElementById('selectedList');
@@ -60,29 +61,26 @@
         checkboxes.forEach(checkbox => {
             const name = checkbox.getAttribute('data-name');
             const price = parseFloat(checkbox.getAttribute('data-price')) || 0;
-            
-            const packageId = checkbox.value;
-            const componentId = checkbox.value;
+            const id = checkbox.value;
+            const isPackage = checkbox.classList.contains('package-checkbox');
 
-            if (!document.querySelector(`#selectedList li[data-name="${name}"]`)) {
-                addSelectedOption(name, price, packageId);
+            if (!document.querySelector(`#selectedList li[data-id="${id}"]`)) {
+                addSelectedOption(name, price, id, isPackage);
 
-                // If it's a package, add its components
-                if (packageData[packageId]) {
-                    packageData[packageId].forEach(compName => {
-                        if (!document.querySelector(`#selectedList li[data-name="${compName}"]`)) {
-                            addSelectedComponent(compName, packageId);
-                            disableComponentCheckbox(compName, true);
+                if (isPackage && packageData[id]) {
+                    packageData[id].forEach(componentName => {
+                        if (!document.querySelector(`#selectedList li[data-name="${componentName}"]`)) {
+                            addSelectedComponent(componentName, id);
+                            disableComponentCheckbox(componentName, true);
                         }
                     });
                 }
 
-                // Create hidden input for form submission
                 const hiddenInput = document.createElement('input');
                 hiddenInput.type = 'hidden';
-                hiddenInput.name = 'selected_options';
-                hiddenInput.value = packageId;
-                hiddenInput.setAttribute('data-name', name);
+                hiddenInput.name = isPackage ? 'selected_packages' : 'selected_components';
+                hiddenInput.value = id;
+                hiddenInput.setAttribute('data-id', id);
                 document.getElementById('form').appendChild(hiddenInput);
 
                 checkbox.checked = false;
@@ -90,19 +88,17 @@
             }
         });
 
+        renumberOptions();
         recalculateTotal();
     }
 
-    function addSelectedOption(name, price, packageId) {
+    function addSelectedOption(name, price, id, isPackage) {
         const selectedList = document.getElementById('selectedList');
         const li = document.createElement('li');
-        li.setAttribute('data-name', name);
-        li.setAttribute('data-package-id', packageId);
+        li.setAttribute('data-id', id);
         li.setAttribute('data-price', price);
-
-        li.innerHTML = `${name} - ₱${price.toFixed(2)} 
-            <img src="{% static 'images/delete.png' %}" class="trash-icon" onclick="removeOption(this, '${packageId}')">`;
-
+        li.innerHTML = `<span class="option-number"></span> ${name} - ₱${price.toFixed(2)} 
+            <img src="{% static 'images/delete.png' %}" class="trash-icon" onclick="removeOption(this, '${id}')">`;
         selectedList.appendChild(li);
     }
 
@@ -116,38 +112,44 @@
         selectedList.appendChild(li);
     }
 
-    function removeOption(trashIcon, packageId) {
+    function removeOption(trashIcon, id) {
         const li = trashIcon.parentElement;
         const name = li.getAttribute('data-name');
         li.remove();
 
-        // Remove hidden input
-        document.querySelector(`input[name="selected_options"][data-name="${name}"]`)?.remove();
-
-        // Re-enable checkbox
-        const checkbox = document.querySelector(`input[data-name="${name}"]`);
+        document.querySelector(`input[data-id="${id}"]`)?.remove();
+        
+        const checkbox = document.querySelector(`input[value="${id}"]`);
         if (checkbox) {
             checkbox.disabled = false;
             checkbox.checked = false;
         }
 
-        // Remove associated package components
-        if (packageData[packageId]) {
-            packageData[packageId].forEach(compName => {
-                const compLi = document.querySelector(`#selectedList li[data-name="${compName}"]`);
+        if (packageData[id]) {
+            packageData[id].forEach(componentName => {
+                const compLi = document.querySelector(`#selectedList li[data-name="${componentName}"]`);
                 if (compLi) {
                     compLi.remove();
-                    disableComponentCheckbox(compName, false);
+                    disableComponentCheckbox(componentName, false);
                 }
             });
         }
 
+        renumberOptions();
         recalculateTotal();
     }
 
     function disableComponentCheckbox(name, disable) {
         document.querySelectorAll(`input[data-name="${name}"]`).forEach(checkbox => {
             checkbox.disabled = disable;
+        });
+    }
+
+    function renumberOptions() {
+        let num = 1;
+        document.querySelectorAll('#selectedList li .option-number').forEach(span => {
+            span.textContent = `${num}. `;
+            num++;
         });
     }
 
@@ -185,11 +187,6 @@
     .container {
         display: flex;
         flex-direction: row;
-    }
-    .package-component {
-        color: gray;
-        font-size: 0.9em;
-        margin-left: 20px;
     }
 </style>
 {% endblock styles %}
