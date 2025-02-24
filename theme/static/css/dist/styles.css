@@ -563,7 +563,7 @@ video {
      -moz-appearance: none;
           appearance: none;
   background-color: #fff;
-  border-color: #6b7280;
+  border-color: #C4C4C4;
   border-width: 1px;
   border-radius: 0px;
   padding-top: 0.5rem;
@@ -594,8 +594,9 @@ input::-moz-placeholder, textarea::-moz-placeholder {
 }
 
 input::placeholder,textarea::placeholder {
-  color: #6b7280;
+  color: #C4C4C4;
   opacity: 1;
+
 }
 
 ::-webkit-datetime-edit-fields-wrapper {
@@ -882,6 +883,10 @@ select {
 
 .mt-6 {
   margin-top: 1.5rem;
+}
+
+.mt-7 {
+  margin-top: 0.75rem;
 }
 
 .mb-4 {
@@ -1178,6 +1183,21 @@ select {
 
 .rounded-lg {
   border-radius: 0.5rem;
+}
+
+
+.rounded-t-lg {
+  border-top-left-radius: 0.5rem; /* Rounds the top-left corner */
+  border-top-right-radius: 0.5rem; /* Rounds the top-right corner */
+}
+
+.rounded-b-lg {
+  border-bottom-left-radius: 0.5rem; /* Rounds the top-left corner */
+  border-bottom-right-radius: 0.5rem; /* Rounds the top-right corner */
+}
+
+.rounded-tr-lg {
+  border-top-right-radius: 0.5rem; /* Rounds the top-right corner */
 }
 
 .rounded-sm {
@@ -1520,6 +1540,11 @@ select {
 }
 
 .text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.text-ssm {
   font-size: 1rem;
   line-height: 1.5rem;
 }

@@ -4,18 +4,18 @@
 {% block content %}
 
 <!--Tabs-->
-<div class="tab-section rounded-lg p-5 inline-flex bg-gray-tab">
+<div class="tab-section rounded-t-lg p-5 inline-flex bg-gray-tab">
     <div class="flex flex-wrap gap-1">
-        <button onclick="showTab(0)" class="py-2 px-4 rounded-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
+        <button onclick="showTab(0)" class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
         data-tab-target="#tab1">Package</button>
-        <button onclick="showTab(1)" class="py-2 px-4 rounded-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
+        <button onclick="showTab(1)" class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
         data-tab-target="#tab1">Component</button>
     </div>
 </div>
 
 <!--Content-->
 <div class="flex"> 
-    <div class="w-2/3 bg-white p-6 pt-13 rounded-lg shadow">
+    <div class="w-2/3 bg-white p-6 pt-13 rounded-b-lg rounded-tr-lg shadow">
         
         <form class="pl-9 pr-9 py-2 pb-9 flex-start" method= "POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
             
@@ -25,8 +25,9 @@
                 <hr>
                 <!-- search bar -->
                 <input type="text" placeholder="Search Package Name"
-                        class="w-full pt-2 mt-2 border rounded-lg">
+                        class="w-full pt-2 mt-7 h-8 text-ssm border rounded-lg ">
 
+                <!--checkboxes-->
                 <div class="mt-2 space-y-2">
                     {% for pa in test_packages %}
                     <label class="flex items-center space-x-2 gap-1">
@@ -42,16 +43,27 @@
             </div>
 
             <!--COMPONENT NAME-->
-            <div class="tab" id="tab-1">
-                <h1 class="font-size">Select a Component</h1>
+            <div class="tab active gap-1" id="tab-1">
+                <h1 class="text-2xl font-bold text-blue-900">Select a Component</h1>
                 <hr>
                 <!-- insert search bar here -->
                 <input type="text" placeholder="Search Component Name"
-                        class="w-full p-2 mt-2 border rounded">
+                        class="w-full pt-2 mt-7 h-8 text-ssm border rounded-lg">
 
-                {% for c in test_comps %}
-                    <input type="checkbox" value={{ c.pk }} id = "components" name = "components"> {{ c.test_name }}
-                {% endfor %}
+                <!--checkboxes-->
+                <div class="mt-2 space-y-2">
+                    {% for c in test_comps %}
+                    <label class="flex items-center space-x-2 gap-1">
+                        <input type="checkbox" value={{ c.pk }} id = "components" name = "components"> 
+                        <span class="text-gray-400 hover:text-blue-800">{{ c.test_name }}</span> 
+                    </label>
+                    {% endfor %}
+
+                    <div class="mt-4 flex justify-end">
+                        <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="submit">Add Options</button>
+                    </div>
+                </div>
+ 
             </div>
                         
         </form>
