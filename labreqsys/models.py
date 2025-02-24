@@ -102,3 +102,12 @@ class TestPackage(models.Model):
     class Meta:
         managed = False
         db_table = 'test_package'
+
+class TestPackageComponent(models.Model):
+    package = models.OneToOneField(TestPackage, models.DO_NOTHING, primary_key=True)  # The composite primary key (package_id, component_id) found, that is not supported. The first column is selected.
+    component = models.ForeignKey(TestComponent, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'test_package_component'
+        unique_together = (('package', 'component'),)
