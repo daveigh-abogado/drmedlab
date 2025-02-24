@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -920,6 +924,11 @@ select {
   flex-wrap: wrap; 
 }
 
+.flex-start {
+  display: flex;  
+  align-items: flex-start;
+}
+
 .grid {
   display: grid;
 }
@@ -1083,6 +1092,10 @@ select {
   justify-content: space-evenly;
 }
 
+.gap-1 {
+  gap: 0.5rem;
+}
+
 .gap-4 {
   gap: 1rem;
 }
@@ -1212,6 +1225,11 @@ select {
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+}
+
+.bg-gray-tab {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
 }
 
 .bg-gray-800 {
@@ -1346,10 +1364,7 @@ select {
   padding: 1rem;
 }
 
-.px-4 {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
+
 
 .px-\[18px\] {
   padding-left: 18px;
@@ -1371,6 +1386,16 @@ select {
   padding-right: 0.75rem;
 }
 
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.px-5 {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -1388,6 +1413,10 @@ select {
 
 .pl-5 {
   padding-left: 1.25rem;
+}
+
+.pl-9 {
+  padding-left: 2.25rem;
 }
 
 .pr-9 {
@@ -1408,6 +1437,10 @@ select {
 
 .pb-4 {
   padding-bottom: 1rem;
+}
+
+.pb-9 {
+  padding-bottom: 2rem;
 }
 
 .pt-20 {
@@ -1432,6 +1465,10 @@ select {
 
 .pt-9 {
   padding-top: 2.25rem;
+}
+
+.pt-13 {
+  padding-top: 3.25rem;
 }
 
 .pt-14 {
@@ -1560,6 +1597,8 @@ select {
   transition-duration: 75ms;
 }
 
+/* hover */
+
 .hover\:bg-gray-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
@@ -1570,7 +1609,7 @@ select {
   background-color: rgb(0 186 255 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:bg-white-100:hover {
+.hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }

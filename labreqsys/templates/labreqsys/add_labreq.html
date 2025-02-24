@@ -3,41 +3,67 @@
 
 {% block content %}
 
-
-<div class="tab-section bg-white rounded-lg p-5 border-2 border-indigo-200">
+<!--Tabs-->
+<div class="tab-section rounded-lg p-5 inline-flex bg-gray-tab">
     <div class="flex flex-wrap gap-1">
-        <button class="p-4 rounded-lg text-gray-700 font-bold hover:bg-gray-300 hover:bg-opacity-40 flex-grow w-80 "
+        <button onclick="showTab(0)" class="py-2 px-4 rounded-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
         data-tab-target="#tab1">Package</button>
-        <button class="p-4 rounded-lg text-gray-700 font-bold hover:bg-gray-300 hover:bg-opacity-40 flex-grow w-80 "
+        <button onclick="showTab(1)" class="py-2 px-4 rounded-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
         data-tab-target="#tab1">Component</button>
     </div>
 </div>
-<form method= "POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
-    <div class="tab active" id="tab-0">
-        <h1>Select a Package</h1>
-        <hr>
-        <!-- insert search bar here-->
-        {% for pa in test_packages %}
-            <input type="checkbox" value={{ pa.pk }} id = "packages" name = "packages"> {{ pa.package_name }}
-        {% endfor %}
+
+<!--Content-->
+<div class="flex mt-6"> 
+    <div class="w-2/3 bg-white p-6 pt-13 rounded-lg shadow">
+        
+        <form class="pl-9 pr-9 py-2 pb-9 flex-start" method= "POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
+            <div class="tab active" id="tab-0">
+                <h1>Select a Package</h1>
+                <hr>
+                <!-- search bar -->
+                <input type="text" placeholder="Search Package Name"
+                        class="w-full p-2 mt-2 border rounded">
+
+                {% for pa in test_packages %}
+                    <input type="checkbox" value={{ pa.pk }} id = "packages" name = "packages"> {{ pa.package_name }}
+                {% endfor %}
+            </div>
+            <div class="tab" id="tab-1">
+                <h1>Select a Component</h1>
+                <hr>
+                <!-- insert search bar here -->
+                {% for c in test_comps %}
+                    <input type="checkbox" value={{ c.pk }} id = "components" name = "components"> {{ c.test_name }}
+                {% endfor %}
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+
     </div>
-    <div class="tab" id="tab-1">
-        <h1>Select a Component</h1>
-        <hr>
-        <!-- insert search bar here -->
-        {% for c in test_comps %}
-            <input type="checkbox" value={{ c.pk }} id = "components" name = "components"> {{ c.test_name }}
-        {% endfor %}
-    </div>
-    <button type="submit">Submit</button>
-</form>
+
+    
+</div>
+
 
 <script>
     function showTab(index) {
         document.querySelectorAll('.tab').forEach((tab, i) => {
             tab.classList.toggle('active', i === index);
         });
+
+        // Handle active state for buttons
+        const tabs = document.querySelectorAll("[data-tab-target]");
+        tabs.forEach((tab, i) => {
+            if (i === index) {
+                tab.classList.add("bg-white", "bg-opacity-40"); // Active style
+            } else {
+                tab.classList.remove("bg-white", "bg-opacity-40"); // Remove from others
+            }
+        });
     }
+
+
 </script>
 {% endblock content %}
 
