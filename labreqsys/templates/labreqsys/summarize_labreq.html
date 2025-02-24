@@ -6,14 +6,22 @@
     <h1>Packages</h1>
     {% for p in packages %}
         <p>{{ p.package_name }}</p>
+        <p>- {{ p.package_price}}
     {% endfor  %}
 
     <h1>Components</h1>
     {% for c in components %}
         <p>{{ c.test_name }}</p>
+        <p> - {{ c.component_price }}</p>
     {% endfor  %}
+
+    
+
 </div>
-<div></div>
+
+<!-- 022225 - Mads: added this to show total ! -->
+<div><p> Total: {{ total }} </p></div>
+
 {% endblock content %}
 
 {% block styles %}

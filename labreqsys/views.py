@@ -3,6 +3,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 import json
 from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent
 from datetime import date
+from decimal import *
 
 def view_labreqs(request):
     labreqs = LabRequest.objects.all()
@@ -53,23 +54,49 @@ def view_patient(request, pk):
 
 def summarize_labreq(request, pk):
     p = get_object_or_404(Patient, pk=pk)
-    temp_list_c = []
-    temp_list_p = []
-    if(request.method=="POST"):
+    
+    
+    if(request.method=="POST"): 
         temp_list_c = request.POST.getlist('components')
         temp_list_p = request.POST.getlist('packages')
-        hiddens = request.POST.getlist('selected_options')
+
+    # [REMOVE] 022225 Mads: TEMP ONLY ! For checking if it works only.
+    temp_list_c = [1, 2, 3, 4]
+    temp_list_p = [1, 2]
+    
+    total = 0
+    
     components = []
     packages = []
+    
     for t in temp_list_c:
         temp = get_object_or_404(TestComponent, pk=t)
+        to_pay = discount(p, temp.component_price)
+        total = to_pay + total    
         components.append(temp)
+        
     for t in temp_list_p:
         temp = get_object_or_404(TestPackage, pk=t)
+        to_pay = discount(p, temp.package_price)
+        total = to_pay + total
         packages.append(temp)
-    for t in hiddens:
-        temp = get_object_or_404(TestPackage, pk=t)
-        packages.append(temp)
-    print("Received Packages:", temp_list_p)
-    print("Received Components:", temp_list_c)
-    return render(request, 'labreqsys/summarize_labreq.html', {'patient': p, 'components': components, 'packages': packages})
+    
+    return render(request, 'labreqsys/summarize_labreq.html', {'patient': p, 'components': components, 'packages': packages, 'total' : total })
+
+def discount(patient, price):
+    if patient.pwd_id_num is None or patient.senior_id_num is None: 
+        return price
+        
+    else:
+        discount = price * Decimal(0.2)
+        payment = price - round(discount)
+        
+        # 022521 [Mads]: Not sure if VAT-exemption already applies to their pricing so I'll just add this jic.
+        """
+        discount_vat = price * Decimal(0.12)
+        payment_vat = price - discount_vat
+        discount = payment_vat * Decimal(0.2)
+        payment = price - round(discount + discount_vat)
+        """
+        
+        return payment
