@@ -7,6 +7,7 @@ DROP TABLE template_section;
 DROP TABLE test_component;
 DROP TABLE template_form;
 DROP TABLE test_package;
+DROP TABLE test_package_component;
 
 CREATE TABLE patient
 (patient_id INTEGER NOT NULL auto_increment,
@@ -102,4 +103,12 @@ CREATE TABLE test_package
 package_name VARCHAR(100) NOT NULL,
 package_price DECIMAL(10,2) NOT NULL DEFAULT 0.00 CHECK (package_price > 0.00),
 CONSTRAINT test_package_pk PRIMARY KEY (package_id)
+);
+
+CREATE TABLE test_package_component
+(package_id INTEGER NOT NULL,
+ component_id INTEGER NOT NULL,
+ CONSTRAINT test_package_component_pk PRIMARY KEY (package_id, component_id),
+ CONSTRAINT test_package_component_fk1 FOREIGN KEY (package_id) REFERENCES test_package(package_id),
+ CONSTRAINT test_package_component_fk2 FOREIGN KEY (component_id) REFERENCES test_component(component_id)
 );

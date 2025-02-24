@@ -7,25 +7,42 @@
     <button onclick="showTab(0)">Package</button>
     <button onclick="showTab(1)">Component</button>
 </div>
-<form method= "POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
-    <div class="tab active" id="tab-0">
-        <h1>Select a Package</h1>
-        <hr>
-        <!-- insert search bar here-->
-        {% for pa in test_packages %}
-            <input type="checkbox" value={{ pa.pk }} id = "packages" name = "packages"> {{ pa.package_name }}
-        {% endfor %}
-    </div>
-    <div class="tab" id="tab-1">
-        <h1>Select a Component</h1>
-        <hr>
-        <!-- insert search bar here -->
-        {% for c in test_comps %}
-            <input type="checkbox" value={{ c.pk }} id = "components" name = "components"> {{ c.test_name }}
-        {% endfor %}
-    </div>
-    <button type="submit">Submit</button>
-</form>
+<div class="container">
+    <form id="form" method="POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
+        <div class="half">
+            <div class="tab active" id="tab-0">
+                <h1>Select a Package</h1>
+                <hr>
+                {% for pa in test_packages %}
+                    <input type="checkbox" name="packages" value="{{ pa.pk }}" 
+                        data-name="{{ pa.package_name }}" 
+                        data-price="{{ pa.package_price }}" 
+                        data-components='{{ pa.components|safe }}' 
+                        class="package-checkbox"> {{ pa.package_name }}
+                {% endfor %}
+            </div>
+            <div class="tab" id="tab-1">
+                <h1>Select a Component</h1>
+                <hr>
+                {% for c in test_comps %}
+                    <input type="checkbox" name="components" value="{{ c.pk }}" 
+                        data-name="{{ c.test_name }}" 
+                        data-price="{{ c.component_price }}" 
+                        class="component-checkbox"> {{ c.test_name }}
+                {% endfor %}
+            </div>
+            <button type="button" onclick="addOptions()">Add Options</button>
+        </div>
+        <div class="half">
+            <h1>Selected Options</h1>
+            <hr>
+            <ul id="selectedList" class="selected-options"></ul>
+            <hr>
+            <h2>Subtotal ₱<span id="totalPrice">0.00</span></h2>
+            <button type="submit">Next</button>
+        </div>
+    </form>
+</div>
 
 <script>
     function showTab(index) {
@@ -33,12 +50,120 @@
             tab.classList.toggle('active', i === index);
         });
     }
+
+    const packageData = JSON.parse('{{ package_data|escapejs }}');
+
+    function addOptions() {
+        const selectedList = document.getElementById('selectedList');
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+
+        checkboxes.forEach(checkbox => {
+            const name = checkbox.getAttribute('data-name');
+            const price = parseFloat(checkbox.getAttribute('data-price')) || 0;
+            
+            const packageId = checkbox.value;
+            const componentId = checkbox.value;
+
+            if (!document.querySelector(`#selectedList li[data-name="${name}"]`)) {
+                addSelectedOption(name, price, packageId);
+
+                // If it's a package, add its components
+                if (packageData[packageId]) {
+                    packageData[packageId].forEach(compName => {
+                        if (!document.querySelector(`#selectedList li[data-name="${compName}"]`)) {
+                            addSelectedComponent(compName, packageId);
+                            disableComponentCheckbox(compName, true);
+                        }
+                    });
+                }
+
+                // Create hidden input for form submission
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'selected_options';
+                hiddenInput.value = packageId;
+                hiddenInput.setAttribute('data-name', name);
+                document.getElementById('form').appendChild(hiddenInput);
+
+                checkbox.checked = false;
+                checkbox.disabled = true;
+            }
+        });
+
+        recalculateTotal();
+    }
+
+    function addSelectedOption(name, price, packageId) {
+        const selectedList = document.getElementById('selectedList');
+        const li = document.createElement('li');
+        li.setAttribute('data-name', name);
+        li.setAttribute('data-package-id', packageId);
+        li.setAttribute('data-price', price);
+
+        li.innerHTML = `${name} - ₱${price.toFixed(2)} 
+            <img src="{% static 'images/delete.png' %}" class="trash-icon" onclick="removeOption(this, '${packageId}')">`;
+
+        selectedList.appendChild(li);
+    }
+
+    function addSelectedComponent(name, packageId) {
+        const selectedList = document.getElementById('selectedList');
+        const li = document.createElement('li');
+        li.setAttribute('data-name', name);
+        li.setAttribute('data-package-id', packageId);
+        li.classList.add('package-component'); 
+        li.textContent = `- ${name}`;
+        selectedList.appendChild(li);
+    }
+
+    function removeOption(trashIcon, packageId) {
+        const li = trashIcon.parentElement;
+        const name = li.getAttribute('data-name');
+        li.remove();
+
+        // Remove hidden input
+        document.querySelector(`input[name="selected_options"][data-name="${name}"]`)?.remove();
+
+        // Re-enable checkbox
+        const checkbox = document.querySelector(`input[data-name="${name}"]`);
+        if (checkbox) {
+            checkbox.disabled = false;
+            checkbox.checked = false;
+        }
+
+        // Remove associated package components
+        if (packageData[packageId]) {
+            packageData[packageId].forEach(compName => {
+                const compLi = document.querySelector(`#selectedList li[data-name="${compName}"]`);
+                if (compLi) {
+                    compLi.remove();
+                    disableComponentCheckbox(compName, false);
+                }
+            });
+        }
+
+        recalculateTotal();
+    }
+
+    function disableComponentCheckbox(name, disable) {
+        document.querySelectorAll(`input[data-name="${name}"]`).forEach(checkbox => {
+            checkbox.disabled = disable;
+        });
+    }
+
+    function recalculateTotal() {
+        let newTotal = 0;
+        document.querySelectorAll('#selectedList li:not(.package-component)').forEach(li => {
+            newTotal += parseFloat(li.getAttribute('data-price')) || 0;
+        });
+        document.getElementById('totalPrice').textContent = newTotal.toFixed(2);
+    }
 </script>
+
 {% endblock content %}
 
 {% block styles %}
 <style>
-
     .tab {
         display: none;
     }
@@ -46,10 +171,25 @@
         display: block;
     }
     .tabs {
-        display: flex; gap: 10px;
+        display: flex;
+        gap: 10px;
     }
     .tabs button {
-        padding: 10px; cursor: pointer;
+        padding: 10px;
+        cursor: pointer;
+    }
+    .trash-icon {
+        width: 20px;
+        cursor: pointer;
+    }
+    .container {
+        display: flex;
+        flex-direction: row;
+    }
+    .package-component {
+        color: gray;
+        font-size: 0.9em;
+        margin-left: 20px;
     }
 </style>
 {% endblock styles %}

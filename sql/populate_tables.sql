@@ -68,3 +68,9 @@ INSERT INTO test_package (package_name, package_price)
 VALUES 
 ('Basic Package', 900.00),
 ('Dengue Package', 2215.00);
+
+INSERT INTO test_package_component
+VALUES 
+(1, 2),
+(1, 1),
+(1, 4);
