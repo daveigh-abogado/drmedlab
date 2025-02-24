@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent
 from datetime import date
 from decimal import *
 
@@ -18,7 +20,21 @@ def add_labreq(request, pk):
     p = get_object_or_404(Patient, pk=pk)
     test_comps = TestComponent.objects.all()
     test_packages = TestPackage.objects.all()
-    return render(request, 'labreqsys/add_labreq.html', {'test_comps': test_comps, 'test_packages': test_packages, 'patient': p})
+
+    # Map package IDs to their component names
+    package_data = {}
+    for package in test_packages:
+        components = TestPackageComponent.objects.filter(package=package).select_related('component')
+        package_data[package.package_id] = [
+            comp.component.test_name for comp in components
+        ]
+
+    return render(request, 'labreqsys/add_labreq.html', {
+        'test_comps': test_comps,
+        'test_packages': test_packages,
+        'patient': p,
+        'package_data': json.dumps(package_data, cls=DjangoJSONEncoder),  # Convert to JSON for JS use
+    })
 
 def view_patient(request, pk):
     p = get_object_or_404(Patient, pk=pk)

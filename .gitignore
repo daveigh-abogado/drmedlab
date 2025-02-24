@@ -1,0 +1,26 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+settings_local.py
+.env
+
+!*/migrations/__init__.py
+
+
+# Byte-compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env
+
+# Database
+db.sqlite3
+
+# Django local settings
+settings_local.py
