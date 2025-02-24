@@ -80,23 +80,9 @@ def summarize_labreq(request, pk):
         to_pay = discount(p, temp.package_price)
         total = to_pay + total
         packages.append(temp)
-    
-    return render(request, 'labreqsys/summarize_labreq.html', {'patient': p, 'components': components, 'packages': packages, 'total' : total })
+    return render(request, 'labreqsys/summarize_labreq.html', {'patient': p, 'components': components, 'packages': packages})
 
-def discount(patient, price):
-    if patient.pwd_id_num is None or patient.senior_id_num is None: 
-        return price
-        
-    else:
-        discount = price * Decimal(0.2)
-        payment = price - round(discount)
-        
-        # 022521 [Mads]: Not sure if VAT-exemption already applies to their pricing so I'll just add this jic.
-        """
-        discount_vat = price * Decimal(0.12)
-        payment_vat = price - discount_vat
-        discount = payment_vat * Decimal(0.2)
-        payment = price - round(discount + discount_vat)
-        """
-        
-        return payment
+def view_individual_lab_request(request, request_id):
+    lab_request = get_object_or_404(LabRequest, pk=request_id)
+    request_details = lab_request.get_request_details()
+    return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details})
