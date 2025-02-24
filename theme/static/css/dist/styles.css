@@ -1023,6 +1023,10 @@ select {
   height: 2rem;
 }
 
+.h-tabcol1 {
+  height: 48rem; /* add package column */
+}
+
 .w-\[18px\] {
   width: 18px;
 }
@@ -1053,6 +1057,10 @@ select {
 
 .w-8 {
   width: 2rem;
+}
+
+.w-36 {
+  width: 36rem;
 }
 
 .max-w-\[300px\] {
@@ -1269,12 +1277,14 @@ select {
 
 .bg-gray-100 {
   --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+  background-color: rgb(244 245 249 / var(--tw-bg-opacity, 1));
 }
+
+
 
 .bg-gray-tab {
   --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
+  background-color: rgb(241 243 247 / var(--tw-bg-opacity, 1));
 }
 
 .bg-gray-800 {
@@ -1409,6 +1419,10 @@ select {
 
 .p-4 {
   padding: 1rem;
+}
+
+.p-5 {
+  padding: 1.3rem;
 }
 
 .p-8 {

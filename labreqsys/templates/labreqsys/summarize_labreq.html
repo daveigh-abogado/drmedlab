@@ -2,18 +2,25 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-<div class = "PatientInfo">
-    <h1>Packages</h1>
-    {% for p in packages %}
-        <p>{{ p.package_name }}</p>
-    {% endfor  %}
-
-    <h1>Components</h1>
-    {% for c in components %}
-        <p>{{ c.test_name }}</p>
-    {% endfor  %}
+<div class="PatientInfo bg-white rounded-lg p-5 flex flex-col">
+    <div>
+        <h1 class="text-2xl font-bold text-blue-900">Selected Options</h1>
+    </div>
+    <div class="mt-4">
+        <h1 class="text-lg font-semibold text-blue-900">Packages</h1>
+        {% for p in packages %}
+            <p>{{ p.package_name }}</p>
+        {% endfor %}
+    </div>
+    <div class="mt-4">
+        <h1 class="text-lg font-semibold text-blue-900">Components</h1>
+        {% for c in components %}
+            <p>{{ c.test_name }}</p>
+        {% endfor %}
+    </div>
 </div>
-<div></div>
+
+
 {% endblock content %}
 
 {% block styles %}
