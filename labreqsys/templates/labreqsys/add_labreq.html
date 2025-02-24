@@ -55,41 +55,42 @@
     }
 
     function addOptions() {
-        const selectedList = document.getElementById('selectedList');
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    const selectedList = document.getElementById('selectedList');
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    console.log(selectedList);
 
-        checkboxes.forEach(checkbox => {
-            const name = checkbox.getAttribute('data-name');
-            const price = parseFloat(checkbox.getAttribute('data-price')) || 0;
-            const id = checkbox.value;
-            const isPackage = checkbox.classList.contains('package-checkbox');
+    checkboxes.forEach(checkbox => {
+        const name = checkbox.getAttribute('data-name');
+        const price = parseFloat(checkbox.getAttribute('data-price')) || 0;
+        const id = checkbox.value;
+        const isPackage = checkbox.classList.contains('package-checkbox');
 
-            if (!document.querySelector(`#selectedList li[data-id="${id}"]`)) {
-                addSelectedOption(name, price, id, isPackage);
+        if (!document.querySelector(`#selectedList li[data-id="${id}"]`)) {
+            addSelectedOption(name, price, id, isPackage);
 
-                if (isPackage && packageData[id]) {
-                    packageData[id].forEach(componentName => {
-                        if (!document.querySelector(`#selectedList li[data-name="${componentName}"]`)) {
-                            addSelectedComponent(componentName, id);
-                            disableComponentCheckbox(componentName, true);
-                        }
-                    });
-                }
-
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = isPackage ? 'selected_packages' : 'selected_components';
-                hiddenInput.value = id;
-                hiddenInput.setAttribute('data-id', id);
-                document.getElementById('form').appendChild(hiddenInput);
-
-                checkbox.checked = false;
-                checkbox.disabled = true;
+            if (isPackage && packageData[id]) {
+                packageData[id].forEach(componentName => {
+                    if (!document.querySelector(`#selectedList li[data-name="${componentName}"]`)) {
+                        addSelectedComponent(componentName, id);
+                        disableComponentCheckbox(componentName, true, id);
+                    }
+                });
             }
-        });
 
-        renumberOptions();
-        recalculateTotal();
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = isPackage ? 'selected_packages' : 'selected_components';
+            hiddenInput.value = id;
+            hiddenInput.setAttribute('data-id', id);
+            document.getElementById('form').appendChild(hiddenInput);
+
+            checkbox.checked = false;
+            checkbox.disabled = true;
+        }
+    });
+
+    renumberOptions();
+    recalculateTotal();
     }
 
     function addSelectedOption(name, price, id, isPackage) {
@@ -130,7 +131,7 @@
                 const compLi = document.querySelector(`#selectedList li[data-name="${componentName}"]`);
                 if (compLi) {
                     compLi.remove();
-                    disableComponentCheckbox(componentName, false);
+                    disableComponentCheckbox(componentName, false, id);
                 }
             });
         }
@@ -139,11 +140,29 @@
         recalculateTotal();
     }
 
-    function disableComponentCheckbox(name, disable) {
-        document.querySelectorAll(`input[data-name="${name}"]`).forEach(checkbox => {
-            checkbox.disabled = disable;
-        });
-    }
+    function disableComponentCheckbox(name, disable, packageId) {
+    document.querySelectorAll(`input[data-name="${name}"]`).forEach(checkbox => {
+        if (disable) {
+            // Mark the checkbox as disabled due to a package
+            checkbox.setAttribute(`data-disabled-by-${packageId}`, "true");
+            checkbox.disabled = true;
+        } else {
+            // Only enable the checkbox if no other package still requires it disabled
+            checkbox.removeAttribute(`data-disabled-by-${packageId}`);
+            
+            // Check if any other package still has it disabled
+            let stillDisabled = false;
+            checkbox.getAttributeNames().forEach(attr => {
+                if (attr.startsWith('data-disabled-by-')) {
+                    stillDisabled = true;
+                }
+            });
+
+            checkbox.disabled = stillDisabled;
+        }
+    });
+}
+
 
     function renumberOptions() {
         let num = 1;
