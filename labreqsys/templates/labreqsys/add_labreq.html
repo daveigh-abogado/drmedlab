@@ -3,9 +3,14 @@
 
 {% block content %}
 
-<div class="tabs">
-    <button onclick="showTab(0)">Package</button>
-    <button onclick="showTab(1)">Component</button>
+
+<div class="tab-section bg-white rounded-lg p-5 border-2 border-indigo-200">
+    <div class="flex flex-wrap gap-1">
+        <button class="p-4 rounded-lg text-gray-700 font-bold hover:bg-gray-300 hover:bg-opacity-40 flex-grow w-80 "
+        data-tab-target="#tab1">Package</button>
+        <button class="p-4 rounded-lg text-gray-700 font-bold hover:bg-gray-300 hover:bg-opacity-40 flex-grow w-80 "
+        data-tab-target="#tab1">Component</button>
+    </div>
 </div>
 <form method= "POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
     <div class="tab active" id="tab-0">
