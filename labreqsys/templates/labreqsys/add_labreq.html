@@ -2,13 +2,23 @@
 {% load static tailwind_tags %}
 
 {% block content %}
+<div class="breadbutton">
+    <ul class="breadcrumb">
+        <li><a href="#">Lab Requests</a></li>
+        <li><a href="#" class="current">Add Lab Request</a></li>
+    </ul>
+    <div class="buttons">
+        <button>Edit Patient</button>
+        <button> <a href="#">Add Request</a></button>
+    </div>
+</div>
 
 <div class="tabs">
     <button onclick="showTab(0)">Package</button>
     <button onclick="showTab(1)">Component</button>
 </div>
 <div class="container">
-    <form id="form" method="POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
+    <form id="form" method="POST" action="{% url 'add_labreq_details' pk=patient.pk %}">{% csrf_token %}
         <div class="half">
             <div class="tab active" id="tab-0">
                 <h1>Select a Package</h1>
@@ -227,6 +237,24 @@
     .container {
         display: flex;
         flex-direction: row;
+    }
+    ul.breadcrumb li {
+        display: inline;
+        font-size: 12px;
+    }
+    
+    ul.breadcrumb li+li:before {
+        color: black;
+        content: "/\00a0";
+    }
+
+    ul.breadcrumb .current {
+        color: #00BAFF;
+    }
+
+    .breadbutton{
+        display: flex;
+        justify-content: space-between;
     }
 </style>
 {% endblock styles %}
