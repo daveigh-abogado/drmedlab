@@ -106,7 +106,7 @@ def summarize_labreq(request, pk):
         else:
             mode_of_release = 'Email'
             
-        LabRequest.objects.create(patient = p, date_requested = current_date, physician = physician, mode_of_release = mode_of_release, overall_status = "Not Started")
+    LabRequest.objects.create(patient = p, date_requested = current_date, physician = physician, mode_of_release = mode_of_release, overall_status = "Not Started")
     return render(request, 'labreqsys/summarize_labreq.html', {
         'patient': p,
         'components': components,
