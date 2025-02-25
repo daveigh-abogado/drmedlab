@@ -25,9 +25,9 @@
 
 <!--Content-->
 <div class="flex h-tabcol1"> 
-    <div class=" bg-white p-6 pt-13 rounded-b-lg rounded-tr-lg shadow">
+    <div class="p-6 pt-13 rounded-b-lg rounded-tr-lg shadow">
         
-        <form class="pl-9 pr-9 py-2 pb-9 flex-start" method= "POST" action="{% url 'add_labreq_details' pk=patient.pk %}">{% csrf_token %}
+        <form id="form" class="pl-9 pr-9 py-2 pb-9 flex-start" method= "POST" action="{% url 'add_labreq_details' pk=patient.pk %}">{% csrf_token %}
             
             <!--PACKAGE NAME-->
             <div class="tab active gap-1 w-36 " id="tab-0">
@@ -50,11 +50,6 @@
                     </label>
                     {% endfor %}
                 </div>
-
-                    <div class="mt-4 flex justify-end">
-                        <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="submit">Add Options</button>
-                    </div>
-                </div>
             </div>
 
             <!--COMPONENT NAME-->
@@ -76,16 +71,20 @@
                         <span class="text-gray-400 hover:text-blue-800">{{ c.test_name }}</span>
                     </label>
                     {% endfor %}
-
-                    <div class="mt-4 flex justify-end">
-                        <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="submit">Add Options</button>
-                    </div>
                 </div>
             </div>
-                        
+            <div class="mt-4 flex justify-end">
+                <button type="button" onclick="addOptions()">Add Options</button>
+            </div>
+            <div class="half">
+                <h1>Selected Options</h1>
+                <hr>
+                <ul id="selectedList" class="selected-options"></ul>
+                <hr>
+                <h2>Subtotal ₱<span id="totalPrice">0.00</span></h2>
+                <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="submit">Next</button>
+            </div>          
         </form>
-
-
     </div>
 
     
@@ -100,16 +99,6 @@
     function showTab(index) {
         document.querySelectorAll('.tab').forEach((tab, i) => {
             tab.classList.toggle('active', i === index);
-        });
-
-        // Handle active state for buttons
-        const tabs = document.querySelectorAll("[data-tab-target]");
-        tabs.forEach((tab, i) => {
-            if (i === index) {
-                tab.classList.add("bg-white", "bg-opacity-40"); // Active style
-            } else {
-                tab.classList.remove("bg-white", "bg-opacity-40"); // Remove from others
-            }
         });
     }
 
