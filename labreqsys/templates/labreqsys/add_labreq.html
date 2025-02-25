@@ -7,14 +7,10 @@
         <li><a href="#">Lab Requests</a></li>
         <li><a href="#" class="current">Add Lab Request</a></li>
     </ul>
-    <div class="buttons">
-        <button>Edit Patient</button>
-        <button> <a href="#">Add Request</a></button>
-    </div>
 </div>
 
 <!--Tabs-->
-<div class="tab-section rounded-t-lg inline-flex bg-gray-tab">
+<div class="tab-section rounded-t-lg inline-flex">
     <div class="flex flex-wrap gap-1">
         <button onclick="showTab(0)" class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
         data-tab-target="#tab1">Package</button>
@@ -24,65 +20,77 @@
 </div>
 
 <!--Content-->
-<div class="flex h-tabcol1"> 
-    <div class="p-6 pt-13 rounded-b-lg rounded-tr-lg shadow">
-        
-        <form id="form" class="pl-9 pr-9 py-2 pb-9 flex-start" method= "POST" action="{% url 'add_labreq_details' pk=patient.pk %}">{% csrf_token %}
+<div class="flex h-tabcol1 gap-1"> 
+    <div class="">
+        <form id="form" class="flex-start" method= "POST" action="{% url 'add_labreq_details' pk=patient.pk %}">{% csrf_token %}
+            <div class="bg-white p-6 pt-13 rounded-b-lg rounded-tr-lg shadow">
+                <!--PACKAGE NAME-->
+                <div class="tab active gap-1 w-36 " id="tab-0">
+                    <h1 class="text-mm font-bold text-blue-900">Select a Package</h1>
+                    <hr>
+                    <!-- search bar -->
+                    <input type="text" placeholder="Search Package Name"
+                            class="w-full h-8 text-ssm border rounded-lg ">
+
+                    <!--checkboxes-->
+                    <div class="mt-2 space-y-2">
+                        {% for pa in test_packages %}
+                        <label class="flex items-center space-x-2 gap-1">
+                            <input type="checkbox" name="packages" value="{{ pa.pk }}" 
+                            data-name="{{ pa.package_name }}" 
+                            data-price="{{ pa.package_price }}" 
+                            data-components='{{ pa.components|safe }}' 
+                            class="package-checkbox p-2 gap-1">
+                            <span class="text-gray-400 hover:text-blue-800"> {{ pa.package_name }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!--COMPONENT NAME-->
+                <div class="tab active gap-1 w-36" id="tab-1">
+                    <h1 class="text-mm font-bold text-blue-900">Select a Component</h1>
+                    <hr>
+                    <!-- insert search bar here -->
+                    <input type="text" placeholder="Search Component Name"
+                            class="w-full h-8 text-ssm border rounded-lg">
+
+                    <!--checkboxes-->
+                    <div class="mt-2 space-y-2">
+                        {% for c in test_comps %}
+                        <label class="flex items-center space-x-2 gap-1">
+                            <input type="checkbox" name="components" value="{{ c.pk }}" 
+                            data-name="{{ c.test_name }}" 
+                            data-price="{{ c.component_price }}" 
+                            class="component-checkbox">
+                            <span class="text-gray-400 hover:text-blue-800">{{ c.test_name }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!--ADD OPTIONS BUTTON-->
+                <div class="mt-4 flex justify-end">
+                    <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="button" onclick="addOptions()">Add Options</button>
+                </div>
+            </div>
             
-            <!--PACKAGE NAME-->
-            <div class="tab active gap-1 w-36 " id="tab-0">
-                <h1 class="text-2xl font-bold text-blue-900">Select a Package</h1>
+            <!--SELECTED OPTIONS: always have to be inside the form-->
+            <div class="half bg-white p-6 pt-13 rounded-lg shadow ml-3">
+                <h1 class="text-mm font-bold text-blue-900">Selected Options</h1>
                 <hr>
-                <!-- search bar -->
-                <input type="text" placeholder="Search Package Name"
-                        class="w-full pt-2 mt-7 h-8 text-ssm border rounded-lg ">
 
-                <!--checkboxes-->
-                <div class="mt-2 space-y-2">
-                    {% for pa in test_packages %}
-                    <label class="flex items-center space-x-2 gap-1">
-                        <input type="checkbox" name="packages" value="{{ pa.pk }}" 
-                        data-name="{{ pa.package_name }}" 
-                        data-price="{{ pa.package_price }}" 
-                        data-components='{{ pa.components|safe }}' 
-                        class="package-checkbox p-2 gap-1">
-                        <span class="text-gray-400 hover:text-blue-800"> {{ pa.package_name }}</span>
-                    </label>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!--COMPONENT NAME-->
-            <div class="tab active gap-1 w-36" id="tab-1">
-                <h1 class="text-2xl font-bold text-blue-900">Select a Component</h1>
-                <hr>
-                <!-- insert search bar here -->
-                <input type="text" placeholder="Search Component Name"
-                        class="w-full pt-2 mt-7 h-8 text-ssm border rounded-lg">
-
-                <!--checkboxes-->
-                <div class="mt-2 space-y-2">
-                    {% for c in test_comps %}
-                    <label class="flex items-center space-x-2 gap-1">
-                        <input type="checkbox" name="components" value="{{ c.pk }}" 
-                        data-name="{{ c.test_name }}" 
-                        data-price="{{ c.component_price }}" 
-                        class="component-checkbox">
-                        <span class="text-gray-400 hover:text-blue-800">{{ c.test_name }}</span>
-                    </label>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="mt-4 flex justify-end">
-                <button type="button" onclick="addOptions()">Add Options</button>
-            </div>
-            <div class="half">
-                <h1>Selected Options</h1>
-                <hr>
+                <!--list of added options-->
                 <ul id="selectedList" class="selected-options"></ul>
-                <hr>
-                <h2>Subtotal ₱<span id="totalPrice">0.00</span></h2>
-                <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="submit">Next</button>
+
+                <hr class="mt-4">
+                <h2 class="text-m text-blue-900">Subtotal ₱
+                    <span id="totalPrice">0.00</span>
+                </h2>
+
+                <div class="mt-4 flex justify-end">
+                    <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="submit">Next</button>
+                </div>
             </div>          
         </form>
     </div>
@@ -98,9 +106,25 @@
 
     function showTab(index) {
         document.querySelectorAll('.tab').forEach((tab, i) => {
-            tab.classList.toggle('active', i === index);
+            if (i === index) {
+                tab.classList.add('active');
+                tab.style.display = 'block'; // Show the selected tab
+            } else {
+                tab.classList.remove('active');
+                tab.style.display = 'none'; // Hide other tabs
+            }
+        });
+
+        document.querySelectorAll('.tab-section button').forEach((btn, i) => {
+            btn.classList.toggle('bg-white', i === index);
+            btn.classList.toggle('text-gray-700', i !== index);
         });
     }
+
+    // Set default tab to Package (Index 0)
+    document.addEventListener("DOMContentLoaded", function() {
+        showTab(0);
+    });
 
     function addOptions() {
         console.log("addOptions function called");

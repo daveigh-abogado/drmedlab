@@ -16,7 +16,7 @@
     <body class="bg-gray-100">
 
 
-            <!--Sidebar with Navbar-->
+        <!--Sidebar with Navbar-->
         <nav class="fixed top-0 z-50 w-full bg-white shadow-lg">
             <div class="px-3 py-3 lg:px-5 lg:pl-3">
             <div class="flex items-center justify-between">
@@ -61,22 +61,22 @@
         </nav>
         
         <!--sidebar-->
-        <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 bg-gradient-to-tr from-blue-500  to-blue-900 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-            <div class="h-full px-3 pb-4 pt-1 overflow-y-auto bg-gradient-to-tr from-blue-500  to-blue-900  ">
+        <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 bg-gradient-to-tr from-blue-500 to-blue-900 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+            <div class="h-full px-2 pb-4 pt-1 overflow-y-auto bg-gradient-to-tr from-blue-500 to-blue-900  ">
                 <ul class="space-y-2 font-medium">
                 
                     <li>
-                        <a href="#" class="flex text-xs items-center p-2 text-white rounded-lg dark:text-white group">
+                        <a class="flex text-xs items-center p-2 text-white rounded-lg dark:text-white group">
                             <span class="ms-3">RECORDS</span>
                         </a>
                     </li>
                     <li>
-                    <a href="{% url 'patientList' %}" class="flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
+                    <a href="{% url 'patientList' %}" class="flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
                         <span class="ms-5">Patient List</span>
                     </a>
                     </li>
                     <li>
-                        <button type="button" class="flex items-center w-64 p-2 text-base transition duration-100 group  text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
+                        <button type="button" class="flex items-center w-64 p-2 text-base transition duration-100 group  text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  active:bg-blue-300 active:text-blue-900" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
                               <span class="ms-5 text-left rtl:text-right whitespace-nowrap">Lab Requests</span>
                               <svg class="w-3 h-3 ms-5 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
@@ -84,16 +84,16 @@
                         </button>
                         <ul id="dropdown-example" class="hidden py-2 space-y-2">
                               <li>
-                                 <a href="#" class=" ms-5 flex items-center w-full p-2  transition duration-75 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900">All Requests</a>
+                                 <a href="#" class=" ms-5 flex items-center w-full p-2  transition duration-75 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  active:bg-blue-300 active:text-blue-900">All Requests</a>
                               </li>
                               <li>
-                                 <a href="#" class=" ms-5 flex items-center w-full p-2  transition duration-75 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900">Not Started</a>
+                                 <a href="#" class=" ms-5 flex items-center w-full p-2  transition duration-75 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  active:bg-blue-300 active:text-blue-900">Not Started</a>
                               </li>
                               <li>
-                                 <a href="#" class=" ms-5 flex items-center w-full p-2 transition duration-75 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900">In Progress</a>
+                                 <a href="#" class=" ms-5 flex items-center w-full p-2 transition duration-75 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  active:bg-blue-300 active:text-blue-900">In Progress</a>
                               </li>
                               <li>
-                                <a href="#" class=" ms-5 flex items-center w-full p-2 transition duration-75 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  dark:hover:bg-blue-300 active:bg-blue-300 active:text-blue-900">Completed</a>
+                                <a href="#" class=" ms-5 flex items-center w-full p-2 transition duration-75 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  active:bg-blue-300 active:text-blue-900">Completed</a>
                              </li>
                         </ul>
                     </li>
