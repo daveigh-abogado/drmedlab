@@ -2,28 +2,113 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-<div class = "PatientInfo">
-    <h1>Packages</h1>
-    {% for p in packages %}
-        <p>{{ p.package_name }}</p>
-        <p>- {{ p.package_price}}
-    {% endfor  %}
-
-    <h1>Components</h1>
-    {% for c in components %}
-        <p>{{ c.test_name }}</p>
-        <p> - {{ c.component_price }}</p>
-    {% endfor  %}
-
-    
-
+<div class="breadbutton">
+    <ul class="breadcrumb">
+        <li><a href="#">Lab Requests</a></li>
+        <li><a href="{% url 'add_labreq' pk=patient.pk %}">Add Lab Request</a></li>
+        <li><a href="{% url 'add_labreq_details' pk=patient.pk %}">Lab Request Details</a></li>
+        <li><a href="#" class="current">Billing Summary</a></li>
+    </ul>
+    <div class="buttons">
+        <button>Edit Patient</button>
+        <button> <a href="#">Add Request</a></button>
+    </div>
 </div>
 
-<!-- 022225 - Mads: added this to show total ! -->
-<div><p> Total: {{ total }} </p></div>
+<div class="tabs">
+    <button onclick="showTab(0)" disabled>Package</button>
+    <button onclick="showTab(1)" disabled>Component</button>
+</div>
+<div class="container">
+    <div class="tab active" id="tab-0">
+        <form action="">
+            <div class = "PatientInfo">
+                <h1>Patient Information</h1>
+                <hr>
+                <table>
+                    <tr>
+                        <th>Date Requested</th>
+                        <td><input type="text" name="date_requested" value="{{ date }}" disabled></td>
+                    </tr>
+                    <tr>
+                        <th>Patient ID</th>
+                        <td><input type="text" name="patient_id" value="{{ patient.pk }}" disabled></td>
+                    </tr>
+                    <tr>
+                        <th>Patient Name</th>
+                        <td>{{ patient.last_name }}, {{ patient.first_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>PWD ID</th>
+                        <td>{{ patient.pwd_id_num }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class = "LabReqDetails">
+                <h1>Patient Information</h1>
+                <hr>
+                <table>
+                    <tr>
+                        <th>Physician Name</th>
+                        <td><input type="text" name="physician" value="{{ physician }}" disabled></td>
+                    </tr>
+                    <tr>
+                        <th>Mode of Delivery</th>
+                        <td><input type="text" name="mode_of_release" value="{{ mode_of_release }}" disabled></td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+        
+        <div class="BillingSummary">
+            <h1>Billing Summary</h1>
+            <hr>
+            <table>
+                {% for p in packages %}
+                <tr>
+                    <th>No.</th>
+                    <td>{{ p.package_name }}</td>
+                    <td>₱ {{ p.package_price }}</td>
+                </tr>
+                {% endfor %}
+                {% for c in components %}
+                <tr>
+                    <th>No.</th>
+                    <td>{{ c.test_name }}</td>
+                    <td>₱ {{ c.component_price }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div> 
+        
+        <!-- 022225 - Mads: added this to show total ! -->
+        <div><p> Total: {{ total }} </p></div>
+    </div>
+</div>
+
 
 {% endblock content %}
 
 {% block styles %}
-<!--insert styles here-->
+<style>
+    ul.breadcrumb li {
+        display: inline;
+        font-size: 12px;
+    }
+    
+    ul.breadcrumb li+li:before {
+        color: black;
+        content: "/\00a0";
+    }
+
+    ul.breadcrumb .current {
+        color: #00BAFF;
+    }
+
+    .breadbutton{
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
 {% endblock styles %}

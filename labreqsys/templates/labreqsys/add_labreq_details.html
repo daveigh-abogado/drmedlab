@@ -1,0 +1,98 @@
+{% extends 'labreqsys/base.html' %}
+{% load static tailwind_tags %}
+
+{% block content %}
+<div class="breadbutton">
+    <ul class="breadcrumb">
+        <li><a href="#">Lab Requests</a></li>
+        <li><a href="{% url 'add_labreq' pk=patient.pk %}">Add Lab Request</a></li>
+        <li><a href="#" class="current">Lab Request Details</a></li>
+    </ul>
+    <div class="buttons">
+        <button>Edit Patient</button>
+        <button> <a href="#">Add Request</a></button>
+    </div>
+</div>
+
+<div class="tabs">
+    <button onclick="showTab(0)" disabled>Package</button>
+    <button onclick="showTab(1)" disabled>Component</button>
+</div>
+<div class="container">
+    <form id="form" method="POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
+        <div class="tab active" id="tab-0">
+            <h1>Lab Request Details</h1>
+            <hr>
+            <table>
+                <tr>
+                    <td><b>Physician Name</b> (optional)</td>
+                    <td><input type="text" name="physician" id="physician"></td>
+                </tr>
+                <tr>
+                    <td><b>Mode of Release</b></td>
+                    <td>
+                        <input type="checkbox" name="mode_of_release" id="release" value="Pick-Up">Pick-Up
+                        <input type="checkbox" name="mode_of_release" id="release" value="Email">Email
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <button><a href="{% url 'add_labreq' pk=patient.pk %}">Back</a></button>
+        <button type="submit">Next</button>
+    </form>
+</div>
+
+<script>
+    function showTab(index) {
+        document.querySelectorAll('.tab').forEach((tab, i) => {
+            tab.classList.toggle('active', i === index);
+        });
+    }
+</script>
+
+{% endblock content %}
+
+{% block styles %}
+<style>
+    .tab {
+        display: none;
+    }
+    .tab.active {
+        display: block;
+    }
+    .tabs {
+        display: flex;
+        gap: 10px;
+    }
+    .tabs button {
+        padding: 10px;
+        cursor: pointer;
+    }
+    .trash-icon {
+        width: 20px;
+        cursor: pointer;
+    }
+    .container {
+        display: flex;
+        flex-direction: row;
+    }
+    ul.breadcrumb li {
+        display: inline;
+        font-size: 12px;
+    }
+    
+    ul.breadcrumb li+li:before {
+        color: black;
+        content: "/\00a0";
+    }
+
+    ul.breadcrumb .current {
+        color: #00BAFF;
+    }
+
+    .breadbutton{
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+{% endblock styles %}

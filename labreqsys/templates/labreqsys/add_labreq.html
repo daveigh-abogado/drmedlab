@@ -2,23 +2,33 @@
 {% load static tailwind_tags %}
 
 {% block content %}
+<div class="breadbutton">
+    <ul class="breadcrumb">
+        <li><a href="#">Lab Requests</a></li>
+        <li><a href="#" class="current">Add Lab Request</a></li>
+    </ul>
+    <div class="buttons">
+        <button>Edit Patient</button>
+        <button> <a href="#">Add Request</a></button>
+    </div>
+</div>
 
 <div class="tabs">
     <button onclick="showTab(0)">Package</button>
     <button onclick="showTab(1)">Component</button>
 </div>
 <div class="container">
-    <form id="form" method="POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
+    <form id="form" method="POST" action="{% url 'add_labreq_details' pk=patient.pk %}">{% csrf_token %}
         <div class="half">
             <div class="tab active" id="tab-0">
                 <h1>Select a Package</h1>
                 <hr>
                 {% for pa in test_packages %}
                     <input type="checkbox" name="packages" value="{{ pa.pk }}" 
-                        data-name="{{ pa.package_name }}" 
-                        data-price="{{ pa.package_price }}" 
-                        data-components='{{ pa.components|safe }}' 
-                        class="package-checkbox"> {{ pa.package_name }}
+                           data-name="{{ pa.package_name }}" 
+                           data-price="{{ pa.package_price }}" 
+                           data-components='{{ pa.components|safe }}' 
+                           class="package-checkbox"> {{ pa.package_name }}
                 {% endfor %}
             </div>
             <div class="tab" id="tab-1">
@@ -26,9 +36,9 @@
                 <hr>
                 {% for c in test_comps %}
                     <input type="checkbox" name="components" value="{{ c.pk }}" 
-                        data-name="{{ c.test_name }}" 
-                        data-price="{{ c.component_price }}" 
-                        class="component-checkbox"> {{ c.test_name }}
+                           data-name="{{ c.test_name }}" 
+                           data-price="{{ c.component_price }}" 
+                           class="component-checkbox"> {{ c.test_name }}
                 {% endfor %}
             </div>
             <button type="button" onclick="addOptions()">Add Options</button>
@@ -47,6 +57,7 @@
 <script>
     let counter = 1;
     const packageData = JSON.parse('{{ package_data|escapejs }}');
+    let disabledComponents = {};
 
     function showTab(index) {
         document.querySelectorAll('.tab').forEach((tab, i) => {
@@ -55,23 +66,31 @@
     }
 
     function addOptions() {
+        console.log("addOptions function called");
+
         const selectedList = document.getElementById('selectedList');
         const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+
+        console.log("Number of checked checkboxes:", checkboxes.length);
 
         checkboxes.forEach(checkbox => {
             const name = checkbox.getAttribute('data-name');
             const price = parseFloat(checkbox.getAttribute('data-price')) || 0;
             const id = checkbox.value;
             const isPackage = checkbox.classList.contains('package-checkbox');
+            const isComponent = checkbox.classList.contains('component-checkbox');
 
-            if (!document.querySelector(`#selectedList li[data-id="${id}"]`)) {
+            console.log("Checkbox:", name, id, isPackage, isComponent);
+
+            if (!document.querySelector(`#selectedList li[data-name="${name}"]`)) {
+                console.log("Adding option:", name);
                 addSelectedOption(name, price, id, isPackage);
 
                 if (isPackage && packageData[id]) {
                     packageData[id].forEach(componentName => {
                         if (!document.querySelector(`#selectedList li[data-name="${componentName}"]`)) {
                             addSelectedComponent(componentName, id);
-                            disableComponentCheckbox(componentName, true);
+                            disableComponentCheckbox(componentName, true, id);
                         }
                     });
                 }
@@ -97,8 +116,9 @@
         const li = document.createElement('li');
         li.setAttribute('data-id', id);
         li.setAttribute('data-price', price);
+        li.setAttribute('data-name', name);
         li.innerHTML = `<span class="option-number"></span> ${name} - ₱${price.toFixed(2)} 
-            <img src="{% static 'images/delete.png' %}" class="trash-icon" onclick="removeOption(this, '${id}')">`;
+            <img src="{% static 'images/delete.png' %}" class="trash-icon" onclick="removeOption(this, '${id}', '${name}', ${isPackage})">`;
         selectedList.appendChild(li);
     }
 
@@ -112,37 +132,67 @@
         selectedList.appendChild(li);
     }
 
-    function removeOption(trashIcon, id) {
+    function removeOption(trashIcon, id, name, isPackage) {
         const li = trashIcon.parentElement;
-        const name = li.getAttribute('data-name');
+
         li.remove();
 
         document.querySelector(`input[data-id="${id}"]`)?.remove();
-        
+
         const checkbox = document.querySelector(`input[value="${id}"]`);
         if (checkbox) {
             checkbox.disabled = false;
             checkbox.checked = false;
         }
 
-        if (packageData[id]) {
+        if (isPackage) {
             packageData[id].forEach(componentName => {
                 const compLi = document.querySelector(`#selectedList li[data-name="${componentName}"]`);
                 if (compLi) {
                     compLi.remove();
-                    disableComponentCheckbox(componentName, false);
+                    enableComponentCheckbox(componentName, id);
                 }
             });
+        } else {
+            enableComponentCheckbox(name);
         }
 
         renumberOptions();
         recalculateTotal();
     }
 
-    function disableComponentCheckbox(name, disable) {
+    function disableComponentCheckbox(name, disable, packageId) {
         document.querySelectorAll(`input[data-name="${name}"]`).forEach(checkbox => {
             checkbox.disabled = disable;
+            if (disable) {
+                if (!disabledComponents[name]) {
+                    disabledComponents[name] = {};
+                }
+                disabledComponents[name][packageId] = true;
+            } else {
+                if (disabledComponents[name]) {
+                    delete disabledComponents[name][packageId];
+                    if (Object.keys(disabledComponents[name]).length === 0) {
+                        delete disabledComponents[name];
+                    }
+                }
+            }
         });
+    }
+
+    function enableComponentCheckbox(name, packageId) {
+        if (disabledComponents[name] && disabledComponents[name][packageId]) {
+            delete disabledComponents[name][packageId];
+            if (Object.keys(disabledComponents[name]).length === 0) {
+                delete disabledComponents[name];
+            }
+        }
+        if (!disabledComponents[name]) {
+            document.querySelectorAll(`input[data-name="${name}"]`).forEach(checkbox => {
+                checkbox.disabled = false;
+                checkbox.checked = false;
+            });
+        }
     }
 
     function renumberOptions() {
@@ -187,6 +237,24 @@
     .container {
         display: flex;
         flex-direction: row;
+    }
+    ul.breadcrumb li {
+        display: inline;
+        font-size: 12px;
+    }
+    
+    ul.breadcrumb li+li:before {
+        color: black;
+        content: "/\00a0";
+    }
+
+    ul.breadcrumb .current {
+        color: #00BAFF;
+    }
+
+    .breadbutton{
+        display: flex;
+        justify-content: space-between;
     }
 </style>
 {% endblock styles %}

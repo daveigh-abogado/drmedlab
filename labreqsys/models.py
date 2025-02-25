@@ -116,34 +116,11 @@ class TestPackage(models.Model):
         managed = False
         db_table = 'test_package'
 
-
-class RequestComponent(models.Model):
-    id = models.BigAutoField(primary_key=True)
+class TestPackageComponent(models.Model):
+    package = models.OneToOneField(TestPackage, models.DO_NOTHING, primary_key=True)  # The composite primary key (package_id, component_id) found, that is not supported. The first column is selected.
     component = models.ForeignKey(TestComponent, models.DO_NOTHING)
-    request = models.ForeignKey(LabRequest, models.DO_NOTHING)
 
     class Meta:
         managed = False
-        db_table = 'request_component'
-        unique_together = (('request', 'component'),)
-
-class RequestPackage(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    package = models.ForeignKey(TestPackage, models.DO_NOTHING)
-    request = models.ForeignKey(LabRequest, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'request_package'
-        unique_together = (('request', 'package'),)
-
-class RequestLineItem(models.Model):
-    line_item_id = models.AutoField(primary_key=True)
-    request_status = models.CharField(max_length=20)
-    component = models.ForeignKey(TestComponent, models.DO_NOTHING)
-    package = models.ForeignKey(TestPackage, models.DO_NOTHING, blank=True, null=True)
-    request = models.ForeignKey(LabRequest, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'request_line_item'
+        db_table = 'test_package_component'
+        unique_together = (('package', 'component'),)
