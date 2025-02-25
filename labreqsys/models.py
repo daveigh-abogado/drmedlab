@@ -35,6 +35,19 @@ class LabRequest(models.Model):
     mode_of_release = models.CharField(max_length=7)
     overall_status = models.CharField(max_length=11)
 
+    def get_request_details(self):
+        return {
+            'request_id': self.request_id,
+            'patient': self.patient,
+            'date_requested': self.date_requested,
+            'physician': self.physician,
+            'mode_of_release': self.mode_of_release,
+            'overall_status': self.overall_status,
+            'components': self.requestcomponent_set.all(),
+            'packages': self.requestpackage_set.all(),
+            'line_items': self.requestlineitem_set.all()
+        }
+
     class Meta:
         managed = False
         db_table = 'lab_request'
@@ -111,3 +124,34 @@ class TestPackageComponent(models.Model):
         managed = False
         db_table = 'test_package_component'
         unique_together = (('package', 'component'),)
+
+class RequestComponent(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    component = models.ForeignKey(TestComponent, models.DO_NOTHING)
+    request = models.ForeignKey(LabRequest, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'request_component'
+        unique_together = (('request', 'component'),)
+
+class RequestPackage(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    package = models.ForeignKey(TestPackage, models.DO_NOTHING)
+    request = models.ForeignKey(LabRequest, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'request_package'
+        unique_together = (('request', 'package'),)
+
+class RequestLineItem(models.Model):
+    line_item_id = models.AutoField(primary_key=True)
+    request_status = models.CharField(max_length=20)
+    component = models.ForeignKey(TestComponent, models.DO_NOTHING)
+    package = models.ForeignKey(TestPackage, models.DO_NOTHING, blank=True, null=True)
+    request = models.ForeignKey(LabRequest, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'request_line_item'

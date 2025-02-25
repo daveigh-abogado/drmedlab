@@ -1,0 +1,77 @@
+{% extends 'labreqsys/base.html' %}
+{% load static tailwind_tags %}
+
+{% block content %}
+<div class="breadbutton">
+    <ul class="breadcrumb">
+        <li><a href="#">Lab Requests</a></li>
+        <li><a href="#" class="current">View Lab Request Record</a></li>
+    </ul>
+</div>
+
+<h1 class="text-2xl font-bold mb-4">Lab Request Details</h1>
+
+<div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <h2 class="text-xl font-semibold">Patient Information</h2>
+    <p><strong>Patient ID:</strong> {{ request_details.patient.patient_id }}</p>
+    <p><strong>Patient Name:</strong> {{ request_details.patient.first_name }} {{ request_details.patient.last_name }}</p>
+    <p><strong>PWD ID:</strong> {{ request_details.patient.pwd_id_num }}</p>
+</div>
+
+<div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <h2 class="text-xl font-semibold">Lab Request Tracker</h2>
+    <p><strong>Request ID:</strong> {{ request_details.request_id }}</p>
+    <p><strong>Overall Status:</strong> {{ request_details.overall_status }}</p>
+    <p><strong>Collection Status:</strong> {{ request_details.collection_status }}</p>
+    <p><strong>Email Status:</strong> {{ request_details.email_status }}</p>
+</div>
+
+<h2 class="text-xl font-semibold mt-6">Packages and Components</h2>
+<table class="min-w-full bg-white">
+    <thead>
+        <tr>
+            <th class="py-2">Package</th>
+            <th class="py-2">Component</th>
+            <th class="py-2">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line_item in request_details.line_items %}
+        <tr>
+            <td class="border px-4 py-2">
+                {% if line_item.package %}
+                    {{ line_item.package.package_name }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td class="border px-4 py-2">{{ line_item.component.test_name }}</td>
+            <td class="border px-4 py-2">{{ line_item.request_status }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
+
+{% block styles %}
+<style>
+    ul.breadcrumb li {
+        display: inline;
+        font-size: 12px;
+    }
+    
+    ul.breadcrumb li+li:before {
+        color: black;
+        content: "/\00a0";
+    }
+
+    ul.breadcrumb .current {
+        color: #00BAFF;
+    }
+
+    .breadbutton{
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+{% endblock styles %}
