@@ -3,33 +3,125 @@
 
 {% block content %}
 
-<h1>Patient List</h1>
-<table>
-    <thead>
-        <tr>
-            <th>Patient ID</th>
-            <th>Last Name</th>
-            <th>Given Name</th>
-            <th>Email</th>
-            <th>Mobile No.</th>
-            <th>Landline No.</th>
-            <th>Date Added</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for p in patients %}
-        <tr>
-            <td><a href="{% url 'view_patient' pk=p.pk %}">{{ p.patient_id }}</a></td>
-            <td>{{ p.last_name }}</td>
-            <td>{{ p.first_name }}</td>
-            <td>{{ p.email }}</td>
-            <td>{{ p.mobile_num }}</td>
-            <td>{{ p.landline_num }}</td>
-            <td>{{ p.date_added }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+
+
+<div class="flex-1 p-6"> <!-- WHOLE SPACE -->
+
+    <!-- TOP BAR -->
+    <div class="container text-center">
+        <div class="row">
+
+
+        <!-- SEARCH -->
+          <div class="col me-auto">
+            <form class="max-w-lg">
+                <div class="flex">
+                    <label for="search-dropdown" class="mb-2 text-sm font-medium text-gray-500 sr-only dark:text-white">Patient ID</label>
+                    <button id="dropdown-button" data-dropdown-toggle="dropdown" class="shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-500 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600" type="button">
+                        Patient ID <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"> <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                        </svg></button>
+                    <div id="dropdown" class="z-10 hidden bg-white divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
+                        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200 list-none" aria-labelledby="dropdown-button">
+                        <li>
+                            <button type="button" class="inline-flex px-1 py-1 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Patient ID</button>
+                        </li>
+                        <li>
+                            <button type="button" class="inline-flex px-1 py-1 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Last Name</button>
+                        </li>
+                        <li>
+                            <button type="button" class="inline-flex px-1 py-1 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Given Name</button>
+                        </li>
+                        <li>
+                            <button type="button" class="inline-flex px-1 py-1 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Email</button>
+                        </li>
+                        </ul>
+                    </div>
+                    <div class="relative w-full">
+                        <input type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="Who are you looking for?" required />
+                        <button type="submit" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                            </svg>
+                            <span class="sr-only">Search</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+          </div>
+
+
+          <!-- Sort By Container -->
+          <div class="col ms-auto text-end">
+                <label class="text-sm font-medium text-gray-500 dark:text-white px-2"> Sort by </label>
+                <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Patient ID
+                    <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                    </svg> 
+                </button>
+                
+                <!-- Dropdown menu -->
+                <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
+                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownHoverButton">
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Patient ID</a>
+                        </li>
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Last Name</a>
+                        </li>
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Given Name</a>
+                        </li>
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Email</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="bg-white rounded-3xl shadow-md mt-4 p-0">
+
+        <!-- TABLE -->
+        
+        <div class = "relative overflow-x-auto shadow-md rounded-xl ">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+                <thead class="text-xs uppercase shadow-lg z-10">
+                    <tr class="bg-gray-50 text-gray-450 text-left shadow-lg shadow-gray-300 text-center">
+                        <th scope="col" class="px-6 py-3">Patient ID</th>
+                        <th scope="col" class="px-6 py-3">Last Name</th>
+                        <th scope="col" class="px-6 py-3">Given Name</th>
+                        <th scope="col" class="px-6 py-3">Email</th>
+                        <th scope="col" class="px-6 py-3">Mobile No.</th>
+                        <th scope="col" class="px-6 py-3">Landline No.</th>
+                        <th scope="col" class="px-6 py-3">Date Added</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for p in patients %}
+                    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
+                        <th scope="row" class="px-6 py-4 font-medium text-blue-500 whitespace-nowrap dark:text-white text-center">
+                            <a href="{% url 'view_patient' pk=p.pk %}" class = "hover:underline focus:underline">
+                                {{ p.patient_id }}
+                            </a>
+                        </th>
+                        <td class="p-3">{{ p.last_name }}</td>
+                        <td class="p-3">{{ p.first_name }}</td>
+                        <td class="p-3">{{ p.email }}</td>
+                        <td class="p-3">{{ p.mobile_num }}</td>
+                        <td class="p-3">{{ p.landline_num }}</td>
+                        <td class="p-3">{{ p.date_added }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
 {% endblock content %}
 
 {% block styles %}
