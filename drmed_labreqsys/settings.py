@@ -85,11 +85,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'drmedlabs',
         'USER': 'root',
-        'PASSWORD': '', #Please enter your root password here (you should have this when you set up your SQL client)
+        'PASSWORD': 'CHLOEsachiel1111', #Please enter your root password here (you should have this when you set up your SQL client)
         'HOST':'localhost',
         'PORT':'3306',
     }
 }
+
 
 
 # Password validation
@@ -143,5 +144,4 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#uncomment the following line if you get the error seen in the setup document
-#NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd" 
+NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd" 
