@@ -8,6 +8,7 @@ DROP TABLE test_component;
 DROP TABLE template_form;
 DROP TABLE test_package;
 DROP TABLE test_package_component;
+DROP TABLE request_line_item;
 
 CREATE TABLE patient
 (patient_id INTEGER NOT NULL auto_increment,
@@ -111,4 +112,16 @@ CREATE TABLE test_package_component
  CONSTRAINT test_package_component_pk PRIMARY KEY (package_id, component_id),
  CONSTRAINT test_package_component_fk1 FOREIGN KEY (package_id) REFERENCES test_package(package_id),
  CONSTRAINT test_package_component_fk2 FOREIGN KEY (component_id) REFERENCES test_component(component_id)
+);
+
+CREATE TABLE request_line_item
+(line_item_id INTEGER NOT NULL auto_increment,
+request_id INTEGER NOT NULL,
+package_id INTEGER,
+component_id INTEGER NOT NULL,
+request_status ENUM('Not Started', 'In Progress', 'Completed') NOT NULL DEFAULT 'Not Started',
+CONSTRAINT request_line_item_pk PRIMARY KEY (line_item_id),
+CONSTRAINT request_line_item_fk1 FOREIGN KEY (request_id) REFERENCES lab_request(request_id),
+CONSTRAINT request_line_item_fk2 FOREIGN KEY (package_id) REFERENCES test_package(package_id),
+CONSTRAINT request_line_item_fk3 FOREIGN KEY (component_id) REFERENCES test_component(component_id)
 );
