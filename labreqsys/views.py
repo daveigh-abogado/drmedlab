@@ -150,12 +150,15 @@ def summarize_labreq(request, pk):
         )
     
     for package in packages:
-        RequestLineItem.objects.create(
-            request=lab_request,
-            package=package,
-            component=None,  # Assuming a package can be saved without a component
-            request_status="Not Started"
-        )
+        # Save each component of the package as a separate line item
+        package_components = TestPackageComponent.objects.filter(package=package)
+        for package_component in package_components:
+            RequestLineItem.objects.create(
+                request=lab_request,
+                component=package_component.component,
+                package=package,
+                request_status="Not Started"
+            )
     
     return render(request, 'labreqsys/summarize_labreq.html', {
         'patient': p,
