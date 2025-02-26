@@ -65,25 +65,29 @@
             <h1>Billing Summary</h1>
             <hr>
             <table>
-                {% for p in packages %}
-                <tr>
-                    <th>No.</th>
-                    <td>{{ p.package_name }}</td>
-                    <td>₱ {{ p.package_price }}</td>
-                </tr>
-                {% endfor %}
-                {% for c in components %}
-                <tr>
-                    <th>No.</th>
-                    <td>{{ c.test_name }}</td>
-                    <td>₱ {{ c.component_price }}</td>
-                </tr>
-                {% endfor %}
+                    {% for p in packages %}
+                    <tr>
+                        <th>Package No. {{ forloop.counter }}</th>
+                        <td>{{ p.package_name }}</td>
+                        <td>₱ {{ p.package_price }}</td>
+                    </tr>
+
+                    {% endfor %}
+                    {% for c in components %}
+                    <tr>
+                        <th>Component No. {{ forloop.counter }}</th>
+                        <td>{{ c.test_name }}</td>
+                        <td>₱ {{ c.component_price }}</td>
+                    </tr>
+                    {% endfor %}
             </table>
         </div> 
         
-        <!-- 022225 - Mads: added this to show total ! -->
-        <div><p> Total: {{ total }} </p></div>
+        <div>
+            <br>
+            <p> Discount: {{ discount }} </p>
+            <p> Total: {{ total }} </p>
+        </div>
     </div>
 </div>
 

@@ -1,57 +1,172 @@
 {% extends 'labreqsys/base.html' %}
 {% load static tailwind_tags %}
 
+
+
+
 {% block content %}
-<div class="breadbutton">
+<div class="p-6 bg-gray-50">
+  <!-- Breadcrumb ()-->
+  <div class="breadbutton">
     <ul class="breadcrumb">
         <li><a href="#">Lab Requests</a></li>
         <li><a href="#" class="current">View Lab Request Record</a></li>
     </ul>
 </div>
 
-<h1 class="text-2xl font-bold mb-4">Lab Request Details</h1>
 
-<div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-    <h2 class="text-xl font-semibold">Patient Information</h2>
-    <p><strong>Patient ID:</strong> {{ request_details.patient.patient_id }}</p>
-    <p><strong>Patient Name:</strong> {{ request_details.patient.first_name }} {{ request_details.patient.last_name }}</p>
-    <p><strong>PWD ID:</strong> {{ request_details.patient.pwd_id_num }}</p>
+
+
+  <!-- Main Content -->
+  <div class="bg-white rounded-lg shadow">
+    <div class="p-8 space-y-8">
+      <!-- Patient Information -->
+      <div>
+        <h2 class="text-xl font-semibold text-blue-700 mb-6">Patient Information</h2>
+        <div class="grid grid-cols-2 gap-8">
+          <div class="space-y-4">
+            <div class="grid grid-cols-[140px,1fr] gap-4 items-center">
+              <div class="text-sm font-medium text-gray-500">Patient ID</div>
+              <div class="text-sm text-blue-600">{{ request_details.patient.patient_id }}</div>
+            </div>
+            <div class="grid grid-cols-[140px,1fr] gap-4 items-center">
+                <div class="text-sm font-medium text-gray-500">Patient Name</div>
+                <div class="text-sm">{{ request_details.patient.first_name }} {{ request_details.patient.last_name }}
+            </div>
+            <div class="grid grid-cols-[140px,1fr] gap-4 items-center">
+              <div class="text-sm font-medium text-gray-500">PWD ID</div>
+              <div class="text-sm">{{ request_details.patient.pwd_id_num | default:"N/A" }}</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-sm font-medium text-gray-500 mb-1">Date Requested</div>
+            <div class="text-sm">{{ request_details.date_requested }}</div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      <!-- Lab Request Tracker -->
+      <div>
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold text-blue-700">Lab Request Tracker</h2>
+          <button class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Download PDF
+          </button>
+        </div>
+
+
+
+
+        <div class="grid grid-cols-2 gap-8 mb-8">
+          <div class="space-y-4">
+            <div class="grid grid-cols-[140px,1fr] gap-4 items-center">
+              <div class="text-sm font-medium text-gray-500">Request ID</div>
+              <div class="text-sm">{{ request_details.request_id }}</div>
+            </div>
+            <div class="grid grid-cols-[140px,1fr] gap-4 items-center">
+              <div class="text-sm font-medium text-gray-500">Overall Status</div>
+              <div>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-50 text-yellow-800 border border-yellow-200">
+                </strong> {{ request_details.overall_status }}</p>                </span>
+              </div>
+            </div>
+            <div class="grid grid-cols-[140px,1fr] gap-4 items-center">
+              <div class="text-sm font-medium text-gray-500">Collection Status</div>
+              <select class="block w-40 text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </strong>{{ request_details.collection_status }}</p>
+              </select>
+            </div>
+            <div class="grid grid-cols-[140px,1fr] gap-4 items-center">
+              <div class="text-sm font-medium text-gray-500">Email Status</div>
+              <div class="text-sm text-gray-400">{{ request_details.email_status }}</p>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <!-- Table -->
+        <div class="overflow-x-auto border rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="w-12 px-6 py-3 text-left">
+                  <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                </th>
+                <th scope="col" class="w-16 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  No.
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Service Type
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Component
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Uploaded Time
+                </th>
+                <th scope="col" class="w-24 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for line_item in request_details.line_items %}
+                <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                </td>
+                <!--<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ component.number }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ component.service_type }}</td>-->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {% if line_item.package %}
+                        {{ line_item.package.package_name }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  {% if line_item.request_status == 'Completed' %}
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-800 border border-green-200">
+                    Completed
+                  </span>
+                  {% elif line_item.request_status == 'In Progress' %}
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-50 text-yellow-800 border border-yellow-200">
+                    In Progress
+                  </span>
+                  {% else %}
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-800 border border-gray-200">
+                    Not Started
+                  </span>
+                  {% endif %}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm {% if component.uploaded_time %}text-gray-900{% else %}text-gray-400{% endif %}">
+                  {{ component.uploaded_time|default:"-" }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                  <a href="#" class="text-blue-600 hover:text-blue-800">View</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-<div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-    <h2 class="text-xl font-semibold">Lab Request Tracker</h2>
-    <p><strong>Request ID:</strong> {{ request_details.request_id }}</p>
-    <p><strong>Overall Status:</strong> {{ request_details.overall_status }}</p>
-    <p><strong>Collection Status:</strong> {{ request_details.collection_status }}</p>
-    <p><strong>Email Status:</strong> {{ request_details.email_status }}</p>
-</div>
-
-<h2 class="text-xl font-semibold mt-6">Packages and Components</h2>
-<table class="min-w-full bg-white">
-    <thead>
-        <tr>
-            <th class="py-2">Package</th>
-            <th class="py-2">Component</th>
-            <th class="py-2">Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for line_item in request_details.line_items %}
-        <tr>
-            <td class="border px-4 py-2">
-                {% if line_item.package %}
-                    {{ line_item.package.package_name }}
-                {% else %}
-                    N/A
-                {% endif %}
-            </td>
-            <td class="border px-4 py-2">{{ line_item.component.test_name }}</td>
-            <td class="border px-4 py-2">{{ line_item.request_status }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
 {% endblock content %}
+
 
 {% block styles %}
 <style>
@@ -59,15 +174,17 @@
         display: inline;
         font-size: 12px;
     }
-    
+   
     ul.breadcrumb li+li:before {
         color: black;
         content: "/\00a0";
     }
 
+
     ul.breadcrumb .current {
         color: #00BAFF;
     }
+
 
     .breadbutton{
         display: flex;

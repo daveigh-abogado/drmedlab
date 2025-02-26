@@ -124,3 +124,34 @@ class TestPackageComponent(models.Model):
         managed = False
         db_table = 'test_package_component'
         unique_together = (('package', 'component'),)
+
+class RequestComponent(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    component = models.ForeignKey(TestComponent, models.DO_NOTHING)
+    request = models.ForeignKey(LabRequest, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'request_component'
+        unique_together = (('request', 'component'),)
+
+class RequestPackage(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    package = models.ForeignKey(TestPackage, models.DO_NOTHING)
+    request = models.ForeignKey(LabRequest, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'request_package'
+        unique_together = (('request', 'package'),)
+
+class RequestLineItem(models.Model):
+    line_item_id = models.AutoField(primary_key=True)
+    request_status = models.CharField(max_length=20)
+    component = models.ForeignKey(TestComponent, models.DO_NOTHING)
+    package = models.ForeignKey(TestPackage, models.DO_NOTHING, blank=True, null=True)
+    request = models.ForeignKey(LabRequest, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'request_line_item'
