@@ -10,9 +10,9 @@ def view_individual_lab_request(request, request_id):
     request_details = labreq.get_request_details()
     return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details})
 
-def view_labreqs(request):
+"""def view_labreqs(request):
     labreqs = LabRequest.objects.all()
-    return render(request, 'labreqsys/view_labreqs.html', {'labreqs':labreqs})
+    return render(request, 'labreqsys/view_labreqs.html', {'labreqs':labreqs})"""
 
 def base(request):
     return render(request, 'labreqsys/base.html')
