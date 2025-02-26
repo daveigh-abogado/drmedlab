@@ -74,3 +74,13 @@ VALUES
 (1, 2),
 (1, 1),
 (1, 4);
+
+INSERT INTO request_line_item (request_id, package_id, component_id, request_status)  
+VALUES
+(1, NULL, 1, 'Not Started'),
+(1, NULL, 2, 'Not Started'),
+(1, NULL, 3, 'Not Started'),
+(2, 1, 1, 'Not Started'),
+(2, 1, 2, 'Not Started'),
+(2, 1, 3, 'Not Started'),
+(2, 1, 4, 'Not Started');

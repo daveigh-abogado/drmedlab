@@ -144,4 +144,6 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd" 
+#uncomment the following line if you get the error seen in the setup document
+NPM_BIN_PATH = "/Program Files/nodejs/npm.cmd" 
+

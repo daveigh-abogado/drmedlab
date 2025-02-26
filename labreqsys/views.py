@@ -73,16 +73,26 @@ def summarize_labreq(request, pk):
     
     for t in sc:
         temp = get_object_or_404(TestComponent, pk=t)
-        to_pay = discount(p, temp.component_price)
-        total = to_pay + total    
+        total = temp.component_price + total    
         components.append(temp)
         
     for t in sp:
         temp = get_object_or_404(TestPackage, pk=t)
-        to_pay = discount(p, temp.package_price)
-        total = to_pay + total
+        total = temp.package_price + total
         packages.append(temp)
-    
+        
+    if p.pwd_id_num is not None or p.senior_id_num is not None: 
+        discount = round(total * Decimal(0.2), 2)
+        total = total - round(discount)
+        
+        # 022521 [Mads]: Not sure if VAT-exemption already applies to their pricing so I'll just add this jic.
+        """
+        discount_vat = price * Decimal(0.12)
+        payment_vat = price - discount_vat
+        discount = payment_vat * Decimal(0.2)
+        payment = price - round(discount + discount_vat)
+        """
+            
     current_date = datetime.today().strftime('%Y-%m-%d')
     if(request.method=="POST"):
         physician = request.POST.get('physician')
@@ -95,6 +105,8 @@ def summarize_labreq(request, pk):
             mode_of_release = 'Pick-up'
         else:
             mode_of_release = 'Email'
+            
+    LabRequest.objects.create(patient = p, date_requested = current_date, physician = physician, mode_of_release = mode_of_release, overall_status = "Not Started")
     return render(request, 'labreqsys/summarize_labreq.html', {
         'patient': p,
         'components': components,
@@ -102,26 +114,9 @@ def summarize_labreq(request, pk):
         'total' : total,
         'date': current_date,
         'physician': physician,
-        'mode_of_release': mode_of_release
+        'mode_of_release': mode_of_release,
+        'discount' : discount
     })
-
-def discount(patient, price):
-    if patient.pwd_id_num is None or patient.senior_id_num is None: 
-        return price
-        
-    else:
-        discount = price * Decimal(0.2)
-        payment = price - round(discount)
-        
-        # 022521 [Mads]: Not sure if VAT-exemption already applies to their pricing so I'll just add this jic.
-        """
-        discount_vat = price * Decimal(0.12)
-        payment_vat = price - discount_vat
-        discount = payment_vat * Decimal(0.2)
-        payment = price - round(discount + discount_vat)
-        """
-        
-        return payment
 
 def view_individual_lab_request(request, request_id):
     lab_request = get_object_or_404(LabRequest, pk=request_id)
