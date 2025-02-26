@@ -1,77 +1,183 @@
 {% extends 'labreqsys/base.html' %}
 {% load static tailwind_tags %}
 
+
 {% block content %}
-<div class="breadbutton">
-    <ul class="breadcrumb">
-        <li><a href="#">Lab Requests</a></li>
-        <li><a href="#" class="current">View Lab Request Record</a></li>
-    </ul>
+<div class="min-h-screen bg-[#F8F9FA] p-6">
+    <!-- Breadcrumb -->
+    <nav class="mb-6 flex items-center text-sm">
+        <a href="#" class="text-gray-600 hover:text-gray-900">Lab Requests</a>
+        <span class="mx-2 text-gray-600">/</span>
+        <span class="text-[#00BAFF]">Lab Request Record</span>
+    </nav>
+
+    <!-- Patient Information Section -->
+    <div class="mb-8">
+        <h1 class="text-[#2F4B8C] text-2xl font-bold">Patient Information</h1>
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <div class="text-sm text-gray-600">Patient ID</div>
+                <div class="text-[#00BAFF] font-medium">{{ request_details.patient.patient_id }}</div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-600">Patient Name</div>
+                <div class="font-medium">{{ request_details.patient.first_name }} {{ request_details.patient.last_name }}</div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-600">PWD ID</div>
+                <div class="font-medium">{{ request_details.patient.pwd_id_num }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lab Request Tracker Section -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <h2 class="text-[#2F4B8C] text-xl font-bold">Lab Request Tracker</h2>
+            <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                Download PDF
+            </button>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <div class="text-sm text-gray-600">Request ID</div>
+                <div class="font-medium">{{ request_details.request_id }}</div>
+            </div>
+            <div>
+                <div class="text-sm text-gray-600">Overall Status</div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#FFF6ED] text-[#B93815]">
+                    {{ request_details.overall_status }}
+                </span>
+            </div>
+            <div>
+                <div class="text-sm text-gray-600">Collection Status</div>
+                <select class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    <option {% if request_details.collection_status == 'Uncollected' %}selected{% endif %}>Uncollected</option>
+                    <option {% if request_details.collection_status == 'Collected' %}selected{% endif %}>Collected</option>
+                </select>
+            </div>
+            <div>
+                <div class="text-sm text-gray-600">Email Status</div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    {{ request_details.email_status }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lab Components Table -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="w-12 px-6 py-3 text-left">
+                        <input type="checkbox" class="h-4 w-4 rounded border-gray-300">
+                    </th>
+                    <th scope="col" class="w-16 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No.</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Type</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Component</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploaded Time</th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for line_item in request_details.line_items %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <input type="checkbox" class="h-4 w-4 rounded border-gray-300">
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {% if forloop.first %}01{% endif %}
+                        {% if forloop.counter == 4 %}02{% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {% if line_item.package %}
+                            {{ line_item.package.package_name }}
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ line_item.component.test_name }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if line_item.request_status == 'Not Started' %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        {% elif line_item.request_status == 'Completed' %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#ECFDF3] text-[#027A48]">
+                        {% else %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#FFF6ED] text-[#B93815]">
+                        {% endif %}
+                            {{ line_item.request_status }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ line_item.uploaded_time|default:"-" }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                        <a href="#" class="text-[#00BAFF] hover:text-[#0096CC]">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-
-<h1 class="text-2xl font-bold mb-4">Lab Request Details</h1>
-
-<div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-    <h2 class="text-xl font-semibold">Patient Information</h2>
-    <p><strong>Patient ID:</strong> {{ request_details.patient.patient_id }}</p>
-    <p><strong>Patient Name:</strong> {{ request_details.patient.first_name }} {{ request_details.patient.last_name }}</p>
-    <p><strong>PWD ID:</strong> {{ request_details.patient.pwd_id_num }}</p>
-</div>
-
-<div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-    <h2 class="text-xl font-semibold">Lab Request Tracker</h2>
-    <p><strong>Request ID:</strong> {{ request_details.request_id }}</p>
-    <p><strong>Overall Status:</strong> {{ request_details.overall_status }}</p>
-    <p><strong>Collection Status:</strong> {{ request_details.collection_status }}</p>
-    <p><strong>Email Status:</strong> {{ request_details.email_status }}</p>
-</div>
-
-<h2 class="text-xl font-semibold mt-6">Packages and Components</h2>
-<table class="min-w-full bg-white">
-    <thead>
-        <tr>
-            <th class="py-2">Package</th>
-            <th class="py-2">Component</th>
-            <th class="py-2">Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for line_item in request_details.line_items %}
-        <tr>
-            <td class="border px-4 py-2">
-                {% if line_item.package %}
-                    {{ line_item.package.package_name }}
-                {% else %}
-                    N/A
-                {% endif %}
-            </td>
-            <td class="border px-4 py-2">{{ line_item.component.test_name }}</td>
-            <td class="border px-4 py-2">{{ line_item.request_status }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% endblock content %}
+{% endblock %}
 
 {% block styles %}
 <style>
+    /* Custom styles for specific elements */
+    select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        appearance: none;
+    }
+
+    /* Checkbox custom styles */
+    input[type='checkbox'] {
+        color: #00BAFF;
+        border-radius: 0.25rem;
+        border-color: #D1D5DB;
+    }
+
+    input[type='checkbox']:checked {
+        background-color: #00BAFF;
+        border-color: #00BAFF;
+    }
+
+    /* Table hover effects */
+    tbody tr:hover {
+        background-color: rgba(0, 186, 255, 0.05);
+    }
     ul.breadcrumb li {
         display: inline;
         font-size: 12px;
     }
-    
+   
     ul.breadcrumb li+li:before {
         color: black;
         content: "/\00a0";
     }
 
+
     ul.breadcrumb .current {
         color: #00BAFF;
     }
+
 
     .breadbutton{
         display: flex;
         justify-content: space-between;
     }
 </style>
-{% endblock styles %}
+
+{% endblock styles %} 
