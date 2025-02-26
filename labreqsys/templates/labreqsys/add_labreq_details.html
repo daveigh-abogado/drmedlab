@@ -11,30 +11,30 @@
 </div>
 
 <!--TABS-->
-<div class="tab-section rounded-t-lg inline-flex"></div>
+<div class="tabs rounded-t-lg inline-flex">
     <div class="flex flex-wrap gap-1">
-        <button onclick="showTab(0)" disabled class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
+        <button onclick="showTab(0)" disabled class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-opacity-40  w-80"
         data-tab-target="#tab1">Package</button>
-        <button onclick="showTab(1)" disabled class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
+        <button onclick="showTab(1)" disabled class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-opacity-40  w-80"
         data-tab-target="#tab1">Component</button>
     </div>
 </div>
 
 <!--CONTENT-->
-<div class="flex gap-1">
-    <div class=" ">
+<div class="flex-wrap">
+    <div class="gap-2 ">
         <form id="form" method="POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
             <div class="bg-white p-6 pt-13 rounded-lg shadow">
                 <div class="tab active gap-1 w-36 " id="tab-0">
                     <h1 class="text-mm font-bold text-blue-900">Lab Request Details</h1>
                     <hr>
-                    <table>
-                        <tr>
-                            <td><b>Physician Name</b> (optional)</td>
-                            <td><input type="text" name="physician" id="physician"></td>
+                    <table class="p-2\.5">
+                        <tr class="gap-4">
+                            <td class="text-blue-900 font-medium ">Physician Name(optional)</td>
+                            <td><input class="border-gray-50 rounded-lg" type="text" name="physician" id="physician"></td>
                         </tr>
-                        <tr>
-                            <td><b>Mode of Release</b></td>
+                        <tr class="gap-4">
+                            <td class="text-blue-900 font-medium">Mode of Release</td>
                             <td>
                                 <input type="checkbox" name="mode_of_release" id="release" value="Pick-Up">Pick-Up
                                 <input type="checkbox" name="mode_of_release" id="release" value="Email">Email
@@ -42,11 +42,12 @@
                         </tr>
                     </table>
                 </div>
+                <!--BUTTONS-->
+                <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg"> <a class="text-white" href="{% url 'add_labreq' pk=patient.pk %}">Back</a></button>
+                <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="submit">Next</button>
             </div>
 
-            <!--BUTTONS-->
-            <button><a href="{% url 'add_labreq' pk=patient.pk %}">Back</a></button>
-            <button type="submit">Next</button>
+            
 
         </form>
     </div>
