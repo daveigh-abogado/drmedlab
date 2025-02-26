@@ -77,17 +77,26 @@
             
             <!--SELECTED OPTIONS: always have to be inside the form-->
             <div class="half bg-white p-6 pt-13 rounded-lg shadow ml-3">
-                <h1 class="text-mm font-bold text-blue-900">Selected Options</h1>
+                <h1 class="text-mm font-bold text-blue-900 flex-start">Selected Options</h1>
                 <hr>
 
-                <!--list of added options-->
-                <ul id="selectedList" class="selected-options"></ul>
+                <!-- List of added options: IDK HOW TO EDIT THE LISTED CONTENT INSIDE HELP? -->
+                <div class="mt-4 space-y-2 text-blue-900">
+                    <ul id="selectedList" class="selected-options"></ul>
+                </div> 
 
                 <hr class="mt-4">
-                <h2 class="text-m text-blue-900">Subtotal ₱
-                    <span id="totalPrice">0.00</span>
-                </h2>
 
+                <!-- Subtotal section in one row -->
+                <div class="flex justify-between items-center text-mm font-bold text-blue-900">
+                    <h2 class="text-m">Subtotal</h2>
+                    <div class="flex justify-end text-m text-left">
+                        <p>₱</p>
+                        <span id="totalPrice">0.00</span>
+                    </div>
+                </div>
+
+                <!--NEXT BUTTON-->
                 <div class="mt-4 flex justify-end">
                     <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="submit">Next</button>
                 </div>
