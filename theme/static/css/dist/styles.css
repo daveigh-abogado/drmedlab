@@ -947,6 +947,7 @@ select {
 .mt-4 {
   margin-top: 1rem;
 }
+
 .ms-6 {
   margin-inline-start: 2rem;
 }
@@ -957,6 +958,10 @@ select {
 
 .ms-8 {
   margin-inline-start: 2.5rem;
+}
+
+.ms-9 {
+  margin-inline-start: 9rem;
 }
 
 .mt-14 {
