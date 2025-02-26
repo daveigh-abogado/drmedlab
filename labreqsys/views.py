@@ -5,9 +5,14 @@ from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateF
 from datetime import date, datetime
 from decimal import Decimal
 
-def view_labreqs(request):
+def view_individual_lab_request(request, request_id):
+    labreq = get_object_or_404(LabRequest, pk=request_id)
+    request_details = labreq.get_request_details()
+    return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details})
+
+"""def view_labreqs(request):
     labreqs = LabRequest.objects.all()
-    return render(request, 'labreqsys/view_labreqs.html', {'labreqs':labreqs})
+    return render(request, 'labreqsys/view_labreqs.html', {'labreqs':labreqs})"""
 
 def base(request):
     return render(request, 'labreqsys/base.html')
@@ -73,26 +78,16 @@ def summarize_labreq(request, pk):
     
     for t in sc:
         temp = get_object_or_404(TestComponent, pk=t)
-        total = temp.component_price + total    
+        to_pay = discount(p, temp.component_price)
+        total = to_pay + total    
         components.append(temp)
         
     for t in sp:
         temp = get_object_or_404(TestPackage, pk=t)
-        total = temp.package_price + total
+        to_pay = discount(p, temp.package_price)
+        total = to_pay + total
         packages.append(temp)
-        
-    if p.pwd_id_num is not None or p.senior_id_num is not None: 
-        discount = round(total * Decimal(0.2), 2)
-        total = total - round(discount)
-        
-        # 022521 [Mads]: Not sure if VAT-exemption already applies to their pricing so I'll just add this jic.
-        """
-        discount_vat = price * Decimal(0.12)
-        payment_vat = price - discount_vat
-        discount = payment_vat * Decimal(0.2)
-        payment = price - round(discount + discount_vat)
-        """
-            
+    
     current_date = datetime.today().strftime('%Y-%m-%d')
     if(request.method=="POST"):
         physician = request.POST.get('physician')
@@ -105,8 +100,6 @@ def summarize_labreq(request, pk):
             mode_of_release = 'Pick-up'
         else:
             mode_of_release = 'Email'
-            
-    LabRequest.objects.create(patient = p, date_requested = current_date, physician = physician, mode_of_release = mode_of_release, overall_status = "Not Started")
     return render(request, 'labreqsys/summarize_labreq.html', {
         'patient': p,
         'components': components,
@@ -114,8 +107,7 @@ def summarize_labreq(request, pk):
         'total' : total,
         'date': current_date,
         'physician': physician,
-        'mode_of_release': mode_of_release,
-        'discount' : discount
+        'mode_of_release': mode_of_release
     })
 
 def discount(patient, price):
@@ -135,7 +127,3 @@ def discount(patient, price):
         """
         
         return payment
-def view_individual_lab_request(request, request_id):
-    lab_request = get_object_or_404(LabRequest, pk=request_id)
-    request_details = lab_request.get_request_details()
-    return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details})
