@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Lab Requests</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Request ID</th>
+                <th>Patient</th>
+                <th>Date Requested</th>
+                <th>Physician</th>
+                <th>Mode of Release</th>
+                <th>Overall Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in labreqs %}
+            <tr>
+                <td>{{ r.request_id }}</td>
+                <td>{{ r.patient }}</td>
+                <td>{{ r.date_requested }}</td>
+                <td>{{ r.physician }}</td>
+                <td>{{ r.mode_of_release }}</td>
+                <td>{{ r.overall_status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>

@@ -1,0 +1,330 @@
+{% extends 'labreqsys/base.html' %}
+{% load static tailwind_tags %}
+
+{% block content %}
+<div class="breadbutton">
+    <ul class="breadcrumb">
+        <li><a href="#">Lab Requests</a></li>
+        <li><a href="#" class="current">Add Lab Request</a></li>
+    </ul>
+</div>
+
+<!--Tabs-->
+<div class="tab-section rounded-t-lg inline-flex">
+    <div class="flex flex-wrap gap-1">
+        <button onclick="showTab(0)" class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
+        data-tab-target="#tab1">Package</button>
+        <button onclick="showTab(1)" class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
+        data-tab-target="#tab1">Component</button>
+    </div>
+</div>
+
+<!--Content-->
+<div class="flex h-tabcol1 gap-1"> 
+    <div class="">
+        <form id="form" class="flex-start" method= "POST" action="{% url 'add_labreq_details' pk=patient.pk %}">{% csrf_token %}
+            <div class="bg-white p-6 pt-13 rounded-b-lg rounded-tr-lg shadow">
+                <!--PACKAGE NAME-->
+                <div class="tab active gap-1 w-36 " id="tab-0">
+                    <h1 class="text-mm font-bold text-blue-900">Select a Package</h1>
+                    <hr>
+                    <!-- search bar -->
+                    <input type="text" placeholder="Search Package Name"
+                            class="w-full h-8 text-ssm border rounded-lg ">
+
+                    <!--checkboxes-->
+                    <div class="mt-2 space-y-2">
+                        {% for pa in test_packages %}
+                        <label class="flex items-center space-x-2 gap-1">
+                            <input type="checkbox" name="packages" value="{{ pa.pk }}" 
+                            data-name="{{ pa.package_name }}" 
+                            data-price="{{ pa.package_price }}" 
+                            data-components='{{ pa.components|safe }}' 
+                            class="package-checkbox p-2 gap-1">
+                            <span class="text-gray-400 hover:text-blue-800"> {{ pa.package_name }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!--COMPONENT NAME-->
+                <div class="tab active gap-1 w-36" id="tab-1">
+                    <h1 class="text-mm font-bold text-blue-900">Select a Component</h1>
+                    <hr>
+                    <!-- insert search bar here -->
+                    <input type="text" placeholder="Search Component Name"
+                            class="w-full h-8 text-ssm border rounded-lg">
+
+                    <!--checkboxes-->
+                    <div class="mt-2 space-y-2">
+                        {% for c in test_comps %}
+                        <label class="flex items-center space-x-2 gap-1">
+                            <input type="checkbox" name="components" value="{{ c.pk }}" 
+                            data-name="{{ c.test_name }}" 
+                            data-price="{{ c.component_price }}" 
+                            class="component-checkbox">
+                            <span class="text-gray-400 hover:text-blue-800">{{ c.test_name }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!--ADD OPTIONS BUTTON-->
+                <div class="mt-4 flex justify-end">
+                    <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="button" onclick="addOptions()">Add Options</button>
+                </div>
+            </div>
+            
+            <!--SELECTED OPTIONS: always have to be inside the form-->
+            <div class="half bg-white p-6 pt-13 rounded-lg shadow ml-3">
+                <h1 class="text-mm font-bold text-blue-900 flex-start">Selected Options</h1>
+                <hr>
+
+                <!-- List of added options: IDK HOW TO EDIT THE LISTED CONTENT INSIDE HELP? -->
+                <div class="mt-4 space-y-2 text-blue-900">
+                    <ul id="selectedList" class="selected-options"></ul>
+                </div> 
+
+                <hr class="mt-4">
+
+                <!-- Subtotal section in one row -->
+                <div class="flex justify-between items-center text-mm font-bold text-blue-900">
+                    <h2 class="text-m">Subtotal</h2>
+                    <div class="flex justify-end text-m text-left">
+                        <p>₱</p>
+                        <span id="totalPrice">0.00</span>
+                    </div>
+                </div>
+
+                <!--NEXT BUTTON-->
+                <div class="mt-4 flex justify-end">
+                    <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="submit">Next</button>
+                </div>
+            </div>          
+        </form>
+    </div>
+
+    
+</div>
+
+
+<script>
+    let counter = 1;
+    const packageData = JSON.parse('{{ package_data|escapejs }}');
+    let disabledComponents = {};
+
+    function showTab(index) {
+        document.querySelectorAll('.tab').forEach((tab, i) => {
+            if (i === index) {
+                tab.classList.add('active');
+                tab.style.display = 'block'; // Show the selected tab
+            } else {
+                tab.classList.remove('active');
+                tab.style.display = 'none'; // Hide other tabs
+            }
+        });
+
+        document.querySelectorAll('.tab-section button').forEach((btn, i) => {
+            btn.classList.toggle('bg-white', i === index);
+            btn.classList.toggle('text-gray-700', i !== index);
+        });
+    }
+
+    // Set default tab to Package (Index 0)
+    document.addEventListener("DOMContentLoaded", function() {
+        showTab(0);
+    });
+
+    function addOptions() {
+        console.log("addOptions function called");
+
+        const selectedList = document.getElementById('selectedList');
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+
+        console.log("Number of checked checkboxes:", checkboxes.length);
+
+        checkboxes.forEach(checkbox => {
+            const name = checkbox.getAttribute('data-name');
+            const price = parseFloat(checkbox.getAttribute('data-price')) || 0;
+            const id = checkbox.value;
+            const isPackage = checkbox.classList.contains('package-checkbox');
+            const isComponent = checkbox.classList.contains('component-checkbox');
+
+            console.log("Checkbox:", name, id, isPackage, isComponent);
+
+            if (!document.querySelector(`#selectedList li[data-name="${name}"]`)) {
+                console.log("Adding option:", name);
+                addSelectedOption(name, price, id, isPackage);
+
+                if (isPackage && packageData[id]) {
+                    packageData[id].forEach(componentName => {
+                        if (!document.querySelector(`#selectedList li[data-name="${componentName}"]`)) {
+                            addSelectedComponent(componentName, id);
+                            disableComponentCheckbox(componentName, true, id);
+                        }
+                    });
+                }
+
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = isPackage ? 'selected_packages' : 'selected_components';
+                hiddenInput.value = id;
+                hiddenInput.setAttribute('data-id', id);
+                document.getElementById('form').appendChild(hiddenInput);
+
+                checkbox.checked = false;
+                checkbox.disabled = true;
+            }
+        });
+
+        renumberOptions();
+        recalculateTotal();
+    }
+
+    function addSelectedOption(name, price, id, isPackage) {
+        const selectedList = document.getElementById('selectedList');
+        const li = document.createElement('li');
+        li.setAttribute('data-id', id);
+        li.setAttribute('data-price', price);
+        li.setAttribute('data-name', name);
+        li.innerHTML = `<span class="option-number"></span> ${name} - ₱${price.toFixed(2)} 
+            <img src="{% static 'images/delete.png' %}" class="trash-icon" onclick="removeOption(this, '${id}', '${name}', ${isPackage})">`;
+        selectedList.appendChild(li);
+    }
+
+    function addSelectedComponent(name, packageId) {
+        const selectedList = document.getElementById('selectedList');
+        const li = document.createElement('li');
+        li.setAttribute('data-name', name);
+        li.setAttribute('data-package-id', packageId);
+        li.classList.add('package-component'); 
+        li.textContent = `- ${name}`;
+        selectedList.appendChild(li);
+    }
+
+    function removeOption(trashIcon, id, name, isPackage) {
+        const li = trashIcon.parentElement;
+
+        li.remove();
+
+        document.querySelector(`input[data-id="${id}"]`)?.remove();
+
+        const checkbox = document.querySelector(`input[value="${id}"]`);
+        if (checkbox) {
+            checkbox.disabled = false;
+            checkbox.checked = false;
+        }
+
+        if (isPackage) {
+            packageData[id].forEach(componentName => {
+                const compLi = document.querySelector(`#selectedList li[data-name="${componentName}"]`);
+                if (compLi) {
+                    compLi.remove();
+                    enableComponentCheckbox(componentName, id);
+                }
+            });
+        } else {
+            enableComponentCheckbox(name);
+        }
+
+        renumberOptions();
+        recalculateTotal();
+    }
+
+    function disableComponentCheckbox(name, disable, packageId) {
+        document.querySelectorAll(`input[data-name="${name}"]`).forEach(checkbox => {
+            checkbox.disabled = disable;
+            if (disable) {
+                if (!disabledComponents[name]) {
+                    disabledComponents[name] = {};
+                }
+                disabledComponents[name][packageId] = true;
+            } else {
+                if (disabledComponents[name]) {
+                    delete disabledComponents[name][packageId];
+                    if (Object.keys(disabledComponents[name]).length === 0) {
+                        delete disabledComponents[name];
+                    }
+                }
+            }
+        });
+    }
+
+    function enableComponentCheckbox(name, packageId) {
+        if (disabledComponents[name] && disabledComponents[name][packageId]) {
+            delete disabledComponents[name][packageId];
+            if (Object.keys(disabledComponents[name]).length === 0) {
+                delete disabledComponents[name];
+            }
+        }
+        if (!disabledComponents[name]) {
+            document.querySelectorAll(`input[data-name="${name}"]`).forEach(checkbox => {
+                checkbox.disabled = false;
+                checkbox.checked = false;
+            });
+        }
+    }
+
+    function renumberOptions() {
+        let num = 1;
+        document.querySelectorAll('#selectedList li .option-number').forEach(span => {
+            span.textContent = `${num}. `;
+            num++;
+        });
+    }
+
+    function recalculateTotal() {
+        let newTotal = 0;
+        document.querySelectorAll('#selectedList li:not(.package-component)').forEach(li => {
+            newTotal += parseFloat(li.getAttribute('data-price')) || 0;
+        });
+        document.getElementById('totalPrice').textContent = newTotal.toFixed(2);
+    }
+</script>
+
+{% endblock content %}
+
+{% block styles %}
+<style>
+    .tab {
+        display: none;
+    }
+    .tab.active {
+        display: block;
+    }
+    .tabs {
+        display: flex;
+        gap: 10px;
+    }
+    .tabs button {
+        padding: 10px;
+        cursor: pointer;
+    }
+    .trash-icon {
+        width: 20px;
+        cursor: pointer;
+    }
+    .container {
+        display: flex;
+        flex-direction: row;
+    }
+    ul.breadcrumb li {
+        display: inline;
+        font-size: 12px;
+    }
+    
+    ul.breadcrumb li+li:before {
+        color: black;
+        content: "/\00a0";
+    }
+
+    ul.breadcrumb .current {
+        color: #00BAFF;
+    }
+
+    .breadbutton{
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+{% endblock styles %}

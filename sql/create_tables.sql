@@ -1,15 +1,16 @@
 use drmedlabs;
 
-DROP TABLE patients;
 DROP TABLE lab_request;
-DROP TABLE template_form;
-DROP TABLE test_component;
-DROP TABLE template_section;
+DROP TABLE patient;
 DROP TABLE template_field;
+DROP TABLE template_section;
+DROP TABLE test_component;
+DROP TABLE template_form;
 DROP TABLE test_package;
+DROP TABLE test_package_component;
+DROP TABLE request_line_item;
 
-
-CREATE TABLE patients 
+CREATE TABLE patient
 (patient_id INTEGER NOT NULL auto_increment,
  last_name VARCHAR(50) NOT NULL,
  first_name VARCHAR(50) NOT NULL,
@@ -30,7 +31,19 @@ CREATE TABLE patients
  province VARCHAR(50),
  zip_code VARCHAR(4) CHECK (zip_code REGEXP '^[0-9]{4}$'),
  civil_status ENUM('Single', 'Married', 'Widowed', 'Other') NOT NULL DEFAULT 'Single',
+ date_added DATE NOT NULL,
  CONSTRAINT patient_pk PRIMARY KEY (patient_id));
+
+-- Trigger to auto-generate date when row was added
+DELIMITER $$
+CREATE TRIGGER set_date_added
+BEFORE INSERT ON patient
+FOR EACH ROW
+BEGIN
+    SET NEW.date_added = CURRENT_DATE();
+END $$
+
+DELIMITER ;
 
 CREATE TABLE lab_request 
 (request_id	INTEGER NOT NULL auto_increment,
@@ -40,7 +53,16 @@ CREATE TABLE lab_request
  mode_of_release ENUM('Pick-up', 'Email', 'Both') NOT NULL DEFAULT 'Pick-up',
  overall_status ENUM('Not Started', 'In Progress', 'Completed') NOT NULL DEFAULT 'Not Started',
  CONSTRAINT lab_request_pk PRIMARY KEY (request_id),
- CONSTRAINT lab_request_fk FOREIGN KEY (patient_id) REFERENCES patients(patient_id));
+ CONSTRAINT lab_request_fk FOREIGN KEY (patient_id) REFERENCES patient(patient_id));
+
+CREATE TABLE collection_log 
+(collection_id	INTEGER NOT NULL auto_increment,
+ request_id INTEGER NOT NULL,
+ collected_by_customer VARCHAR(100) NOT NULL,
+ time_collected DATETIME NOT NULL,
+ mode_of_collection ENUM('Pick-up', 'Email', 'Both') NOT NULL DEFAULT 'Pick-up',
+ CONSTRAINT collection_log_pk PRIMARY KEY (collection_id),
+ CONSTRAINT collection_log_fk FOREIGN KEY (request_id) REFERENCES lab_request(request_id));
 
 CREATE TABLE template_form
 (template_id INTEGER NOT NULL auto_increment,
@@ -82,4 +104,24 @@ CREATE TABLE test_package
 package_name VARCHAR(100) NOT NULL,
 package_price DECIMAL(10,2) NOT NULL DEFAULT 0.00 CHECK (package_price > 0.00),
 CONSTRAINT test_package_pk PRIMARY KEY (package_id)
+);
+
+CREATE TABLE test_package_component
+(package_id INTEGER NOT NULL,
+ component_id INTEGER NOT NULL,
+ CONSTRAINT test_package_component_pk PRIMARY KEY (package_id, component_id),
+ CONSTRAINT test_package_component_fk1 FOREIGN KEY (package_id) REFERENCES test_package(package_id),
+ CONSTRAINT test_package_component_fk2 FOREIGN KEY (component_id) REFERENCES test_component(component_id)
+);
+
+CREATE TABLE request_line_item
+(line_item_id INTEGER NOT NULL auto_increment,
+request_id INTEGER NOT NULL,
+package_id INTEGER,
+component_id INTEGER NOT NULL,
+request_status ENUM('Not Started', 'In Progress', 'Completed') NOT NULL DEFAULT 'Not Started',
+CONSTRAINT request_line_item_pk PRIMARY KEY (line_item_id),
+CONSTRAINT request_line_item_fk1 FOREIGN KEY (request_id) REFERENCES lab_request(request_id),
+CONSTRAINT request_line_item_fk2 FOREIGN KEY (package_id) REFERENCES test_package(package_id),
+CONSTRAINT request_line_item_fk3 FOREIGN KEY (component_id) REFERENCES test_component(component_id)
 );
