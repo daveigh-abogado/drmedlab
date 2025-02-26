@@ -5,6 +5,11 @@ from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateF
 from datetime import date, datetime
 from decimal import Decimal
 
+def view_individual_lab_request(request, request_id):
+    labreq = get_object_or_404(LabRequest, pk=request_id)
+    request_details = labreq.get_request_details()
+    return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details})
+
 def view_labreqs(request):
     labreqs = LabRequest.objects.all()
     return render(request, 'labreqsys/view_labreqs.html', {'labreqs':labreqs})
