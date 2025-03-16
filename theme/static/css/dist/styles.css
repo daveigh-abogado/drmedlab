@@ -1092,6 +1092,7 @@ select {
   width: 1.5rem;
 }
 
+
 .w-64 {
   width: 16rem;
 }
@@ -1934,13 +1935,13 @@ select {
   }
 
   .sm\:ml-64 {
-    margin-left: 16rem; /* 256px */
+    margin-left: 16rem; /* 256px : DO NOT TOUCH!!! this affects the body content margins.  */ 
     margin-top: 2.8rem;
     margin-bottom: 1rem
 }
 
   .sm\:translate-x-0 {
-    --tw-translate-x: 0px;
+    --tw-translate-x: 0 px;
     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   }
 
