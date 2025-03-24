@@ -123,7 +123,7 @@ def summarize_labreq(request, pk):
         discount = round(total * Decimal(0.2), 2)
         total -= discount
     
-    current_date = datetime.today().strftime('%Y-%m-%d')
+    current_date = datetime.now().strftime('%Y-%m-%d')
     if request.method == "POST":
         physician = request.POST.get('physician')
         mode = request.POST.getlist('mode_of_release')
