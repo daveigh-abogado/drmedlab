@@ -38,6 +38,14 @@ def patientList(request):
     patients = Patient.objects.all()
     return render(request, 'labreqsys/patientList.html', {'patients': patients})
 
+def labRequests(request):
+    """
+    Display a list of all lab requests.
+    """
+    labreqs = LabRequest.objects.select_related('patient').all()
+    
+    return render(request, 'labreqsys/labRequests.html', {'labreqs': labreqs})
+
 def view_patient(request, pk):
     """
     Display detailed information about a specific patient.
