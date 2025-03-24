@@ -1112,6 +1112,10 @@ select {
   max-width: 300px;
 }
 
+.max-w-\[250px\] {
+  max-width: 250px;
+}
+
 .w-40 {
   width: 10rem;
 }
@@ -1128,6 +1132,8 @@ select {
 .max-w-lg {
   max-width: 32rem;
 }
+
+
 
 .flex-1 {
   flex: 1 1 0%;
@@ -1194,12 +1200,16 @@ select {
   gap: 0.5rem;
 }
 
+.gap-2 {
+  gap: 2rem;
+}
+
 .gap-4 {
   gap: 1rem;
 }
 
-.gap-2 {
-  gap: 2rem;
+.gap-5 {
+  gap: 1.25rem;
 }
 
 .space-y-2 > :not([hidden]) ~ :not([hidden]) {
@@ -1504,6 +1514,10 @@ select {
   padding: 1.3rem;
 }
 
+.p-6 {
+  padding: 1.25rem;
+}
+
 .p-8 {
   padding: 2rem;
 }
@@ -1557,6 +1571,11 @@ select {
   padding-right: 2.5rem;
 }
 
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 
 .py-1 {
   padding-top: 0.25rem;
@@ -1594,6 +1613,12 @@ select {
 .pl-9 {
   padding-left: 2.25rem;
 }
+
+.pl-16 {
+  padding-left: 4rem;
+}
+
+
 
 .pr-9 {
   padding-right: 2.25rem;
@@ -1726,10 +1751,12 @@ select {
   color: rgb(59 130 246 / var(--tw-text-opacity, 1));
 }
 
-.text-blue-900 {
+.text-blue-800 {
   --tw-text-opacity: 1;
-  color: rgb(30 64 175 / var(--tw-text-opacity, 1));
+  color: rgb(39 66 145 0.8/ var(--tw-text-opacity, 1));
 }
+
+
 
 .text-blue-900 {
   --tw-text-opacity: 1;
@@ -2116,4 +2143,31 @@ select {
     --tw-ring-opacity: 1;
     --tw-ring-color: rgb(55 65 81 / var(--tw-ring-opacity, 1));
   }
+
+  .package-checkbox {
+    display: show; /* Hide default checkbox */
+  }
+
+  /* Custom checkbox */
+  .package-checkbox + div {
+      width: 20px;
+      height: 20px;
+      border: 2px solid gray;
+      border-radius: 4px;
+      display: inline-block;
+      transition: all 0.3s ease;
+  }
+
+  /* When checkbox is checked, change styles */
+  .package-checkbox:checked + div {
+      border-color: #1e40af; /* Tailwind blue-900 */
+      background-color: #1e40af;
+  }
+
+  /* Change label text color when checked */
+  .package-checkbox:checked + div + span {
+      color: #1e40af;
+      font-weight: 500;
+  }
+
 }
