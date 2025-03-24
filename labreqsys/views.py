@@ -189,17 +189,52 @@ def add_patient (request):
         suffix = request.POST.get('suffix')
         sex = request.POST.get('sex')
         civil_status = request.POST.get('civil_status') 
+        
         birthdate = request.POST.get('birthdate')
+        
+        # makes sure birthdate = None when birthdate is passed as "" from request.POST
+        # i know it should be from the model parameters, but omg its not working TT~TT
+        if birthdate == "":
+            birthdate = None
+
+
         mobile_num = request.POST.get('mobile_num')
+        
+        # makes sure mobile_num = None when mobile_num is passed as "" from request.POST
+        # i know it should be from the model parameters, but omg its not working TT~TT (2)
+        if mobile_num == "":
+            mobile_num = None
+            
+        # handles check statement in database
+        elif mobile_num.startswith ("63") == False:
+            mobile_num = "63" + mobile_num.lstrip("0")
+                    
+        
         landline_num = request.POST.get('landline_num')
+        
+        # makes sure landline_num = None when landline_num is passed as "" from request.POST
+        # i know it should be from the model parameters, but omg its not working TT~TT (2)
+        if landline_num == "":
+            landline_num = None
+        
+        # handles check statement in database    
+        elif landline_num.startswith("0") == False:
+            landline_num = "0" + landline_num
+        
         email = request.POST.get('email')
+        print (email)
+        if email == "":
+            email = None
         
         house_num = request.POST.get('house_num')
         street = request.POST.get('street')
         baranggay = request.POST.get('baranggay')
         province = request.POST.get('province')
         city = request.POST.get('city')
+        
         zip_code = request.POST.get('zip_code')
+        if zip_code == "":
+            zip_code = None
         
         pwd_id_num = request.POST.get('pwd_id_num')
         senior_id_num = request.POST.get('senior_id_num')
@@ -213,21 +248,23 @@ def add_patient (request):
             sex=sex,
             civil_status=civil_status,
             birthdate=birthdate,
-            #mobile_num=mobile_num,
-            #landline_num=landline_num,
-            #email=email,
+
+            mobile_num=mobile_num,
+            landline_num=landline_num,
+            email=email,
             house_num=house_num,
             street=street,
             baranggay=baranggay,
             province=province,
             city=city,
-            #zip_code=zip_code,
+            zip_code=zip_code,
             pwd_id_num=pwd_id_num,
             senior_id_num=senior_id_num
             )
-        
+
         patients = Patient.objects.all()
         return render(request, 'labreqsys/patientList.html', {'patients': patients})
+
             
     else:
         return render(request, 'labreqsys/add_patient.html')
