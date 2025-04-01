@@ -13,13 +13,52 @@
     </div>
 </div>
 
-<div>
-    <table>
-        <th>Patient ID</th>
-        <td><button class="pill">{{patient.patient_id}}</button></td>
-    </table>
-    <h1>Patient Information</h1>
-    <hr>
+<div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
+    <div class="w-[550px] inline-flex justify-start items-center gap-1.5">
+        <div class="w-[206px] py-2.5 flex justify-start items-center gap-1.5">
+            <div class="text-blue-900 text-m"> Patient ID </div>
+        </div>
+        <div class="px-6 py-1 bg-gray-100 rounded-3xl flex justify-center items-center gap-1.5">
+            <div class="justify-center text-black text-s">{{patient.patient_id}}</div>
+        </div>
+    </div>
+        
+    <div class="self-stretch inline-flex flex-col justify-start items-start gap-6">
+        <!--Section title: Patient Information-->
+        <div class="self-stretch py-1 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+            <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Patient Information</div>
+        </div>
+
+        <!--Section Content-->
+        <div class="self-stretch inline-flex justify-center items-start gap-1.5"> <!--idk what this is for but also contains both columns-->
+            <div class="self-stretch inline-flex justify-start items-start gap-4"> <!--both columns-->
+                <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--columns-->
+                    <div class="w-[550px] inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="flex-1 p-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                          <div class="flex-1 justify-center text-[#274291] text-xl font-semibold">Patient Name</div>
+                        </div>
+                        <div class="w-[339px] p-2.5 flex justify-start items-center gap-1.5">
+                          <div class="flex-1 justify-center text-black text-xl font-normal">Santa Cruz, Jonathan Nathaniel, Jr.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="inline-flex flex-col justify-start items-start gap-2.5"> <!--columns-->
+                    <div class="w-[550px] inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="flex-1 p-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                          <div class="flex-1 justify-center text-[#274291] text-xl font-semibold">Patient Name</div>
+                        </div>
+                        <div class="w-[339px] p-2.5 flex justify-start items-center gap-1.5">
+                          <div class="flex-1 justify-center text-black text-xl font-normal">Santa Cruz, Jonathan Nathaniel, Jr.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
     <table>
         <tr>
             <th>Patient Name</th>
@@ -105,11 +144,5 @@
         display: flex;
         justify-content: space-between;
     }
-
-    .pill{
-        border-radius: 16px;
-        background-color: #E9EAF0;
-    }
-
 </style>
 {% endblock styles %}
