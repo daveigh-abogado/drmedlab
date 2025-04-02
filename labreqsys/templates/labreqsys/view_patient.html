@@ -2,16 +2,23 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-<div class="breadbutton">
+<div class="breadbutton my-4">
     <ul class="breadcrumb">
         <li><a href="{% url 'patientList' %}">Patient List</a></li>
         <li><a href="#" class="current">Patient Record</a></li>
     </ul>
-    <div class="buttons">
-        <button>Edit Patient</button>
-        <button> <a href="{% url 'add_labreq' pk=patient.pk %}">Add Request</a></button>
-    </div>
+    <div class="inline-flex justify-start items-center gap-2">
+        <button class="px-4 py-1 bg-blue-900-10 bg-opacity-10 text-blue-900 font-bold border-blue-900 border rounded-lg" type="button">
+            Edit Patient
+        </button>
+        <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="button">
+            <a href="{% url 'add_labreq' pk=patient.pk %}" class="text-white no-underline">Add Request</a>
+        </button>
+
+    </div>  
 </div>
+
+
 
 <div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
     
@@ -25,7 +32,7 @@
         </div>
     </div>
         
-    <!--SECTION 2: ID INFORMATION-->
+    <!--SECTION 1: PATIENT INFORMATION-->
     <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section-->
         <!--Section title: Patient Information-->
         <div class="self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
@@ -87,7 +94,7 @@
             <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--indiv column: Column 2-->
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                    <div class="w-7 flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
                         <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Mobile No.</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
@@ -127,9 +134,9 @@
         </div>
     </div>
 
-    <!--SECTION 1: PATIENT INFORMATION-->
+    <!--SECTION 2: ID INFORMATION-->
     <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section-->
-        <!--Section title: Patient Information-->
+        <!--Section title: ID Information-->
         <div class="self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
             <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">ID</div>
         </div>
@@ -139,91 +146,26 @@
             <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--indiv column-->
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Patient Name</div>
+                    <div class="w-7 flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="justify-center text-xs font-semibold text-blue-900 ">PWD</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{full_name}}</div>
-                    </div>
-                </div>
-
-                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Sex</div>
-                    </div>
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.sex}}</div>
+                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.pwd_id_num}}</div>
                     </div>
                 </div>
-
-                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Civil Status</div>
-                    </div>
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.civil_status}}</div>
-                    </div>
-                </div>
-
-                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Age</div>
-                    </div>
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{age}}</div>
-                    </div>
-                </div>
-
-                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Birthday</div>
-                    </div>
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.birthdate}}</div>
-                    </div>
-                </div>
-
             </div>
 
             <!--COLUMN 2-->
             <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--indiv column: Column 2-->
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Mobile No.</div>
+                    <div class="w-7 flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="justify-center text-xs font-semibold text-blue-900 ">Senior citizen</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.mobile_num}}</div>
-                    </div>
-                </div>
-
-                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Landline No.</div>
-                    </div>
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.landline_num}}</div>
+                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.senior_id_num}}</div>
                     </div>
                 </div>
-
-                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Email</div>
-                    </div>
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.email}}</div>
-                    </div>
-                </div>
-
-                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Address</div>
-                    </div>
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{address}}</div>
-                    </div>
-                </div>
-
             </div>
         
         </div>
@@ -238,44 +180,38 @@
         </div>
 
         <!--Section Content-->
-
+        <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
+            
+            <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
+                <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
+                    <th scope="col" class="px-6 py-3">Date Requested</th>
+                    <th scope="col" class="px-6 py-3">Request ID</th>
+                    <th scope="col" class="px-6 py-3">Overall Status</th>
+                    <th scope="col" class="px-6 py-3">Pick-Up Status</th>
+                    <th scope="col" class="px-6 py-3">Email Status</th>
+                </tr>   
+            </thead>
+            
+            <tbody>
+                {% for r in requests %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-200">
+                        <th scope="row" class="px-6 py-3 font-medium text-blue-500">
+                            <a href=" " class = "hover:underline focus:underline"></a>
+                            {{ r.date_requested }}
+                            </a>
+                        </th>
+                        <td class="px-6 py-3">{{ r.request_id }}</td>
+                        <td class="px-6 py-3">{{ r.overall_status }}</td>
+                        <td class="px-6 py-3">{{ pickups }}</td> <!--this should be replace with a for loop noting collection logs-->
+                        <td class="px-6 py-3">{{ emails }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
     </div>
-
-
-    <h1>ID</h1>
-    <hr>
-    <table>
-        <tr>
-            <th>PWD</th>
-            <td>{{patient.pwd_id_num}}</td>
-            <th>Senior Citizen</th>
-            <td>{{patient.senior_id_num}}</td>
-        </tr>
-    </table>
-    <h1>Laboratory Request Record</h1>
-    <hr>
-    <table>
-        <thead>
-            <tr>Date Requested</tr>
-            <tr>Request ID</tr>
-            <tr>Overall Status</tr>
-            <tr>Pick-Up Status</tr>
-            <tr>Email Status</tr>
-        </thead>
-        <tbody>
-            {% for r in requests %}
-                <tr>
-                    <td>{{ r.date_requested }}</td>
-                    <td>{{ r.request_id }}</td>
-                    <td>{{ r.overall_status }}</td>
-                    <td>{{ pickups }}</td> <!--this should be replace with a for loop noting collection logs-->
-                    <td>{{ emails }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 </div>
+
 {% endblock content %}
 
 {% block styles %}

@@ -225,7 +225,7 @@ Reset links to optimize for opt-in styling instead of opt-out.
 
 a {
   color: inherit;
-  text-decoration: inherit;
+  text-decoration: none;
 }
 
 /*
@@ -341,6 +341,7 @@ Remove the inheritance of text transform in Edge and Firefox.
 button,
 select {
   text-transform: none;
+  text-decoration: none;
 }
 
 /*
@@ -1089,6 +1090,10 @@ select {
   width: 11rem;
 }
 
+.w-5 {
+  width: 6.5rem;
+}
+
 .w-6 {
   width: 1.5rem;
 }
@@ -1124,6 +1129,7 @@ select {
 .w-16 {
   width: 4rem;
 }
+
 
 .min-w-max {
   min-width: -moz-max-content;
@@ -1347,6 +1353,11 @@ select {
   border-color: rgb(29 78 216 / var(--tw-border-opacity, 1));
 }
 
+.border-blue-900 {
+  --tw-border-opacity: 1;
+  border-color: rgb(30 64 175 / var(--tw-border-opacity, 1));
+}
+
 .border-gray-300 {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
@@ -1362,6 +1373,8 @@ select {
   border-inline-start-color: rgb(249 250 251 / var(--tw-border-opacity, 1));
 }
 
+
+/*BG BLUE*/
 .bg-blue-300 {
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
@@ -1385,7 +1398,7 @@ select {
 
 .bg-gray-100 {
   --tw-bg-opacity: 1;
-  background-color: rgb(233 234 240 0.5 / var(--tw-bg-opacity, 1));
+  background-color: rgb(233 234 240 / var(--tw-bg-opacity, 1));
 } /*used for light backgroundsw*/
 
 
@@ -1408,7 +1421,12 @@ select {
 .bg-blue-900 {
   --tw-bg-opacity: 1;
   background-color: rgb(39 66 145 / var(--tw-bg-opacity, 1));
+} /*Main Blue*/
+
+.bg-blue-900-10 {
+  background-color: rgba(39, 66, 145, 0.1);
 }
+
 
 .bg-blue-950 {
   --tw-bg-opacity: 1;
@@ -1425,10 +1443,6 @@ select {
   background-color: rgb(29 78 216 / var(--tw-bg-opacity, 1));
 }
 
-.bg-gray-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
-}
 
 .bg-gray-50 {
   --tw-bg-opacity: 1;
@@ -1710,13 +1724,13 @@ select {
 }
 
 .text-sm {
-  font-size: 0.875rem;
+  font-size: 0.875rem; /*14 px*/
   line-height: 1.25rem;
 }
 
 
 .text-xs {
-  font-size: 0.75rem; /*12 px*/
+  font-size: 0.875rem; /*14 px*/
   line-height: 1rem;
 }
 
@@ -1898,6 +1912,10 @@ select {
 
 .hover\:underline:hover {
   text-decoration-line: underline;
+}
+
+.no-underline {
+  text-decoration: none;
 }
 
 .focus\:border-blue-500:focus {
