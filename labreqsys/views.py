@@ -222,7 +222,6 @@ def add_patient (request):
             landline_num = "0" + landline_num
         
         email = request.POST.get('email')
-        print (email)
         if email == "":
             email = None
         
@@ -240,7 +239,7 @@ def add_patient (request):
         senior_id_num = request.POST.get('senior_id_num')
         
     
-        Patient.objects.create(
+        new_p = Patient.objects.create(
             last_name=last_name,
             first_name=first_name,
             middle_initial=middle_initial,
@@ -261,9 +260,10 @@ def add_patient (request):
             pwd_id_num=pwd_id_num,
             senior_id_num=senior_id_num
             )
-
-        patients = Patient.objects.all()
-        return render(request, 'labreqsys/patientList.html', {'patients': patients})
+        
+        p = Patient.objects.get(pk=new_p.patient_id)
+        return redirect('view_patient', pk=p.pk)
+    
 
             
     else:
