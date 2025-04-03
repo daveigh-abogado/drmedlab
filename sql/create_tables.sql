@@ -94,7 +94,7 @@ CREATE TABLE template_field
 section_id INTEGER NOT NULL,
 label_name VARCHAR(255) NOT NULL,
 field_type ENUM('Label', 'Text', 'Image', 'Number') NOT NULL DEFAULT 'Label',
-field_fixed_value VARCHAR(255) DEFAULT 0.00 CHECK (field_type != 'Label' OR field_fixed_value IS NULL),
+field_fixed_value VARCHAR(255),
 CONSTRAINT template_field_pk PRIMARY KEY (field_id),
 CONSTRAINT template_field_fk FOREIGN KEY (section_id) REFERENCES template_section(section_id)
 );
@@ -119,9 +119,21 @@ CREATE TABLE request_line_item
 request_id INTEGER NOT NULL,
 package_id INTEGER,
 component_id INTEGER NOT NULL,
+template_used INTEGER NOT NULL,
 request_status ENUM('Not Started', 'In Progress', 'Completed') NOT NULL DEFAULT 'Not Started',
+progress_timestamp DATETIME,
 CONSTRAINT request_line_item_pk PRIMARY KEY (line_item_id),
 CONSTRAINT request_line_item_fk1 FOREIGN KEY (request_id) REFERENCES lab_request(request_id),
 CONSTRAINT request_line_item_fk2 FOREIGN KEY (package_id) REFERENCES test_package(package_id),
 CONSTRAINT request_line_item_fk3 FOREIGN KEY (component_id) REFERENCES test_component(component_id)
+);
+
+CREATE TABLE result_value
+(result_value_id INTEGER NOT NULL auto_increment,
+line_item_id INTEGER NOT NULL,
+field_id INTEGER NOT NULL,
+field_value VARCHAR(255),
+CONSTRAINT result_value_pk PRIMARY KEY (result_value_id),
+CONSTRAINT result_value_fk1 FOREIGN KEY (line_item_id) REFERENCES request_line_item(line_item_id),
+CONSTRAINT result_value_fk2 FOREIGN KEY (field_id) REFERENCES template_field(field_id)
 );
