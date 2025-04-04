@@ -151,7 +151,41 @@ class RequestLineItem(models.Model):
     component = models.ForeignKey(TestComponent, models.DO_NOTHING)
     package = models.ForeignKey(TestPackage, models.DO_NOTHING, blank=True, null=True)
     request = models.ForeignKey(LabRequest, models.DO_NOTHING)
+    template_used = models.IntegerField()
 
     class Meta:
         managed = False
         db_table = 'request_line_item'
+
+class ResultValue(models.Model):
+    result_value_id = models.AutoField(primary_key=True)
+    line_item = models.ForeignKey(RequestLineItem, models.DO_NOTHING)
+    field = models.ForeignKey('TemplateField', models.DO_NOTHING)
+    field_value = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'result_value'
+
+class LabTech(models.Model):
+    lab_tech_id = models.AutoField(primary_key=True)
+    last_name = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=50)
+    title = models.CharField(max_length=30)
+    tech_role = models.CharField(max_length=30)
+    license_num = models.CharField(max_length=50)
+    signature_path = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'lab_tech'
+
+class ResultReview(models.Model):
+    lab_tech = models.OneToOneField(LabTech, models.DO_NOTHING, primary_key=True)  # The composite primary key (lab_tech_id, result_value_id) found, that is not supported. The first column is selected.
+    result_value = models.ForeignKey('ResultValue', models.DO_NOTHING)
+    reviewed_date = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'result_review'
+        unique_together = (('lab_tech', 'result_value'),)

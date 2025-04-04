@@ -9,6 +9,7 @@ DROP TABLE template_form;
 DROP TABLE test_package;
 DROP TABLE test_package_component;
 DROP TABLE request_line_item;
+DROP TABLE result_value;
 
 CREATE TABLE patient
 (patient_id INTEGER NOT NULL auto_increment,
@@ -137,3 +138,35 @@ CONSTRAINT result_value_pk PRIMARY KEY (result_value_id),
 CONSTRAINT result_value_fk1 FOREIGN KEY (line_item_id) REFERENCES request_line_item(line_item_id),
 CONSTRAINT result_value_fk2 FOREIGN KEY (field_id) REFERENCES template_field(field_id)
 );
+
+CREATE TABLE lab_tech
+(lab_tech_id INTEGER NOT NULL auto_increment,
+ last_name VARCHAR(50) NOT NULL,
+ first_name VARCHAR(50) NOT NULL,
+ title VARCHAR(30) NOT NULL,
+ tech_role VARCHAR(30) NOT NULL,
+ license_num VARCHAR(50) NOT NULL,
+ signature_path VARCHAR(255) NOT NULL,
+ CONSTRAINT lab_tech_pk PRIMARY KEY (lab_tech_id)
+);
+
+CREATE TABLE result_review
+(lab_tech_id INTEGER NOT NULL,
+result_value_id INTEGER NOT NULL,
+reviewed_date DATE NOT NULL,
+ CONSTRAINT result_review_pk PRIMARY KEY (lab_tech_id, result_value_id),
+ CONSTRAINT result_review_fk1 FOREIGN KEY (lab_tech_id) REFERENCES lab_tech(lab_tech_id),
+ CONSTRAINT result_review_fk2 FOREIGN KEY (result_value_id) REFERENCES result_value(result_value_id)
+);
+
+DELIMITER $$
+CREATE TRIGGER set_date_reviewed
+BEFORE INSERT ON result_review
+FOR EACH ROW
+BEGIN
+    SET NEW.reviewed_date = CURRENT_DATE();
+END $$
+
+DELIMITER ;
+
+

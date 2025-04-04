@@ -55,14 +55,16 @@ VALUES
 (NULL, 'Urinalysis'),
 (NULL, 'CBC w/ Platelet'),
 (NULL, 'Fecalysis'),
-(NULL, 'Xray - Chest PA');
+(NULL, 'Xray - Chest PA')
+(NULL, 'Albumin');
 
 INSERT INTO test_component (template_id, test_code, test_name, component_price, category)
 VALUES 
 (1, 'TC001', 'Urinalysis', 100.00, 'Urine Test'),
 (2, 'TC002', 'CBC w/ Platelet', 200.00, 'Blood Test'),
 (3, 'TC003', 'Fecalysis', 300.00, 'Stool Test'),
-(4, 'TC004', 'Xray - Chest PA', 400.00, 'Radiology');
+(4, 'TC004', 'Xray - Chest PA', 400.00, 'Radiology'),
+(5, 'TC005', 'Albumin', 500.00, 'Blood');
 
 INSERT INTO test_package (package_name, package_price)
 VALUES 
@@ -84,3 +86,24 @@ VALUES
 (2, 1, 2, 'Not Started'),
 (2, 1, 3, 'Not Started'),
 (2, 1, 4, 'Not Started');
+
+
+INSERT INTO lab_tech (last_name, first_name, title, tech_role, license_num, signature_path)
+VALUES
+('Smith', 'John', 'Medical Technologist', 'Hematology', 'MT123456', '/signatures/john_smith.png'),
+('Doe', 'Jane', 'Clinical Laboratory Scientist', 'Microbiology', 'CLS789012', '/signatures/jane_doe.png'),
+('Brown', 'Michael', 'Lab Technician', 'Biochemistry', 'LT345678', '/signatures/michael_brown.png'),
+('Johnson', 'Emily', 'Senior Technologist', 'Immunology', 'ST901234', '/signatures/emily_johnson.png');
+
+INSERT INTO template_section (template_id, section_name)  
+VALUES
+(5, 'Albumin Results'),
+(5, 'Remarks');
+
+INSERT INTO template_field (section_id, label_name, field_type, field_fixed_value)  
+VALUES
+(1, 'Test Name', 'Label', 'ALBUMIN, SERUM'),
+(1, 'Result', 'Number', NULL),
+(1, 'Unit', 'Label', 'g/dL'),
+(1, 'Range', 'Text', NULL),
+(2, 'Remarks', 'Text', NULL);

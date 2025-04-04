@@ -1,0 +1,113 @@
+{% extends 'labreqsys/base.html' %}
+{% load static tailwind_tags %}
+
+{% block content %}
+    <h1>Patient Information</h1>
+    <table>
+        <tr>
+            <th>Patient ID</th>
+            <td>{{patient.patient_id}}</td>
+            <th>Date Requested</th>
+            <td>{{request.date_requested}}</td>
+        </tr>
+        <tr>
+            <th>Patient Name</th>
+            <td>{{patient_name}}</td>
+            <th>Landline No.</th>
+            <td>{{patient.landline_num}}</td>
+        </tr>
+        <tr>
+            <th>Age</th>
+            <td>{{patient_age}}</td>
+            <th>Email</th>
+            <td>{{patient.email}}</td>
+        </tr>
+        <tr>
+            <th>Civil Status</th>
+            <td>{{patient.civil_status}}</td>
+            <th>Address</th>
+            <td>{{patient_address}}</td>
+        </tr>
+        <tr>
+            <th>Birthday</th>
+            <td>{{patient.birthdate}}</td>
+            <th>Physician</th>
+            <td>{{request.physician}}</td>
+        </tr>
+        <tr>
+            <th>Mobile No.</th>
+            <td>{{patient.mobile_num}}</td>
+        </tr>
+    </table>
+    <h1>Add Laboratory Results</h1>
+    <h2>{{test.test_name}}</h2>
+    <form id="form" method="POST" action="{% url 'submit_labresults' line_item_id=line_item.line_item_id %}">{% csrf_token %}
+        <table>
+            {% for section_data in sections %}
+                <tr>
+                    {% for f in section_data.fields %}
+                        <th>{{ f.label_name }}</th>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for f in section_data.fields %}
+                        <td>
+                            {% if f.field_type == "Label" %}
+                                {{ f.field_fixed_value }}
+                            {% elif f.field_type == "Text" %}
+                                <input type="text" name="{{ f.label_name }}">
+                            {% elif f.field_type == "Number" %}
+                                <input type="number" name="{{ f.label_name }}">
+                            {% elif f.field_type == "Image" %}
+                                <input type="url" name="{{ f.label_name }}" placeholder="Enter image URL">
+                            {% else %}
+                                <input type="text" name="{{ f.label_name }}">
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+        <h1>Add Signature</h1>
+        <select id="lab_tech_1" name="lab_tech_1" onchange="updateLabTechInfo('lab_tech_1')" required>
+            <option value="">Lab Tech Name</option>
+            {% for tech in lab_technicians %}
+                <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
+                    {{ tech.first_name }} {{ tech.last_name }}
+                </option>
+            {% endfor %}
+        </select>
+        <p id="lab_tech_1_info">Role <br> License Number</p>
+        
+        <select id="lab_tech_2" name="lab_tech_2" onchange="updateLabTechInfo('lab_tech_2')" required>
+            <option value="">Lab Tech Name</option>
+            {% for tech in lab_technicians %}
+                <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
+                    {{ tech.first_name }} {{ tech.last_name }}
+                </option>
+            {% endfor %}
+        </select>
+        <p id="lab_tech_2_info">Role <br> License Number</p>
+        
+        <script>
+            function updateLabTechInfo(selectId) {
+                var select = document.getElementById(selectId);
+                var selectedOption = select.options[select.selectedIndex];
+                var role = selectedOption.getAttribute("data-role");
+                var license = selectedOption.getAttribute("data-license");
+                
+                var infoElement = document.getElementById(selectId + "_info");
+                if (role && license) {
+                    infoElement.innerHTML = role + "<br>" + license;
+                } else {
+                    infoElement.innerHTML = "Role <br> License Number";
+                }
+            }
+        </script>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock content %}
+
+{% block styles %}
+
+{% endblock styles %}

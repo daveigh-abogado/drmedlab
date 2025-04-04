@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.serializers.json import DjangoJSONEncoder
 import json
-from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem
+from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview
 from datetime import date, datetime
 from decimal import Decimal
 
@@ -150,12 +150,23 @@ def summarize_labreq(request, pk):
     )
     
     # Save selected components and packages in the request_line_item table
-    for component in components:
+    for component in components:        
         RequestLineItem.objects.create(
             request=lab_request,
             component=component,
+            template_used=component.template_id,
             request_status="Not Started"
         )
+        # Fetch fields for this component’s template, excluding Labels
+        sections = TemplateSection.objects.filter(template_id=component.template_id)
+        for section in sections:
+            fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
+            for field in fields:
+                ResultValue.objects.create(
+                    line_item=RequestLineItem.objects.last(),
+                    field=field,
+                    field_value=''  # Initially blank
+                )
     
     for package in packages:
         # Save each component of the package as a separate line item
@@ -165,8 +176,19 @@ def summarize_labreq(request, pk):
                 request=lab_request,
                 component=package_component.component,
                 package=package,
+                template_used=package_component.component.template_id,
                 request_status="Not Started"
             )
+            # Fetch fields for this component’s template, excluding Labels
+            sections = TemplateSection.objects.filter(template_id=package_component.component.template_id)
+            for section in sections:
+                fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
+                for field in fields:
+                    ResultValue.objects.create(
+                        line_item=RequestLineItem.objects.last(),
+                        field=field,
+                        field_value=''  # Initially blank
+                    )
     
     return render(request, 'labreqsys/summarize_labreq.html', {
         'patient': p,
@@ -187,3 +209,47 @@ def view_individual_lab_request(request, request_id):
     lab_request = get_object_or_404(LabRequest, pk=request_id)
     request_details = lab_request.get_request_details()
     return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details})
+
+
+def add_lab_result(request, line_item_id):
+    line_item = get_object_or_404(RequestLineItem, pk=line_item_id)
+    test_component = get_object_or_404(TestComponent, pk=line_item.component_id)
+    template = get_object_or_404(TemplateForm, pk=line_item.template_used)
+    sections = TemplateSection.objects.filter(template_id=template.pk)
+    
+    section_data = []
+    for s in sections:
+        fields = TemplateField.objects.filter(section_id=s.pk)
+        section_data.append({'section': s, 'fields': fields})
+
+    lab_request = get_object_or_404(LabRequest, pk=line_item.request_id)
+    patient = get_object_or_404(Patient, pk=lab_request.patient_id)
+    lab_techs = LabTech.objects.all()
+
+    return render(request, 'labreqsys/add_labresult.html', {
+        'line_item': line_item,
+        'template': template,
+        'sections': section_data,
+        'patient': patient,
+        'request': lab_request,
+        'test': test_component,
+        'patient_name': 'Name Test',
+        'patient_age': 'Age',
+        'patient_address': 'Test Address',
+        'lab_technicians': lab_techs
+    })
+
+def submit_labresults(request, line_item_id):
+    # Retrieve the result values for this request
+    results = ResultValue.objects.filter(line_item_id=line_item_id)
+    if request.method == "POST":
+        for r in results:
+            field = TemplateField.objects.get(field_id=r.field_id)
+            new_value = request.POST[field.label_name]
+            r.field_value = new_value
+            r.save()
+
+    line_item = RequestLineItem.objects.get(line_item_id=results.first().line_item_id)
+    line_item.request_status = 'Completed'
+    line_item.save()
+    return redirect('view_individual_lab_request', request_id=line_item.request_id)
