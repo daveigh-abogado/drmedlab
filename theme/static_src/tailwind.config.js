@@ -43,7 +43,10 @@ module.exports = {
     ],
     theme: {
         extend: {
-            
+            fontFamily: {
+                sans: ['Roboto', 'system-ui', 'sans-serif'],
+                // Add more custom font families as needed
+              },
         },
     },
     plugins: [

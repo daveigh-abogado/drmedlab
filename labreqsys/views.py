@@ -131,7 +131,7 @@ def summarize_labreq(request, pk):
         discount = round(total * Decimal(0.2), 2)
         total -= discount
     
-    current_date = datetime.today().strftime('%Y-%m-%d')
+    current_date = datetime.now().strftime('%Y-%m-%d')
     if request.method == "POST":
         physician = request.POST.get('physician')
         mode = request.POST.getlist('mode_of_release')
@@ -253,3 +253,90 @@ def submit_labresults(request, line_item_id):
     line_item.request_status = 'Completed'
     line_item.save()
     return redirect('view_individual_lab_request', request_id=line_item.request_id)
+def add_patient (request):
+    if request.method == "POST":
+        last_name = request.POST.get('last_name')
+        first_name = request.POST.get('first_name')
+        middle_initial = request.POST.get('middle_initial')
+        suffix = request.POST.get('suffix')
+        sex = request.POST.get('sex')
+        civil_status = request.POST.get('civil_status') 
+        
+        birthdate = request.POST.get('birthdate')
+        
+        # makes sure birthdate = None when birthdate is passed as "" from request.POST
+        # i know it should be from the model parameters, but omg its not working TT~TT
+        if birthdate == "":
+            birthdate = None
+
+
+        mobile_num = request.POST.get('mobile_num')
+        
+        # makes sure mobile_num = None when mobile_num is passed as "" from request.POST
+        # i know it should be from the model parameters, but omg its not working TT~TT (2)
+        if mobile_num == "":
+            mobile_num = None
+            
+        # handles check statement in database
+        elif mobile_num.startswith ("63") == False:
+            mobile_num = "63" + mobile_num.lstrip("0")
+                    
+        
+        landline_num = request.POST.get('landline_num')
+        
+        # makes sure landline_num = None when landline_num is passed as "" from request.POST
+        # i know it should be from the model parameters, but omg its not working TT~TT (2)
+        if landline_num == "":
+            landline_num = None
+        
+        # handles check statement in database    
+        elif landline_num.startswith("0") == False:
+            landline_num = "0" + landline_num
+        
+        email = request.POST.get('email')
+        if email == "":
+            email = None
+        
+        house_num = request.POST.get('house_num')
+        street = request.POST.get('street')
+        baranggay = request.POST.get('baranggay')
+        province = request.POST.get('province')
+        city = request.POST.get('city')
+        
+        zip_code = request.POST.get('zip_code')
+        if zip_code == "":
+            zip_code = None
+        
+        pwd_id_num = request.POST.get('pwd_id_num')
+        senior_id_num = request.POST.get('senior_id_num')
+        
+    
+        new_p = Patient.objects.create(
+            last_name=last_name,
+            first_name=first_name,
+            middle_initial=middle_initial,
+            suffix=suffix,
+            sex=sex,
+            civil_status=civil_status,
+            birthdate=birthdate,
+
+            mobile_num=mobile_num,
+            landline_num=landline_num,
+            email=email,
+            house_num=house_num,
+            street=street,
+            baranggay=baranggay,
+            province=province,
+            city=city,
+            zip_code=zip_code,
+            pwd_id_num=pwd_id_num,
+            senior_id_num=senior_id_num
+            )
+        
+        p = Patient.objects.get(pk=new_p.patient_id)
+        return redirect('view_patient', pk=p.pk)
+    
+
+            
+    else:
+        return render(request, 'labreqsys/add_patient.html')
