@@ -1695,6 +1695,10 @@ select {
   padding-top: 0.25rem;
 }
 
+.pt-3 {
+  padding-top: 0.75rem;
+}
+
 .pl-9 {
   padding-left: 2.25rem;
 }
