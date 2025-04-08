@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem
+from django.db.models import Q
 from datetime import date, datetime
 from decimal import Decimal
 
@@ -50,13 +52,32 @@ def view_patient(request, pk):
         age = today.year - p.birthdate.year - ((today.month, today.day) < (p.birthdate.month, p.birthdate.day))
     else:
         age = None
+        
+    address_append = []
+    
+    
+    if p.street:
+        address_append.append(p.street)
+    if p.subdivision:
+        address_append.append(p.subdivision)
+    if p.city:
+        address_append.append(p.city)
+    if p.province:
+        address_append.append(p.province)
+    if p.zip_code:
+        address_append.append(p.zip_code)
+    
+    address = ', '.join(address_append) if address_append else None
+    
+    if p.house_num:
+        address = f"{p.house_num} {address}"
 
     labreqs = LabRequest.objects.filter(patient_id=p.pk).values()
     return render(request, 'labreqsys/view_patient.html', {
         'patient': p,
         'full_name': full_name,
         'age': age,
-        'address': 'testing',  # Replace with actual address
+        'address': address,  # Replace with actual address
         'requests': labreqs,
         'pickups': 'Collected',  # Replace with actual pickup status
         'emails': 'Collected'  # Replace with actual email status
@@ -183,6 +204,7 @@ def view_individual_lab_request(request, request_id):
 
 def add_patient (request):
     if request.method == "POST":
+        
         last_name = request.POST.get('last_name')
         first_name = request.POST.get('first_name')
         middle_initial = request.POST.get('middle_initial')
@@ -191,15 +213,13 @@ def add_patient (request):
         civil_status = request.POST.get('civil_status') 
         
         birthdate = request.POST.get('birthdate')
-        
         # makes sure birthdate = None when birthdate is passed as "" from request.POST
         # i know it should be from the model parameters, but omg its not working TT~TT
         if birthdate == "":
             birthdate = None
-
-
-        mobile_num = request.POST.get('mobile_num')
         
+        
+        mobile_num = request.POST.get('mobile_num')
         # makes sure mobile_num = None when mobile_num is passed as "" from request.POST
         # i know it should be from the model parameters, but omg its not working TT~TT (2)
         if mobile_num == "":
@@ -208,10 +228,8 @@ def add_patient (request):
         # handles check statement in database
         elif mobile_num.startswith ("63") == False:
             mobile_num = "63" + mobile_num.lstrip("0")
-                    
         
         landline_num = request.POST.get('landline_num')
-        
         # makes sure landline_num = None when landline_num is passed as "" from request.POST
         # i know it should be from the model parameters, but omg its not working TT~TT (2)
         if landline_num == "":
@@ -224,7 +242,7 @@ def add_patient (request):
         email = request.POST.get('email')
         if email == "":
             email = None
-        
+            
         house_num = request.POST.get('house_num')
         street = request.POST.get('street')
         baranggay = request.POST.get('baranggay')
@@ -238,31 +256,40 @@ def add_patient (request):
         pwd_id_num = request.POST.get('pwd_id_num')
         senior_id_num = request.POST.get('senior_id_num')
         
-    
-        new_p = Patient.objects.create(
-            last_name=last_name,
-            first_name=first_name,
-            middle_initial=middle_initial,
-            suffix=suffix,
+        if Patient.objects.filter(
+            Q(mobile_num__icontains=mobile_num) | Q(landline_num__icontains=landline_num) | Q(email__icontains=email),
+            first_name__exact=first_name, 
+            last_name__exact=last_name,
+            birthdate__exact=birthdate,
             sex=sex,
-            civil_status=civil_status,
-            birthdate=birthdate,
-
-            mobile_num=mobile_num,
-            landline_num=landline_num,
-            email=email,
-            house_num=house_num,
-            street=street,
-            baranggay=baranggay,
-            province=province,
-            city=city,
-            zip_code=zip_code,
-            pwd_id_num=pwd_id_num,
-            senior_id_num=senior_id_num
-            )
+            city__exact=city,            
+        ):
+            messages.error(request, "Patient already exists.")
+            return redirect('patientList')
+        else:
+            new_p = Patient.objects.create(
+                last_name=last_name,
+                first_name=first_name,
+                middle_initial=middle_initial,
+                suffix=suffix,
+                sex=sex,
+                civil_status=civil_status,
+                birthdate=birthdate,
+                mobile_num=mobile_num,
+                landline_num=landline_num,
+                email=email,
+                house_num=house_num,
+                street=street,
+                baranggay=baranggay,
+                province=province,
+                city=city,
+                zip_code=zip_code,
+                pwd_id_num=pwd_id_num,
+                senior_id_num=senior_id_num
+                )
         
-        p = Patient.objects.get(pk=new_p.patient_id)
-        return redirect('view_patient', pk=p.pk)
+            p = Patient.objects.get(pk=new_p.patient_id)
+            return redirect('view_patient', pk=p.pk)
     
 
             
