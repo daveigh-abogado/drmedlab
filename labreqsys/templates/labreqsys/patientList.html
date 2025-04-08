@@ -11,45 +11,28 @@
     <!-- TOP BAR -->
     <div class="container text-center">
         <div class="row">
-        <!-- SEARCH -->
+            <!-- SEARCH -->
             <div class="col ms-auto">
-                <form class="max-w-lg mx-auto">
-                    <div class="flex">
-                        <label for="search-dropdown" class="mb-4 text-sm font-medium text-gray-900 sr-only">Your Email</label>
-                        <button id="dropdown-button" data-dropdown-toggle="dropdown" class="shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-left text-gray-900 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100" type="button">All categories <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                    </svg></button>
-                        <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
-                            <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdown-button">
-                            <li>
-                                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100">Mockups</button>
-                            </li>
-                            <li>
-                                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100">Templates</button>
-                            </li>
-                            <li>
-                                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100">Design</button>
-                            </li>
-                            <li>
-                                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100">Logos</button>
-                            </li>
-                            </ul>
-                        </div>
-                        <div class="relative w-full">
-                            <input type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Search Mockups, Logos, Design Templates..." required />
-                            <button type="submit" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
-                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                                </svg>
-                                <span class="sr-only">Search</span>
-                            </button>
-                        </div>
+                <div class="w-full max-w-sm min-w-[200px]">
+                    <div class="relative">
+                        <input
+                            class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-blue-900 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-primary-700 hover:border-primary-700 shadow-sm focus:shadow"
+                            placeholder="Search Patient ID, Last or First name" 
+                        />
+                        <button
+                            class="absolute top-1 right-1 flex items-center rounded-md bg-primary-700 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none "
+                            type="button"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                            <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd" />
+                            </svg>
+                        </button> 
                     </div>
-                </form>
+                </div>
             </div>
 
 
-            <!-- Sort By Container -->
+            <!-- Sort By Container 
             <div class="col ms-auto text-end">
                 <label class="font-medium text-ssm text-gray-196 px-2"> Sort by </label>
                 <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="border text-ssm text-gray-196 hover:bg-gray-200 rounded-lg px-6 py-2 text-center inline-flex items-center" type="button">Patient ID
@@ -58,7 +41,7 @@
                     </svg> 
                 </button>
                 
-                <!-- Dropdown menu -->
+                <!-- Dropdown menu 
                 <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownHoverButton">
                         <li>
@@ -76,6 +59,7 @@
                     </ul>
                 </div>
             </div>
+            -->
 
             <!--ADD PATIENT BUTTON: the orginal href -> {% url 'add_patient'%} -->
             <div class="col ms-auto text-end">
