@@ -248,9 +248,13 @@ def submit_labresults(request, line_item_id):
             new_value = request.POST[field.label_name]
             r.field_value = new_value
             r.save()
+        submission_type = request.POST.get('submission_type')
 
     line_item = RequestLineItem.objects.get(line_item_id=results.first().line_item_id)
-    line_item.request_status = 'Completed'
+    if submission_type == 'submit':
+        line_item.request_status = 'Completed'
+    else:
+        line_item.request_status = 'In Progress'
     line_item.save()
     return redirect('view_individual_lab_request', request_id=line_item.request_id)
 def add_patient (request):

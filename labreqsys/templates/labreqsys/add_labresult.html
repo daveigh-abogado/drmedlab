@@ -92,6 +92,7 @@
         </select>
         <p id="lab_tech_2_info">Role <br> License Number</p>
 
+        <input type="hidden" name="submission_type" id="submission_type" value="">
         <!-- Modal Trigger Button -->
         <button type="button" onclick="saveModal()">Save</button>
         <button type="button" onclick="submitModal()">Submit</button>
@@ -122,6 +123,8 @@
     </div>
 
     <script>
+        let submissionType = "";
+        
         function updateLabTechInfo(selectId) {
             var select = document.getElementById(selectId);
             var selectedOption = select.options[select.selectedIndex];
@@ -137,10 +140,12 @@
         }
 
         function submitModal() {
+            submissionType = "submit";
             document.getElementById('confirmModal').style.display = 'block';
         }
 
         function saveModal() {
+            submissionType = "save";
             document.getElementById('saveModal').style.display = 'block';
         }
 
@@ -153,6 +158,7 @@
         }
 
         function submitForm() {
+            document.getElementById('submission_type').value = submissionType;
             document.getElementById('resultform').submit();
         }
 

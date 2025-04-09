@@ -120,12 +120,19 @@
                             {{ line_item.uploaded_time|default:"-" }}
                         </td>
                         <td>
-                            <button 
-                                class="px-4 py-2 rounded text-white font-medium
-                                    {% if line_item.request_status == 'Completed' %} bg-gray-300 cursor-not-allowed {% else %} bg-blue-500 hover:bg-blue-600 {% endif %}"
-                                {% if line_item.request_status == 'Completed' %} disabled {% endif %}>
-                                {% if line_item.request_status == 'In Progress' %} Edit Result {% else %}<a href="{% url 'add_labresult' line_item_id=line_item.line_item_id %}">Add Result</a> {% endif %}
-                            </button>
+                            {% if line_item.request_status == 'Completed' %}
+                                <button 
+                                    class="px-4 py-2 rounded text-white font-medium bg-gray-300 cursor-not-allowed" 
+                                    disabled>
+                                    Add Result
+                                </button>
+                            {% else %}
+                                <a 
+                                    href="{% url 'add_labresult' line_item_id=line_item.line_item_id %}" 
+                                    class="px-4 py-2 rounded text-white font-medium bg-blue-500 hover:bg-blue-600">
+                                    {% if line_item.request_status == 'In Progress' %}Edit Result{% else %}Add Result{% endif %}
+                                </a>
+                            {% endif %}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
                             <a href="#" class="text-[#00BAFF] hover:text-[#0096CC]">View</a>
