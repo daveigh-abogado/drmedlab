@@ -39,9 +39,11 @@
             <td>{{patient.mobile_num}}</td>
         </tr>
     </table>
+
     <h1>Add Laboratory Results</h1>
     <h2>{{test.test_name}}</h2>
-    <form id="form" method="POST" action="{% url 'submit_labresults' line_item_id=line_item.line_item_id %}">{% csrf_token %}
+    <form id="resultform" method="POST" action="{% url 'submit_labresults' line_item_id=line_item.line_item_id %}">
+        {% csrf_token %}
         <table>
             {% for section_data in sections %}
                 <tr>
@@ -68,6 +70,7 @@
                 </tr>
             {% endfor %}
         </table>
+
         <h1>Add Signature</h1>
         <select id="lab_tech_1" name="lab_tech_1" onchange="updateLabTechInfo('lab_tech_1')" required>
             <option value="">Lab Tech Name</option>
@@ -78,7 +81,7 @@
             {% endfor %}
         </select>
         <p id="lab_tech_1_info">Role <br> License Number</p>
-        
+
         <select id="lab_tech_2" name="lab_tech_2" onchange="updateLabTechInfo('lab_tech_2')" required>
             <option value="">Lab Tech Name</option>
             {% for tech in lab_technicians %}
@@ -88,26 +91,83 @@
             {% endfor %}
         </select>
         <p id="lab_tech_2_info">Role <br> License Number</p>
-        
-        <script>
-            function updateLabTechInfo(selectId) {
-                var select = document.getElementById(selectId);
-                var selectedOption = select.options[select.selectedIndex];
-                var role = selectedOption.getAttribute("data-role");
-                var license = selectedOption.getAttribute("data-license");
-                
-                var infoElement = document.getElementById(selectId + "_info");
-                if (role && license) {
-                    infoElement.innerHTML = role + "<br>" + license;
-                } else {
-                    infoElement.innerHTML = "Role <br> License Number";
-                }
-            }
-        </script>
-        <button type="submit">Submit</button>
+
+        <!-- Modal Trigger Button -->
+        <button type="button" onclick="saveModal()">Save</button>
+        <button type="button" onclick="submitModal()">Submit</button>
     </form>
+    
+    <!-- Save Modal -->
+    <div id="saveModal" class="modal">
+        <div class="modal-content" style="background-color: white; width: 500px; margin-top: 400px; margin-left: 800px; padding: 50px;">
+            <h2>Save results?</h2>
+            <p>You may continue editing this form later.</p>
+            <div class="modal-buttons">
+                <button class="btn-confirm" onclick="submitForm()">Yes</button>
+                <button class="btn-cancel" onclick="closeSaveModal()">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content" style="background-color: white; width: 500px; margin-top: 400px; margin-left: 800px; padding: 50px;">
+            <h2>Submit results?</h2>
+            <p>You cannot edit this form upon submission.</p>
+            <div class="modal-buttons">
+                <button class="btn-confirm" onclick="submitForm()">Yes</button>
+                <button class="btn-cancel" onclick="closeConfirmModal()">No</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateLabTechInfo(selectId) {
+            var select = document.getElementById(selectId);
+            var selectedOption = select.options[select.selectedIndex];
+            var role = selectedOption.getAttribute("data-role");
+            var license = selectedOption.getAttribute("data-license");
+
+            var infoElement = document.getElementById(selectId + "_info");
+            if (role && license) {
+                infoElement.innerHTML = role + "<br>" + license;
+            } else {
+                infoElement.innerHTML = "Role <br> License Number";
+            }
+        }
+
+        function submitModal() {
+            document.getElementById('confirmModal').style.display = 'block';
+        }
+
+        function saveModal() {
+            document.getElementById('saveModal').style.display = 'block';
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+
+        function closeSaveModal() {
+            document.getElementById('saveModal').style.display = 'none';
+        }
+
+        function submitForm() {
+            document.getElementById('resultform').submit();
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target === modal) {
+                closeConfirmModal();
+            }
+            const modalc = document.getElementById('saveModal');
+            if (event.target === modalc) {
+                closeSaveModal();
+            }
+        }
+    </script>
 {% endblock content %}
 
 {% block styles %}
-
 {% endblock styles %}
