@@ -260,6 +260,7 @@ def add_patient(request):
         senior_id_num = request.POST.get('senior_id_num')
         
         query = Q(first_name__exact=first_name, last_name__exact=last_name, birthdate__exact=birthdate, sex=sex, city__exact=city)
+        
         if mobile_num:
             query |= Q(mobile_num__icontains=mobile_num)
         if landline_num:
@@ -267,7 +268,13 @@ def add_patient(request):
         if email:
             query |= Q(email__icontains=email)
 
-        if Patient.objects.filter(query).exists():
+        if Patient.objects.filter( 
+            Q(first_name__exact=first_name) &
+            Q(last_name__exact=last_name) &
+            Q(birthdate__exact=birthdate) &
+            Q(sex=sex) &
+            Q(city__exact=city) &
+            query).exists():
             messages.error(request, "Patient already exists.")
             return redirect('patientList')
         else:
