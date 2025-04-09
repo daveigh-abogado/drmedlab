@@ -82,14 +82,16 @@ VALUES
 (1, NULL, 3, 'Not Started', 3),
 (2, 1, 1, 'Not Started', 1),
 (2, 1, 2, 'Not Started', 2),
-(2, 1, 4, 'Not Started', 3),
-(2, NULL, 3, 'Not Started', 4),
+(2, 1, 4, 'Not Started', 4),
+(2, NULL, 3, 'Not Started', 3),
 (4, NULL, 5, 'Not Started', 5);
 
 INSERT INTO template_section (template_id, section_name)  
 VALUES
 (5, 'Albumin Results'),
-(5, 'Remarks');
+(5, 'Remarks'),
+(4, 'X-Ray Image'),
+(4, 'X-Ray Remarks');
 
 INSERT INTO template_field (section_id, label_name, field_type, field_required, field_value)  
 VALUES
@@ -97,7 +99,8 @@ VALUES
 (1, 'Result', 'Number', 'Yes', NULL),
 (1, 'Unit', 'Label', 'Yes', 'g/dL'),
 (1, 'Range', 'Text', 'Yes', NULL),
-(2, 'Remarks', 'Text', 'Yes', NULL);
+(3, 'X-Ray Image', 'Image', 'Yes', NULL),
+(4, 'Remarks', 'Text', 'Yes', NULL);
 
 INSERT INTO result_value (line_item_id, field_id, field_value)  
 VALUES
