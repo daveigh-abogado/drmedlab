@@ -68,7 +68,7 @@ class TemplateField(models.Model):
     section = models.ForeignKey('TemplateSection', models.DO_NOTHING)
     label_name = models.CharField(max_length=255)
     field_type = models.CharField(max_length=6)
-    field_fixed_value = models.JSONField(blank=True, null=True)
+    field_value = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False

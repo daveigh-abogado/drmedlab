@@ -53,7 +53,7 @@
                     {% for f in section_data.fields %}
                         <td>
                             {% if f.field_type == "Label" %}
-                                {{ f.field_fixed_value }}
+                                {{ f.field_value }}
                             {% elif f.field_type == "Text" %}
                                 <input type="text" name="{{ f.label_name }}">
                             {% elif f.field_type == "Number" %}
