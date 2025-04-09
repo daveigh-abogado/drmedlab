@@ -117,7 +117,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ line_item.uploaded_time|default:"-" }}
+                            {{ line_item.progress_timestamp|default:"-" }}
                         </td>
                         <td>
                             {% if line_item.request_status == 'Completed' %}

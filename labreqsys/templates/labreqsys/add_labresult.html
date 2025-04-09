@@ -57,17 +57,17 @@
                             {% if f.field_type == "Label" %}
                                 {{ f.field_value }}
                             {% elif f.field_type == "Text" %}
-                                <input type="text" name="{{ f.label_name }}">
+                                <input type="text" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
                             {% elif f.field_type == "Number" %}
-                                <input type="number" name="{{ f.label_name }}">
+                                <input type="number" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
                             {% elif f.field_type == "Image" %}
-                                <input type="url" name="{{ f.label_name }}" placeholder="Enter image URL">
+                                <input type="url" name="{{ f.label_name }}" placeholder="Enter image URL" value="{{ f.saved_value|default_if_none:'' }}">
                             {% else %}
-                                <input type="text" name="{{ f.label_name }}">
+                                <input type="text" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
                             {% endif %}
                         </td>
                     {% endfor %}
-                </tr>
+                </tr>                
             {% endfor %}
         </table>
 

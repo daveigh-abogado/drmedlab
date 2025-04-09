@@ -4,6 +4,8 @@ import json
 from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview
 from datetime import date, datetime
 from decimal import Decimal
+from django.utils import timezone
+
 
 # Utility functions
 def discount(patient, price):
@@ -217,9 +219,14 @@ def add_lab_result(request, line_item_id):
     template = get_object_or_404(TemplateForm, pk=line_item.template_used)
     sections = TemplateSection.objects.filter(template_id=template.pk)
     
+    existing_results = ResultValue.objects.filter(line_item=line_item)
+    result_dict = {res.field_id: res.field_value for res in existing_results}
+
     section_data = []
     for s in sections:
         fields = TemplateField.objects.filter(section_id=s.pk)
+        for field in fields:
+            field.saved_value = result_dict.get(field.field_id)
         section_data.append({'section': s, 'fields': fields})
 
     lab_request = get_object_or_404(LabRequest, pk=line_item.request_id)
@@ -240,7 +247,6 @@ def add_lab_result(request, line_item_id):
     })
 
 def submit_labresults(request, line_item_id):
-    # Retrieve the result values for this request
     results = ResultValue.objects.filter(line_item_id=line_item_id)
     if request.method == "POST":
         for r in results:
@@ -253,6 +259,7 @@ def submit_labresults(request, line_item_id):
     line_item = RequestLineItem.objects.get(line_item_id=results.first().line_item_id)
     if submission_type == 'submit':
         line_item.request_status = 'Completed'
+        line_item.progress_timestamp = timezone.now()
     else:
         line_item.request_status = 'In Progress'
     line_item.save()

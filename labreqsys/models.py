@@ -152,6 +152,7 @@ class RequestLineItem(models.Model):
     package = models.ForeignKey(TestPackage, models.DO_NOTHING, blank=True, null=True)
     request = models.ForeignKey(LabRequest, models.DO_NOTHING)
     template_used = models.IntegerField()
+    progress_timestamp = models.DateTimeField()
 
     class Meta:
         managed = False
