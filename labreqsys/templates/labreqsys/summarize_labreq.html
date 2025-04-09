@@ -94,10 +94,18 @@
             <br>
             <p> Discount: {{ discount }} </p>
             <p> Total: {{ total }} </p>
+
+            <!-- Ensure the form submits correctly -->
+            <form method="POST" action="{% url 'summarize_labreq' pk=patient.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="confirm" value="true">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Confirm
+                </button>
+            </form>
         </div>
     </div>
 </div>
-
 
 {% endblock content %}
 
