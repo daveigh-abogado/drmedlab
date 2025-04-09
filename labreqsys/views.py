@@ -126,41 +126,44 @@ def summarize_labreq(request, pk):
     current_date = datetime.now().strftime('%Y-%m-%d')
 
     if request.method == "POST" and "confirm" in request.POST:
-        physician = request.POST.get('physician')
-        mode = request.POST.getlist('mode_of_release')
+        # Save the lab request and redirect to the patient's details page
+        if request.POST["confirm"] == "submit":
+            physician = request.POST.get('physician')
+            mode = request.POST.getlist('mode_of_release')
 
-        if 'Pick-Up' in mode and 'Email' in mode:
-            mode_of_release = 'Both'
-        else:
-            mode_of_release = 'Pick-up' if 'Pick-Up' in mode else 'Email'
-            
-        lab_request = LabRequest.objects.create(
-            patient=p,
-            date_requested=current_date,
-            physician=physician,
-            mode_of_release=mode_of_release,
-            overall_status="Not Started"
-        )
-        
-        for component in components:
-            RequestLineItem.objects.create(
-                request=lab_request,
-                component=component,
-                request_status="Not Started"
+            if 'Pick-Up' in mode and 'Email' in mode:
+                mode_of_release = 'Both'
+            else:
+                mode_of_release = 'Pick-up' if 'Pick-Up' in mode else 'Email'
+                
+            lab_request = LabRequest.objects.create(
+                patient=p,
+                date_requested=current_date,
+                physician=physician,
+                mode_of_release=mode_of_release,
+                overall_status="Not Started"
             )
-        
-        for package in packages:
-            package_components = TestPackageComponent.objects.filter(package=package)
-            for package_component in package_components:
+            
+            for component in components:
                 RequestLineItem.objects.create(
                     request=lab_request,
-                    component=package_component.component,
-                    package=package,
+                    component=component,
                     request_status="Not Started"
                 )
-        
-        # Redirect to the specific patient's details page after saving
-        return redirect('view_patient', pk=pk)
+            
+            for package in packages:
+                package_components = TestPackageComponent.objects.filter(package=package)
+                for package_component in package_components:
+                    RequestLineItem.objects.create(
+                        request=lab_request,
+                        component=package_component.component,
+                        package=package,
+                        request_status="Not Started"
+                    )
+            
+            return redirect('view_patient', pk=pk)
+        else:
+            return redirect('view_patient', pk=pk)
 
     # Render the summary page without saving
     return render(request, 'labreqsys/summarize_labreq.html', {
