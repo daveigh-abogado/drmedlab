@@ -1251,9 +1251,10 @@ select {
   gap: 0.5rem;
 }
 
-.gap-1\.5 {
-  gap: 0.375rem;
+.gap-2 {
+  gap: 2rem;
 }
+
 
 .gap-4 {
   gap: 1rem;
@@ -2373,4 +2374,44 @@ select {
     --tw-ring-opacity: 1;
     --tw-ring-color: rgb(55 65 81 / var(--tw-ring-opacity, 1));
   }
+
+  .h-modal {
+    height: calc(100% - 2rem); /* Adjust height with some spacing */
+    max-height: 100vh; /* Prevents it from exceeding the viewport height */
+  }
+
+  .inset-0 {
+    position: absolute;  /* or relative, fixed, or sticky depending on the context */
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  .package-checkbox {
+    display: show; /* Hide default checkbox */
+  }
+
+  /* Custom checkbox */
+  .package-checkbox + div {
+      width: 20px;
+      height: 20px;
+      border: 2px solid gray;
+      border-radius: 4px;
+      display: inline-block;
+      transition: all 0.3s ease;
+  }
+
+  /* When checkbox is checked, change styles */
+  .package-checkbox:checked + div {
+      border-color: #1e40af; /* Tailwind blue-900 */
+      background-color: #1e40af;
+  }
+
+  /* Change label text color when checked */
+  .package-checkbox:checked + div + span {
+      color: #1e40af;
+      font-weight: 500;
+  }
+
 }
