@@ -1,32 +1,15 @@
-USE drmedlabs;
+use drmedlabs;
 
--- Drop foreign key constraints
-ALTER TABLE collection_log DROP FOREIGN KEY collection_log_fk;
-ALTER TABLE lab_request DROP FOREIGN KEY lab_request_fk;
-ALTER TABLE test_package_component DROP FOREIGN KEY test_package_component_fk1;
-ALTER TABLE test_package_component DROP FOREIGN KEY test_package_component_fk2;
-ALTER TABLE test_component DROP FOREIGN KEY test_component_fk;
-ALTER TABLE request_line_item DROP FOREIGN KEY request_line_item_fk1;
-ALTER TABLE request_line_item DROP FOREIGN KEY request_line_item_fk2;
-ALTER TABLE request_line_item DROP FOREIGN KEY request_line_item_fk3;
-
--- Drop tables if they exist
-DROP TABLE IF EXISTS collection_log;
-DROP TABLE IF EXISTS request_line_item;
-DROP TABLE IF EXISTS test_package_component;
-DROP TABLE IF EXISTS test_package;
-DROP TABLE IF EXISTS test_component;
-DROP TABLE IF EXISTS template_field;
-DROP TABLE IF EXISTS template_section;
-DROP TABLE IF EXISTS template_form;
 DROP TABLE IF EXISTS lab_request;
 DROP TABLE IF EXISTS patient;
+DROP TABLE IF EXISTS template_field;
+DROP TABLE IF EXISTS template_section;
+DROP TABLE IF EXISTS test_component;
+DROP TABLE IF EXISTS template_form;
+DROP TABLE IF EXISTS test_package;
+DROP TABLE IF EXISTS test_package_component;
+DROP TABLE IF EXISTS request_line_item;
 
--- Drop triggers if they exist
-DROP TRIGGER IF EXISTS set_date_added;
-DROP TRIGGER IF EXISTS template_field_check;
-
--- Create tables
 CREATE TABLE patient
 (patient_id INTEGER NOT NULL auto_increment,
  last_name VARCHAR(50) NOT NULL,
@@ -59,6 +42,7 @@ FOR EACH ROW
 BEGIN
     SET NEW.date_added = CURRENT_DATE();
 END $$
+
 DELIMITER ;
 
 CREATE TABLE lab_request 
@@ -114,18 +98,6 @@ field_fixed_value VARCHAR(255) DEFAULT NULL,
 CONSTRAINT template_field_pk PRIMARY KEY (field_id),
 CONSTRAINT template_field_fk FOREIGN KEY (section_id) REFERENCES template_section(section_id)
 );
-
-DELIMITER $$
-CREATE TRIGGER template_field_check
-BEFORE INSERT ON template_field
-FOR EACH ROW
-BEGIN
-    IF NEW.field_type = 'Label' AND NEW.field_fixed_value IS NOT NULL THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'field_fixed_value must be NULL when field_type is Label';
-    END IF;
-END $$
-DELIMITER ;
 
 CREATE TABLE test_package
 (package_id INTEGER NOT NULL auto_increment,
