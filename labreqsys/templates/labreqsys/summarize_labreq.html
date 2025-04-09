@@ -21,79 +21,121 @@
     </div>
 </div>
 
-<div class="flex-wrap">
-    <div class="tab active bg-white p-6 pt-13 rounded-b-lg rounded-tr-lg shadow" id="tab-0">
+<div class="block">
+    <div class="bg-white p-8 pt-13 rounded-b-lg rounded-tr-lg shadow" id="tab-0">
         <form action="">
-            <div class = "PatientInfo">
-                <h1 class="text-mm font-bold text-blue-900">Patient Information</h1>
+            <div class="PatientInfo ">
+                <h1 class="text-mm text-blue-900">Patient Information</h1>
                 <hr>
-                <table>
-                    <tr class="gap-2">
-                        <th>Date Requested</th>
-                        <td class><input class="w-full h-8 text-ssm border rounded-lg" type="text" name="date_requested" value="{{ date }}" disabled></td>
-                    </tr>
-                    <tr>
-                        <th>Patient ID</th>
-                        <td><input class="w-full h-8 text-ssm border rounded-lg" type="text" name="patient_id" value="{{ patient.pk }}" disabled></td>
-                    </tr>
-                    <tr>
-                        <th>Patient Name</th>
-                        <td>{{ patient.last_name }}, {{ patient.first_name }}</td>
-                    </tr>
-                    <tr>
-                        <th>PWD ID</th>
-                        <td>{{ patient.pwd_id_num }}</td>
-                    </tr>
-                </table>
+
+                <div class="flex flex-col space-y-4 mt-4">
+                    <!-- Date Requested -->
+                    <div class="flex gap-4 items-center">
+                        <span style="font-weight: 600;" class="text-blue-900 w-40 ">Date Requested</span>
+                        <span class="bg-gray-100 text-gray-800 px-4 py-1 rounded-full">{{ date }}</span>
+                    </div>
+
+                    <!-- Patient ID -->
+                    <div class="flex gap-4 items-center">
+                        <span style="font-weight: 600;" class="font-bold text-blue-900 w-40">Patient ID</span>
+                        <span class="bg-gray-100 text-gray-800 px-4 py-1 rounded-full">{{ patient.pk }}</span>
+                    </div>
+
+                    <!-- Patient Name -->
+                    <div class="flex gap-4 items-center">
+                        <span style="font-weight: 600;"class="font-bold text-blue-900 w-40">Patient Name</span>
+                        <span>{{ patient.last_name }}, {{ patient.first_name }}</span>
+                    </div>
+
+                    <!-- PWD ID -->
+                    <div class="flex gap-4 items-center">
+                        <span style="font-weight: 600;"class="font-semibold text-blue-900 w-40">PWD ID</span>
+                        <span>{{ patient.pwd_id_num }}</span>
+                    </div>
+                </div>
             </div>
-            
-            <div class = "LabReqDetails">
-                <h1 class="text-mm font-bold text-blue-900">Lab Request Information</h1>
+
+            <div class="LabReqDetails mt-4">
+                <h1 class="text-mm text-blue-900">Lab Request Information</h1>
                 <hr>
-                <!--CHANGE TO DIVS-->
-                <table>
-                    <tr>
-                        <th>Physician Name</th>
-                        <td><input class="w-full h-8 text-ssm border rounded-lg" type="text" name="physician" value="{{ physician }}" disabled></td>
-                    </tr>
-                    <tr>
-                        <th>Mode of Delivery</th>
-                        <td><input class="w-full h-8 text-ssm border rounded-lg" type="text" name="mode_of_release" value="{{ mode_of_release }}" disabled></td>
-                    </tr>
-                    <tr>
-                        <th>Request ID</th>
-                        <td><input class="w-full h-8 text-ssm border rounded-lg" type="text" name="request_id" value="{{ request_id }}" disabled></td>
-                    </tr>
-                </table>
+            
+                <div class="flex flex-col space-y-4 mt-4">
+                    <!-- Physician Name -->
+                    <div class="flex gap-4 items-center">
+                        <span style="font-weight: 600;" class="text-blue-900 w-40 ">Physician Name</span>
+                        <span class="text-gray-800 ">{{ physician }}</span>
+                    </div>
+            
+                    <!-- Mode of Delivery -->
+                    <div class="flex gap-4 items-center">
+                        <span style="font-weight: 600;" class="text-blue-900 w-40 ">Mode of Delivery</span>
+                        <span class="text-gray-800 ">{{ mode_of_release }}</span>
+                    </div>
+                    
+            
+                    <!-- Request ID -->
+                    <div class="flex gap-4 items-center">
+                        <span style="font-weight: 600;" class="font-bold text-blue-900 w-40">Request ID</span>
+                        <span class="bg-gray-100 text-gray-800 px-4 py-1 rounded-full text-left">{{ request_id }}</span>
+                    </div>
+                </div>
             </div>
         </form>
         
-        <div class="BillingSummary">
-            <h1 class="text-mm font-bold text-blue-900">Billing Summary</h1>
+        <div class="BillingSummary mt-4">
+            <h1 class="text-mm text-blue-900">Billing Summary</h1>
             <hr>
-            <table>
-                    {% for p in packages %}
-                    <tr>
-                        <th>Package No. {{ forloop.counter }}</th>
-                        <td>{{ p.package_name }}</td>
-                        <td>₱ {{ p.package_price }}</td>
-                    </tr>
 
-                    {% endfor %}
-                    {% for c in components %}
-                    <tr>
-                        <th>Component No. {{ forloop.counter }}</th>
-                        <td>{{ c.test_name }}</td>
-                        <td>₱ {{ c.component_price }}</td>
-                    </tr>
-                    {% endfor %}
-            </table>
+            <div class="packages-container">
+                {% for p in packages %}
+                <div class="package-item flex justify-between py-2">
+                    <div class ="flex items-center">
+                        <div class="mr-2 text-blue-900" style="font-weight: 600"> Package No. {{ forloop.counter }}</div>
+                        <div class="">{{ p.package_name }}</div>
+                    </div>
+                    <div class="">₱ {{ p.package_price }}</div>
+                </div>
+                {% endfor %}
+            
+                {% for c in components %}
+                <div class="component-item flex justify-between py-2">
+                    <div class = "flex items-center">
+                        <div class="mr-2 text-blue-900" style="font-weight: 600;">Component No. {{ forloop.counter }}</div>
+                        <div class="">{{ c.test_name }}</div>
+                    </div>
+                    <div class="">₱ {{ c.component_price }}</div>
+                </div>
+                {% endfor %}
+            </div>
         </div> 
         
         <div>
             <br>
-            <p> Discount: {{ discount }} </p>
-            <p> Total: {{ total }} </p>
+            <div class="flex justify-between py-2">
+                <div class="mr-2 text-blue-900" style="font-weight: 600">Discount</div>
+                <div class="">₱ {{ discount }}</div>
+            </div>
+
+            <div class="component-item flex justify-between py-2 border-2 border-blue-900 rounded-lg p-2 bg-gray-50">
+                <div class = "flex items-center">
+                    <div class="mr-2 text-blue-900" style="font-weight: bold;">Total</div>
+                </div>
+                <div class="">₱ {{ total }}</div>
+            </div>
+
+        </div>
+
+        <!-- Submit and Cancel Buttons -->
+        <div class="flex justify-end mt-6 gap-4">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <button type="submit" name="confirm" value="submit" class="text-white px-4 py-2 bg-blue-900 font-bold rounded-lg">
+                    Submit
+                </button>
+            </form>
+            <a href="{% url 'view_patient' patient.pk %}" class="text-white px-4 py-2 bg-gray-500 font-bold rounded-lg">
+                Cancel
+            </a>
         </div>
     </div>
 </div>
