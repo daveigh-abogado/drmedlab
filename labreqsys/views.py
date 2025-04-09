@@ -205,7 +205,7 @@ def view_individual_lab_request(request, request_id):
     return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details})
 
 
-def add_patient (request):
+def add_patient(request):
     if request.method == "POST":
         
         last_name = request.POST.get('last_name')
@@ -259,14 +259,15 @@ def add_patient (request):
         pwd_id_num = request.POST.get('pwd_id_num')
         senior_id_num = request.POST.get('senior_id_num')
         
-        if Patient.objects.filter(
-            Q(mobile_num__icontains=mobile_num) | Q(landline_num__icontains=landline_num) | Q(email__icontains=email),
-            first_name__exact=first_name, 
-            last_name__exact=last_name,
-            birthdate__exact=birthdate,
-            sex=sex,
-            city__exact=city,            
-        ):
+        query = Q(first_name__exact=first_name, last_name__exact=last_name, birthdate__exact=birthdate, sex=sex, city__exact=city)
+        if mobile_num:
+            query |= Q(mobile_num__icontains=mobile_num)
+        if landline_num:
+            query |= Q(landline_num__icontains=landline_num)
+        if email:
+            query |= Q(email__icontains=email)
+
+        if Patient.objects.filter(query).exists():
             messages.error(request, "Patient already exists.")
             return redirect('patientList')
         else:

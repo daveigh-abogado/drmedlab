@@ -1,14 +1,14 @@
 use drmedlabs;
 
-DROP TABLE lab_request;
-DROP TABLE patient;
-DROP TABLE template_field;
-DROP TABLE template_section;
-DROP TABLE test_component;
-DROP TABLE template_form;
-DROP TABLE test_package;
-DROP TABLE test_package_component;
-DROP TABLE request_line_item;
+DROP TABLE IF EXISTS lab_request;
+DROP TABLE IF EXISTS patient;
+DROP TABLE IF EXISTS template_field;
+DROP TABLE IF EXISTS template_section;
+DROP TABLE IF EXISTS test_component;
+DROP TABLE IF EXISTS template_form;
+DROP TABLE IF EXISTS test_package;
+DROP TABLE IF EXISTS test_package_component;
+DROP TABLE IF EXISTS request_line_item;
 
 CREATE TABLE patient
 (patient_id INTEGER NOT NULL auto_increment,
@@ -94,7 +94,7 @@ CREATE TABLE template_field
 section_id INTEGER NOT NULL,
 label_name VARCHAR(255) NOT NULL,
 field_type ENUM('Label', 'Text', 'Image', 'Number') NOT NULL DEFAULT 'Label',
-field_fixed_value VARCHAR(255) DEFAULT 0.00 CHECK (field_type != 'Label' OR field_fixed_value IS NULL),
+field_fixed_value VARCHAR(255) DEFAULT NULL,
 CONSTRAINT template_field_pk PRIMARY KEY (field_id),
 CONSTRAINT template_field_fk FOREIGN KEY (section_id) REFERENCES template_section(section_id)
 );
