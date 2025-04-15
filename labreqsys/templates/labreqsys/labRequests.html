@@ -88,26 +88,28 @@
 
         <!-- TABLE -->
         
-        <div class = "relative overflow-x-auto shadow-md rounded-xl ">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-                <thead class="text-xs uppercase shadow-lg z-10">
-                    <tr class="bg-gray-50 text-gray-450 text-left shadow-lg shadow-gray-300 text-center">
-                        <th scope="col" class="px-6 py-3">Request ID</th>
+        <div class = "relative overflow-x-auto rounded-xl">
+            <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
+                <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
+                    <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
+                        <th scope="col" class="px-6 py-3 text-center">Request ID</th>
                         <th scope="col" class="px-6 py-3">Patient Name</th>
-                        <th scope="col" class="px-6 py-3">Overall Status</th>
-                        <th scope="col" class="px-6 py-3">Action</th>
+                        <th scope="col" class="px-6 py-3 text-center">Overall Status</th>
+                        <th scope="col" class="px-6 py-3 text-center">Action</th>
                     </tr>
                 </thead>
 
                 <tbody>
                 {% for l in labreqs %}
-                    <tr class="odd:bg-white even:bg-gray-50  border-b  border-gray-200">
-                        <td class="p-3">{{ l.request_id }}</td>
-                        <td class="p-3">{{ l.patient.last_name }}, {{ l.patient.first_name }}</td>
-                        <td class="p-3">{{ l.overall_status }}</td>
-                        <th scope="row" class="px-6 py-4 font-medium text-blue-500 whitespace-nowrap text-center">
-                            <a href="{% url 'view_individual_lab_request' request_id=l.request_id %}" class = "hover:underline focus:underline">
-                                View Request
+                    <tr class="border-b border-gray-200 hover:bg-gray-200">
+                        <th scope="row" class="px-6 py-3 font-medium text-center">
+                            {{ l.request_id }}
+                        </th>
+                        <td class="px-6 py-2">{{ l.patient.last_name }}, {{ l.patient.first_name }}</td>
+                        <td class="px-6 py-2 text-center">{{ l.overall_status }}</td>
+                        <th scope="row" class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center no-underline">
+                            <a href="{% url 'view_individual_lab_request' request_id=l.request_id %}" class = "no-underline ">
+                                View
                             </a>
                         </th>
                     </tr>

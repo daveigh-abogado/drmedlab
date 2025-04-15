@@ -2015,6 +2015,7 @@ select {
 
 .no-underline {
   text-decoration: none;
+  text-decoration-line: none;
 }
 
 .focus\:border-blue-500:focus {
