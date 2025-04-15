@@ -3,7 +3,7 @@
 
 
 {% block content %}
-<div class="min-h-screen bg-[#F8F9FA] p-6">
+<div class="flex-1 p-3">
     <!-- Breadcrumb -->
     <nav class="mb-4 flex items-center text-sm">
         <a href="{% url 'labRequests' %}" class="text-gray-600 hover:text-gray-900">Lab Requests</a>
@@ -111,7 +111,7 @@
                         <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Collection Status</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <select class="w-40 h-8 px-6 py-2.5 bg-gray-100 rounded-2xl inline-flex justify-between items-center text-center justify-center text-xs">
+                        <select class="w-40 h-auto px-6 py-2 bg-gray-100 rounded-2xl inline-flex justify-between items-center text-start justify-start text-xs">
                             <option {% if request_details.collection_status == 'Uncollected' %}selected{% endif %}>Uncollected</option>
                             <option {% if request_details.collection_status == 'Collected' %}selected{% endif %}>Collected</option>
                         </select>
@@ -123,6 +123,7 @@
                         <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Email Status</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <!--TO BACKEND: Just copy paste the <select> and <options> tag for the dropdown styling-->
                         <div class="w-7 justify-center text-xs text-black font-normal">{{ request_details.email_status }}</div>
                     </div>
                 </div>
@@ -138,64 +139,62 @@
                         <th scope="col" class="w-12 px-6 py-3 text-left">
                             <input type="checkbox" class="h-4 w-4 rounded border-gray-300">
                         </th>
-                        <th scope="col" class="w-16 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No.</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Type</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Component</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploaded Time</th>
-                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                        <th scope="col" class="px-6 py-3 text-center">No.</th>
+                        <th scope="col" class="px-6 py-3 text-start">Service Type</th>
+                        <th scope="col" class="px-6 py-3 text-start">Component</th>
+                        <th scope="col" class="px-6 py-3 text-center">Status</th>
+                        <th scope="col" class="px-6 py-3 text-center">Uploaded Time</th>
+                        <th scope="col" class="px-6 py-3 text-center">Action</th>
+                        <th scope="col" class="px-6 py-3 text-center"></th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody>
                     {% for line_item in request_details.line_items %}
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                    <tr class="border-b border-gray-200 hover:bg-gray-200">
+                        <th class="px-6 py-3 whitespace-nowrap">
                             <input type="checkbox" class="h-4 w-4 rounded border-gray-300">
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        </th>
+                        <td class="px-6 py-2 font-medium text-center">
                             {% if forloop.first %}01{% endif %}
                             {% if forloop.counter == 4 %}02{% endif %}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td class="px-6 py-2">
                             {% if line_item.package %}
                                 {{ line_item.package.package_name }}
                             {% endif %}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td class="px-6 py-2">
                             {{ line_item.component.test_name }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-2 text-center">
                             {% if line_item.request_status == 'Not Started' %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-gray-100 text-gray-800 shadow-sm border-gray-200 border">
                             {% elif line_item.request_status == 'Completed' %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#ECFDF3] text-[#027A48]">
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium border border-completed bg-completed text-completed shadow-sm">
                             {% else %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#FFF6ED] text-[#B93815]">
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium border border-progress bg-progress text-progress shadow-sm">
                             {% endif %}
                                 {{ line_item.request_status }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td class="px-6 py-2 text-center">
                             {{ line_item.progress_timestamp|default:"-" }}
                         </td>
-                        <td>
+                        <td class="px-6 py-2 text-center">
                             {% if line_item.request_status == 'Completed' %}
-                                <button 
-                                    class="px-4 py-2 rounded text-white font-medium bg-gray-300 cursor-not-allowed" 
-                                    disabled>
+                                <button class="px-4 py-2 rounded text-white font-medium bg-blue-900 text-xs cursor-not-allowed no-underline">
                                     Add Result
                                 </button>
                             {% else %}
                                 <a 
                                     href="{% url 'add_labresult' line_item_id=line_item.line_item_id %}" 
-                                    class="px-4 py-2 rounded text-white font-medium bg-blue-500 hover:bg-blue-600">
+                                    class="px-6 py-2 rounded text-white text-xs font-medium bg-blue-900 hover:bg-blue-900 no-underline">
                                     {% if line_item.request_status == 'In Progress' %}Edit Result{% else %}Add Result{% endif %}
                                 </a>
                             {% endif %}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                            <a href="#" class="text-[#00BAFF] hover:text-[#0096CC]">View</a>
+                        <td class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center">
+                            <a href="#" class = "no-underline ">View</a>
                         </td>
                     </tr>
                     {% endfor %}

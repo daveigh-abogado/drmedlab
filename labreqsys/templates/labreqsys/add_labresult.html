@@ -2,125 +2,242 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-    <h1>Patient Information</h1>
-    <table>
-        <tr>
-            <th>Patient ID</th>
-            <td>{{patient.patient_id}}</td>
-            <th>Date Requested</th>
-            <td>{{request.date_requested}}</td>
-        </tr>
-        <tr>
-            <th>Patient Name</th>
-            <td>{{patient_name}}</td>
-            <th>Landline No.</th>
-            <td>{{patient.landline_num}}</td>
-        </tr>
-        <tr>
-            <th>Age</th>
-            <td>{{patient_age}}</td>
-            <th>Email</th>
-            <td>{{patient.email}}</td>
-        </tr>
-        <tr>
-            <th>Civil Status</th>
-            <td>{{patient.civil_status}}</td>
-            <th>Address</th>
-            <td>{{patient_address}}</td>
-        </tr>
-        <tr>
-            <th>Birthday</th>
-            <td>{{patient.birthdate}}</td>
-            <th>Physician</th>
-            <td>{{request.physician}}</td>
-        </tr>
-        <tr>
-            <th>Mobile No.</th>
-            <td>{{patient.mobile_num}}</td>
-        </tr>
-    </table>
+<div class="flex-1 p-3">
+    <div class="w-full h-hug p-8 mt-4 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
 
-    <h1>Add Laboratory Results</h1>
-    <h2>{{test.test_name}}</h2>
-    <form id="resultform" method="POST" action="{% url 'submit_labresults' line_item_id=line_item.line_item_id %}">
-        {% csrf_token %}
-        <table>
-            {% for section_data in sections %}
-                <tr>
-                    {% for f in section_data.fields %}
-                        <th>{{ f.label_name }}</th>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    {% for f in section_data.fields %}
-                        <td>
-                            {% if f.field_type == "Label" %}
-                                {{ f.field_value }}
-                            {% elif f.field_type == "Text" %}
-                                <input type="text" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
-                            {% elif f.field_type == "Number" %}
-                                <input type="number" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
-                            {% elif f.field_type == "Image" %}
-                                <input type="url" name="{{ f.label_name }}" placeholder="Enter image URL" value="{{ f.saved_value|default_if_none:'' }}">
-                            {% else %}
-                                <input type="text" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
-                            {% endif %}
-                        </td>
-                    {% endfor %}
-                </tr>                
-            {% endfor %}
-        </table>
-
-        <h1>Add Signature</h1>
-        <select id="lab_tech_1" name="lab_tech_1" onchange="updateLabTechInfo('lab_tech_1')" required>
-            <option value="">Lab Tech Name</option>
-            {% for tech in lab_technicians %}
-                <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
-                    {{ tech.first_name }} {{ tech.last_name }}
-                </option>
-            {% endfor %}
-        </select>
-        <p id="lab_tech_1_info">Role <br> License Number</p>
-
-        <select id="lab_tech_2" name="lab_tech_2" onchange="updateLabTechInfo('lab_tech_2')" required>
-            <option value="">Lab Tech Name</option>
-            {% for tech in lab_technicians %}
-                <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
-                    {{ tech.first_name }} {{ tech.last_name }}
-                </option>
-            {% endfor %}
-        </select>
-        <p id="lab_tech_2_info">Role <br> License Number</p>
-
-        <input type="hidden" name="submission_type" id="submission_type" value="">
-        <!-- Modal Trigger Button -->
-        <button type="button" onclick="saveModal()">Save</button>
-        <button type="button" onclick="submitModal()">Submit</button>
-    </form>
+        <!-- Patient Information Section -->
+        <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5">
+            <!--Section title: Patient Information-->
+            <div class="self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+                <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Patient Information</div>
+            </div>
     
-    <!-- Save Modal -->
-    <div id="saveModal" class="modal">
-        <div class="modal-content" style="background-color: white; width: 500px; margin-top: 400px; margin-left: 800px; padding: 50px;">
-            <h2>Save results?</h2>
-            <p>You may continue editing this form later.</p>
-            <div class="modal-buttons">
-                <button class="btn-confirm" onclick="submitForm()">Yes</button>
-                <button class="btn-cancel" onclick="closeSaveModal()">No</button>
+            <!--Section Content-->
+            <div class="self-stretch inline-flex justify-start items-start gap-4"> <!--both columns-->
+                <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--indiv column-->
+    
+                    <div class="inline-flex justify-start items-center gap-1.5">
+                        <div class="w-[201px] py-2.5 px-2.5 flex justify-start items-center gap-1.5">
+                            <div class="w-28 text-blue-900 text-xs font-semibold"> Patient ID </div>
+                        </div>
+                        <div class="flex px-6 py-1 bg-gray-100 justify-start rounded-3xl flex items-center gap-1.5">
+                            <div class="justify-center text-black text-xs">{{patient.patient_id}}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Patient Name</div>
+                        </div>
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{patient_name}}</div>
+                        </div>
+                    </div>
+    
+                    <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Sex</div>
+                        </div>
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{patient.sex}}</div>
+                        </div>
+                    </div>
+    
+                    <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Civil Status</div>
+                        </div>
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{patient.civil_status}}</div>
+                        </div>
+                    </div>
+    
+                    <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Age</div>
+                        </div>
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{patient_age}}</div>
+                        </div>
+                    </div>
+    
+                    <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Birthday</div>
+                        </div>
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{patient.birthdate}}</div>
+                        </div>
+                    </div>
+    
+                    
+    
+                </div>
+    
+                <!--COLUMN 2-->
+                <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--indiv column: Column 2-->
+    
+                    <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="w-7 flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Date Requested</div>
+                        </div>
+                        <div class="px-6 py-1 bg-gray-100 justify-start rounded-3xl flex items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-28 justify-center text-xs text-black font-normal">{{request.date_requested}}</div>
+                        </div>
+                    </div>
+    
+                    <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="w-7 flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Mobile No.</div>
+                        </div>
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{patient.mobile_num}}</div>
+                        </div>
+                    </div>
+    
+                    <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Landline No.</div>
+                        </div>
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{patient.landline_num}}</div>
+                        </div>
+                    </div>
+    
+                    <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Email</div>
+                        </div>
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{patient.email}}</div>
+                        </div>
+                    </div>
+    
+                    <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Address</div>
+                        </div>
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{patient_address}}</div>
+                        </div>
+                    </div>
+    
+                    <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Physician</div>
+                        </div>
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{request.physician}}</div>
+                        </div>
+                    </div>
+    
+                </div>
+            
+            </div>
+        </div>
+    
+    
+        <!-- Lab Results Section -->
+        <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5">
+            <!--Section title: Lab Results-->
+            <div class="self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+                <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Add Laboratory Results</div>
+            </div>
+    
+            <h2>{{test.test_name}}</h2>
+            <form id="resultform" method="POST" action="{% url 'submit_labresults' line_item_id=line_item.line_item_id %}">
+                {% csrf_token %}
+                <table>
+                    {% for section_data in sections %}
+                        <tr>
+                            {% for f in section_data.fields %}
+                                <th>{{ f.label_name }}</th>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            {% for f in section_data.fields %}
+                                <td>
+                                    {% if f.field_type == "Label" %}
+                                        {{ f.field_value }}
+                                    {% elif f.field_type == "Text" %}
+                                        <input type="text" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
+                                    {% elif f.field_type == "Number" %}
+                                        <input type="number" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
+                                    {% elif f.field_type == "Image" %}
+                                        <input type="url" name="{{ f.label_name }}" placeholder="Enter image URL" value="{{ f.saved_value|default_if_none:'' }}">
+                                    {% else %}
+                                        <input type="text" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>                
+                    {% endfor %}
+                </table>
+    
+                <!--Section title: Add Signature-->
+                <div class="self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+                    <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Add Signature</div>
+                </div>
+    
+                <div>
+                    <select id="lab_tech_1" name="lab_tech_1" onchange="updateLabTechInfo('lab_tech_1')" required>
+                        <option value="">Lab Tech Name</option>
+                        {% for tech in lab_technicians %}
+                            <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
+                                {{ tech.first_name }} {{ tech.last_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+    
+                    <p id="lab_tech_1_info">Role <br> License Number</p>
+    
+                    <select id="lab_tech_2" name="lab_tech_2" onchange="updateLabTechInfo('lab_tech_2')" required>
+                        <option value="">Lab Tech Name</option>
+                        {% for tech in lab_technicians %}
+                            <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
+                                {{ tech.first_name }} {{ tech.last_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <p id="lab_tech_2_info">Role <br> License Number</p>
+                </div>
+                
+    
+                
+    
+                <input type="hidden" name="submission_type" id="submission_type" value="">
+                <!-- Modal Trigger Button -->
+                <button type="button" onclick="saveModal()">Save</button>
+                <button type="button" onclick="submitModal()">Submit</button>
+            </form>
+        </div>
+        
+        <!-- Save Modal -->
+        <div id="saveModal" class="modal">
+            <div class="modal-content" style="background-color: white; width: 500px; margin-top: 400px; margin-left: 800px; padding: 50px;">
+                <h2>Save results?</h2>
+                <p>You may continue editing this form later.</p>
+                <div class="modal-buttons">
+                    <button class="btn-confirm" onclick="submitForm()">Yes</button>
+                    <button class="btn-cancel" onclick="closeSaveModal()">No</button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Confirmation Modal -->
+        <div id="confirmModal" class="modal">
+            <div class="modal-content" style="background-color: white; width: 500px; margin-top: 400px; margin-left: 800px; padding: 50px;">
+                <h2>Submit results?</h2>
+                <p>You cannot edit this form upon submission.</p>
+                <div class="modal-buttons">
+                    <button class="btn-confirm" onclick="submitForm()">Yes</button>
+                    <button class="btn-cancel" onclick="closeConfirmModal()">No</button>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Confirmation Modal -->
-    <div id="confirmModal" class="modal">
-        <div class="modal-content" style="background-color: white; width: 500px; margin-top: 400px; margin-left: 800px; padding: 50px;">
-            <h2>Submit results?</h2>
-            <p>You cannot edit this form upon submission.</p>
-            <div class="modal-buttons">
-                <button class="btn-confirm" onclick="submitForm()">Yes</button>
-                <button class="btn-cancel" onclick="closeConfirmModal()">No</button>
-            </div>
-        </div>
-    </div>
 
     <script>
         let submissionType = "";
