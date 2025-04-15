@@ -5,6 +5,17 @@ from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateF
 from datetime import date, datetime
 from decimal import Decimal
 from django.utils import timezone
+from django.http import HttpResponse
+from django.urls import reverse
+
+import pdfkit
+config=pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
+import zipfile
+import zipfile
+from io import BytesIO
+import os
+
+
 
 
 # Utility functions
@@ -351,3 +362,168 @@ def add_patient (request):
             
     else:
         return render(request, 'labreqsys/add_patient.html')
+
+
+def pdf(request, pk):
+    '''
+        Webpage to format pdf!
+    '''
+    
+    line_item = RequestLineItem.objects.get(line_item_id=pk)
+    
+    test_component = TestComponent.objects.get(component_id=line_item.component.component_id)
+    
+    template_form = TemplateForm.objects.get(template_id=test_component.template.template_id)
+    
+    lab_request = LabRequest.objects.get(request_id=line_item.request.request_id)
+
+    patient = Patient.objects.get(patient_id=lab_request.patient.patient_id)
+    
+    
+    template_section = TemplateSection.objects.filter(template=template_form.template_id)
+    template_field = []
+    result_value = []
+    
+    result_values = []
+
+    for section in template_section:
+        fields = TemplateField.objects.filter(section=section.section_id)
+        for field in fields:
+            template_field.append(field)
+            results = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)
+            for result in results:
+                result_value.append(result)
+    
+    
+    age = 0
+    if patient.birthdate:
+        today = date.today()
+        age = today.year - patient.birthdate.year - ((today.month, today.day) < (patient.birthdate.month, patient.birthdate.day))
+    else:
+        age = None          
+            
+        
+    
+    
+        
+        
+
+            
+    
+    # -----------------------
+    # Text/Number Type
+    template_sec_result = TemplateSection.objects.filter(template=template_form.template_id, section_name__icontains='results')
+    template_field_result = None
+    for result in template_sec_result:
+        template_field_result=TemplateField.objects.filter(section=result.section_id)
+
+    # Image Type
+    template_sec_image = TemplateSection.objects.filter(template=template_form.template_id, section_name__icontains='image')
+    template_field_image = None
+    for image in template_sec_image: 
+        template_field_image=TemplateField.objects.filter(section=image.section_id)
+    
+    # Remark Type
+    template_sec_remark = TemplateSection.objects.filter(template=template_form.template_id, section_name__icontains='remarks')
+    template_field_remark = None
+    for remark in template_sec_remark: 
+        template_field_remark=TemplateField.objects.filter(section=remark.section_id)
+    
+    
+    
+    for result in template_sec_result:
+        result_value_result = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__section_id=result.section_id)
+    
+    for remark in template_sec_remark:
+        result_value_remark = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__section_id=remark.section_id)
+
+    # --------
+    
+    
+    
+    
+    return render(request, 'labreqsys/pdf.html', 
+                {'line_item':line_item,
+                'test_component':test_component,
+                'template_form':template_form,
+                'template_section': template_section,
+                'template_field': template_field, 
+                
+                
+                #'template_sec_result': template_sec_result,
+                #'template_sec_image': template_sec_image,
+                #'template_sec_remark': template_sec_remark,
+                #'template_field_result':template_field_result,
+                #'template_field_image':template_field_image,
+                #'template_field_remark':template_field_remark,
+                'lab_request': lab_request, 
+                'patient': patient, 
+                'result_value': result_value,             
+                #'result_value_result': result_value_result,
+                #'result_value_remark': result_value_remark,
+                # 'review_result': review_result,
+                'age': age,
+                'address': "testing",
+                })
+
+
+def generatePDF(request):
+    '''
+    Request to generate PDF
+    '''
+    ids = request.GET.get("ids", "").split(",") 
+    pdfs = []
+    filenames = []
+
+    if len(ids) > 1: # Return zip with all pdfs selected
+        for pk in ids:
+            try:
+                pdf_response = savePDF(request, pk)
+                pdfs.append(pdf_response)
+                filenames.append(f"patient_{pk}.pdf")
+            except Patient.DoesNotExist:
+                print(f"Patient with ID {pk} does not exist.")
+                continue
+            except Exception as e:
+                print(f"Error generating PDF for ID {pk}: {e}")
+                continue
+
+        if not pdfs:
+            return HttpResponse("No PDFs were generated.", status=400)
+
+        zip_buffer = BytesIO()
+
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            for pdf_response, filename in zip(pdfs, filenames):
+                zip_file.writestr(filename, pdf_response.content)
+
+        zip_buffer.seek(0)
+
+        response = HttpResponse(zip_buffer, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename="patients_pdfs.zip"'
+        return response
+    elif len(ids) == 1: # Return only one pdf
+        return savePDF(request, ids[0])
+
+    return HttpResponse("No PDFs.")
+    
+
+# PDF generation function for a single patient
+def savePDF(request, pk):
+    '''
+    Save PDF using pdfkit
+    '''
+    
+    line_item = RequestLineItem.objects.get(line_item_id=pk)
+    print (f"pdf: {line_item}")
+    
+    filename = f"{line_item.request.patient.last_name}_{line_item.component.test_name}_{line_item.request.date_requested}.pdf"
+    # Create PDF from URL (the URL will be a page where you render patient details)
+    pdf = pdfkit.from_url(request.build_absolute_uri(reverse('pdf', args=[pk])), False)
+    
+    # Return the PDF response
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'  # Correct filename usage
+    print("PDF made")
+
+    return response
