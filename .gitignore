@@ -25,3 +25,4 @@ db.sqlite3
 
 # Django local settings
 settings_local.py
+drmed_labreqsys/settings.py
