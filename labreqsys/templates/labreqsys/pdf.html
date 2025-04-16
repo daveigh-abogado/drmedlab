@@ -142,45 +142,29 @@
     
     </div>
 
-<!--Section title: Patient Information-->
+
 {{template_form.template_name}}
 <br>
 
-{% for section in template_section %}
+{% for section, row in form.items %}
+    {{section.section_name}} <!--FOR BACKEND PURPOSE ONLY ! can remove later :)-->
     <table>
-
-        
         <thead>
-            <tr> Section: {{section.section_name}}</tr>
-            <tr>
-            {% for field in template_field %}             
-                {%if field.section == section%}
-                    <th> Label: {{field.label_name}}</th>
-                {% endif %}
+            {% for field in row %}
+                <th>{{field.label_name}}</th>
             {% endfor %}
-            </tr>
         </thead>
         <tbody>
-            {% for value in result_value %}
-                {% if value.field.section == section%}
-                    <tr>
-                        {% for field in template_field %}             
-                            {%if field.section == section %}
-                                <td>
-                                    {% if field.label_name == 'Result' or field.label_name == 'Remarks' %}
-                                        Result: {{value.field_value}}
-                                    {% else %}
-                                        Value: {{field.field_value}}
-                                    {% endif %}
-                                </td>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                {% endif %}
+            {% for field, values in row.items %}
+                {% if values %} 
+                    {% for value in values %} 
+                    <td> {{value.field_value}} </td>
+                    {% endfor %}
+                {% else %}
+                    <td>{{field.field_value}}</td>
+                {% endif %}                
             {% endfor %}
-        </tbody>
-    </table>
-
+    <table>
 {% endfor %}
 
 

@@ -275,6 +275,7 @@ def submit_labresults(request, line_item_id):
         line_item.request_status = 'In Progress'
     line_item.save()
     return redirect('view_individual_lab_request', request_id=line_item.request_id)
+
 def add_patient (request):
     if request.method == "POST":
         last_name = request.POST.get('last_name')
@@ -373,97 +374,73 @@ def pdf(request, pk):
     
     test_component = TestComponent.objects.get(component_id=line_item.component.component_id)
     
-    template_form = TemplateForm.objects.get(template_id=test_component.template.template_id)
+    template_form = TemplateForm.objects.filter(template_id=line_item.component.template.template_id).order_by('-template_id')[0]
+    # Looks for the latest template made
     
     lab_request = LabRequest.objects.get(request_id=line_item.request.request_id)
 
     patient = Patient.objects.get(patient_id=lab_request.patient.patient_id)
     
     
-    template_section = TemplateSection.objects.filter(template=template_form.template_id)
-    template_field = []
-    result_value = []
+    # [MADS NOTES]: CHAOS ENSUES !
     
-    result_values = []
+    ''' 
+        !! form 'dict' will look like this:
+        {
+            <TemplateSection 1>: --> Represents a row #1
+                {
+                    TemplateField 1 : Results[],                --> Represents field_value already filled
+                    TemplateField 2 : Results[<ResultValue 1>]  --> Represents field_value filled in by user
+                    TemplateField 3 : Results[]                 --> Ex. Unit, Field_value = g/L
+                    TemplateField 4 : Results[<ResultValue 2>]  --> Ex. Result, Field_value = 12 (INPUT)
+                }
+            <TemplateSection 2>: --> Represents a row #2
+                {
+                    TemplateField 2 : Results[<ResultValue 1>]  --> Ex. Remarks, Field_value = "Neutral" (INPUT)
+                }
+        }
+        
+        This way, its easier to map out results with user input and a lot more dynamic
+    '''
+    
+    form = {}
+    fields = [] 
+    reviewed_by = [] # [MADS TO DO!] When ResultReview starts saving, pass reviewer data here
+    
+    template_section = TemplateSection.objects.filter(template=template_form.template_id)
 
     for section in template_section:
-        fields = TemplateField.objects.filter(section=section.section_id)
-        for field in fields:
-            template_field.append(field)
-            results = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)
-            for result in results:
-                result_value.append(result)
+        fields.append(TemplateField.objects.filter(section=section.section_id)) # list of all fields per section and appends to fields 'list'
+        
+        for column in fields:
+            results = []
+            result_value = {}
+            for field in column:
+                
+                results.append(ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)) # list of all results per field and appends to results 'list'
+                for result in results:
+                    result_value[field] = result # pairs result 'queryset' to field 'object' indicated in for loop
     
-    
+                    if result.exists():
+                        for review in result:
+                            reviewed_by.append(ResultReview.objects.filter(result_value__result_value_id = review.result_value_id))
+                form[section] = result_value # pairs result_value 'dict' to a section 'queryset'
+                
     age = 0
     if patient.birthdate:
         today = date.today()
         age = today.year - patient.birthdate.year - ((today.month, today.day) < (patient.birthdate.month, patient.birthdate.day))
     else:
-        age = None          
-            
-        
-    
-    
-        
-        
-
-            
-    
-    # -----------------------
-    # Text/Number Type
-    template_sec_result = TemplateSection.objects.filter(template=template_form.template_id, section_name__icontains='results')
-    template_field_result = None
-    for result in template_sec_result:
-        template_field_result=TemplateField.objects.filter(section=result.section_id)
-
-    # Image Type
-    template_sec_image = TemplateSection.objects.filter(template=template_form.template_id, section_name__icontains='image')
-    template_field_image = None
-    for image in template_sec_image: 
-        template_field_image=TemplateField.objects.filter(section=image.section_id)
-    
-    # Remark Type
-    template_sec_remark = TemplateSection.objects.filter(template=template_form.template_id, section_name__icontains='remarks')
-    template_field_remark = None
-    for remark in template_sec_remark: 
-        template_field_remark=TemplateField.objects.filter(section=remark.section_id)
-    
-    
-    
-    for result in template_sec_result:
-        result_value_result = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__section_id=result.section_id)
-    
-    for remark in template_sec_remark:
-        result_value_remark = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__section_id=remark.section_id)
-
-    # --------
-    
-    
-    
+        age = None                 
     
     return render(request, 'labreqsys/pdf.html', 
-                {'line_item':line_item,
-                'test_component':test_component,
-                'template_form':template_form,
-                'template_section': template_section,
-                'template_field': template_field, 
-                
-                
-                #'template_sec_result': template_sec_result,
-                #'template_sec_image': template_sec_image,
-                #'template_sec_remark': template_sec_remark,
-                #'template_field_result':template_field_result,
-                #'template_field_image':template_field_image,
-                #'template_field_remark':template_field_remark,
-                'lab_request': lab_request, 
+                {'lab_request': lab_request, 
                 'patient': patient, 
-                'result_value': result_value,             
-                #'result_value_result': result_value_result,
-                #'result_value_remark': result_value_remark,
-                # 'review_result': review_result,
+                'test_component':test_component,
                 'age': age,
                 'address': "testing",
+                'form' : form,
+                'reviewed_by': reviewed_by                
                 })
 
 
@@ -472,10 +449,10 @@ def generatePDF(request):
     Request to generate PDF
     '''
     ids = request.GET.get("ids", "").split(",") 
-    pdfs = []
-    filenames = []
-
+    
     if len(ids) > 1: # Return zip with all pdfs selected
+        pdfs = []
+        filenames = []
         for pk in ids:
             try:
                 pdf_response = savePDF(request, pk)
@@ -487,10 +464,7 @@ def generatePDF(request):
             except Exception as e:
                 print(f"Error generating PDF for ID {pk}: {e}")
                 continue
-
-        if not pdfs:
-            return HttpResponse("No PDFs were generated.", status=400)
-
+            
         zip_buffer = BytesIO()
 
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
@@ -515,15 +489,13 @@ def savePDF(request, pk):
     '''
     
     line_item = RequestLineItem.objects.get(line_item_id=pk)
-    print (f"pdf: {line_item}")
     
-    filename = f"{line_item.request.patient.last_name}_{line_item.component.test_name}_{line_item.request.date_requested}.pdf"
+    filename = f"{line_item.request.patient.last_name}, {line_item.request.patient.first_name[0]}_{line_item.component.test_name}_{line_item.request.date_requested}.pdf"
     # Create PDF from URL (the URL will be a page where you render patient details)
     pdf = pdfkit.from_url(request.build_absolute_uri(reverse('pdf', args=[pk])), False)
     
     # Return the PDF response
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'  # Correct filename usage
-    print("PDF made")
 
     return response
