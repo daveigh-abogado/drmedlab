@@ -6,53 +6,33 @@
 
 
 
-<div class="flex-1 p-3"> <!-- WHOLE SPACE -->
+<div class="pt-3"> <!-- WHOLE SPACE -->
 
     <!-- TOP BAR -->
     <div class="container text-center">
         <div class="row">
-        <!-- SEARCH -->
-            <div class="col">
-                <form class="max-w-lg">
-                    <div class="flex">
-                        <label for="search-dropdown" class="font-medium text-gray-500 sr-only">Patient ID</label>
-                        <button id="dropdown-button" data-dropdown-toggle="dropdown" class="shrink-0 bg-white inline-flex items-center px-4 font-medium text-center text-gray-500 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none" type="button">
-                            Patient ID 
-                            <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"> <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+            <!-- SEARCH -->
+            <div class="col ms-auto">
+                <div class="w-full max-w-sm min-w-[200px]">
+                    <div class="relative">
+                        <input
+                            class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-blue-900 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-primary-700 hover:border-primary-700 shadow-sm focus:shadow"
+                            placeholder="Search Patient ID, Last or First name" 
+                        />
+                        <button
+                            class="absolute top-1 right-1 flex items-center rounded-md bg-primary-700 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none "
+                            type="button"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                            <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd" />
                             </svg>
-                        </button>
-
-                        <div id="dropdown" class="z-10 hidden divide-gray-100 bg-white rounded-lg shadow-sm w-44">
-                            <ul class="py-2 text-sm text-gray-700 list-none" aria-labelledby="dropdown-button">
-                                <li>
-                                    <button type="button" class="inline-flex px-1 py-1 w-full text-left hover:bg-gray-100">Patient ID</button>
-                                </li>
-                                <li>
-                                    <button type="button" class="inline-flex px-1 py-1 w-full text-left hover:bg-gray-100">Last Name</button>
-                                </li>
-                                <li>
-                                    <button type="button" class="inline-flex px-1 py-1 w-full text-left hover:bg-gray-100">Given Name</button>
-                                </li>
-                                <li>
-                                    <button type="button" class="inline-flex px-1 py-1 w-full text-left hover:bg-gray-100">Email</button>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="relative w-full">
-                            <input type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Who are you looking for?" required />
-                            <button type="submit" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-primary-700 rounded-e-lg border border-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
-                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                                </svg>
-                                <span class="sr-only">Search</span>
-                            </button>
-                        </div>
+                        </button> 
                     </div>
-                </form>
+                </div>
             </div>
 
 
-            <!-- Sort By Container -->
+            <!-- Sort By Container 
             <div class="col ms-auto text-end">
                 <label class="font-medium text-ssm text-gray-196 px-2"> Sort by </label>
                 <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="border text-ssm text-gray-196 hover:bg-gray-200 rounded-lg px-6 py-2 text-center inline-flex items-center" type="button">Patient ID
@@ -61,7 +41,7 @@
                     </svg> 
                 </button>
                 
-                <!-- Dropdown menu -->
+                <!-- Dropdown menu 
                 <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownHoverButton">
                         <li>
@@ -79,6 +59,7 @@
                     </ul>
                 </div>
             </div>
+            -->
 
             <!--ADD PATIENT BUTTON: the orginal href -> {% url 'add_patient'%} -->
             <div class="col ms-auto text-end">
@@ -109,27 +90,28 @@
 
                             <!--ROW 1-->
                             <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2">Patient Information</div>
+
                             <div class="grid gap-2.5 mb-4 sm:grid-cols-6"> <!--TO BACKEND: don't forget to fill in for=""-->
                                 <div>
                                     <label for="last_name" class="block mb-2 text-left text-sm font-medium text-gray-500">Last Name *</label>
-                                    <input type="text" name="last_name" id="last_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type last name" required="">
+                                    <input type="text" name="last_name" id="last_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type last name" required="" pattern="^[A-Za-z]+$*" title="Use letters and spaces only.">
                                 </div>
                                 <div>
                                     <label for="first_name" class="block mb-2 text-left text-sm font-medium text-gray-500">First Name *</label>
-                                    <input type="text" name="first_name" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type first name" required="">
+                                    <input type="text" name="first_name" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type first name" required="" pattern="^[A-Za-z ]+$" title="Use letters and spaces only.">
                                 </div>
                                 <div>
                                     <label for="middle_initial" class="block mb-2 text-left text-sm font-medium text-gray-500">M.I.</label>
-                                    <input type="text" name="middle_initial" id="middle_initial" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type M.I.">
+                                    <input type="text" name="middle_initial" id="middle_initial" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type M.I." pattern="^[A-Za-z]{1,2}$"  title="Maximum 2 letters only.">
                                 </div>
                                 <div>
                                     <label for="suffix" class="block mb-2 text-left text-sm font-medium text-gray-500">Suffix</label>
-                                    <input type="text" name="suffix" id="suffix" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type Suffix">
+                                    <input type="text" name="suffix" id="suffix" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type Suffix" pattern="^[A-Za-z ]+$" title="Use letters and spaces only.">
                                 </div>
                                 <div>
                                     <label for="sex" class="block mb-2 text-left text-sm font-medium text-gray-500">Sex *</label>
-                                    <select id="sex" name="sex" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                                        <option selected="">Select gender</option>
+                                    <select id="sex" name="sex" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
+                                        <option value="" disabled selected>Select gender</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
                                         <option value=Other> Other </option>
@@ -137,8 +119,8 @@
                                 </div>
                                 <div>
                                     <label for="Civil Status" class="block mb-2 text-left text-sm font-medium text-gray-500">Civil Status *</label>
-                                    <select id="civil_status" name="civil_status" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                                        <option selected="">Select status</option>
+                                    <select id="civil_status" name="civil_status" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
+                                        <option value="" disabled selected>Select status</option>
                                         <option value=Single> Single </option>
                                         <option value=Married> Married </option>
                                         <option value=Widowed> Widowed </option>
@@ -155,15 +137,15 @@
                                 </div>
                                 <div>
                                     <label for="mobile_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Mobile No.</label>
-                                    <input type="text" name="mobile_num" id="mobile_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="+63 9">
+                                    <input type="text" name="mobile_num" id="mobile_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="+63 9" pattern="^[0-9]{8,12}$" title="Use 12 digits only. No letters or special characters.">
                                 </div>
                                 <div>
                                     <label for="landline_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Landline No.</label>
-                                    <input type="text" name="landline_num" id="landline_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="+08 2">
+                                    <input type="text" name="landline_num" id="landline_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="+08 2" pattern="^[0-9]{7,9}$" title="Use 9 digits only. No letters or special characters.">
                                 </div>
                                 <div>
                                     <label for="email" class="block mb-2 text-left text-sm font-medium text-gray-500">Email</label>
-                                    <input type="text" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="@">
+                                    <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="@">
                                 </div>
                             </div>
 
@@ -172,40 +154,41 @@
                             <div class="grid gap-2.5 mb-4 sm:grid-cols-4"> <!--TO BACKEND: don't forget to fill in for=""-->
                                 <div>
                                     <label for="house_num" class="block mb-2 text-left text-sm font-medium text-gray-500">House No. *</label>
-                                    <input type="text" name="house_num" id="house_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type number" required="">
+                                    <input type="text" name="house_num" id="house_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type number" required="" pattern="^[A-Za-z0-9]+$" title="Use letters and numbers only." >
                                 </div>
                                 <div>
                                     <label for="street" class="block mb-2 text-left text-sm font-medium text-gray-500">Street Name *</label>
-                                    <input type="text" name="street" id="street" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type street name" required="">
+                                    <input type="text" name="street" id="street" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type street name" required="" pattern="^[A-Za-z0-9 .,]+$" title="Use letters, numbers, spaces, and periods only.">
+                    
                                 </div>
                                 <div>
                                     <label for="subdivision" class="block mb-2 text-left text-sm font-medium text-gray-500">Village/Subdivision</label>
-                                    <input type="text" name="subdivision" id="subdivision" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type village or subdivision">
+                                    <input type="text" name="subdivision" id="subdivision" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type village or subdivision" pattern="^[A-Za-z0-9 .,]+$" title="Use letters, numbers, spaces, and periods only.">
                                 </div>
                                 <div>
                                     <label for="baranggay" class="block mb-2 text-left text-sm font-medium text-gray-500">Barangay</label>
-                                    <input type="text" name="baranggay" id="baranggay" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type barangay">
+                                    <input type="text" name="baranggay" id="baranggay" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type barangay" pattern="^[A-Za-z0-9 .,]+$" title="Use letters, numbers, spaces, and periods only.">
                                 </div>
                             </div>
 
                             <!--ROW 4-->
                             <div class="grid gap-2.5 mb-4 sm:grid-cols-3"> <!--TO BACKEND: don't forget to fill in for=""-->
                                 <div>
-                                    <label for="province" class="block mb-2 text-left text-sm font-medium text-gray-500">Province</label>
+                                    <label for="province" class="block mb-2 text-left text-sm font-medium text-gray-500">Province *</label>
                                     <select id="province" name="province" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
                                         <option value="" selected disabled>Select province</option>
-                                        <option value="MetroManila"> Metro Manila </option>
+                                        <option value="Metro Manila"> Metro Manila </option>
                                         <option value="Abra"> Abra </option>
                             
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="city" class="block mb-2 text-left text-sm font-medium text-gray-500">City</label>
-                                    <input type="text" name="city" id="city" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type city">
+                                    <label for="city" class="block mb-2 text-left text-sm font-medium text-gray-500">City *</label>
+                                    <input type="text" name="city" id="city" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type city" required="" pattern="^[A-Za-z ]+$" title="Use letters and spaces only.">
                                 </div>
                                 <div>
                                     <label for="zip_code" class="block mb-2 text-left text-sm font-medium text-gray-500">Zip Code *</label>
-                                    <input type="text" name="zip_code" id="zip_code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type zip code" required="">
+                                    <input type="text" name="zip_code" id="zip_code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type zip code" pattern="[0-9]{4}" title="Enter correct zip code.">
                                 </div>
                             </div>
 
@@ -214,11 +197,11 @@
                             <div class="grid gap-2.5 mb-4 sm:grid-cols-2"> <!--TO BACKEND: don't forget to fill in for=""-->
                                 <div>
                                     <label for="pwd_id_num" class="block mb-2 text-left text-sm font-medium text-gray-500">PWD</label>
-                                    <input type="text" name="pwd_id_num" id="pwd_id_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type PWD number">
+                                    <input type="text" name="pwd_id_num" id="pwd_id_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type PWD number" pattern="[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{3}-[0-9]{7}" title="Enter correct PWD Number Format: [NN]-[NN]-[NN]-[NNN]-[NNNNNNN]">
                                 </div>
                                 <div>
                                     <label for="senior_id_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Senior Citizen</label>
-                                    <input type="text" name="senior_id_num" id="senior_id_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type Senior Citizen ID number">
+                                    <input type="text" name="senior_id_num" id="senior_id_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type Senior Citizen ID number" pattern="^[a-zA-Z0-9\s]$" title="Use letters and numbers only.">
                                 </div>
                             </div>
 
@@ -230,15 +213,25 @@
                     </div>
                 </div>
             </div>
-            
+                
         </div>
+        <!--- Error Message -->
+        <div>
+            {% if messages %}
+            <ul class="mb-4">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>    
     </div>
+    
     
 
     <div class="bg-white rounded-3xl mt-4 p-0">
 
         <!-- TABLE -->
-        
         <div class = "relative overflow-x-auto  rounded-xl ">
             <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
                 <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
@@ -276,7 +269,10 @@
 </div>
 
 
-
+<script>
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("birthdate").setAttribute("max", today);
+</script>
 
 {% endblock content %}
 

@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('labreqsys', '0002_requestcomponent_requestlineitem_requestpackage_and_more'),
+        ('labreqsys', '0001_initial'),
     ]
 
     operations = [

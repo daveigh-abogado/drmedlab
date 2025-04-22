@@ -849,9 +849,18 @@ select {
   top: 0px;
 }
 
+.top-1 {
+  top: 0.25rem;
+}
+
 .right-0 {
   right: 0px;
 }
+
+.right-1 {
+  right: 0.25rem;
+}
+
 
 .z-10 {
   z-index: 10;
@@ -1149,6 +1158,9 @@ select {
 
 .max-w-\[250px\] {
   max-width: 250px;
+}
+.max-w-sm {
+  max-width: 384px; /*24 rem*/
 }
 
 .w-40 {
@@ -1581,6 +1593,11 @@ select {
   background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
 }
 
+.bg-transparent {
+  --tw-bg-opacity: 1;
+  background-color: transparent;
+}
+
 .from-blue-500 {
   --tw-gradient-from: #3b82f6 var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(59 130 246 / 0) var(--tw-gradient-to-position);
@@ -1737,6 +1754,10 @@ select {
   padding-top: 0.25rem;
 }
 
+.pt-3 {
+  padding-top: 0.75rem;
+}
+
 .pl-9 {
   padding-left: 2.25rem;
 }
@@ -1753,6 +1774,10 @@ select {
 
 .pr-\[10px\] {
   padding-right: 10px;
+}
+
+.pr-28 {
+  padding-right: 7rem;
 }
 
 
@@ -1999,6 +2024,10 @@ select {
   transition-duration: 75ms;
 }
 
+.duration-300 {
+  transition-duration: 300ms;
+}
+
 .ease-in-out {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -2042,6 +2071,13 @@ select {
   text-decoration-line: underline;
 }
 
+.hover\:border-primary-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: #1e40af;
+}
+
+
+
 .no-underline {
   text-decoration: none;
   text-decoration-line: none;
@@ -2055,6 +2091,17 @@ select {
 .focus\:underline:focus {
   text-decoration-line: underline;
 }
+
+.focus\:shadow:focus {
+  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 
+               0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 
+                       0 1px 2px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), 
+               var(--tw-ring-shadow, 0 0 #0000), 
+               var(--tw-shadow);
+}
+
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
@@ -2115,8 +2162,8 @@ select {
   box-shadow: 0 0 0 2px #93c5fd; /* Default primary-300 color */
 }
 
-.focus\:border-primary-600:focus {
-  border-color: #1D4ED8; /* Assuming primary-600 is #1D4ED8 */
+.focus\:border-primary-700:focus {
+  border-color: #1D4ED8; 
 }
 
 .active\:bg-blue-300:active {

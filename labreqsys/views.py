@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview
+from django.db.models import Q
 from datetime import date, datetime
 from decimal import Decimal
 from django.utils import timezone
@@ -71,13 +73,32 @@ def view_patient(request, pk):
         age = today.year - p.birthdate.year - ((today.month, today.day) < (p.birthdate.month, p.birthdate.day))
     else:
         age = None
+        
+    address_append = []
+    
+    
+    if p.street:
+        address_append.append(p.street)
+    if p.subdivision:
+        address_append.append(p.subdivision)
+    if p.city:
+        address_append.append(p.city)
+    if p.province:
+        address_append.append(p.province)
+    if p.zip_code:
+        address_append.append(p.zip_code)
+    
+    address = ', '.join(address_append) if address_append else None
+    
+    if p.house_num:
+        address = f"{p.house_num} {address}"
 
     labreqs = LabRequest.objects.filter(patient_id=p.pk).values()
     return render(request, 'labreqsys/view_patient.html', {
         'patient': p,
         'full_name': full_name,
         'age': age,
-        'address': 'testing',  # Replace with actual address
+        'address': address,  # Replace with actual address
         'requests': labreqs,
         'pickups': 'Collected',  # Replace with actual pickup status
         'emails': 'Collected'  # Replace with actual email status
@@ -145,74 +166,55 @@ def summarize_labreq(request, pk):
         total -= discount
     
     current_date = datetime.now().strftime('%Y-%m-%d')
-    if request.method == "POST":
-        physician = request.POST.get('physician')
-        mode = request.POST.getlist('mode_of_release')
 
-    if 'Pick-Up' in mode and 'Email' in mode:
-        mode_of_release = 'Both'
-    else:
-        mode_of_release = 'Pick-up' if 'Pick-Up' in mode else 'Email'
-        
-    lab_request = LabRequest.objects.create(
-        patient=p,
-        date_requested=current_date,
-        physician=physician,
-        mode_of_release=mode_of_release,
-        overall_status="Not Started"
-    )
-    
-    # Save selected components and packages in the request_line_item table
-    for component in components:        
-        RequestLineItem.objects.create(
-            request=lab_request,
-            component=component,
-            template_used=component.template_id,
-            request_status="Not Started"
-        )
-        # Fetch fields for this component’s template, excluding Labels
-        sections = TemplateSection.objects.filter(template_id=component.template_id)
-        for section in sections:
-            fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
-            for field in fields:
-                ResultValue.objects.create(
-                    line_item=RequestLineItem.objects.last(),
-                    field=field,
-                    field_value=''  # Initially blank
-                )
-    
-    for package in packages:
-        # Save each component of the package as a separate line item
-        package_components = TestPackageComponent.objects.filter(package=package)
-        for package_component in package_components:
-            RequestLineItem.objects.create(
-                request=lab_request,
-                component=package_component.component,
-                package=package,
-                template_used=package_component.component.template_id,
-                request_status="Not Started"
+    if request.method == "POST" and "confirm" in request.POST:
+        # Save the lab request and redirect to the patient's details page
+        if request.POST["confirm"] == "submit":
+            physician = request.POST.get('physician')
+            mode = request.POST.getlist('mode_of_release')
+
+            if 'Pick-Up' in mode and 'Email' in mode:
+                mode_of_release = 'Both'
+            else:
+                mode_of_release = 'Pick-up' if 'Pick-Up' in mode else 'Email'
+                
+            lab_request = LabRequest.objects.create(
+                patient=p,
+                date_requested=current_date,
+                physician=physician,
+                mode_of_release=mode_of_release,
+                overall_status="Not Started"
             )
-            # Fetch fields for this component’s template, excluding Labels
-            sections = TemplateSection.objects.filter(template_id=package_component.component.template_id)
-            for section in sections:
-                fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
-                for field in fields:
-                    ResultValue.objects.create(
-                        line_item=RequestLineItem.objects.last(),
-                        field=field,
-                        field_value=''  # Initially blank
+            
+            for component in components:
+                RequestLineItem.objects.create(
+                    request=lab_request,
+                    component=component,
+                    request_status="Not Started"
+                )
+            
+            for package in packages:
+                package_components = TestPackageComponent.objects.filter(package=package)
+                for package_component in package_components:
+                    RequestLineItem.objects.create(
+                        request=lab_request,
+                        component=package_component.component,
+                        package=package,
+                        request_status="Not Started"
                     )
-    
+            
+            return redirect('view_patient', pk=pk)
+        else:
+            return redirect('view_patient', pk=pk)
+
+    # Render the summary page without saving
     return render(request, 'labreqsys/summarize_labreq.html', {
         'patient': p,
         'components': components,
         'packages': packages,
         'total': total,
         'date': current_date,
-        'physician': physician,
-        'mode_of_release': mode_of_release,
         'discount': discount,
-        'request_id': lab_request.request_id  # Pass the request ID to the template
     })
 
 def view_individual_lab_request(request, request_id):
@@ -278,6 +280,7 @@ def submit_labresults(request, line_item_id):
 
 def add_patient (request):
     if request.method == "POST":
+        
         last_name = request.POST.get('last_name')
         first_name = request.POST.get('first_name')
         middle_initial = request.POST.get('middle_initial')
@@ -286,15 +289,13 @@ def add_patient (request):
         civil_status = request.POST.get('civil_status') 
         
         birthdate = request.POST.get('birthdate')
-        
         # makes sure birthdate = None when birthdate is passed as "" from request.POST
         # i know it should be from the model parameters, but omg its not working TT~TT
         if birthdate == "":
             birthdate = None
-
-
-        mobile_num = request.POST.get('mobile_num')
         
+        
+        mobile_num = request.POST.get('mobile_num')
         # makes sure mobile_num = None when mobile_num is passed as "" from request.POST
         # i know it should be from the model parameters, but omg its not working TT~TT (2)
         if mobile_num == "":
@@ -303,10 +304,8 @@ def add_patient (request):
         # handles check statement in database
         elif mobile_num.startswith ("63") == False:
             mobile_num = "63" + mobile_num.lstrip("0")
-                    
         
         landline_num = request.POST.get('landline_num')
-        
         # makes sure landline_num = None when landline_num is passed as "" from request.POST
         # i know it should be from the model parameters, but omg its not working TT~TT (2)
         if landline_num == "":
@@ -319,7 +318,7 @@ def add_patient (request):
         email = request.POST.get('email')
         if email == "":
             email = None
-        
+            
         house_num = request.POST.get('house_num')
         street = request.POST.get('street')
         baranggay = request.POST.get('baranggay')
@@ -333,31 +332,48 @@ def add_patient (request):
         pwd_id_num = request.POST.get('pwd_id_num')
         senior_id_num = request.POST.get('senior_id_num')
         
-    
-        new_p = Patient.objects.create(
-            last_name=last_name,
-            first_name=first_name,
-            middle_initial=middle_initial,
-            suffix=suffix,
-            sex=sex,
-            civil_status=civil_status,
-            birthdate=birthdate,
-
-            mobile_num=mobile_num,
-            landline_num=landline_num,
-            email=email,
-            house_num=house_num,
-            street=street,
-            baranggay=baranggay,
-            province=province,
-            city=city,
-            zip_code=zip_code,
-            pwd_id_num=pwd_id_num,
-            senior_id_num=senior_id_num
-            )
+        query = Q(first_name__exact=first_name, last_name__exact=last_name, birthdate__exact=birthdate, sex=sex, city__exact=city)
         
-        p = Patient.objects.get(pk=new_p.patient_id)
-        return redirect('view_patient', pk=p.pk)
+        if mobile_num:
+            query |= Q(mobile_num__icontains=mobile_num)
+        if landline_num:
+            query |= Q(landline_num__icontains=landline_num)
+        if email:
+            query |= Q(email__icontains=email)
+
+        if Patient.objects.filter( 
+            Q(first_name__exact=first_name) &
+            Q(last_name__exact=last_name) &
+            Q(birthdate__exact=birthdate) &
+            Q(sex=sex) &
+            Q(city__exact=city) &
+            query).exists():
+            messages.error(request, "Patient already exists.")
+            return redirect('patientList')
+        else:
+            new_p = Patient.objects.create(
+                last_name=last_name,
+                first_name=first_name,
+                middle_initial=middle_initial,
+                suffix=suffix,
+                sex=sex,
+                civil_status=civil_status,
+                birthdate=birthdate,
+                mobile_num=mobile_num,
+                landline_num=landline_num,
+                email=email,
+                house_num=house_num,
+                street=street,
+                baranggay=baranggay,
+                province=province,
+                city=city,
+                zip_code=zip_code,
+                pwd_id_num=pwd_id_num,
+                senior_id_num=senior_id_num
+                )
+        
+            p = Patient.objects.get(pk=new_p.patient_id)
+            return redirect('view_patient', pk=p.pk)
     
 
             

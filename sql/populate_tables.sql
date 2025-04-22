@@ -15,7 +15,7 @@ DELETE FROM patient;
 -- PATIENTS
 INSERT INTO patient
 VALUES
-(NULL,'Dela Cruz', 'Juan', 'M', 'Jr.', 'Male', '1990-05-15', 
+(NULL, 'Dela Cruz', 'Juan', 'M', 'Jr.', 'Male', '1990-05-15', 
 '639171234567', '028123456', 'PWD123456789', 'SC987654321', 'juan.delacruz@email.com', 
 '123', 'Rizal Street', 'Sunshine Village', 'Barangay 1', 'Manila', 'Metro Manila', 
 '1000', 'Married', NULL),
@@ -37,8 +37,7 @@ NULL, 'Single', NULL
 (NULL, 'Miya', 'Atsumu', NULL, NULL, 'Male', '1980-01-22', 
 NULL, NULL, NULL, NULL, 'atsumumiya@email.com', 
 NULL, NULL, NULL, NULL, 'Hyogo', NULL, 
-'1281', 'Single', NULL
-);
+'1281', 'Single', NULL);
 
 -- LAB REQUESTS
 INSERT INTO lab_request
