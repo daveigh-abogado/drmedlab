@@ -94,15 +94,15 @@
                             <div class="grid gap-2.5 mb-4 sm:grid-cols-6"> <!--TO BACKEND: don't forget to fill in for=""-->
                                 <div>
                                     <label for="last_name" class="block mb-2 text-left text-sm font-medium text-gray-500">Last Name *</label>
-                                    <input type="text" name="last_name" id="last_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type last name" required="" pattern="^[A-Za-z]+$*" title="Use letters and spaces only.">
+                                    <input type="text" name="last_name" id="last_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type last name" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
                                 </div>
                                 <div>
                                     <label for="first_name" class="block mb-2 text-left text-sm font-medium text-gray-500">First Name *</label>
-                                    <input type="text" name="first_name" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type first name" required="" pattern="^[A-Za-z ]+$" title="Use letters and spaces only.">
+                                    <input type="text" name="first_name" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type first name" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
                                 </div>
                                 <div>
                                     <label for="middle_initial" class="block mb-2 text-left text-sm font-medium text-gray-500">M.I.</label>
-                                    <input type="text" name="middle_initial" id="middle_initial" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type M.I." pattern="^[A-Za-z]{1,2}$"  title="Maximum 2 letters only.">
+                                    <input type="text" name="middle_initial" id="middle_initial" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type M.I." pattern="^[A-Za-z]{1,2}$" title="Maximum 2 letters only.">
                                 </div>
                                 <div>
                                     <label for="suffix" class="block mb-2 text-left text-sm font-medium text-gray-500">Suffix</label>
