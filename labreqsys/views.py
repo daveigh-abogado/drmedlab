@@ -311,10 +311,6 @@ def add_patient (request):
         if landline_num == "":
             landline_num = None
         
-        # handles check statement in database    
-        elif landline_num.startswith("0") == False:
-            landline_num = "0" + landline_num
-        
         email = request.POST.get('email')
         if email == "":
             email = None

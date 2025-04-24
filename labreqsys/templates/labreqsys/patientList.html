@@ -137,11 +137,11 @@
                                 </div>
                                 <div>
                                     <label for="mobile_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Mobile No.</label>
-                                    <input type="text" name="mobile_num" id="mobile_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="+63 9" pattern="^[0-9]{8,12}$" title="Use 12 digits only. No letters or special characters.">
+                                    <input type="text" name="mobile_num" id="mobile_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="+63 9" pattern="^(63)\d{10}$|^\d{9}$|^0\d{10}$" title="Use 10-12 digits only. No letters or special characters.">
                                 </div>
                                 <div>
                                     <label for="landline_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Landline No.</label>
-                                    <input type="text" name="landline_num" id="landline_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="+08 2" pattern="^[0-9]{7,9}$" title="Use 9 digits only. No letters or special characters.">
+                                    <input type="text" name="landline_num" id="landline_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="+08 2" pattern="^0\d{9}$" title="Use 10 digits only. No letters or special characters.">
                                 </div>
                                 <div>
                                     <label for="email" class="block mb-2 text-left text-sm font-medium text-gray-500">Email</label>

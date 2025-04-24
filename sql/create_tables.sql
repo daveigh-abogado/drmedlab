@@ -23,7 +23,7 @@ CREATE TABLE patient
  sex ENUM('Male', 'Female', 'Other') NOT NULL,
  birthdate DATE NOT NULL,
  mobile_num VARCHAR(12) CHECK (mobile_num LIKE '63%'),
- landline_num VARCHAR(9) CHECK (landline_num LIKE '0%'),
+ landline_num VARCHAR(10) CHECK (landline_num LIKE '0%'),
  pwd_id_num VARCHAR(20),
  senior_id_num VARCHAR(20),
  email VARCHAR(50) CHECK (email LIKE '%_@_%._%'),
