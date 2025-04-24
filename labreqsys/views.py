@@ -172,30 +172,34 @@ def summarize_labreq(request, pk):
     
     current_date = datetime.now().strftime('%Y-%m-%d')
 
-    if request.method == "POST" and "confirm" in request.POST:
-        # Save the lab request and redirect to the patient's details page
-        if request.POST["confirm"] == "submit":
-            physician = request.POST.get('physician')
-            mode = request.POST.getlist('mode_of_release')
+    if request.method == "POST":
+        physician = request.POST.get('physician')
+        mode = request.POST.getlist('mode_of_release')
 
-            if 'Pick-Up' in mode and 'Email' in mode:
-                mode_of_release = 'Both'
-            else:
-                mode_of_release = 'Pick-up' if 'Pick-Up' in mode else 'Email'
-                
-            lab_request = LabRequest.objects.create(
-                patient=p,
-                date_requested=current_date,
-                physician=physician,
-                mode_of_release=mode_of_release,
-                overall_status="Not Started"
-            )
-            
+        if 'Pick-Up' in mode and 'Email' in mode:
+            mode_of_release = 'Both'
+        else:
+            mode_of_release = 'Pick-up' if 'Pick-Up' in mode else 'Email'
+
+        # Create the lab request immediately when we get the POST data
+        lab_request = LabRequest.objects.create(
+            patient=p,
+            date_requested=current_date,
+            physician=physician,
+            mode_of_release=mode_of_release,
+            overall_status="Not Started"
+        )
+        request_id = lab_request.request_id
+
+        if "confirm" in request.POST and request.POST["confirm"] == "submit":
+            # If confirmed, create the line items
             for component in components:
                 RequestLineItem.objects.create(
                     request=lab_request,
                     component=component,
-                    request_status="Not Started"
+                    request_status="Not Started",
+                    template_used=component.template.template_id,
+                    progress_timestamp=timezone.now()
                 )
             
             for package in packages:
@@ -205,14 +209,27 @@ def summarize_labreq(request, pk):
                         request=lab_request,
                         component=package_component.component,
                         package=package,
-                        request_status="Not Started"
+                        request_status="Not Started",
+                        template_used=package_component.component.template.template_id,
+                        progress_timestamp=timezone.now()
                     )
             
             return redirect('view_patient', pk=pk)
-        else:
+        elif "confirm" in request.POST:
+            # If cancelled, delete the lab request and redirect
+            lab_request.delete()
             return redirect('view_patient', pk=pk)
+    else:
+        physician = None
+        mode_of_release = None
+        request_id = None
 
-    # Render the summary page without saving
+    # Get the next request ID (this will be the ID of the next lab request)
+    if request_id is None:
+        last_request = LabRequest.objects.order_by('-request_id').first()
+        request_id = (last_request.request_id + 1) if last_request else 1
+
+    # Render the summary page
     return render(request, 'labreqsys/summarize_labreq.html', {
         'patient': p,
         'components': components,
@@ -220,6 +237,9 @@ def summarize_labreq(request, pk):
         'total': total,
         'date': current_date,
         'discount': discount,
+        'physician': physician,
+        'mode_of_release': mode_of_release,
+        'request_id': request_id
     })
 
 def view_individual_lab_request(request, request_id):
