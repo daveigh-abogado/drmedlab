@@ -166,7 +166,10 @@ def summarize_labreq(request, pk):
         packages.append(temp)
         
     discount = 0
-    if p.pwd_id_num is not None or p.senior_id_num is not None: 
+    # Apply discount only if patient has a non-empty PWD ID or Senior ID
+    has_pwd = p.pwd_id_num and str(p.pwd_id_num).strip()
+    has_senior = p.senior_id_num and str(p.senior_id_num).strip()
+    if has_pwd or has_senior:
         discount = round(total * Decimal(0.2), 2)
         total -= discount
     
