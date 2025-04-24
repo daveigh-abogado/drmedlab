@@ -118,6 +118,12 @@ def add_testcomponent(request):
     """
     return render(request, 'labreqsys/add_testcomponent.html')
 
+def add_template(request):
+    """
+    Display form builder to create a template.
+    """
+    return render(request, 'labreqsys/add_template.html')
+
 def add_labreq(request, pk):
     """
     Display a form to add a new lab request for a specific patient.

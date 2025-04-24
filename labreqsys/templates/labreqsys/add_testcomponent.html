@@ -47,17 +47,20 @@
             <!--TEMPLATE-->
             <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2 mt-6">Template</div>
             <div class="grid gap-2.5 mb-4"> <!--TO FRONTEND: paayos ng hover-->
-                <button class="w-full justify-center text-blue-900 inline-flex items-center bg-blue-555 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" style="max-width: 15%;"> <!--TO FRONTEND: BUTTON WIDTH IS HARDCODED-->
+                <a href="{% url 'add_template' %}" class="w-full justify-center text-blue-900 inline-flex items-center bg-blue-555 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline" style="max-width: 15%;"> <!--TO FRONTEND: BUTTON WIDTH IS HARDCODED-->
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-                    <a href="#" class="text-blue-900 no-underline">Template</a>
-                </button>
+                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
+                    </svg>
+                    Template
+                </a>
+                
             </div>
             <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
                 <div>
-                    <button class="w-full justify-center text-blue-900 inline-flex items-center bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                        <!--TO FRONTEND: paayos ng border color and hover-->
+                    <!--TO FRONTEND: paayos ng border color and hover-->
+                    <a href="{% url 'testComponents' %}" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">
                         Cancel
-                    </button>
+                    </a>
                 </div>
                 <div>
                     <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
