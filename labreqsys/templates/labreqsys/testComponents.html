@@ -66,8 +66,8 @@
             
             <!--ADD PATIENT BUTTON: the orginal href -> {% url 'add_patient'%} -->
             <div class="col ms-auto text-end">
-                <button id="addPatientButton" data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="text-white px-6 py-2 bg-primary-700 font-bold rounded-lg text-ssm" type="button">
-                    Add Patient
+                <button id="addPatientButton" class="text-white px-6 py-2 bg-primary-700 font-bold rounded-lg text-ssm" type="button">
+                    <a href="{% url 'add_testcomponent' %}" class="text-white no-underline">Add Test Component</a>
                 </button>
             </div>
         </div>
@@ -106,7 +106,7 @@
                         <td class="px-6 py-2">₱{{ t.component_price }}</td>
                         <th scope="row" class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center no-underline">
                             <a href="#" class = "no-underline ">
-                                View
+                                View Template
                             </a>
                         </th>
                     </tr>

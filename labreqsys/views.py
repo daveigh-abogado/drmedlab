@@ -112,6 +112,12 @@ def view_patient(request, pk):
         'emails': 'Collected'  # Replace with actual email status
     })
 
+def add_testcomponent(request):
+    """
+    Display a form to add a new test component.
+    """
+    return render(request, 'labreqsys/add_testcomponent.html')
+
 def add_labreq(request, pk):
     """
     Display a form to add a new lab request for a specific patient.

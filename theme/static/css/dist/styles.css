@@ -1523,6 +1523,10 @@ select {
   background-color: rgba(39, 66, 145, 0.1);
 }
 
+.bg-blue-555 {
+  background-color: rgba(188, 196, 221, 1.0);
+} /*added this for + template button*/
+
 
 .bg-blue-950 {
   --tw-bg-opacity: 1;
