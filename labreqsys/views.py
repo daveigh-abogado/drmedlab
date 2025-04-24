@@ -11,14 +11,19 @@ from django.http import HttpResponse
 from django.urls import reverse
 
 import pdfkit
-config=pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
+import platform
 import zipfile
 import zipfile
 from io import BytesIO
 import os
 
+# Determine wkhtmltopdf path based on OS
+if platform.system() == 'Windows':
+    wkhtmltopdf_path = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+else:  # macOS and Linux
+    wkhtmltopdf_path = '/usr/local/bin/wkhtmltopdf'  # Default Homebrew installation path
 
-
+config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
 
 # Utility functions
 def discount(patient, price):

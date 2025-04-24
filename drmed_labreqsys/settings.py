@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import platform
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -85,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'drmedlabs',
         'USER': 'root',
-        'PASSWORD': 'Kamja_Ace1999', #Please enter your root password here (you should have this when you set up your SQL client)
+        'PASSWORD': '', #Please enter your root password here (you should have this when you set up your SQL client)
         'HOST':'localhost',
         'PORT':'3306',
     }
@@ -144,6 +145,15 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#uncomment the following line if you get the error seen in the setup document
-NPM_BIN_PATH = "/Program Files/nodejs/npm.cmd" 
+# Determine NPM path based on OS
+if platform.system() == 'Windows':
+    NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+elif platform.system() == 'Darwin':  # macOS
+    # Check if it's Apple Silicon or Intel Mac
+    if platform.machine() == 'arm64':
+        NPM_BIN_PATH = "/opt/homebrew/bin/npm"
+    else:
+        NPM_BIN_PATH = "/usr/local/bin/npm"
+else:  # Linux
+    NPM_BIN_PATH = "/usr/bin/npm"
 
