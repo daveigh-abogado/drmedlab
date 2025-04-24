@@ -63,13 +63,14 @@
         <aside id="sidebar-multi-level-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 bg-gradient-to-tr from-blue-500 to-blue-900 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
             <div class="h-full overflow-y-auto bg-gradient-to-tr from-blue-500 to-blue-900  ">
                 <ul class="space-y-2 font-medium no-underline">
+                    <!-- RECORDS-->
                     <li>
                         <a class="flex text-xs items-center p-2 text-white rounded-lg dark:text-white group no-underline">
                             <span class="ms-3 no-underline">RECORDS</span>
                         </a>
                     </li>
 
-                    <!--ACTUAL Lists-->
+                    <!--ACTUAL STATUS Lists-->
                     <li>
                     <a href="{% url 'patientList' %}" class="no-underline flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
                         <span class="ms-5">Patient List</span>
@@ -97,6 +98,26 @@
                              </li>
                         </ul>
                     </li>
+                    
+                    <!--OFFERINGS-->
+                    <li>
+                        <a class="flex text-xs items-center p-2 text-white rounded-lg dark:text-white group no-underline">
+                            <span class="ms-3 no-underline">OFFERINGS</span>
+                        </a>
+                    </li>
+
+                    <!--ACTUAL OFFERINGS Lists-->
+                    <li>
+                        <a href="#" class="no-underline flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
+                            <span class="ms-5">Component</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="no-underline flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
+                            <span class="ms-5">Package</span>
+                        </a>
+                    </li>
+                    
                 </ul>
             </div>
         </aside>
