@@ -61,6 +61,14 @@ def labRequests(request):
     
     return render(request, 'labreqsys/labRequests.html', {'labreqs': labreqs})
 
+def testComponents(request):
+    """
+    Display a list of all test components.
+    """
+    testComponents = TestComponent.objects.all()
+    
+    return render(request, 'labreqsys/testComponents.html', {'testComponents': testComponents})
+
 def view_patient(request, pk):
     """
     Display detailed information about a specific patient.
