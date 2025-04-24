@@ -172,6 +172,10 @@ def summarize_labreq(request, pk):
     
     current_date = datetime.now().strftime('%Y-%m-%d')
 
+    # Get the next request ID for display and creation
+    last_request = LabRequest.objects.order_by('-request_id').first()
+    next_request_id = (last_request.request_id + 1) if last_request else 1
+
     if request.method == "POST":
         physician = request.POST.get('physician')
         mode = request.POST.getlist('mode_of_release')
@@ -181,18 +185,17 @@ def summarize_labreq(request, pk):
         else:
             mode_of_release = 'Pick-up' if 'Pick-Up' in mode else 'Email'
 
-        # Create the lab request immediately when we get the POST data
-        lab_request = LabRequest.objects.create(
-            patient=p,
-            date_requested=current_date,
-            physician=physician,
-            mode_of_release=mode_of_release,
-            overall_status="Not Started"
-        )
-        request_id = lab_request.request_id
-
         if "confirm" in request.POST and request.POST["confirm"] == "submit":
-            # If confirmed, create the line items
+            # Create the lab request with the specific ID we calculated
+            lab_request = LabRequest.objects.create(
+                request_id=next_request_id,  # Explicitly set the ID
+                patient=p,
+                date_requested=current_date,
+                physician=physician,
+                mode_of_release=mode_of_release,
+                overall_status="Not Started"
+            )
+            
             for component in components:
                 RequestLineItem.objects.create(
                     request=lab_request,
@@ -215,19 +218,11 @@ def summarize_labreq(request, pk):
                     )
             
             return redirect('view_patient', pk=pk)
-        elif "confirm" in request.POST:
-            # If cancelled, delete the lab request and redirect
-            lab_request.delete()
+        elif "confirm" in request.POST and request.POST["confirm"] == "cancel":
             return redirect('view_patient', pk=pk)
     else:
         physician = None
         mode_of_release = None
-        request_id = None
-
-    # Get the next request ID (this will be the ID of the next lab request)
-    if request_id is None:
-        last_request = LabRequest.objects.order_by('-request_id').first()
-        request_id = (last_request.request_id + 1) if last_request else 1
 
     # Render the summary page
     return render(request, 'labreqsys/summarize_labreq.html', {
@@ -239,7 +234,7 @@ def summarize_labreq(request, pk):
         'discount': discount,
         'physician': physician,
         'mode_of_release': mode_of_release,
-        'request_id': request_id
+        'request_id': next_request_id
     })
 
 def view_individual_lab_request(request, request_id):
