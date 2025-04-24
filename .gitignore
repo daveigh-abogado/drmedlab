@@ -16,12 +16,9 @@ __pycache__/
 *.pyd
 
 # Virtual environment
-venv/
-.venv/
 env/
-.env/
-ENV/
-.ENV/
+venv/
+.env
 
 # Database
 db.sqlite3
