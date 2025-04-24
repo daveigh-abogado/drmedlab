@@ -16,6 +16,8 @@ import zipfile
 import zipfile
 from io import BytesIO
 import os
+import decimal
+from django.db.models import Max
 
 # Determine wkhtmltopdf path based on OS
 if platform.system() == 'Windows':
@@ -148,39 +150,55 @@ def summarize_labreq(request, pk):
     Summarize the selected components and packages for a new lab request and calculate the total cost.
     """
     p = get_object_or_404(Patient, pk=pk)
-    sc = request.session.get('selected_components', [])
-    sp = request.session.get('selected_packages', [])
+    # Handle empty session data
+    sc = request.session.get('selected_components', []) or []
+    sp = request.session.get('selected_packages', []) or []
     
-    total = 0
+    total = Decimal('0.00')  # Ensure decimal precision for currency
     components = []
     packages = []
     
+    # Safely handle component prices
     for t in sc:
-        temp = get_object_or_404(TestComponent, pk=t)
-        total += temp.component_price
-        components.append(temp)
-        
+        try:
+            temp = get_object_or_404(TestComponent, pk=t)
+            total += Decimal(str(temp.component_price or 0))  # Convert to Decimal safely
+            components.append(temp)
+        except (ValueError, TypeError):
+            total += Decimal('0.00')
+            
+    # Safely handle package prices
     for t in sp:
-        temp = get_object_or_404(TestPackage, pk=t)
-        total += temp.package_price
-        packages.append(temp)
+        try:
+            temp = get_object_or_404(TestPackage, pk=t)
+            total += Decimal(str(temp.package_price or 0))  # Convert to Decimal safely
+            packages.append(temp)
+        except (ValueError, TypeError):
+            total += Decimal('0.00')
         
-    discount = 0
+    discount = Decimal('0.00')
     # Apply discount only if patient has a non-empty PWD ID or Senior ID
     has_pwd = p.pwd_id_num and str(p.pwd_id_num).strip()
     has_senior = p.senior_id_num and str(p.senior_id_num).strip()
     if has_pwd or has_senior:
-        discount = round(total * Decimal(0.2), 2)
-        total -= discount
+        try:
+            discount = round(total * Decimal('0.2'), 2)
+            total -= discount
+        except (ValueError, TypeError, decimal.InvalidOperation):
+            discount = Decimal('0.00')
     
     current_date = datetime.now().strftime('%Y-%m-%d')
 
-    # Get the next request ID for display and creation
-    last_request = LabRequest.objects.order_by('-request_id').first()
-    next_request_id = (last_request.request_id + 1) if last_request else 1
+    # Safely get next request ID
+    try:
+        last_request = LabRequest.objects.order_by('-request_id').first()
+        next_request_id = (last_request.request_id + 1) if last_request else 1
+    except Exception:
+        # Fallback to a query that gets the max ID directly
+        next_request_id = (LabRequest.objects.aggregate(Max('request_id'))['request_id__max'] or 0) + 1
 
     if request.method == "POST":
-        physician = request.POST.get('physician')
+        physician = request.POST.get('physician', '').strip() or None
         mode = request.POST.getlist('mode_of_release')
 
         if 'Pick-Up' in mode and 'Email' in mode:
@@ -189,36 +207,43 @@ def summarize_labreq(request, pk):
             mode_of_release = 'Pick-up' if 'Pick-Up' in mode else 'Email'
 
         if "confirm" in request.POST and request.POST["confirm"] == "submit":
-            # Create the lab request with the specific ID we calculated
-            lab_request = LabRequest.objects.create(
-                request_id=next_request_id,  # Explicitly set the ID
-                patient=p,
-                date_requested=current_date,
-                physician=physician,
-                mode_of_release=mode_of_release,
-                overall_status="Not Started"
-            )
-            
-            for component in components:
-                RequestLineItem.objects.create(
-                    request=lab_request,
-                    component=component,
-                    request_status="Not Started",
-                    template_used=component.template.template_id,
-                    progress_timestamp=timezone.now()
+            # Only proceed if we have components or packages
+            if components or packages:
+                lab_request = LabRequest.objects.create(
+                    request_id=next_request_id,
+                    patient=p,
+                    date_requested=current_date,
+                    physician=physician,
+                    mode_of_release=mode_of_release,
+                    overall_status="Not Started"
                 )
-            
-            for package in packages:
-                package_components = TestPackageComponent.objects.filter(package=package)
-                for package_component in package_components:
-                    RequestLineItem.objects.create(
-                        request=lab_request,
-                        component=package_component.component,
-                        package=package,
-                        request_status="Not Started",
-                        template_used=package_component.component.template.template_id,
-                        progress_timestamp=timezone.now()
-                    )
+                
+                for component in components:
+                    try:
+                        RequestLineItem.objects.create(
+                            request=lab_request,
+                            component=component,
+                            request_status="Not Started",
+                            template_used=component.template.template_id,
+                            progress_timestamp=timezone.now()
+                        )
+                    except Exception:
+                        continue  # Skip this item if there's an error
+                
+                for package in packages:
+                    try:
+                        package_components = TestPackageComponent.objects.filter(package=package)
+                        for package_component in package_components:
+                            RequestLineItem.objects.create(
+                                request=lab_request,
+                                component=package_component.component,
+                                package=package,
+                                request_status="Not Started",
+                                template_used=package_component.component.template.template_id,
+                                progress_timestamp=timezone.now()
+                            )
+                    except Exception:
+                        continue  # Skip this package if there's an error
             
             return redirect('view_patient', pk=pk)
         elif "confirm" in request.POST and request.POST["confirm"] == "cancel":
