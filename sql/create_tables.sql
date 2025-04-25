@@ -1,18 +1,18 @@
 use drmedlabs;
 
-DROP TABLE result_review;
-DROP TABLE result_value;
-DROP TABLE lab_tech;
-DROP TABLE collection_log;
-DROP TABLE request_line_item;
-DROP TABLE test_package_component;
-DROP TABLE test_package;
-DROP TABLE test_component;
-DROP TABLE template_field;
-DROP TABLE template_section;
-DROP TABLE template_form;
-DROP TABLE lab_request;
-DROP TABLE patient;
+DROP TABLE IF EXISTS result_review;
+DROP TABLE IF EXISTS result_value;
+DROP TABLE IF EXISTS lab_tech;
+DROP TABLE IF EXISTS collection_log;
+DROP TABLE IF EXISTS request_line_item;
+DROP TABLE IF EXISTS test_package_component;
+DROP TABLE IF EXISTS test_package;
+DROP TABLE IF EXISTS test_component;
+DROP TABLE IF EXISTS template_field;
+DROP TABLE IF EXISTS template_section;
+DROP TABLE IF EXISTS template_form;
+DROP TABLE IF EXISTS lab_request;
+DROP TABLE IF EXISTS patient;
 
 CREATE TABLE patient
 (patient_id INTEGER NOT NULL auto_increment,
