@@ -9,6 +9,8 @@ from decimal import Decimal
 from django.utils import timezone
 from django.http import HttpResponse
 from django.urls import reverse
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 import pdfkit
 import platform
@@ -40,6 +42,7 @@ def discount(patient, price):
         return payment
 
 # View functions
+@login_required(login_url='login')
 def base(request):
     """
     Render the base template.
@@ -53,6 +56,7 @@ def view_labreqs(request):
     labreqs = LabRequest.objects.all()
     return render(request, 'labreqsys/view_labreqs.html', {'labreqs': labreqs})
 
+@login_required(login_url='login')
 def patientList(request):
     """
     Display a list of all patients.
@@ -60,6 +64,7 @@ def patientList(request):
     patients = Patient.objects.all()
     return render(request, 'labreqsys/patientList.html', {'patients': patients})
 
+@login_required(login_url='login')
 def labRequests(request):
     """
     Display a list of all lab requests.
@@ -68,6 +73,7 @@ def labRequests(request):
     
     return render(request, 'labreqsys/labRequests.html', {'labreqs': labreqs})
 
+@login_required(login_url='login')
 def view_patient(request, pk):
     """
     Display detailed information about a specific patient.
@@ -326,7 +332,8 @@ def submit_labresults(request, line_item_id):
     line_item.save()
     return redirect('view_individual_lab_request', request_id=line_item.request_id)
 
-def add_patient (request):
+@login_required(login_url='login')
+def add_patient(request):
     if request.method == "POST":
         
         last_name = request.POST.get('last_name')
@@ -559,3 +566,21 @@ def savePDF(request, pk):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'  # Correct filename usage
 
     return response
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('patientList')
+        else:
+            return render(request, 'labreqsys/login.html', {
+                'error_message': 'Invalid username or password'
+            })
+    return render(request, 'labreqsys/login.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
