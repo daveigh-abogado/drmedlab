@@ -11,7 +11,8 @@ from django.http import HttpResponse
 from django.urls import reverse
 
 import pdfkit
-config=pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
+config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
+#ORIGINAL: config=pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
 import zipfile
 import zipfile
 from io import BytesIO
