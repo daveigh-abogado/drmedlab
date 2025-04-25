@@ -7,6 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='/login', permanent=True)),  # Redirect root URL to login
     path('login/', views.login_view, name='login'),
+    path('signup/', views.signup_view, name='signup'),
     path('logout/', views.logout_view, name='logout'),
     path('patientList', views.patientList, name='patientList'),
     path('labRequests', views.labRequests, name='labRequests'),

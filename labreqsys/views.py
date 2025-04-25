@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 import pdfkit
 import platform
@@ -584,3 +585,44 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+def signup_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+
+        if password1 != password2:
+            return render(request, 'labreqsys/signup.html', {
+                'error_message': 'Passwords do not match'
+            })
+
+        if User.objects.filter(username=username).exists():
+            return render(request, 'labreqsys/signup.html', {
+                'error_message': 'Username already exists'
+            })
+
+        if User.objects.filter(email=email).exists():
+            return render(request, 'labreqsys/signup.html', {
+                'error_message': 'Email already exists'
+            })
+
+        try:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password1,
+                first_name=first_name,
+                last_name=last_name
+            )
+            login(request, user)
+            return redirect('patientList')
+        except Exception as e:
+            return render(request, 'labreqsys/signup.html', {
+                'error_message': str(e)
+            })
+
+    return render(request, 'labreqsys/signup.html')
