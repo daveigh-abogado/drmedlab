@@ -8,6 +8,9 @@ urlpatterns = [
     path('', RedirectView.as_view(url='/patientList', permanent=True)),  # Redirect root URL to /patientList
     path('patientList', views.patientList, name='patientList'),
     path('labRequests', views.labRequests, name='labRequests'),
+    path('testComponents', views.testComponents, name='testComponents'),
+    path('add_testcomponent', views.add_testcomponent, name='add_testcomponent'),
+    path('add_template', views.add_template, name='add_template'),
     path('view_patient/<int:pk>/', views.view_patient, name='view_patient'),
     path('add_labreq/<int:pk>/', views.add_labreq, name = 'add_labreq'),
     path('add_labreq_details/<int:pk>/', views.add_labreq_details, name = 'add_labreq_details'),
@@ -17,7 +20,7 @@ urlpatterns = [
     path('submit_labresults/<int:line_item_id>/', views.submit_labresults, name='submit_labresults'),
     path('add_patient', views.add_patient, name='add_patient'),
     path('generatePDF', views.generatePDF, name='generatePDF'),
-    path('pdf/<int:pk>', views.pdf, name='pdf')
+    path('pdf/<int:pk>', views.pdf, name='pdf'),
 
 ]
 #test

@@ -61,6 +61,14 @@ def labRequests(request):
     
     return render(request, 'labreqsys/labRequests.html', {'labreqs': labreqs})
 
+def testComponents(request):
+    """
+    Display a list of all test components.
+    """
+    testComponents = TestComponent.objects.all()
+    
+    return render(request, 'labreqsys/testComponents.html', {'testComponents': testComponents})
+
 def view_patient(request, pk):
     """
     Display detailed information about a specific patient.
@@ -103,6 +111,18 @@ def view_patient(request, pk):
         'pickups': 'Collected',  # Replace with actual pickup status
         'emails': 'Collected'  # Replace with actual email status
     })
+
+def add_testcomponent(request):
+    """
+    Display a form to add a new test component.
+    """
+    return render(request, 'labreqsys/add_testcomponent.html')
+
+def add_template(request):
+    """
+    Display form builder to create a template.
+    """
+    return render(request, 'labreqsys/add_template.html')
 
 def add_labreq(request, pk):
     """

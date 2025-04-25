@@ -1,0 +1,170 @@
+{% extends 'labreqsys/base.html' %}
+{% load static tailwind_tags %}
+
+{% block content %}
+<div class="breadbutton my-4">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'testComponents' %}">Test Component List</a></li>
+        <li><a href="{% url 'add_testcomponent' %}">Add Test Component</a></li>
+        <li><a href="#" class="current">Create Template</a></li>
+    </ul>
+</div>
+
+
+<div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
+    <!-- Header -->
+    <div class="flex justify-between items-center rounded-t sm:mb-4 w-full">
+        <h1 class="text-mm font-semibold text-blue-900">Create Template</h1>
+        <div class="flex gap-2">
+            <a href="{% url 'testComponents' %}" class="text-blue-900 inline-flex items-center bg-blue-100 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">Cancel</a>
+            <button type="submit" form="form" class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Create Template</button>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <form id="form" method="POST" action="#" class="w-full gap-2.5">{% csrf_token %}
+        <!-- Template Name -->
+        <div class="grid gap-2.5 mb-4 sm:grid-cols-1 border-b pb-3">
+            <div>
+                <label for="template_name" class="block mb-2 text-left text-sm font-medium text-gray-500 uppercase">Form Name *</label>
+                <input type="text" name="template_name" id="template_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" placeholder="e.g. Blood Chemistry" required pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
+            </div>
+        </div>
+
+        <div id="sections-container"></div>
+
+        <!-- Add Section Button -->
+        <div class="grid gap-2.5 mt-2 sm:grid-cols-1">
+            <div>
+                <button type="button" id="add-section-btn" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Section</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    let sectionCount = 0;
+
+    const sectionsContainer = document.getElementById('sections-container');
+    const addSectionBtn = document.getElementById('add-section-btn');
+
+    function createField(sectionIndex, fieldIndex) {
+        return `
+            <div class="border border-gray-300 rounded p-2 mt-3 field-group" data-field-index="${fieldIndex}">
+                <div class="grid gap-2.5 mb-2 sm:grid-cols-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Label *</label>
+                        <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][label]" placeholder="e.g. X-Ray Image" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Type *</label>
+                        <select name="sections[${sectionIndex}][fields][${fieldIndex}][type]" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                            <option value="">Select field type</option>
+                            <option value="Label">Label</option>
+                            <option value="Text">Text</option>
+                            <option value="Image">Image</option>
+                            <option value="Number">Number</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Fixed Value</label>
+                        <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][fixed_value]" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5">
+                    </div>
+                    <div class="flex items-center pt-3 h-full">
+                        <button type="button" class="delete-field-btn text-red-500 hover:text-red-700" title="Delete Field">🗑</button>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    function createSection(sectionIndex) {
+        return `
+            <div class="section border-b mb-4 pb-4" data-section-index="${sectionIndex}">
+                <div class="flex justify-between ">
+                    <h2 class="text-mm font-semibold text-blue-900">Section ${sectionIndex + 1}</h2>
+                    <button type="button" class="delete-section-btn px-4 text-right bg-red-500 rounded text-white hover:bg-red-700">Delete Section</button>
+                </div>
+                <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Section Name *</label>
+                <input type="text" name="sections[${sectionIndex}][name]" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 mb-2" required>
+
+                <div class="fields-container"></div>
+
+                <div class="mt-2 grid gap-2.5 sm:grid-cols-1">
+                    <button type="button" class="add-field-btn text-blue-900 border border-blue-900 bg-blue-100 hover:bg-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Field</button>
+                </div>
+            </div>`;
+    }
+
+    addSectionBtn.addEventListener('click', () => {
+        const sectionHTML = document.createElement('div');
+        sectionHTML.innerHTML = createSection(sectionCount);
+        sectionsContainer.appendChild(sectionHTML);
+        sectionCount++;
+    });
+
+    //event listener
+    sectionsContainer.addEventListener('click', function (e) {
+        const target = e.target;
+
+        if (target.classList.contains('add-field-btn')) {
+            const section = target.closest('.section');
+            const sectionIndex = section.dataset.sectionIndex;
+            const fieldsContainer = section.querySelector('.fields-container');
+            const fieldIndex = fieldsContainer.children.length;
+            const fieldHTML = document.createElement('div');
+            fieldHTML.innerHTML = createField(sectionIndex, fieldIndex);
+            fieldsContainer.appendChild(fieldHTML);
+        }
+
+        if (target.classList.contains('delete-field-btn')) {
+            target.closest('.field-group').remove();
+        }
+
+        if (target.classList.contains('delete-section-btn')) {
+            target.closest('.section').remove();
+        }
+    });
+
+    // field value input based on type
+    sectionsContainer.addEventListener('change', function (e) {
+        if (e.target.tagName === 'SELECT' && e.target.name.includes('[type]')) {
+            const selectedType = e.target.value;
+            const fieldGroup = e.target.closest('.field-group');
+            const fixedValueInput = fieldGroup.querySelector('input[name*="[fixed_value]"]');
+            
+            if (['Text', 'Image', 'Number'].includes(selectedType)) {
+                fixedValueInput.disabled = true;
+                fixedValueInput.value = ''; //clears the value
+            } else {
+                fixedValueInput.disabled = false;
+            }
+        }
+    });
+</script>
+
+
+
+{% endblock content %}
+
+{% block styles %}
+<style>
+    ul.breadcrumb li {
+        display: inline;
+        font-size: 12px;
+    }
+    
+    ul.breadcrumb li+li:before {
+        color: black;
+        content: "/\00a0";
+    }
+
+    ul.breadcrumb .current {
+        color: #00BAFF;
+    }
+
+    .breadbutton{
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+{% endblock styles %}
