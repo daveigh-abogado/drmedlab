@@ -20,3 +20,4 @@ urlpatterns = [
     path('pdf/<int:pk>', views.pdf, name='pdf')
 
 ]
+#test
