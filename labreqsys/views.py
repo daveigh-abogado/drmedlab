@@ -244,9 +244,20 @@ def summarize_labreq(request, pk):
                             request=lab_request,
                             component=component,
                             request_status="Not Started",
-                            template_used=component.template.template_id,
+                            template_used=component.template_id,
                             progress_timestamp=timezone.now()
                         )
+
+                        # Fetch fields for this component’s template, excluding Labels
+                        sections = TemplateSection.objects.filter(template_id=component.template_id)
+                        for section in sections:
+                            fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
+                            for field in fields:
+                                ResultValue.objects.create(
+                                    line_item=RequestLineItem.objects.last(),
+                                    field=field,
+                                    field_value= ''
+                                )
                     except Exception:
                         continue  # Skip this item if there's an error
                 
@@ -259,9 +270,19 @@ def summarize_labreq(request, pk):
                                 component=package_component.component,
                                 package=package,
                                 request_status="Not Started",
-                                template_used=package_component.component.template.template_id,
+                                template_used=package_component.component.template_id,
                                 progress_timestamp=timezone.now()
                             )
+                            # Fetch fields for this component’s template, excluding Labels
+                            sections = TemplateSection.objects.filter(template_id=package_component.component.template_id)
+                            for section in sections:
+                                fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
+                                for field in fields:
+                                    ResultValue.objects.create(
+                                        line_item=RequestLineItem.objects.last(),
+                                        field=field,
+                                        field_value=''  # Initially blank
+                                    )
                     except Exception:
                         continue  # Skip this package if there's an error
             
