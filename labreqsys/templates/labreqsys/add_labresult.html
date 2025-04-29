@@ -148,12 +148,12 @@
                 <div class="text-center text-base font-semibold text-blue-900 uppercase mb-2">{{test.test_name}}</div>
 
                 {% for section_data in sections %}
-                <div class="flex flex-wrap gap-2.5 mb-2"><!--TO FRONTEND: THE NUMBER OF COLUMNS INSIDE IS NOT FIXED SO YOU CANT USE COLS-4-->
+                <div class="grid gap-2.5 mb-4 sm:grid-cols-{{section_data.field_count}}">
                     {% for f in section_data.fields %}
                     <div>
-                        <label for="test_code" class="block mb-2 text-left text-sm font-medium text-gray-500">{{ f.label_name }}</label>
+                        <label for="test_code" class="block mb-2 text-center text-sm font-medium text-gray-500">{{ f.label_name }}</label>
                         {% if f.field_type == "Label" %}
-                            <h4>{{ f.field_value }}</h4>
+                            <div class="text-center">{{ f.field_value }}</div>
                         {% elif f.field_type == "Text" %}
                             <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
                         {% elif f.field_type == "Number" %}

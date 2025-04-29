@@ -380,9 +380,11 @@ def add_lab_result(request, line_item_id):
     section_data = []
     for s in sections:
         fields = TemplateField.objects.filter(section_id=s.pk)
+        field_count = 0
         for field in fields:
             field.saved_value = result_dict.get(field.field_id)
-        section_data.append({'section': s, 'fields': fields})
+            field_count+=1
+        section_data.append({'section': s, 'field_count': field_count, 'fields': fields})
 
     lab_request = get_object_or_404(LabRequest, pk=line_item.request_id)
     patient = get_object_or_404(Patient, pk=lab_request.patient_id)
