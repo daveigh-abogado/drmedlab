@@ -213,18 +213,24 @@
     }
 
     function removeOption(trashIcon, id, name, isPackage) {
-        const li = trashIcon.parentElement;
+        // Get the parent li element (going up two levels from the trash icon)
+        const li = trashIcon.closest('li');
+        if (!li) return;
 
+        // Remove the list item
         li.remove();
 
+        // Remove the hidden input
         document.querySelector(`input[data-id="${id}"]`)?.remove();
 
+        // Re-enable the checkbox
         const checkbox = document.querySelector(`input[value="${id}"]`);
         if (checkbox) {
             checkbox.disabled = false;
             checkbox.checked = false;
         }
 
+        // Handle package components if it's a package
         if (isPackage) {
             packageData[id].forEach(componentName => {
                 const compLi = document.querySelector(`#selectedList li[data-name="${componentName}"]`);
@@ -237,6 +243,7 @@
             enableComponentCheckbox(name);
         }
 
+        // Update the UI
         renumberOptions();
         recalculateTotal();
     }
@@ -286,8 +293,19 @@
     function recalculateTotal() {
         let newTotal = 0;
         document.querySelectorAll('#selectedList li:not(.package-component)').forEach(li => {
-            newTotal += parseFloat(li.getAttribute('data-price')) || 0;
+            const priceStr = li.getAttribute('data-price');
+            if (priceStr) {
+                try {
+                    const price = parseFloat(priceStr);
+                    if (!isNaN(price)) {
+                        newTotal += price;
+                    }
+                } catch (e) {
+                    console.error('Error parsing price:', e);
+                }
+            }
         });
+        // Update total price (peso symbol is in HTML)
         document.getElementById('totalPrice').textContent = newTotal.toFixed(2);
     }
 </script>
