@@ -76,6 +76,7 @@
                 </div>
             </div>`;
     }
+    //TO FRONTEND: PLS TELL DV IF YOU'RE GONNA CHANGE THE SECTION HEADER TO NOT BE H2 BC CHANGING THIS BREAKS THE JS
 
     function createSection(sectionIndex) {
         return `
@@ -93,6 +94,41 @@
                     <button type="button" class="add-field-btn text-blue-900 border border-blue-900 bg-blue-100 hover:bg-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Field</button>
                 </div>
             </div>`;
+    }
+
+    function reindexSections() {
+        const sections = sectionsContainer.querySelectorAll('.section');
+        sections.forEach((section, newIndex) => {
+            section.dataset.sectionIndex = newIndex;
+
+            //update section header
+            const heading = section.querySelector('h2');
+            heading.textContent = `Section ${newIndex + 1}`;
+
+            //update section name
+            const sectionNameInput = section.querySelector('input[type="text"]');
+            sectionNameInput.name = `sections[${newIndex}][name]`;
+
+            //update all fields in this section
+            const fields = section.querySelectorAll('.field-group');
+            fields.forEach((field, fieldIndex) => {
+                field.dataset.fieldIndex = fieldIndex;
+
+                const inputs = field.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    if (input.name.includes('[label]')) {
+                        input.name = `sections[${newIndex}][fields][${fieldIndex}][label]`;
+                    } else if (input.name.includes('[type]')) {
+                        input.name = `sections[${newIndex}][fields][${fieldIndex}][type]`;
+                    } else if (input.name.includes('[fixed_value]')) {
+                        input.name = `sections[${newIndex}][fields][${fieldIndex}][fixed_value]`;
+                    }
+                });
+            });
+        });
+
+        //reset overall sectionCount
+        sectionCount = sections.length;
     }
 
     addSectionBtn.addEventListener('click', () => {
@@ -122,6 +158,7 @@
 
         if (target.classList.contains('delete-section-btn')) {
             target.closest('.section').remove();
+            reindexSections();;
         }
     });
 
