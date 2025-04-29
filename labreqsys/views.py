@@ -123,7 +123,60 @@ def add_testcomponent(request):
     """
     Display a form to add a new test component.
     """
-    return render(request, 'labreqsys/add_testcomponent.html')
+    template_status = 'absent'
+    if request.method == "POST":
+        template_name = request.POST.get("template_name")
+        
+        template = TemplateForm.objects.create(template_name=template_name)
+
+        section_index = 0
+        while f"sections[{section_index}][name]" in request.POST:
+            section_name = request.POST.get(f"sections[{section_index}][name]")
+            section = TemplateSection.objects.create(
+                template=template, section_name=section_name
+            )
+
+            field_index = 0
+            while f"sections[{section_index}][fields][{field_index}][label]" in request.POST:
+                label = request.POST.get(f"sections[{section_index}][fields][{field_index}][label]")
+                field_type = request.POST.get(f"sections[{section_index}][fields][{field_index}][type]")
+                fixed_value = request.POST.get(f"sections[{section_index}][fields][{field_index}][fixed_value]", "")
+
+                TemplateField.objects.create(
+                    section=section,
+                    label_name=label,
+                    field_type=field_type,
+                    field_value=fixed_value if fixed_value else None
+                )
+                field_index += 1
+            section_index += 1
+        template_status = 'present'
+    return render(request, 'labreqsys/add_testcomponent.html', {
+        'template_status': template_status})
+
+def create_testcomponent(request):
+    """
+    Add Test Component to the Database
+    """
+    if request.method == "POST":
+        last_template = TemplateForm.objects.order_by('-template_id').first()
+        print('check this girly')
+        print(TestComponent.objects.filter(template_id=last_template.template_id))
+        if TestComponent.objects.filter(template_id=last_template.template_id):
+            return redirect('add_testcomponent')
+        else:
+            test_code = request.POST.get('test_code')
+            test_name = request.POST.get('test_name')
+            category = request.POST.get('category')
+            component_price = request.POST.get('price')
+            TestComponent.objects.create(
+                template_id = last_template.template_id,
+                test_code = test_code,
+                test_name = test_name,
+                component_price = component_price,
+                category = category
+            )
+    return redirect('testComponents')
 
 def add_template(request):
     """
@@ -244,9 +297,20 @@ def summarize_labreq(request, pk):
                             request=lab_request,
                             component=component,
                             request_status="Not Started",
-                            template_used=component.template.template_id,
+                            template_used=component.template_id,
                             progress_timestamp=timezone.now()
                         )
+
+                        # Fetch fields for this component’s template, excluding Labels
+                        sections = TemplateSection.objects.filter(template_id=component.template_id)
+                        for section in sections:
+                            fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
+                            for field in fields:
+                                ResultValue.objects.create(
+                                    line_item=RequestLineItem.objects.last(),
+                                    field=field,
+                                    field_value= ''
+                                )
                     except Exception:
                         continue  # Skip this item if there's an error
                 
@@ -259,9 +323,19 @@ def summarize_labreq(request, pk):
                                 component=package_component.component,
                                 package=package,
                                 request_status="Not Started",
-                                template_used=package_component.component.template.template_id,
+                                template_used=package_component.component.template_id,
                                 progress_timestamp=timezone.now()
                             )
+                            # Fetch fields for this component’s template, excluding Labels
+                            sections = TemplateSection.objects.filter(template_id=package_component.component.template_id)
+                            for section in sections:
+                                fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
+                                for field in fields:
+                                    ResultValue.objects.create(
+                                        line_item=RequestLineItem.objects.last(),
+                                        field=field,
+                                        field_value=''  # Initially blank
+                                    )
                     except Exception:
                         continue  # Skip this package if there's an error
             
@@ -329,6 +403,8 @@ def add_lab_result(request, line_item_id):
 
 def submit_labresults(request, line_item_id):
     results = ResultValue.objects.filter(line_item_id=line_item_id)
+    print(results)
+
     if request.method == "POST":
         for r in results:
             field = TemplateField.objects.get(field_id=r.field_id)

@@ -10,6 +10,7 @@ urlpatterns = [
     path('labRequests', views.labRequests, name='labRequests'),
     path('testComponents', views.testComponents, name='testComponents'),
     path('add_testcomponent', views.add_testcomponent, name='add_testcomponent'),
+    path('create_testcomponent', views.create_testcomponent, name='create_testcomponent'),
     path('add_template', views.add_template, name='add_template'),
     path('view_patient/<int:pk>/', views.view_patient, name='view_patient'),
     path('add_labreq/<int:pk>/', views.add_labreq, name = 'add_labreq'),

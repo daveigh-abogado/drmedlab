@@ -143,36 +143,30 @@
             <div class="self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
                 <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Add Laboratory Results</div>
             </div>
-    
-            <h2>{{test.test_name}}</h2>
             <form id="resultform" method="POST" action="{% url 'submit_labresults' line_item_id=line_item.line_item_id %}">
                 {% csrf_token %}
-                <table>
-                    {% for section_data in sections %}
-                        <tr>
-                            {% for f in section_data.fields %}
-                                <th>{{ f.label_name }}</th>
-                            {% endfor %}
-                        </tr>
-                        <tr>
-                            {% for f in section_data.fields %}
-                                <td>
-                                    {% if f.field_type == "Label" %}
-                                        {{ f.field_value }}
-                                    {% elif f.field_type == "Text" %}
-                                        <input type="text" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
-                                    {% elif f.field_type == "Number" %}
-                                        <input type="number" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
-                                    {% elif f.field_type == "Image" %}
-                                        <input type="url" name="{{ f.label_name }}" placeholder="Enter image URL" value="{{ f.saved_value|default_if_none:'' }}">
-                                    {% else %}
-                                        <input type="text" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
-                                    {% endif %}
-                                </td>
-                            {% endfor %}
-                        </tr>                
+                <div class="text-center text-base font-semibold text-blue-900 uppercase mb-2">{{test.test_name}}</div>
+
+                {% for section_data in sections %}
+                <div class="flex flex-wrap gap-2.5 mb-2"><!--TO FRONTEND: THE NUMBER OF COLUMNS INSIDE IS NOT FIXED SO YOU CANT USE COLS-4-->
+                    {% for f in section_data.fields %}
+                    <div>
+                        <label for="test_code" class="block mb-2 text-left text-sm font-medium text-gray-500">{{ f.label_name }}</label>
+                        {% if f.field_type == "Label" %}
+                            <h4>{{ f.field_value }}</h4>
+                        {% elif f.field_type == "Text" %}
+                            <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
+                        {% elif f.field_type == "Number" %}
+                            <input type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
+                        {% elif f.field_type == "Image" %}
+                            <input type="url" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" placeholder="Enter image URL" value="{{ f.saved_value|default_if_none:'' }}">
+                        {% else %}
+                            <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
+                        {% endif %}
+                    </div>            
                     {% endfor %}
-                </table>
+                </div>
+                {% endfor %}
     
                 <!--Section title: Add Signature-->
                 <div class="self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
