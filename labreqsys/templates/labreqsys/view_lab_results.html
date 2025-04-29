@@ -1,0 +1,9 @@
+{% extends 'labreqsys/base.html' %}
+{% load static tailwind_tags %}
+
+{% block content %}
+<iframe src="{% url 'pdf' pk=line_item.line_item_id %}" 
+    name="pdf"
+    width="100%" 
+    height="800px">
+{% endblock content %}

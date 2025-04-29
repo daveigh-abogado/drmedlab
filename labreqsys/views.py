@@ -19,6 +19,8 @@ import os
 import decimal
 from django.db.models import Max
 
+from django.views.decorators.clickjacking import xframe_options_exempt
+
 # Determine wkhtmltopdf path based on OS
 if platform.system() == 'Windows':
     wkhtmltopdf_path = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
@@ -444,7 +446,7 @@ def add_patient (request):
     else:
         return render(request, 'labreqsys/add_patient.html')
 
-
+@xframe_options_exempt
 def pdf(request, pk):
     '''
         Webpage to format pdf!
@@ -484,14 +486,13 @@ def pdf(request, pk):
     '''
     
     form = {}
-    fields = [] 
+    fields = []  
     reviewed_by = [] # [MADS TO DO!] When ResultReview starts saving, pass reviewer data here
     
     template_section = TemplateSection.objects.filter(template=template_form.template_id)
 
-    for section in template_section:
+    for section in template_section:   
         fields.append(TemplateField.objects.filter(section=section.section_id)) # list of all fields per section and appends to fields 'list'
-        
         for column in fields:
             results = []
             result_value = {}
@@ -499,20 +500,20 @@ def pdf(request, pk):
                 
                 results.append(ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)) # list of all results per field and appends to results 'list'
                 for result in results:
+                    print (f"Result: {result}\n")
                     result_value[field] = result # pairs result 'queryset' to field 'object' indicated in for loop
     
                     if result.exists():
                         for review in result:
                             reviewed_by.append(ResultReview.objects.filter(result_value__result_value_id = review.result_value_id))
-                form[section] = result_value # pairs result_value 'dict' to a section 'queryset'
-                
+                form[section] = result_value # pairs result_value 'dict' to a section 'queryset'    
     age = 0
     if patient.birthdate:
         today = date.today()
         age = today.year - patient.birthdate.year - ((today.month, today.day) < (patient.birthdate.month, patient.birthdate.day))
     else:
         age = None                 
-    
+    #print (form)
     return render(request, 'labreqsys/pdf.html', 
                 {'lab_request': lab_request, 
                 'patient': patient, 
@@ -579,3 +580,11 @@ def savePDF(request, pk):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'  # Correct filename usage
 
     return response
+
+
+def view_lab_result(request, pk):
+    """
+    Display form builder to create a template.
+    """
+    line_item = get_object_or_404(RequestLineItem, line_item_id=pk)
+    return render(request, 'labreqsys/view_lab_results.html', {'line_item' : line_item})
