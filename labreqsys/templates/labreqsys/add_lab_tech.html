@@ -1,0 +1,90 @@
+{% extends 'labreqsys/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-bold mb-6">Add New Lab Technician</h1>
+
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="p-4 {% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %} rounded">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700">First Name</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.first_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700">Last Name</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.last_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">Title</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.title.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.tech_role.id_for_label }}" class="block text-sm font-medium text-gray-700">Role</label>
+                {{ form.tech_role }}
+                {% if form.tech_role.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.tech_role.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.license_num.id_for_label }}" class="block text-sm font-medium text-gray-700">License Number</label>
+                {{ form.license_num }}
+                {% if form.license_num.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.license_num.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.signature.id_for_label }}" class="block text-sm font-medium text-gray-700">Signature (PNG only)</label>
+                {{ form.signature }}
+                {% if form.signature.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.signature.errors.0 }}</p>
+                {% endif %}
+                <p class="text-gray-500 text-xs mt-1">{{ form.signature.help_text }}</p>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <a href="{% url 'patientList' %}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Cancel</a>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Add Lab Technician</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Add Tailwind classes to form inputs
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input[type="text"], input[type="file"]');
+        inputs.forEach(input => {
+            input.classList.add('mt-1', 'block', 'w-full', 'rounded-md', 'border-gray-300', 'shadow-sm', 'focus:border-blue-500', 'focus:ring-blue-500', 'sm:text-sm');
+        });
+    });
+</script>
+{% endblock %} 
