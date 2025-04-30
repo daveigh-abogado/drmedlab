@@ -9,7 +9,7 @@ from decimal import Decimal
 from django.utils import timezone
 from django.http import HttpResponse
 from django.urls import reverse
-from .forms import LabTechForm
+from .forms import LabTechForm, EditLabTechForm
 
 import pdfkit
 import platform
@@ -655,3 +655,59 @@ def view_lab_techs(request):
     """
     lab_techs = LabTech.objects.all()
     return render(request, 'labreqsys/view_lab_techs.html', {'lab_techs': lab_techs})
+
+def edit_lab_tech(request, lab_tech_id):
+    """
+    Handle editing of an existing lab technician.
+    """
+    lab_tech = get_object_or_404(LabTech, pk=lab_tech_id)
+    
+    if request.method == 'POST':
+        form = EditLabTechForm(request.POST, request.FILES, instance=lab_tech)
+        if form.is_valid():
+            try:
+                lab_tech = form.save(commit=False)
+                
+                # Handle signature file if provided
+                if 'signature' in request.FILES:
+                    signature = request.FILES['signature']
+                    # Create a unique filename using timestamp and tech's name
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    safe_name = "".join(c for c in lab_tech.last_name if c.isalnum())
+                    filename = f"signature_{safe_name}_{timestamp}.png"
+                    
+                    # Save the signature file
+                    file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
+                    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                    
+                    # Delete old signature file if it exists
+                    if lab_tech.signature_path:
+                        old_path = os.path.join('labreqsys', 'static', lab_tech.signature_path)
+                        if os.path.exists(old_path):
+                            os.remove(old_path)
+                    
+                    with open(file_path, 'wb+') as destination:
+                        for chunk in signature.chunks():
+                            destination.write(chunk)
+                    
+                    # Update the path in the database
+                    lab_tech.signature_path = f'signatures/{filename}'
+                
+                lab_tech.save()
+                messages.success(request, 'Lab technician updated successfully!')
+                return redirect('view_lab_techs')
+            except Exception as e:
+                messages.error(request, f'Error updating lab technician: {str(e)}')
+                # Try to clean up the new file if it was created
+                if 'file_path' in locals():
+                    try:
+                        os.remove(file_path)
+                    except:
+                        pass
+    else:
+        form = EditLabTechForm(instance=lab_tech)
+    
+    return render(request, 'labreqsys/edit_lab_tech.html', {
+        'form': form,
+        'lab_tech': lab_tech
+    })
