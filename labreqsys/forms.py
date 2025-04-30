@@ -3,6 +3,30 @@ from .models import LabTech
 import re
 
 class LabTechForm(forms.ModelForm):
+    title = forms.ChoiceField(
+        choices=[
+            ('', 'Select title'),
+            ('RMT', 'RMT (Registered Medical Technologist)'),
+            ('MD', 'MD (Medical Doctor)'),
+        ],
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control'
+        })
+    )
+
+    tech_role = forms.ChoiceField(
+        choices=[
+            ('', 'Select role'),
+            ('Medical Technologist', 'Medical Technologist'),
+            ('Pathologist', 'Pathologist'),
+        ],
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control'
+        })
+    )
+
     class Meta:
         model = LabTech
         fields = ['first_name', 'last_name', 'title', 'tech_role', 'license_num']
@@ -10,22 +34,16 @@ class LabTechForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter first name',
-                'required': True
+                'required': True,
+                'pattern': '^[A-Za-z\\s]+$',
+                'title': 'Use letters and spaces only'
             }),
             'last_name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter last name',
-                'required': True
-            }),
-            'title': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter title (e.g., Medical Technologist)',
-                'required': True
-            }),
-            'tech_role': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter role (e.g., Clinical Chemistry)',
-                'required': True
+                'required': True,
+                'pattern': '^[A-Za-z\\s]+$',
+                'title': 'Use letters and spaces only'
             }),
             'license_num': forms.TextInput(attrs={
                 'class': 'form-control',
