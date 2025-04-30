@@ -1902,6 +1902,13 @@ select {
   font-style: normal;
 }
 
+.text-m-600 {
+  font-size: 1.25rem;
+  line-height: normal;
+  font-weight:600;
+  font-style: normal;
+}
+
 .text-mm {
   font-size: 1.5rem;
   line-height: normal;

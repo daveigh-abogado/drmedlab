@@ -42,7 +42,7 @@
         <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
             <div id="modal-preview-content">
                 </div>
-            <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
+            <div class="grid gap-2.5 mb-4 sm:grid-cols-2 mt-4">
                 <button data-modal-hide="templateModal" type="button" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">Back to Editing</button>
                 <button type="submit" form="form" id="confirmSubmit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Create Template</button>
             </div>
@@ -213,7 +213,7 @@
 
         // build preview content
         let previewHTML = `<div class="flex justify-between items-center rounded-t border-b sm:mb-5">
-                <h3 class="text-mm font-semibold text-blue-900">
+                <h3 class="text-mm font-semibold text-blue-900 uppercase">
                     ${templateName}
                 </h3>
             </div>`;
@@ -222,8 +222,8 @@
             section.fields.forEach(field => {
                 field_number++;
             });
-            previewHTML += `<div class="text-center uppercase text-base font-semibold text-blue-900 mb-2">${section.name}</div>
-            <div class="grid gap-2.5 mb-4 sm:grid-cols-${field_number}">`;
+            previewHTML += `<div class="self-stretch h-8 justify-center font-semibold text-m-600 text-gray-500 mb-2">${section.name}</div>
+            <div class="grid gap-2.5 sm:grid-cols-${field_number}">`;
             section.fields.forEach(field => {
                 previewHTML += `<div>`;
                 previewHTML += `<label for="test_code" class="block mb-2 text-center text-sm font-medium text-gray-500">${field.label}</label>`;
