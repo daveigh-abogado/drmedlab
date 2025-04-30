@@ -23,5 +23,6 @@ urlpatterns = [
     path('pdf/<int:pk>', views.pdf, name='pdf'),
     path('add_lab_tech/', views.add_lab_tech, name='add_lab_tech'),
     path('lab_techs/', views.view_lab_techs, name='view_lab_techs'),
+    path('edit_lab_tech/<int:lab_tech_id>/', views.edit_lab_tech, name='edit_lab_tech'),
 ]
 #test

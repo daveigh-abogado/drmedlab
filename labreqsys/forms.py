@@ -87,3 +87,17 @@ class LabTechForm(forms.ModelForm):
             if signature.size > 5 * 1024 * 1024:  # 5MB limit
                 raise forms.ValidationError('Signature file size should be less than 5MB.')
         return signature 
+
+class EditLabTechForm(LabTechForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Remove name fields as they shouldn't be editable
+        if 'first_name' in self.fields:
+            del self.fields['first_name']
+        if 'last_name' in self.fields:
+            del self.fields['last_name']
+        # Make signature optional for editing
+        self.fields['signature'].required = False
+
+    class Meta(LabTechForm.Meta):
+        fields = ['title', 'tech_role', 'license_num']  # Exclude name fields 
