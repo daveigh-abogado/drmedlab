@@ -42,6 +42,7 @@
                         </div>
                     </div>
                 </form>
+
                 <!--TO FRONTEND: PLEASE ADD THIS SORT FUNCTION AND PAAYOS AHSJDBAHJSD SO THAT IT'S ALL IN ONE ROW-->
                 <!--
                 <div class="col ms-auto text-end">
@@ -64,9 +65,9 @@
                 -->
             </div>
             
-            <!--ADD PATIENT BUTTON: the orginal href -> {% url 'add_patient'%} -->
-            <div class="col ms-auto text-end">
-                <a href="{% url 'add_testcomponent' %}" id="addPatientButton" class="text-white px-6 py-2 bg-primary-700 font-bold rounded-lg text-ssm no-underline inline-block text-center">
+            <!--ADD Component BUTTON:  -->
+            <div class="col text-end mt-2">
+                <a href="{% url 'add_testcomponent' %}" id="addPatientButton" class="text-white px-6 py-2 bg-primary-700 rounded-lg text-s-600 no-underline inline-block text-center">
                     Add Test Component
                 </a>
             </div>
@@ -85,9 +86,9 @@
                 <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
                     <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
                         <th scope="col" class="px-6 py-3 text-center">ID</th>
-                        <th scope="col" class="px-6 py-3">Test Code</th>
+                        <th scope="col" class="px-6 py-3 ">Test Code</th>
                         <th scope="col" class="px-6 py-3">Test Name</th>
-                        <th scope="col" class="px-6 py-3">Price</th>
+                        <th scope="col" class="px-6 py-3 text-center">Price</th>
                         <th scope="col" class="px-6 py-3 text-center">Action</th>
                     </tr>
                 </thead>
@@ -103,9 +104,9 @@
                             <div>{{ t.test_name }}</div>
                             <div class="text-sm text-gray-500">{{ t.category }}</div>
                         </td>
-                        <td class="px-6 py-2">₱{{ t.component_price }}</td>
+                        <td class="px-6 py-2 text-center ">₱{{ t.component_price }}</td>
                         <th scope="row" class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center no-underline">
-                            <a href="#" class = "no-underline ">
+                            <a href="#" class = "no-underline text-view">
                                 View Template
                             </a>
                         </th>

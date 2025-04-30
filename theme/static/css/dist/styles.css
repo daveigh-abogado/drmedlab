@@ -1441,13 +1441,13 @@ select {
 }
 
 .border-completed {
-  --tw-border-opacity: 1;
+  --tw-border-opacity: 0.4;
   border-color: rgb(31 116 32 / var(--tw-border-opacity, 0.4));
 }
 
 .bg-completed {
-  --tw-border-opacity: 1;
-  background-color: rgb(31 116 32 / var(--tw-border-opacity, 0.2));
+  --tw-bg-opacity: 0.2;
+  background-color: rgb(31 116 32 / var(--tw-bg-opacity, 0.2));
 }
 
 .text-completed {
@@ -1457,12 +1457,12 @@ select {
 
 .border-progress {
   --tw-border-opacity: 1;
-  border-color: rgb(234 193 12 / var(--tw-border-opacity, 0.4));
+  border-color: rgb(234 193 12 / var(--tw-border-opacity, 1));
 }
 
 .bg-progress {
-  --tw-border-opacity: 1;
-  background-color: rgb(234 193 12 / var(--tw-border-opacity, 0.2));
+  --tw-bg-opacity: 0.2;
+  background-color: rgb(234 193 12 / var(--tw-bg-opacity, 0.2));
 }
 
 .text-progress {
@@ -1862,6 +1862,7 @@ select {
   font-weight: 600;
 }
 
+
 .text-5xl {
   font-size: 3rem;
   line-height: 1;
@@ -1895,12 +1896,21 @@ select {
   font-style: normal;
 }
 
+.text-s-600 {
+  font-size: 1rem;
+  line-height: normal;
+  font-weight: 600;
+  font-style: normal;
+}
+
 .text-m {
   font-size: 1.25rem;
   line-height: normal;
-  font-weight:400;
+  font-weight:600;
   font-style: normal;
 }
+
+
 
 .text-mm {
   font-size: 1.5rem;
@@ -1940,6 +1950,10 @@ select {
   color: rgb(39 66 145 0.8/ var(--tw-text-opacity, 1));
 }
 
+.text-view {
+  --tw-text-opacity: 1;
+  color: rgb(8 173 236/ var(--tw-text-opacity, 1));
+}
 
 
 .text-blue-900 {
@@ -1984,6 +1998,11 @@ select {
 .text-gray-400 {
   --tw-text-opacity: 1;
   color: rgb(156 163 175 / var(--tw-text-opacity, 1));
+}
+
+.text-black-600 {
+  --tw-text-opacity: 0.6;
+  color: rgb(0 0 0 / var(--tw-text-opacity, 0.6));
 }
 
 .shadow-lg {
