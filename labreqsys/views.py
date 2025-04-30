@@ -535,9 +535,12 @@ def generatePDF(request):
         filenames = []
         for pk in ids:
             try:
+                line_item = RequestLineItem.objects.get(line_item_id=pk)
+                filename = f"{line_item.request.patient.last_name}, {line_item.request.patient.first_name[0]}_{line_item.component.test_name}_{line_item.request.date_requested}.pdf"
+                
                 pdf_response = savePDF(request, pk)
                 pdfs.append(pdf_response)
-                filenames.append(f"patient_{pk}.pdf")
+                filenames.append(filename)
             except Patient.DoesNotExist:
                 print(f"Patient with ID {pk} does not exist.")
                 continue
@@ -552,9 +555,11 @@ def generatePDF(request):
                 zip_file.writestr(filename, pdf_response.content)
 
         zip_buffer.seek(0)
+        
+        filename_z = f"{line_item.request.patient.last_name}_{line_item.request.date_requested}.zip"
 
         response = HttpResponse(zip_buffer, content_type='application/zip')
-        response['Content-Disposition'] = 'attachment; filename="patients_pdfs.zip"'
+        response['Content-Disposition'] = f'attachment; filename="{filename_z}"'
         return response
     elif len(ids) == 1: # Return only one pdf
         return savePDF(request, ids[0])
