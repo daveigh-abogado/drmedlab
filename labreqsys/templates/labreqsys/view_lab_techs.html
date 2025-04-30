@@ -30,7 +30,7 @@
 
             <!--ADD LAB TECH BUTTON -->
             <div class="col ms-auto text-end">
-                <button id="addLabTechButton" data-modal-target="labTechModal" data-modal-toggle="labTechModal" class="text-white px-6 py-2 bg-primary-700 font-bold rounded-lg text-ssm hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 transition-all duration-200" type="button">
+                <button id="addLabTechButton" data-modal-target="labTechModal" data-modal-toggle="labTechModal" class="text-white px-6 py-2 bg-primary-700 font-bold rounded-lg text-ssm" type="button">
                     Add Lab Technician
                 </button>
             </div>
@@ -47,60 +47,53 @@
                             <h3 class="text-mm font-semibold text-blue-900">
                                 Add Lab Technician
                             </h3>
-                            <button type="button" class="text-blue-900 bg-transparent hover:bg-blue-800 hover:text-blue-800 rounded-lg text-sm p-1.5 ml-auto inline-flex items-right transition-colors duration-200" data-modal-toggle="labTechModal">
+                            <button type="button" class="text-blue-900 bg-transparent hover:bg-blue-800 hover:text-blue-800 rounded-lg text-sm p-1.5 ml-auto inline-flex items-right" data-modal-toggle="labTechModal">
                                 <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                                 <span class="sr-only">Close modal</span>
                             </button>
                         </div>
                         <!-- Modal body -->
-                        <form id="labTechForm" method="POST" action="{% url 'add_lab_tech' %}" class="gap-2.5" enctype="multipart/form-data" novalidate>
+                        <form id="labTechForm" method="POST" action="{% url 'add_lab_tech' %}" class="gap-2.5" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
                                 <div>
                                     <label for="last_name" class="block mb-2 text-left text-sm font-medium text-gray-500">Last Name *</label>
-                                    <input type="text" name="last_name" id="last_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 transition-all duration-200" placeholder="Type last name" required pattern="^[A-Za-z\s]+$" title="Use letters and spaces only">
-                                    <p class="mt-1 text-xs text-red-600 hidden" id="last_name_error"></p>
+                                    <input type="text" name="last_name" id="last_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type last name" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
                                 </div>
                                 <div>
                                     <label for="first_name" class="block mb-2 text-left text-sm font-medium text-gray-500">First Name *</label>
-                                    <input type="text" name="first_name" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 transition-all duration-200" placeholder="Type first name" required pattern="^[A-Za-z\s]+$" title="Use letters and spaces only">
-                                    <p class="mt-1 text-xs text-red-600 hidden" id="first_name_error"></p>
+                                    <input type="text" name="first_name" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type first name" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
                                 </div>
                             </div>
                             <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
                                 <div>
                                     <label for="title" class="block mb-2 text-left text-sm font-medium text-gray-500">Title *</label>
-                                    <select id="title" name="title" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 transition-all duration-200" required>
+                                    <select id="title" name="title" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
                                         <option value="" disabled selected>Select title</option>
                                         <option value="RMT">RMT (Registered Medical Technologist)</option>
                                         <option value="MD">MD (Medical Doctor)</option>
                                     </select>
-                                    <p class="mt-1 text-xs text-red-600 hidden" id="title_error"></p>
                                 </div>
                                 <div>
                                     <label for="tech_role" class="block mb-2 text-left text-sm font-medium text-gray-500">Role *</label>
-                                    <select id="tech_role" name="tech_role" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 transition-all duration-200" required>
+                                    <select id="tech_role" name="tech_role" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
                                         <option value="" disabled selected>Select role</option>
                                         <option value="Medical Technologist">Medical Technologist</option>
                                         <option value="Pathologist">Pathologist</option>
                                     </select>
-                                    <p class="mt-1 text-xs text-red-600 hidden" id="tech_role_error"></p>
                                 </div>
                             </div>
                             <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
                                 <div>
                                     <label for="license_num" class="block mb-2 text-left text-sm font-medium text-gray-500">License Number *</label>
-                                    <input type="text" name="license_num" id="license_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 transition-all duration-200" placeholder="Type license number" required>
-                                    <p class="mt-1 text-xs text-red-600 hidden" id="license_num_error"></p>
+                                    <input type="text" name="license_num" id="license_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type license number" required="">
                                 </div>
                                 <div>
                                     <label for="signature" class="block mb-2 text-left text-sm font-medium text-gray-500">Signature (PNG) *</label>
-                                    <input type="file" name="signature" id="signature" accept="image/png" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 transition-all duration-200" required>
-                                    <p class="mt-1 text-xs text-gray-500">Maximum file size: 5MB</p>
-                                    <p class="mt-1 text-xs text-red-600 hidden" id="signature_error"></p>
+                                    <input type="file" name="signature" id="signature" accept="image/png" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
                                 </div>
                             </div>
-                            <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all duration-200">
+                            <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                 <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
                                 Add Lab Technician
                             </button>
@@ -119,69 +112,59 @@
                             <h3 class="text-mm font-semibold text-blue-900">
                                 Edit Lab Technician
                             </h3>
-                            <button type="button" class="text-blue-900 bg-transparent hover:bg-blue-800 hover:text-blue-800 rounded-lg text-sm p-1.5 ml-auto inline-flex items-right transition-colors duration-200" data-modal-toggle="editLabTechModal">
+                            <button type="button" id="editModalCloseBtn" class="text-blue-900 bg-transparent hover:bg-blue-800 hover:text-blue-800 rounded-lg text-sm p-1.5 ml-auto inline-flex items-right">
                                 <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                                 <span class="sr-only">Close modal</span>
                             </button>
                         </div>
                         <!-- Modal body -->
-                        <form id="editLabTechForm" method="POST" class="gap-2.5" enctype="multipart/form-data" novalidate>
+                        <form id="editLabTechForm" method="POST" class="gap-2.5" enctype="multipart/form-data">
                             {% csrf_token %}
                             <!-- Name Fields (Read-only) -->
                             <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-500">Last Name</label>
-                                    <input type="text" id="edit_last_name" class="mt-1 bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5" readonly>
+                                    <label class="block mb-2 text-left text-sm font-medium text-gray-500">Last Name</label>
+                                    <input type="text" id="edit_last_name" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5" readonly>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-500">First Name</label>
-                                    <input type="text" id="edit_first_name" class="mt-1 bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5" readonly>
+                                    <label class="block mb-2 text-left text-sm font-medium text-gray-500">First Name</label>
+                                    <input type="text" id="edit_first_name" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5" readonly>
                                 </div>
                             </div>
-
                             <!-- Title and Role -->
                             <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
                                 <div>
-                                    <label for="edit_title" class="block text-sm font-medium text-gray-500">Title *</label>
-                                    <select id="edit_title" name="title" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 transition-all duration-200" required>
+                                    <label for="edit_title" class="block mb-2 text-left text-sm font-medium text-gray-500">Title *</label>
+                                    <select id="edit_title" name="title" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
                                         <option value="RMT">RMT (Registered Medical Technologist)</option>
                                         <option value="MD">MD (Medical Doctor)</option>
                                     </select>
-                                    <p class="mt-1 text-xs text-red-600 hidden" id="edit_title_error"></p>
                                 </div>
                                 <div>
-                                    <label for="edit_tech_role" class="block text-sm font-medium text-gray-500">Role *</label>
-                                    <select id="edit_tech_role" name="tech_role" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 transition-all duration-200" required>
+                                    <label for="edit_tech_role" class="block mb-2 text-left text-sm font-medium text-gray-500">Role *</label>
+                                    <select id="edit_tech_role" name="tech_role" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
                                         <option value="Medical Technologist">Medical Technologist</option>
                                         <option value="Pathologist">Pathologist</option>
                                     </select>
-                                    <p class="mt-1 text-xs text-red-600 hidden" id="edit_tech_role_error"></p>
                                 </div>
                             </div>
-
                             <!-- License Number -->
                             <div class="mb-4">
-                                <label for="edit_license_num" class="block text-sm font-medium text-gray-500">License Number *</label>
-                                <input type="text" id="edit_license_num" name="license_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 transition-all duration-200" required>
-                                <p class="mt-1 text-xs text-red-600 hidden" id="edit_license_num_error"></p>
+                                <label for="edit_license_num" class="block mb-2 text-left text-sm font-medium text-gray-500">License Number *</label>
+                                <input type="text" name="license_num" id="edit_license_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
                             </div>
-
                             <!-- Current Signature -->
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-500 mb-2">Current Signature</label>
-                                <img id="edit_current_signature" class="h-16 mb-2">
+                                <label class="block mb-2 text-left text-sm font-medium text-gray-500">Current Signature</label>
+                                <img id="current_signature" class="h-16 mb-2">
                             </div>
-
                             <!-- New Signature Upload -->
                             <div class="mb-4">
-                                <label for="edit_signature" class="block text-sm font-medium text-gray-500">Update Signature (PNG, Optional)</label>
-                                <input type="file" id="edit_signature" name="signature" accept="image/png" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 transition-all duration-200">
-                                <p class="mt-1 text-xs text-gray-500">Leave empty to keep current signature. Maximum file size: 5MB</p>
-                                <p class="mt-1 text-xs text-red-600 hidden" id="edit_signature_error"></p>
+                                <label for="edit_signature" class="block mb-2 text-left text-sm font-medium text-gray-500">Update Signature (PNG, Optional)</label>
+                                <input type="file" name="signature" id="edit_signature" accept="image/png" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                                <p class="mt-1 text-xs text-gray-500">Leave empty to keep current signature</p>
                             </div>
-
-                            <!-- Submit Button -->
-                            <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all duration-200">
+                            <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                 Save Changes
                             </button>
                         </form>
@@ -211,7 +194,7 @@
                 </thead>
                 <tbody>
                     {% for tech in lab_techs %}
-                    <tr class="bg-white border-b hover:bg-gray-50 transition-colors duration-200">
+                    <tr class="bg-white border-b hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">{{ tech.last_name }}, {{ tech.first_name }}</div>
                         </td>
@@ -232,10 +215,7 @@
                             {% endif %}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <button 
-                                onclick="openEditModal('{{ tech.lab_tech_id }}', '{{ tech.first_name }}', '{{ tech.last_name }}', '{{ tech.title }}', '{{ tech.tech_role }}', '{{ tech.license_num }}', '{% if tech.signature_path %}{% static tech.signature_path %}{% endif %}')"
-                                class="text-primary-700 hover:text-primary-800 transition-colors duration-200"
-                            >
+                            <button onclick="openEditModal({{ tech.lab_tech_id }}, '{{ tech.first_name }}', '{{ tech.last_name }}', '{{ tech.title }}', '{{ tech.tech_role }}', '{{ tech.license_num }}', '{% static tech.signature_path %}')" class="text-primary-700 hover:text-primary-800">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                 </svg>
@@ -263,150 +243,67 @@
         const editModal = document.getElementById('editLabTechModal');
         const addButton = document.getElementById('addLabTechButton');
         const addCloseButton = addModal.querySelector('[data-modal-toggle="labTechModal"]');
-        const editCloseButton = editModal.querySelector('[data-modal-toggle="editLabTechModal"]');
+        const editCloseButton = document.getElementById('editModalCloseBtn');
 
-        function toggleModal(modal) {
-            modal.classList.toggle('hidden');
-            modalBackdrop.classList.toggle('hidden');
-            if (!modal.classList.contains('hidden')) {
-                modal.style.display = 'flex';
-            } else {
-                modal.style.display = 'none';
-                // Clear form errors when closing
-                const form = modal.querySelector('form');
-                if (form) {
-                    clearFormErrors(form);
-                }
-            }
+        function closeModal(modal) {
+            modal.classList.add('hidden');
+            modalBackdrop.classList.add('hidden');
+            modal.style.display = 'none';
         }
 
-        function clearFormErrors(form) {
-            const errorElements = form.querySelectorAll('[id$="_error"]');
-            errorElements.forEach(element => {
-                element.classList.add('hidden');
-                element.textContent = '';
-            });
-            const inputs = form.querySelectorAll('input, select');
-            inputs.forEach(input => {
-                input.classList.remove('border-red-500');
-            });
+        function openModal(modal) {
+            modal.classList.remove('hidden');
+            modalBackdrop.classList.remove('hidden');
+            modal.style.display = 'flex';
         }
 
         // Add modal event listeners
         addCloseButton.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            toggleModal(addModal);
+            closeModal(addModal);
         });
 
         addButton.addEventListener('click', function() {
-            toggleModal(addModal);
+            openModal(addModal);
         });
 
         // Edit modal event listeners
         editCloseButton.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            toggleModal(editModal);
+            closeModal(editModal);
         });
 
-        // Close modal when clicking the backdrop
+        // Close modals when clicking backdrop
         modalBackdrop.addEventListener('click', function(e) {
             if (e.target === modalBackdrop) {
                 if (!addModal.classList.contains('hidden')) {
-                    toggleModal(addModal);
+                    closeModal(addModal);
                 }
                 if (!editModal.classList.contains('hidden')) {
-                    toggleModal(editModal);
+                    closeModal(editModal);
                 }
             }
         });
 
-        // Close modals when pressing Escape key
+        // Close modals when pressing Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 if (!addModal.classList.contains('hidden')) {
-                    toggleModal(addModal);
+                    closeModal(addModal);
                 }
                 if (!editModal.classList.contains('hidden')) {
-                    toggleModal(editModal);
+                    closeModal(editModal);
                 }
             }
         });
-
-        // Form validation
-        function validateForm(form) {
-            let isValid = true;
-            const inputs = form.querySelectorAll('input[required], select[required]');
-            
-            inputs.forEach(input => {
-                const errorElement = document.getElementById(`${input.id}_error`);
-                if (!input.value) {
-                    isValid = false;
-                    input.classList.add('border-red-500');
-                    if (errorElement) {
-                        errorElement.textContent = 'This field is required';
-                        errorElement.classList.remove('hidden');
-                    }
-                } else if (input.type === 'file' && input.files[0]) {
-                    if (input.files[0].size > 5 * 1024 * 1024) { // 5MB
-                        isValid = false;
-                        input.classList.add('border-red-500');
-                        if (errorElement) {
-                            errorElement.textContent = 'File size must be less than 5MB';
-                            errorElement.classList.remove('hidden');
-                        }
-                    }
-                } else if (input.pattern && !new RegExp(input.pattern).test(input.value)) {
-                    isValid = false;
-                    input.classList.add('border-red-500');
-                    if (errorElement) {
-                        errorElement.textContent = input.title || 'Invalid format';
-                        errorElement.classList.remove('hidden');
-                    }
-                } else {
-                    input.classList.remove('border-red-500');
-                    if (errorElement) {
-                        errorElement.classList.add('hidden');
-                    }
-                }
-            });
-
-            return isValid;
-        }
-
-        // Add form validation
-        const addForm = document.getElementById('labTechForm');
-        if (addForm) {
-            addForm.addEventListener('submit', function(e) {
-                if (!validateForm(this)) {
-                    e.preventDefault();
-                }
-            });
-        }
-
-        // Edit form validation
-        const editForm = document.getElementById('editLabTechForm');
-        if (editForm) {
-            editForm.addEventListener('submit', function(e) {
-                if (!validateForm(this)) {
-                    e.preventDefault();
-                }
-            });
-        }
     });
 
     function openEditModal(id, firstName, lastName, title, role, licenseNum, signaturePath) {
         const editModal = document.getElementById('editLabTechModal');
-        const form = document.getElementById('editLabTechForm');
         const modalBackdrop = document.getElementById('modalBackdrop');
-
-        // Clear any previous errors
-        const errorElements = form.querySelectorAll('[id$="_error"]');
-        errorElements.forEach(element => {
-            element.classList.add('hidden');
-            element.textContent = '';
-        });
+        const form = document.getElementById('editLabTechForm');
 
         // Set form action
         form.action = `/edit_lab_tech/${id}/`;
@@ -417,11 +314,12 @@
         document.getElementById('edit_title').value = title;
         document.getElementById('edit_tech_role').value = role;
         document.getElementById('edit_license_num').value = licenseNum;
-
-        // Set current signature image if exists
-        const currentSignature = document.getElementById('edit_current_signature');
+        
+        // Set current signature image
+        const currentSignature = document.getElementById('current_signature');
         if (signaturePath) {
             currentSignature.src = signaturePath;
+            currentSignature.alt = "Current Signature";
             currentSignature.style.display = 'block';
         } else {
             currentSignature.style.display = 'none';
