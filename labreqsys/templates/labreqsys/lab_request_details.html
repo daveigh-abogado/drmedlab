@@ -72,14 +72,13 @@
         <!-- Lab Request Tracker Section -->
         <div class="mb-8">
             <div class="flex items-center justify-between">
-                <h2 class="text-[#2F4B8C] text-xl font-bold">Lab Request Tracker</h2>
+                <h2 class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Lab Request Tracker</h2>
                 <!--TO FRONTEND: edit div-->
-                <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" onclick="handleButtonClick()">
+                <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-gray-50" onclick="handleButtonClick()">
                     <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                     </svg>
                     Download PDF
-                
                 </button>
                 <!-- madie is working on this one -->
             </div>
@@ -169,9 +168,9 @@
                             {% if line_item.request_status == 'Not Started' %}
                                 <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-gray-100 text-gray-800 shadow-sm border-gray-200 border">
                             {% elif line_item.request_status == 'Completed' %}
-                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium border border-completed bg-completed text-completed shadow-sm">
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-completed text-completed shadow-sm">
                             {% else %}
-                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium border border-progress bg-progress text-progress shadow-sm">
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-progress text-progress shadow-sm">
                             {% endif %}
                                 {{ line_item.request_status }}
                             </span>
@@ -192,8 +191,8 @@
                                 </a>
                             {% endif %}
                         </td>
-                        <td class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center">
-                            <a href="#" class = "no-underline ">View</a>
+                        <td class="px-6 py-2 font-medium text-view whitespace-nowrap text-center">
+                            <a href="#" class = "no-underline text-view">View</a>
                         </td>
                     </tr>
                     {% endfor %}
