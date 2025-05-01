@@ -147,6 +147,7 @@
 <br>
 
 {% for section, row in form.items %}
+{{section.section_name}}
     <table>
         <thead>
             {% for field in row %}
@@ -167,9 +168,20 @@
     </table>
 {% endfor %}
 
+<p> *** End of Report *** </p>
+
 <!-- [MADS TODO] Add Technician details here-->
+<table>
+<!--{% for tech in lab_tech%}-->
+<th>
+    yes
+</th>
+<th>
+    yo
+</th>
 
-
+<!--{% endfor%}-->
+<table>
 
 
 

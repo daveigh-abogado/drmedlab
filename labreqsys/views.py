@@ -586,21 +586,29 @@ def pdf(request, pk):
 
     for section in template_section:
         fields.append(TemplateField.objects.filter(section=section.section_id)) # list of all fields per section and appends to fields 'list'
-        
+        print(f"section: {section}")
+    
         for column in fields:
             results = []
             result_value = {}
             for field in column:
+                print(f"field: {field}")
+                result_value[field] = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)
                 
-                results.append(ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)) # list of all results per field and appends to results 'list'
-                for result in results:
-                    result_value[field] = result # pairs result 'queryset' to field 'object' indicated in for loop
-    
-                    if result.exists():
-                        for review in result:
-                            reviewed_by.append(ResultReview.objects.filter(result_value__result_value_id = review.result_value_id))
-                form[section] = result_value # pairs result_value 'dict' to a section 'queryset'
+                print (f"FIELDY !!! {section} ^^ {field}: {ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)}\n")
+                print (result_value)
+        form[section] = result_value
+            
+    print(f"form: {form}")
                 
+    '''
+    for result in results:
+        result_value[field] = result # pairs result 'queryset' to field 'object' indicated in for loop
+        print(result_value)
+        if result.exists():
+            for review in result:
+                reviewed_by.append(ResultReview.objects.filter(result_value__result_value_id = review.result_value_id))'''
+        # pairs result_value 'dict' to a section 'queryset'  
     age = 0
     if patient.birthdate:
         today = date.today()
