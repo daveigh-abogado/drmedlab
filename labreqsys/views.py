@@ -229,6 +229,7 @@ def summarize_labreq(request, pk):
         
     discount = Decimal('0.00')
     total = subtotal  # Initialize total with subtotal
+    discount_type = None
     
     # Apply discount only if patient has a non-empty PWD ID or Senior ID
     has_pwd = p.pwd_id_num and str(p.pwd_id_num).strip()
@@ -237,6 +238,7 @@ def summarize_labreq(request, pk):
         try:
             discount = round(subtotal * Decimal('0.2'), 2)
             total = subtotal - discount
+            discount_type = 'PWD' if has_pwd else 'Senior Citizen'
         except (ValueError, TypeError, decimal.InvalidOperation):
             discount = Decimal('0.00')
     
@@ -351,6 +353,7 @@ def summarize_labreq(request, pk):
         'subtotal': subtotal,
         'date': current_date,
         'discount': discount,
+        'discount_type': discount_type,
         'physician': physician,
         'mode_of_release': mode_of_release,
         'request_id': next_request_id
