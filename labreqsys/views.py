@@ -239,7 +239,7 @@ def summarize_labreq(request, pk):
             else:  # If only Pick-up selected
                 mode_of_release = 'Pick-up'
 
-
+        #launch
         if "confirm" in request.POST and request.POST["confirm"] == "submit":
             # Only proceed if we have components or packages
             if components or packages:
