@@ -23,7 +23,9 @@ urlpatterns = [
     path('generatePDF', views.generatePDF, name='generatePDF'),
     path('pdf/<int:pk>', views.pdf, name='pdf'),
     path('view_labresult/<int:pk>', views.view_lab_result, name='view_labresult'),
-    path('save_patient', views.save_patient, name='save_patient')
+    path('save_patient', views.save_patient, name='save_patient'),
+    path('packages', views.packages, name='packages'),
+    path('add_package', views.add_package, name='add_package')
 
 ]
 #test

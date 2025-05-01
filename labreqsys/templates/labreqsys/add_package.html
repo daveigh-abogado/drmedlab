@@ -1,0 +1,110 @@
+{% extends 'labreqsys/base.html' %}
+{% load static tailwind_tags %}
+
+{% block content %}
+<div class="breadbutton my-4">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'testComponents' %}">Test Component List</a></li>
+        <li><a href="#" class="current">Add Test Component</a></li>
+    </ul>
+</div>
+
+
+
+<div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
+    <!-- Add Test Component Header -->
+    <div class="flex justify-between items-center rounded-t border-b sm:mb-4">
+        <h1 class="text-mm font-semibold text-blue-900">
+            Add Package
+        </h1>
+    </div>
+    <div class="ml-3 pl-5"> <!--TO FRONTEND: ADJUST AS NEEDED THE LACK OF PADDING WAS BOTHERING ME LNG SINCE MERON SA FIGMA-->
+        <!-- Form Body -->
+        <form id="form" method="POST" action="{%url 'add_package' %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
+
+            <!--TEST COMPONENT DETAILS-->
+            <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2">Test Component Details</div>
+
+            <div class="grid gap-2.5 mb-4 sm:grid-cols-4"> <!--TO BACKEND: don't forget to fill in for=""-->
+                <div>
+                    <label for="package_name" class="block mb-2 text-left text-sm font-medium text-gray-500 uppercase">Package Name *</label>
+                    <input type="text" name="package_name" id="package_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Click and Type Package Name" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
+                </div>
+                <div> <!--TO FRONTEND: adjust price width to be smaller than the other fields plsplspls-->
+                    <label for="price" class="block mb-2 text-left text-sm font-medium text-gray-500">Price *</label>
+                    <input type="text" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="00" required="" pattern="^\d+(\.\d{2})?$" title="Enter a valid price with exactly 2 decimal places (e.g., 12 or 12.34)">
+                </div>
+            </div>
+
+            <!--TEMPLATE-->
+            <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2 mt-6"> Add Component</div>
+            <label for="package_name" class="block mb-2 text-left text-sm font-medium text-gray-500 uppercase">Select a component</label>
+            <div>
+                <table>
+                    {% for t in components%}
+                    
+                    <tr> 
+                        <input type="checkbox" name="componentCheckbox" id="componentCheckbox" value={{t.component_id}}>{{t.test_name}}
+                    </tr>
+                    {% endfor %}
+                </table>
+
+            </div>
+            <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
+                <div>
+                    <!--TO FRONTEND: paayos ng border color and hover-->
+                    <a href="{% url 'testComponents' %}" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">
+                        Cancel
+                    </a>
+                </div>
+                <div>
+                    <button type="submit" name="savePackage" id="savePackage" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
+                        Save
+                    </button>
+                </div>
+            </div>
+
+        </form> 
+    </div>   
+</div>
+
+<script>
+    
+    document.getElementById("form").addEventListener("submit", function(event) {
+        const checked = document.querySelectorAll('input[name="componentCheckbox"]:checked');
+        const warning = document.getElementById("checkboxWarning");
+    
+        if (checked.length === 0) {
+            event.preventDefault(); // Stop the form from submitting
+            alert("Test — Please select at least one component.");
+        } else {
+            warning.textContent = ""; // Clear any previous warning
+        }
+    });
+
+</script>
+
+{% endblock content %}
+
+{% block styles %}
+<style>
+    ul.breadcrumb li {
+        display: inline;
+        font-size: 12px;
+    }
+    
+    ul.breadcrumb li+li:before {
+        color: black;
+        content: "/\00a0";
+    }
+
+    ul.breadcrumb .current {
+        color: #00BAFF;
+    }
+
+    .breadbutton{
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+{% endblock styles %}

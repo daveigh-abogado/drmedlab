@@ -686,3 +686,42 @@ def view_lab_result(request, pk):
     """
     line_item = get_object_or_404(RequestLineItem, line_item_id=pk)
     return render(request, 'labreqsys/view_lab_results.html', {'line_item' : line_item})
+
+
+def packages (request):
+    '''
+    Display packages
+    '''
+    packages = TestPackage.objects.all()
+    pc = TestPackageComponent.objects.all()
+    return render(request, 'labreqsys/packages.html', {'packages': packages, 'pc': pc})
+
+def add_package (request):
+    '''
+    Display packages
+    '''
+    test_components = TestComponent.objects.all()
+    
+    if request.method == "POST":
+        package_name = request.POST.get('package_name')
+        price = request.POST.get('price')
+        components = request.POST.getlist('componentCheckbox')
+        
+        if TestPackage.objects.filter(package_name=package_name).exists():
+            return redirect('packages')
+        else:
+            package = TestPackage.objects.create(
+                package_name=package_name,
+                package_price=price
+                )
+            
+            for c in components:
+                component = TestComponent.objects.get(component_id=c)
+                TestPackageComponent.objects.create(
+                    package=package,
+                    component=component
+                )
+
+        return redirect('packages')
+    else:
+        return render(request, 'labreqsys/add_package.html', {'components': test_components})
