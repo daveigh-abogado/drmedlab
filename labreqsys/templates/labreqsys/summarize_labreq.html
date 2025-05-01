@@ -117,12 +117,25 @@
             </div> 
             
             <div>
-                
-                <!--TO BACKEND: pls add different labels for senior ID and PWD ID-->
-                <div class="flex justify-between py-2">
-                    <div class="mr-2 text-blue-900" style="font-weight: 600">Discount</div>
-                    <div class="">₱ {{ discount }}</div>
+                {% if discount_type %}
+                <div class="flex flex-col gap-2 py-2">
+                    <div class="flex justify-between">
+                        <div class="mr-2 text-blue-900" style="font-weight: 600">{{ discount_type }} Discount (20%)</div>
+                        <div class="">₱ {{ discount }}</div>
+                    </div>
+                    {% if discount_type == 'Senior Citizen' %}
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <div class="mr-2">Senior Citizen ID:</div>
+                        <div class="">{{ patient.senior_id_num }}</div>
+                    </div>
+                    {% elif discount_type == 'PWD' %}
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <div class="mr-2">PWD ID:</div>
+                        <div class="">{{ patient.pwd_id_num }}</div>
+                    </div>
+                    {% endif %}
                 </div>
+                {% endif %}
 
                 <div class="component-item flex justify-between py-2 border-2 border rounded-lg p-2 bg-gray-50">
                     <div class = "flex items-center">
