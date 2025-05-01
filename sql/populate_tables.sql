@@ -108,6 +108,8 @@ VALUES
 
 INSERT INTO collection_log
 VALUES 
+(NULL, '1', 'Jo March', '2025-01-30 10:30:00', 'Email'),
+(NULL, '2', 'Elizabeth Bennett', '2025-01-30 10:30:00', 'Pick-up'),
 (NULL, '3', 'Carlos Reyes', '2025-01-30 10:30:00', 'Email'),
 (NULL, '3', 'Carlos Reyes', '2025-02-01 12:00:00', 'Pick-up'),
 (NULL, '4', 'Charles Leclerc', '2025-02-18 13:00:00', 'Email'),
