@@ -174,7 +174,7 @@ def summarize_labreq(request, pk):
     sc = request.session.get('selected_components', []) or []
     sp = request.session.get('selected_packages', []) or []
     
-    total = Decimal('0.00')  # Ensure decimal precision for currency
+    subtotal = Decimal('0.00')  # Initialize subtotal
     components = []
     packages = []
     
@@ -182,28 +182,30 @@ def summarize_labreq(request, pk):
     for t in sc:
         try:
             temp = get_object_or_404(TestComponent, pk=t)
-            total += Decimal(str(temp.component_price or 0))  # Convert to Decimal safely
+            subtotal += Decimal(str(temp.component_price or 0))  # Add to subtotal
             components.append(temp)
         except (ValueError, TypeError):
-            total += Decimal('0.00')
+            subtotal += Decimal('0.00')
             
     # Safely handle package prices
     for t in sp:
         try:
             temp = get_object_or_404(TestPackage, pk=t)
-            total += Decimal(str(temp.package_price or 0))  # Convert to Decimal safely
+            subtotal += Decimal(str(temp.package_price or 0))  # Add to subtotal
             packages.append(temp)
         except (ValueError, TypeError):
-            total += Decimal('0.00')
+            subtotal += Decimal('0.00')
         
     discount = Decimal('0.00')
+    total = subtotal  # Initialize total with subtotal
+    
     # Apply discount only if patient has a non-empty PWD ID or Senior ID
     has_pwd = p.pwd_id_num and str(p.pwd_id_num).strip()
     has_senior = p.senior_id_num and str(p.senior_id_num).strip()
     if has_pwd or has_senior:
         try:
-            discount = round(total * Decimal('0.2'), 2)
-            total -= discount
+            discount = round(subtotal * Decimal('0.2'), 2)
+            total = subtotal - discount
         except (ValueError, TypeError, decimal.InvalidOperation):
             discount = Decimal('0.00')
     
@@ -248,7 +250,7 @@ def summarize_labreq(request, pk):
                             progress_timestamp=timezone.now()
                         )
 
-                        # Fetch fields for this component’s template, excluding Labels
+                        # Fetch fields for this component's template, excluding Labels
                         sections = TemplateSection.objects.filter(template_id=component.template_id)
                         for section in sections:
                             fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
@@ -273,7 +275,7 @@ def summarize_labreq(request, pk):
                                 template_used=package_component.component.template_id,
                                 progress_timestamp=timezone.now()
                             )
-                            # Fetch fields for this component’s template, excluding Labels
+                            # Fetch fields for this component's template, excluding Labels
                             sections = TemplateSection.objects.filter(template_id=package_component.component.template_id)
                             for section in sections:
                                 fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
@@ -299,6 +301,7 @@ def summarize_labreq(request, pk):
         'components': components,
         'packages': packages,
         'total': total,
+        'subtotal': subtotal,  # Add subtotal to the context
         'date': current_date,
         'discount': discount,
         'physician': physician,
