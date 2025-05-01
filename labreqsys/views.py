@@ -314,7 +314,7 @@ def view_individual_lab_request(request, request_id):
     request_details = lab_request.get_request_details()
     return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details})
 
-
+#delete this later
 def add_lab_result(request, line_item_id):
     line_item = get_object_or_404(RequestLineItem, pk=line_item_id)
     test_component = get_object_or_404(TestComponent, pk=line_item.component_id)
