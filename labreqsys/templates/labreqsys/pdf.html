@@ -172,15 +172,26 @@
 
 <!-- [MADS TODO] Add Technician details here-->
 <table>
-<!--{% for tech in lab_tech%}-->
+{% for tech in lab_tech %}
 <th>
-    yes
+    <img src="{{tech.lab_tech.signature_path}}" alt="{{tech.lab_tech.first_name}}_{{tech.lab_tech.last_name}}_signature">
 </th>
-<th>
-    yo
-</th>
-
-<!--{% endfor%}-->
+<tr>
+    <td>
+        {{tech.lab_tech.first_name}} {{tech.lab_tech.last_name}}
+    </td>
+</tr>
+<tr>
+    <td>
+        {{tech.lab_tech.title}}
+    </td>
+</tr>
+<tr>
+    <td>
+        {{tech.lab_tech.license_num}}
+    </td>
+</tr>
+{% endfor%}
 <table>
 
 

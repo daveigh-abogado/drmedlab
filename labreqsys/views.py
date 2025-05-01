@@ -546,19 +546,19 @@ def pdf(request, pk):
     '''
     
     line_item = RequestLineItem.objects.get(line_item_id=pk)
-    
+
     test_component = TestComponent.objects.get(component_id=line_item.component.component_id)
-    
+
     template_form = TemplateForm.objects.filter(template_id=line_item.component.template.template_id).order_by('-template_id')[0]
     # Looks for the latest template made
-    
+
     lab_request = LabRequest.objects.get(request_id=line_item.request.request_id)
 
     patient = Patient.objects.get(patient_id=lab_request.patient.patient_id)
-    
-    
+
+
     # [MADS NOTES]: CHAOS ENSUES !
-    
+
     ''' 
         !! form 'dict' will look like this:
         {
@@ -577,45 +577,51 @@ def pdf(request, pk):
         
         This way, its easier to map out results with user input and a lot more dynamic
     '''
-    
+
     form = {}
-    fields = [] 
+    fields = []
     reviewed_by = [] # [MADS TO DO!] When ResultReview starts saving, pass reviewer data here
-    
+
     template_section = TemplateSection.objects.filter(template=template_form.template_id)
 
     for section in template_section:
         fields.append(TemplateField.objects.filter(section=section.section_id)) # list of all fields per section and appends to fields 'list'
-        print(f"section: {section}")
-    
+
         for column in fields:
-            results = []
             result_value = {}
             for field in column:
-                print(f"field: {field}")
                 result_value[field] = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)
-                
-                print (f"FIELDY !!! {section} ^^ {field}: {ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)}\n")
-                print (result_value)
-        form[section] = result_value
-            
-    print(f"form: {form}")
-                
-    '''
-    for result in results:
-        result_value[field] = result # pairs result 'queryset' to field 'object' indicated in for loop
-        print(result_value)
-        if result.exists():
-            for review in result:
-                reviewed_by.append(ResultReview.objects.filter(result_value__result_value_id = review.result_value_id))'''
-        # pairs result_value 'dict' to a section 'queryset'  
+        form[section] = result_value # pairs result_value 'dict' to a section 'queryset' 
+
+    results = ResultValue.objects.filter(line_item_id=line_item.line_item_id)
+    reviews = []
+
+    for rs in results:
+        review = ResultReview.objects.filter(result_value=rs)
+        print(f"{rs} + {len(results)}")
+        for lt in review:
+            print(f"review: {lt}")
+            if not reviews:
+                reviews.append(lt)
+                print("yes 1\n")
+            else:
+                for rev in reviews:
+                    print(f"rev : {rev.lab_tech.lab_tech_id}; lt : {lt.lab_tech.lab_tech_id}")
+                    if lt.lab_tech.lab_tech_id != rev.lab_tech.lab_tech_id:
+                        print ("yes 2\n")
+                        reviews.append(lt)
+                    else:
+                        print("no\n")
+                        break
+    print (f"review!: {reviews}")
+
     age = 0
     if patient.birthdate:
         today = date.today()
         age = today.year - patient.birthdate.year - ((today.month, today.day) < (patient.birthdate.month, patient.birthdate.day))
     else:
         age = None                 
-    
+
     return render(request, 'labreqsys/pdf.html', 
                 {'lab_request': lab_request, 
                 'patient': patient, 
@@ -623,7 +629,8 @@ def pdf(request, pk):
                 'age': age,
                 'address': "testing",
                 'form' : form,
-                'reviewed_by': reviewed_by                
+                'reviewed_by': reviewed_by,
+                'lab_tech' : reviews               
                 })
 
 
