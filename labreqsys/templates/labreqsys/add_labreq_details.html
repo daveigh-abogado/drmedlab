@@ -49,8 +49,14 @@
                             <div class="flex justify-start items-center">
                                 <div class="w-60 inline-flex flex-col justify-start items-start">
                                     <div class="self-stretch inline-flex justify-start items-center gap-3">
-                                        <input type="checkbox" name="mode_of_release" id="release" value="Pick-Up">Pick-Up
-                                        <input type="checkbox" name="mode_of_release" id="release" value="Email">Email
+                                        <div class="flex items-center mr-4">
+                                            <input type="checkbox" name="mode_of_release" id="pickup" value="Pick-up" class="mr-2">
+                                            <label for="pickup">Pick-up</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="checkbox" name="mode_of_release" id="email" value="Email" class="mr-2">
+                                            <label for="email">Email</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -82,6 +88,23 @@
             tab.classList.toggle('active', i === index);
         });
     }
+
+    // Add form validation
+    document.getElementById('form').addEventListener('submit', function(e) {
+        const modeCheckboxes = document.querySelectorAll('input[name="mode_of_release"]');
+        let modeSelected = false;
+        
+        modeCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                modeSelected = true;
+            }
+        });
+
+        if (!modeSelected) {
+            e.preventDefault();
+            alert('Please select at least one mode of release (Pick-up or Email)');
+        }
+    });
 </script>
 
 {% endblock content %}

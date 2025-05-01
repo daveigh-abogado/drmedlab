@@ -36,6 +36,19 @@ class LabRequest(models.Model):
     overall_status = models.CharField(max_length=11)
 
     def get_request_details(self):
+        # Get collection status based on mode_of_release
+        collection_status = 'Uncollected'
+        if self.mode_of_release == 'Pick-up':
+            collection_logs = CollectionLog.objects.filter(request=self).order_by('-time_collected').first()
+            if collection_logs:
+                collection_status = 'Collected'
+        
+        # Get email status based on mode_of_release
+        email_status = 'Not Sent'
+        if self.mode_of_release in ['Email', 'Both']:
+            # You can add email tracking logic here if needed
+            email_status = 'Sent' if self.overall_status == 'Completed' else 'Not Sent'
+
         return {
             'request_id': self.request_id,
             'patient': self.patient,
@@ -43,6 +56,8 @@ class LabRequest(models.Model):
             'physician': self.physician,
             'mode_of_release': self.mode_of_release,
             'overall_status': self.overall_status,
+            'collection_status': collection_status,
+            'email_status': email_status,
             'components': self.requestcomponent_set.all(),
             'packages': self.requestpackage_set.all(),
             'line_items': self.requestlineitem_set.all()

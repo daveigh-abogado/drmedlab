@@ -195,15 +195,31 @@
             <tbody>
                 {% for r in requests %}
                     <tr class="border-b border-gray-200 hover:bg-gray-200">
-                        <th scope="row" class="px-6 py-3 font-medium text-blue-500">
-                            <a href=" " class = "hover:underline focus:underline"></a> <!--TO BACKEND: pls link to lab request details :>-->
-                            {{ r.date_requested }}
+                        <td class="px-6 py-3">
+                            <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
+                                {{ r.date_requested }}
                             </a>
-                        </th>
-                        <td class="px-6 py-3">{{ r.request_id }}</td>
-                        <td class="px-6 py-3">{{ r.overall_status }}</td>
-                        <td class="px-6 py-3">{{ pickups }}</td> <!--this should be replace with a for loop noting collection logs-->
-                        <td class="px-6 py-3">{{ emails }}</td>
+                        </td>
+                        <td class="px-6 py-3">
+                            <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
+                                {{ r.request_id }}
+                            </a>
+                        </td>
+                        <td class="px-6 py-3">
+                            <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
+                                {{ r.overall_status }}
+                            </a>
+                        </td>
+                        <td class="px-6 py-3">
+                            <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
+                                {{ pickups }}
+                            </a>
+                        </td>
+                        <td class="px-6 py-3">
+                            <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
+                                {{ emails }}
+                            </a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -233,6 +249,19 @@
     .breadbutton{
         display: flex;
         justify-content: space-between;
+    }
+
+    /* Add styles for the lab request table links */
+    .lab-request-link {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    tr:hover .lab-request-link {
+        color: #00BAFF;
     }
 </style>
 {% endblock styles %}
