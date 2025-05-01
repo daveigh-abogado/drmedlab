@@ -16,164 +16,949 @@
 
 	</head>
 
-<div>
-<img src="{% static 'images/drmed_full.png' %}" class="h-8 me-3" alt="DRMed Logo" />
-    <div> 4/F NORTHRIDGE PLAZA,
-        CONGRESSIONAL AVE., QUEZON CITY
-        (02) 8355 3517 / (0916) 604 3208 </div>
-    </div>
-</div>
+    <body>
+        <div class="result-PDF">
+            <!--fuck this shi am out-->
+            <table class="logo-header" style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <!-- Logo Column -->
+                    <td style="width: 50%; vertical-align: middle;">
+                    <img class="image" src="{% static 'images/drmed_full.png' %}" />
+                    </td>
+                
+                    <!-- Address Column -->
+                    <td style="width: 50%; text-align: right; vertical-align: middle;">
+                        <div class="element-f-NORTHRIDGE-PLAZA">
+                            <span class="text-wrapper">
+                            4/F NORTHRIDGE PLAZA,<br />
+                            CONGRESSIONAL AVE., QUEZON CITY<br />
+                            </span>
+                            <span class="span">(02) 8355 3517 / (0916) 604 3208</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
 
+            <!--SECTION 1: PATIENT INFORMATION-->
+            <table class="patient-information" style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <!-- Patient ID -->
+                  <td class="div-wrapper"><div class="text-wrapper-4">Patient ID</div></td>
+                  <td class="frame-2"><div class="text-wrapper-5">{{patient.patient_id}}</div></td>
+              
+                  <!-- Date Requested -->
+                  <td class="div-wrapper"><div class="text-wrapper-4">Date Requested</div></td>
+                  <td class="frame-2"><div class="text-wrapper-5">{{lab_request.date_requested}}</div></td>
+                </tr>
+              
+                <tr>
+                  <!-- Patient Name -->
+                  <td class="div-wrapper"><div class="text-wrapper-4">Patient Name</div></td>
+                  <td class="frame-2"><div class="text-wrapper-5">{{patient.last_name}}, {{patient.first_name}}</div></td>
+              
+                  <!-- Landline No. -->
+                  <td class="div-wrapper"><div class="text-wrapper-4">Landline No.</div></td>
+                  <td class="frame-2"><div class="text-wrapper-5">{{patient.landline_num}}</div></td>
+                </tr>
+              
+                <tr>
+                  <!-- Age -->
+                  <td class="div-wrapper"><div class="text-wrapper-4">Age</div></td>
+                  <td class="frame-2"><div class="text-wrapper-5">{{age}}</div></td>
+              
+                  <!-- Email -->
+                  <td class="div-wrapper"><div class="text-wrapper-4">Email</div></td>
+                  <td class="frame-2"><div class="text-wrapper-5">{{patient.email}}</div></td>
+                </tr>
+              
+                <tr>
+                  <!-- Civil Status -->
+                  <td class="div-wrapper"><div class="text-wrapper-4">Civil Status</div></td>
+                  <td class="frame-2"><div class="text-wrapper-5">{{patient.civil_status}}</div></td>
+              
+                  <!-- Address -->
+                  <td class="div-wrapper"><div class="text-wrapper-4">Address</div></td>
+                  <td class="frame-2"><div class="text-wrapper-5">{{address}}</div></td>
+                </tr>
+              
+                <tr>
+                  <!-- Birthday -->
+                  <td class="div-wrapper"><div class="text-wrapper-4">Birthday</div></td>
+                  <td class="frame-2"><div class="text-wrapper-5">{{patient.birthdate}}</div></td>
+              
+                  <!-- Physician -->
+                  <td class="div-wrapper"><div class="text-wrapper-4">Physician</div></td>
+                  <td class="frame-2"><div class="text-wrapper-5">{{lab_request.physician}}</div></td>
+                </tr>
+              
+                <tr>
+                  <!-- Mobile No. -->
+                  <td class="div-wrapper"><div class="text-wrapper-4">Mobile No.</div></td>
+                  <td class="frame-2"><div class="text-wrapper-5">{{patient.mobile_num}}</div></td>
+              
+                  <!-- Filler column to balance -->
+                  <td></td>
+                  <td></td>
+                </tr>
+            </table>
 
-   
-<!--SECTION 1: PATIENT INFORMATION-->
-<div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section-->
-    <!--Section Content-->
-    <div class="self-stretch inline-flex justify-start items-start gap-4"> <!--both columns-->
-        <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--indiv column-->
-
-            <div class="w-[132px] inline-flex justify-start items-center gap-1.5">
-                <div class="w-[206px] py-2.5 px-2.5 flex justify-start items-center gap-1.5">
-                    <div class="text-blue-900 text-xs"> Patient ID </div>
-                </div>
-                <div class="px-6 py-1 bg-gray-100 rounded-3xl flex justify-center items-center gap-1.5">
-                    <div class="justify-center text-black text-xs">{{patient.patient_id}}</div>
+            <!--LAB RESULTS-->
+            <div class="lab-result">
+                <div class="results">
+                    <div class="results-content-group">
+                        <div class="results-template"> 
+                            <div class="results-content">
+                                <div class="text-wrapper-5">{{template_form.template_name}}</div>
+                                <div class="input-results">
+                                    
+                                    <!--TO BACKEND: the styling is still unedited :>-->
+                                    {% for section, row in form.items %}
+                                    {{section.section_name}} <!--FOR BACKEND PURPOSE ONLY ! can remove later :)-->
+                                    <table>
+                                        <thead>
+                                            {% for field in row %}
+                                                <th>{{field.label_name}}</th>
+                                            {% endfor %}
+                                        </thead>
+                                        <tbody>
+                                            {% for field, values in row.items %}
+                                                {% if values %} 
+                                                    {% for value in values %} 
+                                                    <td> {{value.field_value}} </td>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <td>{{field.field_value}}</td>
+                                                {% endif %}                
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    {% endfor %}
+                                    <!-- [MADS TODO] Add Technician details here-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Patient Name</div>
-                </div>
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-7 justify-center text-xs text-black font-normal">{{patient.last_name}}, {{patient.first_name}}</div>
-                </div>
-            </div>
-
-            <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Age</div>
-                </div>
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-7 justify-center text-xs text-black font-normal">{{age}}</div>
-                </div>
-            </div>
-
-            <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Civil Status</div>
-                </div>
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-7 justify-center text-xs text-black font-normal">{{patient.civil_status}}</div>
-                </div>
-            </div>
-
-            <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Birthday</div>
-                </div>
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-7 justify-center text-xs text-black font-normal">{{patient.birthdate}}</div>
-                </div>
-            </div>
-
-            <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                <div class="w-7 flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Mobile No.</div>
-                </div>
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-7 justify-center text-xs text-black font-normal">{{patient.mobile_num}}</div>
-                </div>
-            </div>
-
         </div>
+    </body>
+</html>
 
-        <!--COLUMN 2-->
-        <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--indiv column: Column 2-->
+<style>
+:root {
+  --foundation-bluelight: rgba(233, 236, 244, 1);
+  --foundation-bluelight-hover: rgba(223, 227, 239, 1);
+  --foundationbluelight-active: rgba(188, 196, 221, 1);
+  --foundation-bluenormal: rgba(39, 66, 145, 1);
+  --foundation-bluenormal-hover: rgba(35, 59, 131, 1);
+  --foundationbluenormal-active: rgba(31, 53, 116, 1);
+  --foundation-bluedark: rgba(29, 50, 109, 1);
+  --foundation-bluedark-hover: rgba(23, 40, 87, 1);
+  --foundation-bluedark-active: rgba(18, 30, 65, 1);
+  --foundation-bluedarker: rgba(14, 23, 51, 1);
+  --foundation-light-bluelight-blue-50: rgba(230, 247, 253, 1);
+  --foundation-light-bluelight-blue-100: rgba(178, 230, 249, 1);
+  --foundation-light-bluelight-blue-200: rgba(141, 217, 246, 1);
+  --foundation-light-bluelight-blue-300: rgba(90, 200, 242, 1);
+  --foundation-light-bluelight-blue-400: rgba(57, 189, 240, 1);
+  --foundation-light-bluelight-blue-500: rgba(8, 173, 236, 1);
+  --foundation-light-bluelight-blue-600: rgba(7, 157, 215, 1);
+  --foundation-light-bluelight-blue-700: rgba(6, 123, 168, 1);
+  --foundation-light-bluelight-blue-800: rgba(4, 95, 130, 1);
+  --foundation-light-bluelight-blue-900: rgba(3, 73, 99, 1);
+}
 
-            <div class="w-[132px] inline-flex justify-start items-center gap-1.5">
-                <div class="w-[206px] py-2.5 px-2.5 flex justify-start items-center gap-1.5">
-                    <div class="text-blue-900 text-xs"> Date Requested </div>
-                </div>
-                <div class="px-6 py-1 bg-gray-100 rounded-3xl flex justify-center items-center gap-1.5">
-                    <div class="justify-center text-black text-xs">{{lab_request.date_requested}}</div>
-                </div>
-            </div>
-            
-            
+.result-PDF {
+  display: inline-flex;
+  flex-direction: column;
+  width: 1440px;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 20px;
+  background-color: #ffffff;
+}
 
-            <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Landline No.</div>
-                </div>
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-7 justify-center text-xs text-black font-normal">{{patient.landline_num}}</div>
-                </div>
-            </div>
+.result-PDF .logo-header {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 30px 20px;
+  align-self: stretch;
+  width: 100%;
+  border-bottom-width: 4px;
+  border-bottom-style: solid;
+  border-color: #2742914c;
+}
 
-            <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Email</div>
-                </div>
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-7 justify-center text-xs text-black font-normal">{{patient.email}}</div>
-                </div>
-            </div>
+.result-PDF .image {
+  width: 333px;
+  height: 112px;
+}
 
-            <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Address</div>
-                </div>
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-7 justify-center text-xs text-black font-normal">{{address}}</div>
-                </div>
-            </div>
+.result-PDF .element-f-NORTHRIDGE-PLAZA {
+  font-family: "Outfit-Bold", Helvetica;
+  font-weight: 400;
+  color: var(--foundation-bluedark);
+  font-size: 24px;
+  text-align: right;
+  letter-spacing: 0.96px;
+  line-height: normal;
+  color: #1D326D;
+  display:flex
+}
 
-            <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Physician</div>
-                </div>
-                <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-7 justify-center text-xs text-black font-normal">{{lab_request.physician}}</div>
-                </div>
-            </div>
+.result-PDF .text-wrapper {
+  font-weight: 700;
+  letter-spacing: 0.23px;
+}
 
-        </div>
-    
-    </div>
+.result-PDF .span {
+  font-family: "Outfit-Regular", Helvetica;
+  letter-spacing: 0.23px;
+}
+
+.result-PDF .patient-information {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 20px;
+  align-self: stretch;
+  width: 100%;
+  display: flex;
+  position: relative;
+  flex: 0 0 auto;
+  margin-top: 10px;
+}
+
+.result-PDF .patient-information-wrapper {
+  justify-content: center;
+  gap: 10px;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+
+.result-PDF .div {
+  gap: 16px;
+  flex: 1;
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+
+.result-PDF .patient-info-column {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.result-PDF .patient-ID {
+  width: 548px;
+  align-items: center;
+  gap: 50px;
+  display: flex;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.result-PDF .div-2 {
+  display: inline-flex;
+  justify-content: center;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.result-PDF .frame {
+  width: 206px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  position: relative;
+}
+
+.result-PDF .text-wrapper-2 {
+  position: relative;
+  width: fit-content;
+  margin-top: -1.00px;
+  font-family: "Roboto-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #274291;
+  font-size: 16px;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.result-PDF .patient-ID-fill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 5px 24px;
+  position: relative;
+  flex: 0 0 auto;
+  background-color: #e8eaf0;
+  border-radius: 24px;
+}
+
+.result-PDF .text-wrapper-3 {
+  position: relative;
+  width: fit-content;
+  margin-top: -1.00px;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 16px;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.result-PDF .div-3 {
+  width: 550px;
+  align-items: flex-start;
+  gap: 10px;
+  display: flex;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.result-PDF .div-wrapper {
+  display: flex;
+  padding: 10px;
+  flex: 1;
+  flex-grow: 1;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.result-PDF .text-wrapper-4 {
+  position: relative;
+  flex: 1;
+  margin-top: -1.00px;
+  font-family: "Roboto-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #274291;
+  font-size: 16px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .frame-2 {
+  display: flex;
+  width: 339px;
+  padding: 10px;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.result-PDF .text-wrapper-5 {
+  position: relative;
+  flex: 1;
+  margin-top: -1.00px;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 16px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .patient-info-column-2 {
+  align-self: stretch;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.result-PDF .frame-3 {
+  width: 212px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  position: relative;
+}
+
+.result-PDF .lab-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 0px 20px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.result-PDF .results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 128px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  background-color: #ffffff;
+  border-radius: 16px;
+}
+
+.result-PDF .result-content-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 0px 0px 20px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.result-PDF .results-template {
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.result-PDF .results-content {
+  display: flex;
+  flex-direction: column;
+  width: 1360px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+  top: 17px;
+}
+
+.result-PDF .text-wrapper-6 {
+  position: relative;
+  align-self: stretch;
+  height: 32px;
+  margin-top: -1.00px;
+  font-family: "Outfit-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #000000;
+  font-size: 24px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+  justify-content: center;
+}
+
+.result-PDF .input-results {
+  display: flex;
+  height: 145px;
+  align-items: flex-start;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  background-color: #ffffff;
+  overflow-y: scroll;
+}
+
+.result-PDF .input-results::-webkit-scrollbar {
+  width: 0;
+  display: none;
+}
+
+.result-PDF .div-4 {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  flex-grow: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+}
+
+.result-PDF .header {
+  display: flex;
+  height: 42px;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  background-color: #fafbff;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  border-color: #ebecef;
+}
+
+.result-PDF .text-wrapper-7 {
+  position: relative;
+  flex: 1;
+  margin-top: -4.50px;
+  margin-bottom: -0.50px;
+  font-family: "Roboto-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #274291;
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .item {
+  height: 102px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.result-PDF .text-wrapper-8 {
+  position: relative;
+  flex: 1;
+  font-family: "Roboto-Bold", Helvetica;
+  font-weight: 700;
+  color: #000000;
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .result {
+  display: flex;
+  flex-direction: column;
+  width: 148px;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+}
+
+.result-PDF .text-wrapper-9 {
+  position: relative;
+  flex: 1;
+  margin-top: -4.50px;
+  margin-bottom: -0.50px;
+  font-family: "Roboto-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #274291;
+  font-size: 20px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .item-2 {
+  display: flex;
+  height: 103px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.result-PDF .form-field-component {
+  display: flex;
+  flex-direction: column;
+  width: 90px;
+  align-items: flex-start;
+  gap: 6px;
+  position: relative;
+}
+
+.result-PDF .form-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 24px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  border-radius: 10px;
+}
+
+.result-PDF .text-wrapper-10 {
+  position: relative;
+  width: fit-content;
+  margin-top: -1.00px;
+  margin-left: -4.50px;
+  margin-right: -4.50px;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.result-PDF .unit {
+  display: flex;
+  flex-direction: column;
+  width: 264px;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+}
+
+.result-PDF .item-3 {
+  height: 101px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.result-PDF .text-wrapper-11 {
+  position: relative;
+  flex: 1;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 20px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .header-2 {
+  display: flex;
+  height: 42px;
+  gap: 8px;
+  padding: 12px 24px;
+  align-self: stretch;
+  width: 100%;
+  background-color: #fafbff;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  border-color: #ebecef;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.result-PDF .text-wrapper-12 {
+  position: relative;
+  width: 255.75px;
+  margin-top: -4.50px;
+  margin-bottom: -0.50px;
+  font-family: "Roboto-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #274291;
+  font-size: 20px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .text-wrapper-13 {
+  width: 255.75px;
+  font-size: 20px;
+  text-align: center;
+  position: relative;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .remarks-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px 0px 20px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-color: #2742914c;
+}
+
+.result-PDF .remark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.result-PDF .text-wrapper-14 {
+  position: relative;
+  align-self: stretch;
+  height: 32px;
+  margin-top: -1.00px;
+  font-family: "Outfit-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #666578e6;
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .p {
+  position: relative;
+  align-self: stretch;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .text-wrapper-15 {
+  position: relative;
+  align-self: stretch;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 20px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .signature-columns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 295px;
+  padding: 0px 238px 20px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-color: #2742914c;
+}
+
+.result-PDF .input-results-2 {
+  display: inline-flex;
+  gap: 4px;
+  flex: 0 0 auto;
+  margin-left: -27.50px;
+  border-radius: 16px;
+  overflow-y: scroll;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+}
+
+.result-PDF .input-results-2::-webkit-scrollbar {
+  width: 0;
+  display: none;
+}
+
+.result-PDF .header-3 {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.result-PDF .form-container-2 {
+  display: flex;
+  width: 322px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0px 24px;
+  position: relative;
+  border-radius: 10px;
+}
+
+.result-PDF .select-dropdown {
+  display: flex;
+  width: 322px;
+  align-items: center;
+  justify-content: space-around;
+  gap: 10px;
+  padding: 0px 24px;
+  position: relative;
+  border-radius: 8px;
+}
+
+.result-PDF .text-wrapper-16 {
+  position: relative;
+  flex: 1;
+  margin-top: -1.00px;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+  text-decoration: underline;
+}
+
+.result-PDF .text-wrapper-17 {
+  position: relative;
+  flex: 1;
+  margin-top: -1.00px;
+  font-family: "Roboto-Bold", Helvetica;
+  font-weight: 700;
+  color: #000000;
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .text-wrapper-18 {
+  position: relative;
+  flex: 1;
+  margin-top: -1.00px;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #00000099;
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.result-PDF .input-results-3 {
+  display: inline-flex;
+  gap: 4px;
+  flex: 0 0 auto;
+  margin-right: -27.50px;
+  border-radius: 16px;
+  overflow-y: scroll;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+}
+
+.result-PDF .input-results-3::-webkit-scrollbar {
+  width: 0;
+  display: none;
+}
+
+.result-PDF .select-dropdown-2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0px 24px;
+  position: relative;
+  flex: 0 0 auto;
+  border-radius: 8px;
+}
+
+.result-PDF .text-wrapper-19 {
+  position: relative;
+  width: 274px;
+  margin-top: -1.00px;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+  text-decoration: underline;
+}
+
+.result-PDF .footer {
+  display: flex;
+  height: 23px;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 815px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  background-color: transparent;
+}
+
+.result-PDF .gen {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0px 30px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.result-PDF .text-wrapper-20 {
+  position: relative;
+  width: fit-content;
+  margin-top: -1.00px;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #00000099;
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.result-PDF .page {
+  display: flex;
+  width: 202px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0px 30px;
+  position: relative;
+}
+
+.result-PDF .text-wrapper-21 {
+  position: relative;
+  width: fit-content;
+  margin-top: -1.00px;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #00000099;
+  font-size: 20px;
+  text-align: right;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}
 
 
-{{template_form.template_name}}
-<br>
-
-{% for section, row in form.items %}
-    {{section.section_name}} <!--FOR BACKEND PURPOSE ONLY ! can remove later :)-->
-    <table>
-        <thead>
-            {% for field in row %}
-                <th>{{field.label_name}}</th>
-            {% endfor %}
-        </thead>
-        <tbody>
-            {% for field, values in row.items %}
-                {% if values %} 
-                    {% for value in values %} 
-                    <td> {{value.field_value}} </td>
-                    {% endfor %}
-                {% else %}
-                    <td>{{field.field_value}}</td>
-                {% endif %}                
-            {% endfor %}
-        </tbody>
-    </table>
-{% endfor %}
-
-<!-- [MADS TODO] Add Technician details here-->
-
-
-
-
-
-
-
-
+</style>
