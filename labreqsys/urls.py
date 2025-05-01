@@ -19,9 +19,11 @@ urlpatterns = [
     path('add_labresult/<int:line_item_id>/', views.add_lab_result, name='add_labresult'),
     path('submit_labresults/<int:line_item_id>/', views.submit_labresults, name='submit_labresults'),
     path('add_patient', views.add_patient, name='add_patient'),
+    path('add_patient_details', views.add_patient_details, name='add_patient_details'),
     path('generatePDF', views.generatePDF, name='generatePDF'),
     path('pdf/<int:pk>', views.pdf, name='pdf'),
-    path('view_labresult/<int:pk>', views.view_lab_result, name='view_labresult')
+    path('view_labresult/<int:pk>', views.view_lab_result, name='view_labresult'),
+    path('save_patient', views.save_patient, name='save_patient')
 
 ]
 #test

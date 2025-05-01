@@ -83,7 +83,7 @@ def view_patient(request, pk):
     Display detailed information about a specific patient.
     """
     p = get_object_or_404(Patient, pk=pk)
-    full_name = f"{p.last_name}, {p.first_name}"
+    full_name = f"{p.last_name}, {p.first_name} {p.middle_initial} {p.suffix}"
 
     if p.birthdate:
         today = date.today()
@@ -98,6 +98,8 @@ def view_patient(request, pk):
         address_append.append(p.street)
     if p.subdivision:
         address_append.append(p.subdivision)
+    if p.baranggay:
+        address_append.append(p.baranggay)
     if p.city:
         address_append.append(p.city)
     if p.province:
@@ -350,51 +352,31 @@ def submit_labresults(request, line_item_id):
 
 def add_patient (request):
     if request.method == "POST":
-        
         last_name = request.POST.get('last_name')
         first_name = request.POST.get('first_name')
         middle_initial = request.POST.get('middle_initial')
         suffix = request.POST.get('suffix')
         sex = request.POST.get('sex')
         civil_status = request.POST.get('civil_status') 
-        
         birthdate = request.POST.get('birthdate')
-        # makes sure birthdate = None when birthdate is passed as "" from request.POST
-        # i know it should be from the model parameters, but omg its not working TT~TT
-        if birthdate == "":
-            birthdate = None
-        
         
         mobile_num = request.POST.get('mobile_num')
-        # makes sure mobile_num = None when mobile_num is passed as "" from request.POST
-        # i know it should be from the model parameters, but omg its not working TT~TT (2)
-        if mobile_num == "":
-            mobile_num = None
-            
+        
         # handles check statement in database
-        elif mobile_num.startswith ("63") == False:
+        if mobile_num != "" and mobile_num.startswith ("63") == False :
             mobile_num = "63" + mobile_num.lstrip("0")
         
         landline_num = request.POST.get('landline_num')
-        # makes sure landline_num = None when landline_num is passed as "" from request.POST
-        # i know it should be from the model parameters, but omg its not working TT~TT (2)
-        if landline_num == "":
-            landline_num = None
-        
+        print (f"type: {type(mobile_num)} number: {mobile_num}")
+
         email = request.POST.get('email')
-        if email == "":
-            email = None
-            
         house_num = request.POST.get('house_num')
         street = request.POST.get('street')
         baranggay = request.POST.get('baranggay')
+        subdivision = request.POST.get('subdivision')
         province = request.POST.get('province')
         city = request.POST.get('city')
-        
         zip_code = request.POST.get('zip_code')
-        if zip_code == "":
-            zip_code = None
-        
         pwd_id_num = request.POST.get('pwd_id_num')
         senior_id_num = request.POST.get('senior_id_num')
         
@@ -407,6 +389,7 @@ def add_patient (request):
         if email:
             query |= Q(email__icontains=email)
 
+        
         if Patient.objects.filter( 
             Q(first_name__exact=first_name) &
             Q(last_name__exact=last_name) &
@@ -416,36 +399,131 @@ def add_patient (request):
             query).exists():
             messages.error(request, "Patient already exists.")
             return redirect('patientList')
-        else:
-            new_p = Patient.objects.create(
-                last_name=last_name,
-                first_name=first_name,
-                middle_initial=middle_initial,
-                suffix=suffix,
-                sex=sex,
-                civil_status=civil_status,
-                birthdate=birthdate,
-                mobile_num=mobile_num,
-                landline_num=landline_num,
-                email=email,
-                house_num=house_num,
-                street=street,
-                baranggay=baranggay,
-                province=province,
-                city=city,
-                zip_code=zip_code,
-                pwd_id_num=pwd_id_num,
-                senior_id_num=senior_id_num
-                )
-        
-            p = Patient.objects.get(pk=new_p.patient_id)
-            return redirect('view_patient', pk=p.pk)
+        else:    
+            return render(request, 'labreqsys/add_patient_details.html', {
+                'last_name':last_name,
+                'first_name':first_name,
+                'middle_initial':middle_initial,
+                'suffix':suffix,
+                'sex':sex,
+                'civil_status':civil_status,
+                'birthdate':birthdate,
+                'mobile_num':mobile_num,
+                'landline_num':landline_num,
+                'email':email,
+                'house_num':house_num,
+                'street':street,
+                'subdivision':subdivision,
+                'baranggay':baranggay,
+                'province':province,
+                'city':city,
+                'zip_code':zip_code,
+                'pwd_id_num':pwd_id_num,
+                'senior_id_num':senior_id_num})
+    else:
+        return render(request, 'labreqsys/patientList.html')
     
 
+def add_patient_details(request):
+    if request.method == "POST":
+        last_name = request.POST.get('last_name')
+        print(f"ast:{last_name}")
+        
+        first_name = request.POST.get('first_name')
+        middle_initial = request.POST.get('middle_initial')
+        suffix = request.POST.get('suffix')
+        sex = request.POST.get('sex')
+        civil_status = request.POST.get('civil_status') 
+        birthdate = request.POST.get('birthdate')
+        mobile_num = request.POST.get('mobile_num')
+        landline_num = request.POST.get('landline_num')
+        email = request.POST.get('email')
+        house_num = request.POST.get('house_num')
+        street = request.POST.get('street')
+        baranggay = request.POST.get('baranggay')
+        province = request.POST.get('province')
+        city = request.POST.get('city')
+        subdivision = request.POST.get('subdivision')
+        zip_code = request.POST.get('zip_code')
+        pwd_id_num = request.POST.get('pwd_id_num')
+        senior_id_num = request.POST.get('senior_id_num')
+    
+        new_p = Patient.objects.create(
+                    last_name=last_name,
+                    first_name=first_name,
+                    middle_initial=middle_initial,
+                    suffix=suffix,
+                    sex=sex,
+                    civil_status=civil_status,
+                    birthdate=birthdate,
+                    mobile_num=mobile_num,
+                    landline_num=landline_num,
+                    email=email,
+                    house_num=house_num,
+                    street=street,
+                    baranggay=baranggay,
+                    province=province,
+                    city=city,
+                    zip_code=zip_code,
+                    pwd_id_num=pwd_id_num,
+                    senior_id_num=senior_id_num
+                    )
             
+        p = Patient.objects.get(pk=new_p.patient_id)
+        return redirect('view_patient', pk=p.pk)   
     else:
-        return render(request, 'labreqsys/add_patient.html')
+        return render(request, 'labreqsys/add_patient_details.html')
 
+def save_patient(request):
+    if request.method == "POST":
+        last_name = request.POST.get('last_name')
+        print(f"ast:{last_name}")
+        
+        first_name = request.POST.get('first_name')
+        middle_initial = request.POST.get('middle_initial')
+        suffix = request.POST.get('suffix')
+        sex = request.POST.get('sex')
+        civil_status = request.POST.get('civil_status') 
+        birthdate = request.POST.get('birthdate')
+        mobile_num = request.POST.get('mobile_num')
+        landline_num = request.POST.get('landline_num')
+        email = request.POST.get('email')
+        house_num = request.POST.get('house_num')
+        street = request.POST.get('street')
+        baranggay = request.POST.get('baranggay')
+        province = request.POST.get('province')
+        city = request.POST.get('city')
+        subdivision = request.POST.get('subdivision')
+        zip_code = request.POST.get('zip_code')
+        pwd_id_num = request.POST.get('pwd_id_num')
+        senior_id_num = request.POST.get('senior_id_num')
+    
+        new_p = Patient.objects.create(
+                    last_name=last_name,
+                    first_name=first_name,
+                    middle_initial=middle_initial,
+                    suffix=suffix,
+                    sex=sex,
+                    civil_status=civil_status,
+                    birthdate=birthdate,
+                    mobile_num=mobile_num,
+                    landline_num=landline_num,
+                    email=email,
+                    house_num=house_num,
+                    street=street,
+                    baranggay=baranggay,
+                    province=province,
+                    city=city,
+                    zip_code=zip_code,
+                    pwd_id_num=pwd_id_num,
+                    senior_id_num=senior_id_num
+                    )
+            
+        p = Patient.objects.get(pk=new_p.patient_id)
+        return redirect('view_patient', pk=p.pk)
+    else: 
+        return HttpResponse ("dumbass bitch?")
+    
 @xframe_options_exempt
 def pdf(request, pk):
     '''
@@ -486,13 +564,14 @@ def pdf(request, pk):
     '''
     
     form = {}
-    fields = []  
+    fields = [] 
     reviewed_by = [] # [MADS TO DO!] When ResultReview starts saving, pass reviewer data here
     
     template_section = TemplateSection.objects.filter(template=template_form.template_id)
 
-    for section in template_section:   
+    for section in template_section:
         fields.append(TemplateField.objects.filter(section=section.section_id)) # list of all fields per section and appends to fields 'list'
+        
         for column in fields:
             results = []
             result_value = {}
@@ -500,20 +579,20 @@ def pdf(request, pk):
                 
                 results.append(ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)) # list of all results per field and appends to results 'list'
                 for result in results:
-                    print (f"Result: {result}\n")
                     result_value[field] = result # pairs result 'queryset' to field 'object' indicated in for loop
     
                     if result.exists():
                         for review in result:
                             reviewed_by.append(ResultReview.objects.filter(result_value__result_value_id = review.result_value_id))
-                form[section] = result_value # pairs result_value 'dict' to a section 'queryset'    
+                form[section] = result_value # pairs result_value 'dict' to a section 'queryset'
+                
     age = 0
     if patient.birthdate:
         today = date.today()
         age = today.year - patient.birthdate.year - ((today.month, today.day) < (patient.birthdate.month, patient.birthdate.day))
     else:
         age = None                 
-    #print (form)
+    
     return render(request, 'labreqsys/pdf.html', 
                 {'lab_request': lab_request, 
                 'patient': patient, 
@@ -536,9 +615,12 @@ def generatePDF(request):
         filenames = []
         for pk in ids:
             try:
+                line_item = RequestLineItem.objects.get(line_item_id=pk)
+                filename = f"{line_item.request.patient.last_name}, {line_item.request.patient.first_name[0]}_{line_item.component.test_name}_{line_item.request.date_requested}.pdf"
+                
                 pdf_response = savePDF(request, pk)
                 pdfs.append(pdf_response)
-                filenames.append(f"patient_{pk}.pdf")
+                filenames.append(filename)
             except Patient.DoesNotExist:
                 print(f"Patient with ID {pk} does not exist.")
                 continue
@@ -553,9 +635,11 @@ def generatePDF(request):
                 zip_file.writestr(filename, pdf_response.content)
 
         zip_buffer.seek(0)
+        
+        filename_z = f"{line_item.request.patient.last_name}_{line_item.request.date_requested}.pdf"
 
         response = HttpResponse(zip_buffer, content_type='application/zip')
-        response['Content-Disposition'] = 'attachment; filename="patients_pdfs.zip"'
+        response['Content-Disposition'] = f'attachment; filename="{filename_z}"'
         return response
     elif len(ids) == 1: # Return only one pdf
         return savePDF(request, ids[0])
@@ -580,7 +664,6 @@ def savePDF(request, pk):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'  # Correct filename usage
 
     return response
-
 
 def view_lab_result(request, pk):
     """
