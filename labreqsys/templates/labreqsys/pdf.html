@@ -108,8 +108,9 @@
                     <div class="results-content-group">
                         <div class="results-template"> 
                             <div class="results-content">
-                                <div class="text-wrapper-6">{{template_form.template_name}}</div>
+                                <div class="text-wrapper-5">{{template_form.template_name}}</div>
                                 <div class="input-results">
+                                    
                                     <!--TO BACKEND: the styling is still unedited :>-->
                                     {% for section, row in form.items %}
                                     {{section.section_name}} <!--FOR BACKEND PURPOSE ONLY ! can remove later :)-->
@@ -462,6 +463,7 @@
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+  justify-content: center;
 }
 
 .result-PDF .input-results {
