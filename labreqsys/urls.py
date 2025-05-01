@@ -21,6 +21,7 @@ urlpatterns = [
     path('add_patient', views.add_patient, name='add_patient'),
     path('generatePDF', views.generatePDF, name='generatePDF'),
     path('pdf/<int:pk>', views.pdf, name='pdf'),
+    path('change_collection_status/<int:request_id>', views.change_collection_status, name='change_collection_status')
 
 ]
-#test
+

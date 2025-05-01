@@ -212,12 +212,12 @@
                         </td>
                         <td class="px-6 py-3">
                             <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
-                                {{ pickups }}
+                                {{ r.pickup_status }}
                             </a>
                         </td>
                         <td class="px-6 py-3">
                             <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
-                                {{ emails }}
+                                {{ r.email_status }}
                             </a>
                         </td>
                     </tr>

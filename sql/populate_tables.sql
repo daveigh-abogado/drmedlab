@@ -110,7 +110,8 @@ INSERT INTO collection_log
 VALUES 
 (NULL, '3', 'Carlos Reyes', '2025-01-30 10:30:00', 'Email'),
 (NULL, '3', 'Carlos Reyes', '2025-02-01 12:00:00', 'Pick-up'),
-(NULL, '4', 'Charles Leclerc', '2025-02-18 16:20:00', 'Both');
+(NULL, '4', 'Charles Leclerc', '2025-02-18 13:00:00', 'Email'),
+(NULL, '4', 'Charles Leclerc', '2025-02-18 16:20:00', 'Pick-up');
 
 INSERT INTO lab_tech (last_name, first_name, title, tech_role, license_num, signature_path)
 VALUES

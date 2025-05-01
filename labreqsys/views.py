@@ -108,15 +108,41 @@ def view_patient(request, pk):
     if p.house_num:
         address = f"{p.house_num} {address}"
 
-    labreqs = LabRequest.objects.filter(patient_id=p.pk).values()
+    lab_requests = LabRequest.objects.filter(patient=p)
+    request_details = []
+
+    for req in lab_requests:
+        pickup_status = 'N/A'
+        email_status = 'N/A'
+
+        if req.mode_of_release in ['Pick-up', 'Both']:
+            c = CollectionLog.objects.get(request=req, mode_of_collection='Pick-up')
+            if c.time_collected is None:
+                pickup_status = 'Uncollected'
+            elif c.time_collected:
+                pickup_status = 'Collected'
+
+        if req.mode_of_release in ['Email', 'Both']:
+            c = CollectionLog.objects.get(request=req, mode_of_collection='Email')
+            if c.time_collected is None:
+                email_status = 'Not Sent'
+            elif c.time_collected:
+                email_status = 'Sent'
+
+        request_details.append({
+            'request_id': req.request_id,
+            'date_requested': req.date_requested,
+            'overall_status': req.overall_status,
+            'pickup_status': pickup_status,
+            'email_status': email_status,
+        })
+
     return render(request, 'labreqsys/view_patient.html', {
         'patient': p,
         'full_name': full_name,
         'age': age,
         'address': address,  # Replace with actual address
-        'requests': labreqs,
-        'pickups': 'Collected',  # Replace with actual pickup status
-        'emails': 'Collected'  # Replace with actual email status
+        'requests': request_details
     })
 
 def add_testcomponent(request):
@@ -221,36 +247,42 @@ def summarize_labreq(request, pk):
 
     if request.method == "POST":
         physician = request.POST.get('physician', '').strip() or None
-        
-        # Handle mode of release from both forms
-        if "confirm" in request.POST:
-            # This is the final submission from summarize_labreq
-            mode_of_release = request.POST.get('mode_of_release', 'Pick-up')
-        else:
-            # This is the initial submission from add_labreq_details
-            mode = request.POST.getlist('mode_of_release')
-            
-            if not mode:  # If no mode selected, default to Pick-up
-                mode_of_release = 'Pick-up'
-            elif 'Pick-up' in mode and 'Email' in mode:  # If both selected
-                mode_of_release = 'Both'
-            elif 'Email' in mode:  # If only Email selected
-                mode_of_release = 'Email'
-            else:  # If only Pick-up selected
-                mode_of_release = 'Pick-up'
+        # This is the initial submission from add_labreq_details
+        mode = request.POST.getlist('mode_of_release')
 
-        
+        #KEEP THIS WHEN U ARE MERGING, THIS IS THE MOST UPDATED
+        if not mode:  # If no mode selected, default to Pick-up
+            mode_of_release = 'Pick-up'
+        elif 'Pick-up' in mode and 'Email' in mode:  # If both selected
+            mode_of_release = 'Both'
+        elif 'Email' in mode:  # If only Email selected
+            mode_of_release = 'Email'
+        else:  # If only Pick-up selected
+            mode_of_release = 'Pick-up'
+
         if "confirm" in request.POST and request.POST["confirm"] == "submit":
             # Only proceed if we have components or packages
+            final_mode = request.POST.get('mode_of_release')
             if components or packages:
                 lab_request = LabRequest.objects.create(
                     request_id=next_request_id,
                     patient=p,
                     date_requested=current_date,
                     physician=physician,
-                    mode_of_release=mode_of_release,
+                    mode_of_release=final_mode,
                     overall_status="Not Started"
                 )
+
+                if 'Both' in mode or 'Pick-up' in mode:
+                    CollectionLog.objects.create(
+                        request = lab_request,
+                        mode_of_collection = 'Pick-up'
+                    )
+                if 'Both' in mode or 'Email' in mode:
+                    CollectionLog.objects.create(
+                        request = lab_request,
+                        mode_of_collection = 'Email'
+                    )
                 
                 for component in components:
                     try:
@@ -258,8 +290,7 @@ def summarize_labreq(request, pk):
                             request=lab_request,
                             component=component,
                             request_status="Not Started",
-                            template_used=component.template_id,
-                            progress_timestamp=timezone.now()
+                            template_used=component.template_id
                         )
 
                         # Fetch fields for this component's template, excluding Labels
@@ -284,8 +315,7 @@ def summarize_labreq(request, pk):
                                 component=package_component.component,
                                 package=package,
                                 request_status="Not Started",
-                                template_used=package_component.component.template_id,
-                                progress_timestamp=timezone.now()
+                                template_used=package_component.component.template_id
                             )
                             # Fetch fields for this component's template, excluding Labels
                             sections = TemplateSection.objects.filter(template_id=package_component.component.template_id)
@@ -327,8 +357,45 @@ def view_individual_lab_request(request, request_id):
     """
     lab_request = get_object_or_404(LabRequest, pk=request_id)
     request_details = lab_request.get_request_details()
-    return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details})
+    collection_status = ''
+    email_status = ''
+    if lab_request.mode_of_release == 'Both' or lab_request.mode_of_release == 'Pick-up':
+        c = CollectionLog.objects.get(request=lab_request, mode_of_collection='Pick-up')
+        if c.time_collected is None:
+            collection_status = 'Uncollected'
+        else:
+            collection_status = 'Collected'
+    if lab_request.mode_of_release == 'Both' or lab_request.mode_of_release == 'Email':
+        c = CollectionLog.objects.get(request=lab_request, mode_of_collection='Email')
+        if c.time_collected is None:
+            email_status = 'Not Sent'
+        else:
+            email_status = 'Sent'
 
+    return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details, 'collection_status': collection_status, 'email_status': email_status})
+
+def change_collection_status(request, request_id):
+    """
+    Change email or collection status
+    """
+    c_mode = ''
+    e_mode= ''
+    print(request.method)
+    if request.method == "POST":
+        lab_request = get_object_or_404(LabRequest, pk=request_id)
+        c_mode = request.POST.get('collected')
+        e_mode = request.POST.get('emailed')
+        try:
+            if 'Collected' in c_mode:
+                c = CollectionLog.objects.get(request=lab_request, mode_of_collection='Pick-up')
+                c.time_collected=timezone.now()
+                c.save()
+        except:
+            if 'Sent' in e_mode:
+                c = CollectionLog.objects.get(request=lab_request, mode_of_collection='Email')
+                c.time_collected=timezone.now()
+                c.save()
+    return redirect('view_individual_lab_request', request_id=request_id)
 
 def add_lab_result(request, line_item_id):
     line_item = get_object_or_404(RequestLineItem, pk=line_item_id)
@@ -367,6 +434,7 @@ def add_lab_result(request, line_item_id):
 
 def submit_labresults(request, line_item_id):
     results = ResultValue.objects.filter(line_item_id=line_item_id)
+
     if request.method == "POST":
         for r in results:
             field = TemplateField.objects.get(field_id=r.field_id)
@@ -376,12 +444,34 @@ def submit_labresults(request, line_item_id):
         submission_type = request.POST.get('submission_type')
 
     line_item = RequestLineItem.objects.get(line_item_id=results.first().line_item_id)
+    lab = LabRequest.objects.get(request_id=line_item.request_id)
+    
     if submission_type == 'submit':
         line_item.request_status = 'Completed'
         line_item.progress_timestamp = timezone.now()
+        line_item.save()
+
+        lineitems = RequestLineItem.objects.filter(request=lab.request_id)
+        temp = []
+        if lab.overall_status == 'Not Started' or lab.overall_status == 'In Progress':
+            for l in lineitems:
+                temp.append(l.request_status)
+            if 'Not Started' not in temp and 'In Progress' not in temp:
+                lab.overall_status = 'Completed'
+                lab.save()
+            elif lab.overall_status == 'Not Started':
+                lab.overall_status = 'In Progress'
+                lab.save()
+        
     else:
         line_item.request_status = 'In Progress'
-    line_item.save()
+        line_item.save()
+            
+        if lab.overall_status == 'Not Started':
+            lab.overall_status = 'In Progress'
+            lab.save()
+
+
     return redirect('view_individual_lab_request', request_id=line_item.request_id)
 
 def add_patient (request):
