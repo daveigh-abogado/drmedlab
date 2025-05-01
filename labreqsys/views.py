@@ -351,6 +351,11 @@ def submit_labresults(request, line_item_id):
     return redirect('view_individual_lab_request', request_id=line_item.request_id)
 
 def add_patient (request):
+    '''
+    
+    Takes add patients, then processes for formatting
+    
+    '''
     if request.method == "POST":
         last_name = request.POST.get('last_name')
         first_name = request.POST.get('first_name')
@@ -361,13 +366,11 @@ def add_patient (request):
         birthdate = request.POST.get('birthdate')
         
         mobile_num = request.POST.get('mobile_num')
-        
         # handles check statement in database
         if mobile_num != "" and mobile_num.startswith ("63") == False :
             mobile_num = "63" + mobile_num.lstrip("0")
         
         landline_num = request.POST.get('landline_num')
-        print (f"type: {type(mobile_num)} number: {mobile_num}")
 
         email = request.POST.get('email')
         house_num = request.POST.get('house_num')
@@ -390,13 +393,7 @@ def add_patient (request):
             query |= Q(email__icontains=email)
 
         
-        if Patient.objects.filter( 
-            Q(first_name__exact=first_name) &
-            Q(last_name__exact=last_name) &
-            Q(birthdate__exact=birthdate) &
-            Q(sex=sex) &
-            Q(city__exact=city) &
-            query).exists():
+        if Patient.objects.filter(query).exists():
             messages.error(request, "Patient already exists.")
             return redirect('patientList')
         else:    
@@ -419,16 +416,20 @@ def add_patient (request):
                 'city':city,
                 'zip_code':zip_code,
                 'pwd_id_num':pwd_id_num,
-                'senior_id_num':senior_id_num})
+                'senior_id_num':senior_id_num,
+                'modal': True})
     else:
-        return render(request, 'labreqsys/patientList.html')
+        return render(request, 'labreqsys/add_patient.html')
     
 
 def add_patient_details(request):
+    '''
+    
+    Displays preview of Add Patient details, then saves
+    
+    '''    
     if request.method == "POST":
-        last_name = request.POST.get('last_name')
-        print(f"ast:{last_name}")
-        
+        last_name = request.POST.get('last_name')      
         first_name = request.POST.get('first_name')
         middle_initial = request.POST.get('middle_initial')
         suffix = request.POST.get('suffix')
@@ -447,30 +448,44 @@ def add_patient_details(request):
         zip_code = request.POST.get('zip_code')
         pwd_id_num = request.POST.get('pwd_id_num')
         senior_id_num = request.POST.get('senior_id_num')
-    
-        new_p = Patient.objects.create(
-                    last_name=last_name,
-                    first_name=first_name,
-                    middle_initial=middle_initial,
-                    suffix=suffix,
-                    sex=sex,
-                    civil_status=civil_status,
-                    birthdate=birthdate,
-                    mobile_num=mobile_num,
-                    landline_num=landline_num,
-                    email=email,
-                    house_num=house_num,
-                    street=street,
-                    baranggay=baranggay,
-                    province=province,
-                    city=city,
-                    zip_code=zip_code,
-                    pwd_id_num=pwd_id_num,
-                    senior_id_num=senior_id_num
-                    )
-            
-        p = Patient.objects.get(pk=new_p.patient_id)
-        return redirect('view_patient', pk=p.pk)   
+        
+        query = Q(first_name__exact=first_name, last_name__exact=last_name, birthdate__exact=birthdate, sex=sex, city__exact=city)
+        
+        if mobile_num:
+            query |= Q(mobile_num__icontains=mobile_num)
+        if landline_num:
+            query |= Q(landline_num__icontains=landline_num)
+        if email:
+            query |= Q(email__icontains=email)
+
+        
+        if Patient.objects.filter(query).exists():
+            messages.error(request, "Patient already exists.")
+            return redirect('patientList')
+        else:
+            new_p = Patient.objects.create(
+                        last_name=last_name,
+                        first_name=first_name,
+                        middle_initial=middle_initial,
+                        suffix=suffix,
+                        sex=sex,
+                        civil_status=civil_status,
+                        birthdate=birthdate,
+                        mobile_num=mobile_num,
+                        landline_num=landline_num,
+                        email=email,
+                        house_num=house_num,
+                        street=street,
+                        baranggay=baranggay,
+                        province=province,
+                        city=city,
+                        zip_code=zip_code,
+                        pwd_id_num=pwd_id_num,
+                        senior_id_num=senior_id_num
+                        )
+        
+            p = Patient.objects.get(pk=new_p.patient_id)
+            return redirect('view_patient', pk=p.pk)   
     else:
         return render(request, 'labreqsys/add_patient_details.html')
 
