@@ -21,30 +21,62 @@
 </div>
 
 <!--CONTENT-->
-<div class="flex-wrap">
-    <div class="gap-2 ">
+<div class="flex">
+    <div class="gap-2 w-full">
         <form id="form" method="POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
             <div class="bg-white p-6 pt-13 rounded-lg shadow">
-                <div class="tab active gap-1 w-36 " id="tab-0">
+                <div class="tab active gap-1 " id="tab-0">
                     <h1 class="text-mm font-bold text-blue-900">Lab Request Details</h1>
                     <hr>
-                    <table class="p-2\.5">
-                        <tr class="gap-4">
-                            <td class="text-blue-900 font-medium ">Physician Name(optional)</td>
-                            <td><input class="border-gray-50 rounded-lg" type="text" name="physician" id="physician"></td>
-                        </tr>
-                        <tr class="gap-4">
-                            <td class="text-blue-900 font-medium">Mode of Release</td>
-                            <td>
-                                <input type="checkbox" name="mode_of_release" id="release" value="Pick-Up">Pick-Up
-                                <input type="checkbox" name="mode_of_release" id="release" value="Email">Email
-                            </td>
-                        </tr>
-                    </table>
+
+                    <div class="self-stretch px-3.5 inline-flex flex-col justify-center items-start gap-2">
+
+                        <div class="inline-flex justify-center items-center gap-2.5">
+                          <div class="w-14 p-2.5 flex justify-start items-center gap-2.5">
+                            <div class="justify-center"><span class="text-blue-900 font-medium">Physician Name (optional) </span></div>
+                          </div>
+                          <div data-show-label="false" data-state="Default" class="w-[322px] inline-flex flex-col justify-start items-start gap-1.5">
+                                <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" type="text" name="physician" id="physician">
+                          </div>
+                        </div>
+
+                        <div class="self-stretch inline-flex justify-start items-center gap-2.5">
+                            <div class="w-[234px] flex justify-center items-start gap-2.5">
+                                <div class="w-14 p-2.5 flex justify-start items-start gap-2.5">
+                                <div class="justify-center text-blue-900 font-medium">Mode of Release</div>
+                                </div>
+                            </div>
+                            <div class="flex justify-start items-center">
+                                <div class="w-60 inline-flex flex-col justify-start items-start">
+                                    <div class="self-stretch inline-flex justify-start items-center gap-3">
+                                        <div class="flex items-center mr-4">
+                                            <input type="checkbox" name="mode_of_release" id="pickup" value="Pick-up" class="mr-2">
+                                            <label for="pickup">Pick-up</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="checkbox" name="mode_of_release" id="email" value="Email" class="mr-2">
+                                            <label for="email">Email</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!--BUTTONS-->
-                <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg"> <a class="text-white" href="{% url 'add_labreq' pk=patient.pk %}">Back</a></button>
-                <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="submit">Next</button>
+                <div class="inline-flex gap-2.5 mt-4 justify-start w-14">
+                    <div>
+                        <a class="justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline" href="{% url 'add_labreq' pk=patient.pk %}">
+                            Back
+                        </a>
+                    </div>
+                    <div>
+                        <button type="submit" class="justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            
             </div>
         </form>
     </div>
@@ -56,6 +88,23 @@
             tab.classList.toggle('active', i === index);
         });
     }
+
+    // Add form validation
+    document.getElementById('form').addEventListener('submit', function(e) {
+        const modeCheckboxes = document.querySelectorAll('input[name="mode_of_release"]');
+        let modeSelected = false;
+        
+        modeCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                modeSelected = true;
+            }
+        });
+
+        if (!modeSelected) {
+            e.preventDefault();
+            alert('Please select at least one mode of release (Pick-up or Email)');
+        }
+    });
 </script>
 
 {% endblock content %}

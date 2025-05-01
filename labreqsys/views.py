@@ -227,7 +227,7 @@ def summarize_labreq(request, pk):
     sc = request.session.get('selected_components', []) or []
     sp = request.session.get('selected_packages', []) or []
     
-    total = Decimal('0.00')  # Ensure decimal precision for currency
+    subtotal = Decimal('0.00')  # Initialize subtotal
     components = []
     packages = []
     
@@ -235,28 +235,32 @@ def summarize_labreq(request, pk):
     for t in sc:
         try:
             temp = get_object_or_404(TestComponent, pk=t)
-            total += Decimal(str(temp.component_price or 0))  # Convert to Decimal safely
+            subtotal += Decimal(str(temp.component_price or 0))  # Add to subtotal
             components.append(temp)
         except (ValueError, TypeError):
-            total += Decimal('0.00')
+            subtotal += Decimal('0.00')
             
     # Safely handle package prices
     for t in sp:
         try:
             temp = get_object_or_404(TestPackage, pk=t)
-            total += Decimal(str(temp.package_price or 0))  # Convert to Decimal safely
+            subtotal += Decimal(str(temp.package_price or 0))  # Add to subtotal
             packages.append(temp)
         except (ValueError, TypeError):
-            total += Decimal('0.00')
+            subtotal += Decimal('0.00')
         
     discount = Decimal('0.00')
+    total = subtotal  # Initialize total with subtotal
+    discount_type = None
+    
     # Apply discount only if patient has a non-empty PWD ID or Senior ID
     has_pwd = p.pwd_id_num and str(p.pwd_id_num).strip()
     has_senior = p.senior_id_num and str(p.senior_id_num).strip()
     if has_pwd or has_senior:
         try:
-            discount = round(total * Decimal('0.2'), 2)
-            total -= discount
+            discount = round(subtotal * Decimal('0.2'), 2)
+            total = subtotal - discount
+            discount_type = 'PWD' if has_pwd else 'Senior Citizen'
         except (ValueError, TypeError, decimal.InvalidOperation):
             discount = Decimal('0.00')
     
@@ -272,12 +276,24 @@ def summarize_labreq(request, pk):
 
     if request.method == "POST":
         physician = request.POST.get('physician', '').strip() or None
-        mode = request.POST.getlist('mode_of_release')
-
-        if 'Pick-Up' in mode and 'Email' in mode:
-            mode_of_release = 'Both'
+        
+        # Handle mode of release from both forms
+        if "confirm" in request.POST:
+            # This is the final submission from summarize_labreq
+            mode_of_release = request.POST.get('mode_of_release', 'Pick-up')
         else:
-            mode_of_release = 'Pick-up' if 'Pick-Up' in mode else 'Email'
+            # This is the initial submission from add_labreq_details
+            mode = request.POST.getlist('mode_of_release')
+            
+            if not mode:  # If no mode selected, default to Pick-up
+                mode_of_release = 'Pick-up'
+            elif 'Pick-up' in mode and 'Email' in mode:  # If both selected
+                mode_of_release = 'Both'
+            elif 'Email' in mode:  # If only Email selected
+                mode_of_release = 'Email'
+            else:  # If only Pick-up selected
+                mode_of_release = 'Pick-up'
+
 
         if "confirm" in request.POST and request.POST["confirm"] == "submit":
             # Only proceed if we have components or packages
@@ -301,7 +317,7 @@ def summarize_labreq(request, pk):
                             progress_timestamp=timezone.now()
                         )
 
-                        # Fetch fields for this component’s template, excluding Labels
+                        # Fetch fields for this component's template, excluding Labels
                         sections = TemplateSection.objects.filter(template_id=component.template_id)
                         for section in sections:
                             fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
@@ -352,8 +368,10 @@ def summarize_labreq(request, pk):
         'components': components,
         'packages': packages,
         'total': total,
+        'subtotal': subtotal,
         'date': current_date,
         'discount': discount,
+        'discount_type': discount_type,
         'physician': physician,
         'mode_of_release': mode_of_release,
         'request_id': next_request_id
