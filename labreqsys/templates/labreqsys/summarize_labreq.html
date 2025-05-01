@@ -100,27 +100,33 @@
                 {% for c in components %}
                 <div class="component-item flex justify-between py-2">
                     <div class = "flex items-center">
-                        <div class="mr-2 text-blue-900" style="font-weight: 600;">Component No. {{ forloop.counter }}</div>
+                        <div class="mr-2 text-blue-900" style="font-weight: 600;"> {{ forloop.counter }}</div>
                         <div class="">{{ c.test_name }}</div>
                     </div>
                     <div class="">₱ {{ c.component_price }}</div>
                 </div>
                 {% endfor %}
+                <div class="flex justify-between py-2">
+                    <div class="text-m text-blue-900" style="font-weight: 600">Subtotal</div>
+                    <div class="">₱ </div> <!--TO BACKEND: pls add subtotal-->
+                </div>
+                <hr>
             </div>
         </div> 
         
         <div>
-            <br>
+            
+            <!--TO BACKEND: pls add different labels for senior ID and PWD ID-->
             <div class="flex justify-between py-2">
                 <div class="mr-2 text-blue-900" style="font-weight: 600">Discount</div>
                 <div class="">₱ {{ discount }}</div>
             </div>
 
-            <div class="component-item flex justify-between py-2 border-2 border-blue-900 rounded-lg p-2 bg-gray-50">
+            <div class="component-item flex justify-between py-2 border-2 border rounded-lg p-2 bg-gray-50">
                 <div class = "flex items-center">
                     <div class="mr-2 text-blue-900" style="font-weight: bold;">Total</div>
                 </div>
-                <div class="">₱ {{ total }}</div>
+                <div style="font-weight: bold;" class="text-blue-900">₱ {{ total }}</div>
             </div>
 
         </div>
@@ -129,16 +135,17 @@
         <div class="flex justify-end mt-6 gap-4">
             <form method="POST" action="">
                 {% csrf_token %}
-                <div class="flex gap-4">
-                    <button type="submit" name="confirm" value="submit" class="text-white px-4 py-2 bg-blue-900 font-bold rounded-lg hover:bg-blue-800">
-                        Submit
-                    </button>
-                    <button type="submit" name="confirm" value="cancel" class="">
+                <div class="flex gap-2.5">
+                    <button type="submit" name="confirm" value="cancel" class="justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">
                         Cancel
+                    </button>
+                    <button type="submit" name="confirm" value="submit" class="justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                        Submit
                     </button>
                 </div>
             </form>
         </div>
+
     </div>
 </div>
 

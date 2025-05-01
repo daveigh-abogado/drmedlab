@@ -236,13 +236,13 @@
             <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
                 <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
                     <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
-                        <th scope="col" class="px-6 py-3 text-center">Patient ID</th>
-                        <th scope="col" class="px-6 py-3">Last Name</th>
-                        <th scope="col" class="px-6 py-3">Given Name</th>
-                        <th scope="col" class="px-6 py-3">Email</th>
-                        <th scope="col" class="px-6 py-3">Mobile No.</th>
-                        <th scope="col" class="px-6 py-3">Landline No.</th>
-                        <th scope="col" class="px-6 py-3">Date Added</th>
+                        <th scope="col" class="p-3 text-center">Patient ID</th>
+                        <th scope="col" class="p-3">Last Name</th>
+                        <th scope="col" class="p-3">Given Name</th>
+                        <th scope="col" class="p-3">Email</th>
+                        <th scope="col" class="p-3">Mobile No.</th>
+                        <th scope="col" class="p-3">Landline No.</th>
+                        <th scope="col" class="p-3 text-center">Date Added</th>
                     </tr>
                 </thead>
 
@@ -259,7 +259,7 @@
                         <td class="p-3">{{ p.email }}</td>
                         <td class="p-3">{{ p.mobile_num }}</td>
                         <td class="p-3">{{ p.landline_num }}</td>
-                        <td class="p-3">{{ p.date_added }}</td>
+                        <td class="p-3 text-center">{{ p.date_added }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

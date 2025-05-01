@@ -657,10 +657,10 @@ select {
   flex-shrink: 0;
   height: 1rem;
   width: 1rem;
-  color: #2563eb;
+  color: #274291;
   background-color: #fff;
   border-color:   #274291;
-  opacity: 50%;
+  opacity: 100%;
   border-width: 1px;
   --tw-shadow: 0 0 #0000;
 }
@@ -679,14 +679,14 @@ select {
   --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
   --tw-ring-offset-width: 2px;
   --tw-ring-offset-color: #fff;
-  --tw-ring-color: #2563eb;
+  --tw-ring-color: #274291;
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
 }
 
 [type='checkbox']:checked,[type='radio']:checked {
-  border-color: transparent;
+  border-color: #274291;
   background-color: currentColor;
   background-size: 100% 100%;
   background-position: center;
@@ -718,7 +718,7 @@ select {
 }
 
 [type='checkbox']:checked:hover,[type='checkbox']:checked:focus,[type='radio']:checked:hover,[type='radio']:checked:focus {
-  border-color: transparent;
+  border-color: #274291;
   background-color: currentColor;
 }
 
@@ -740,7 +740,7 @@ select {
 }
 
 [type='checkbox']:indeterminate:hover,[type='checkbox']:indeterminate:focus {
-  border-color: transparent;
+  border-color: #274291;
   background-color: currentColor;
 }
 
@@ -1134,6 +1134,10 @@ select {
 
 .w-7 {
   width: 7rem;
+}
+
+.w-14 {
+  width: 14.375rem;
 }
 
 
