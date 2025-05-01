@@ -40,6 +40,7 @@ def discount(patient, price):
         return payment
 
 # View functions
+# delete this later
 def base(request):
     """
     Render the base template.
