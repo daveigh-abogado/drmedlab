@@ -43,6 +43,7 @@ def discount(patient, price):
         return payment
 
 # View functions
+# delete this later
 def base(request):
     """
     Render the base template.
@@ -154,7 +155,60 @@ def add_testcomponent(request):
     """
     Display a form to add a new test component.
     """
-    return render(request, 'labreqsys/add_testcomponent.html')
+    template_status = 'absent'
+    if request.method == "POST":
+        template_name = request.POST.get("template_name")
+        
+        template = TemplateForm.objects.create(template_name=template_name)
+
+        section_index = 0
+        while f"sections[{section_index}][name]" in request.POST:
+            section_name = request.POST.get(f"sections[{section_index}][name]")
+            section = TemplateSection.objects.create(
+                template=template, section_name=section_name
+            )
+
+            field_index = 0
+            while f"sections[{section_index}][fields][{field_index}][label]" in request.POST:
+                label = request.POST.get(f"sections[{section_index}][fields][{field_index}][label]")
+                field_type = request.POST.get(f"sections[{section_index}][fields][{field_index}][type]")
+                fixed_value = request.POST.get(f"sections[{section_index}][fields][{field_index}][fixed_value]", "")
+
+                TemplateField.objects.create(
+                    section=section,
+                    label_name=label,
+                    field_type=field_type,
+                    field_value=fixed_value if fixed_value else None
+                )
+                field_index += 1
+            section_index += 1
+        template_status = 'present'
+    return render(request, 'labreqsys/add_testcomponent.html', {
+        'template_status': template_status})
+
+def create_testcomponent(request):
+    """
+    Add Test Component to the Database
+    """
+    if request.method == "POST":
+        last_template = TemplateForm.objects.order_by('-template_id').first()
+        print('check this girly')
+        print(TestComponent.objects.filter(template_id=last_template.template_id))
+        if TestComponent.objects.filter(template_id=last_template.template_id):
+            return redirect('add_testcomponent')
+        else:
+            test_code = request.POST.get('test_code')
+            test_name = request.POST.get('test_name')
+            category = request.POST.get('category')
+            component_price = request.POST.get('price')
+            TestComponent.objects.create(
+                template_id = last_template.template_id,
+                test_code = test_code,
+                test_name = test_name,
+                component_price = component_price,
+                category = category
+            )
+    return redirect('testComponents')
 
 def add_template(request):
     """
@@ -324,7 +378,7 @@ def summarize_labreq(request, pk):
                                 request_status="Not Started",
                                 template_used=package_component.component.template_id
                             )
-                            # Fetch fields for this component's template, excluding Labels
+                            # Fetch fields for this component’s template, excluding Labels
                             sections = TemplateSection.objects.filter(template_id=package_component.component.template_id)
                             for section in sections:
                                 fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')

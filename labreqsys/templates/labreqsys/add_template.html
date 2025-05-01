@@ -10,30 +10,25 @@
     </ul>
 </div>
 
-
 <div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
-    <!-- Header -->
     <div class="flex justify-between items-center rounded-t sm:mb-4 w-full">
         <h1 class="text-mm font-semibold text-blue-900">Create Template</h1>
         <div class="flex gap-2">
-            <a href="{% url 'testComponents' %}" class="text-blue-900 inline-flex items-center bg-blue-900-10 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline border">Cancel</a>
-            <button type="submit" form="form" class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Create Template</button>
+            <a href="{% url 'add_testcomponent' %}" class="text-blue-900 inline-flex items-center bg-blue-900-10 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline border">Cancel</a>
+            <button type="button" id="createTemplatebutton" data-modal-target="templateModal" data-modal-toggle="templateModal" class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Create Template</button>
         </div>
     </div>
 
-    <!-- Form -->
     <form id="form" method="POST" action="#" class="w-full gap-2.5">{% csrf_token %}
-        <!-- Template Name -->
         <div class="grid gap-2.5 mb-4 sm:grid-cols-1 border-b pb-3">
             <div>
                 <label for="template_name" class="block mb-2 text-left text-sm font-medium text-gray-500 uppercase">Form Name *</label>
-                <input type="text" name="template_name" id="template_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" placeholder="e.g. Blood Chemistry" required pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
+                <input type="text" name="template_name" id="template_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" placeholder="e.g. Blood Chemistry" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
             </div>
         </div>
 
         <div id="sections-container"></div>
 
-        <!-- Add Section Button -->
         <div class="grid gap-2.5 mt-2 sm:grid-cols-1">
             <div>
                 <button type="button" id="add-section-btn" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Section</button>
@@ -42,11 +37,27 @@
     </form>
 </div>
 
+<div id="templateModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-4xl h-full md:h-auto">
+        <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
+            <div id="modal-preview-content">
+                </div>
+            <div class="grid gap-2.5 mb-4 sm:grid-cols-2 mt-4">
+                <button data-modal-hide="templateModal" type="button" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">Back to Editing</button>
+                <button type="submit" form="form" id="confirmSubmit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Create Template</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     let sectionCount = 0;
 
     const sectionsContainer = document.getElementById('sections-container');
     const addSectionBtn = document.getElementById('add-section-btn');
+    const createTemplateButton = document.getElementById('createTemplatebutton');
+    const modalPreviewContent = document.getElementById('modal-preview-content');
+    const form = document.getElementById('form');
 
     function createField(sectionIndex, fieldIndex) {
         return `
@@ -179,7 +190,7 @@
             const selectedType = e.target.value;
             const fieldGroup = e.target.closest('.field-group');
             const fixedValueInput = fieldGroup.querySelector('input[name*="[fixed_value]"]');
-            
+
             if (['Text', 'Image', 'Number'].includes(selectedType)) {
                 fixedValueInput.disabled = true;
                 fixedValueInput.value = ''; //clears the value
@@ -188,9 +199,70 @@
             }
         }
     });
+
+    createTemplateButton.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent the default form submission
+
+        // get all of the form data
+        const formData = new FormData(form);
+        const templateName = formData.get('template_name');
+        const sectionsData = [];
+
+        const sections = sectionsContainer.querySelectorAll('.section');
+        sections.forEach((sectionElement) => {
+            const sectionName = sectionElement.querySelector('input[name^="sections"][name$="[name]"]').value;
+            const fieldsData = [];
+            const fields = sectionElement.querySelectorAll('.field-group');
+            fields.forEach((fieldElement) => {
+                const label = fieldElement.querySelector('input[name*="[label]"]').value;
+                const type = fieldElement.querySelector('select[name*="[type]"]').value;
+                const fixedValue = fieldElement.querySelector('input[name*="[fixed_value]"]').value;
+                fieldsData.push({ label: label, type: type, fixed_value: fixedValue });
+            });
+            sectionsData.push({ name: sectionName, fields: fieldsData });
+        });
+
+        // build preview content
+        let previewHTML = `<div class="flex justify-between items-center rounded-t border-b sm:mb-5">
+                <h3 class="text-mm font-semibold text-blue-900 uppercase">
+                    ${templateName}
+                </h3>
+            </div>`;
+        sectionsData.forEach((section, index) => {
+            let field_number = 0;
+            section.fields.forEach(field => {
+                field_number++;
+            });
+            previewHTML += `<div class="self-stretch h-8 justify-center font-semibold text-m-600 text-gray-500 mb-2">${section.name}</div>
+            <div class="grid gap-2.5 sm:grid-cols-${field_number}">`;
+            section.fields.forEach(field => {
+                previewHTML += `<div>`;
+                previewHTML += `<label for="test_code" class="block mb-2 text-center text-sm font-medium text-gray-500">${field.label}</label>`;
+                if (field.type == 'Label') {
+                    previewHTML += `<div class="text-center">${field.fixed_value}</div>`;
+                } else if ((field.type == 'Text')) {
+                    previewHTML += `<input disabled type="text" class="bg-gray-50 border border-gray-300 text-center text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">`;
+                } else if ((field.type == 'Number')) {
+                    previewHTML += `<input disabled type="number" class="bg-gray-50 border border-gray-300 text-center text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">`;
+                } else if ((field.type == 'Image')) {
+                    previewHTML += `<input disabled type="file" class="bg-gray-50 border border-gray-300 text-center text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">`;
+                }
+                previewHTML += `</div>`;
+            });
+            previewHTML += `</div>`;
+        });
+
+        // Update the modal content
+        modalPreviewContent.innerHTML = previewHTML;
+    });
+
+    // Handle the final form submission when "Confirm Create" is clicked
+    const confirmSubmitButton = document.getElementById('confirmSubmit');
+    confirmSubmitButton.addEventListener('click', () => {
+        form.action = "{% url 'add_testcomponent' %}";
+        form.submit();
+    });
 </script>
-
-
 
 {% endblock content %}
 
@@ -200,7 +272,7 @@
         display: inline;
         font-size: 12px;
     }
-    
+
     ul.breadcrumb li+li:before {
         color: black;
         content: "/\00a0";
