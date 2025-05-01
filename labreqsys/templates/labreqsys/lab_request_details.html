@@ -164,10 +164,10 @@
                                 <form method ="POST" action="{% url 'change_collection_status' request_id=request_details.request_id %}" id="collection-form">{% csrf_token %}
                                 </form>
                                 <select name="collected" form="collection-form"
-                                data-current-value="{{ collection_status }}"
-                                onchange="confirmSubmission('collection-form', this)"
-                                class="w-40 h-auto px-6 py-2 bg-gray-100 font-semibold text-blue-900 rounded-2xl inline-flex justify-between items-center text-start justify-start text-xs"
-                                {% if collection_status == 'Collected' %}disabled{% endif %}>
+                                        data-current-value="{{ collection_status }}"
+                                        onchange="confirmSubmission('collection-form', this)"
+                                        class="w-40 h-auto px-6 py-2 bg-gray-100 font-semibold rounded-2xl inline-flex justify-between items-center text-start justify-start text-xs {% if collection_status != 'Collected' %}text-blue-900{% endif %}"
+                                        {% if collection_status == 'Collected' %}disabled{% endif %}>
                                     <option {% if collection_status == 'Uncollected' %}selected{% endif %} value="Uncollected">Uncollected</option>
                                     <option {% if collection_status == 'Collected' %}selected{% endif %} value="Collected">Collected</option>
                                 </select>
@@ -204,10 +204,10 @@
                                 <form method ="POST" action="{% url 'change_collection_status' request_id=request_details.request_id %}" id="email-form">{% csrf_token %}
                                 </form>
                                 <select name="emailed" form="email-form"
-                                data-current-value="{{ email_status }}"
-                                onchange="confirmSubmission('email-form', this)"
-                                class="w-40 h-auto px-6 py-2 bg-gray-100 rounded-2xl font-semibold text-blue-900 inline-flex justify-between items-center text-start justify-start text-xs"
-                                {% if email_status == 'Sent' %}disabled{% endif %}>
+                                        data-current-value="{{ email_status }}"
+                                        onchange="confirmSubmission('email-form', this)"
+                                        class="w-40 h-auto px-6 py-2 bg-gray-100 rounded-2xl font-semibold inline-flex justify-between items-center text-start justify-start text-xs {% if email_status != 'Sent' %}text-blue-900{% endif %}"
+                                        {% if email_status == 'Sent' %}disabled{% endif %}>
                                     <option value="Not Sent" {% if email_status == 'Not Sent' %}selected{% endif %}>Not Sent</option>
                                     <option value="Sent" {% if email_status == 'Sent' %}selected{% endif %}>Sent</option>
                                 </select>
