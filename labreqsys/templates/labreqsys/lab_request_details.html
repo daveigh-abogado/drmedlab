@@ -193,7 +193,7 @@
                             {% endif %}
                         </td>
                         <td class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center">
-                            <a href="#" class = "no-underline ">View</a>
+                            <a href="{%url 'view_labresult' pk=line_item.line_item_id%}" class = "no-underline ">View</a>
                         </td>
                     </tr>
                     {% endfor %}

@@ -50,7 +50,7 @@
                   <td class="div-wrapper"><div class="text-wrapper-4">Date Requested</div></td>
                   <td class="frame-2"><div class="text-wrapper-5">{{lab_request.date_requested}}</div></td>
                 </tr>
-              
+
                 <tr>
                   <!-- Patient Name -->
                   <td class="div-wrapper"><div class="text-wrapper-4">Patient Name</div></td>
@@ -133,7 +133,30 @@
                                         </tbody>
                                     </table>
                                     {% endfor %}
+                                    <p> *** End of Report *** </p>
                                     <!-- [MADS TODO] Add Technician details here-->
+                                    <table>
+                                      {% for tech in lab_tech %}
+                                      <th>
+                                          <img src="{{tech.lab_tech.signature_path}}" alt="{{tech.lab_tech.first_name}}_{{tech.lab_tech.last_name}}_signature">
+                                      </th>
+                                      <tr>
+                                          <td>
+                                              {{tech.lab_tech.first_name}} {{tech.lab_tech.last_name}}
+                                          </td>
+                                      </tr>
+                                      <tr>
+                                          <td>
+                                              {{tech.lab_tech.title}}
+                                          </td>
+                                      </tr>
+                                      <tr>
+                                          <td>
+                                              {{tech.lab_tech.license_num}}
+                                          </td>
+                                      </tr>
+                                      {% endfor%}
+                                      <table>
                                 </div>
                             </div>
                         </div>
@@ -189,7 +212,7 @@
   border-bottom-style: solid;
   border-color: #2742914c;
 }
-
+      
 .result-PDF .image {
   width: 333px;
   height: 112px;
