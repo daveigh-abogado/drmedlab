@@ -107,8 +107,8 @@
                         </th>
                         <td class="px-6 py-2">{{ l.patient.last_name }}, {{ l.patient.first_name }}</td>
                         <td class="px-6 py-2 text-center">{{ l.overall_status }}</td>
-                        <th scope="row" class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center no-underline">
-                            <a href="{% url 'view_individual_lab_request' request_id=l.request_id %}" class = "no-underline ">
+                        <th scope="row" class="px-6 py-2 font-medium text-view whitespace-nowrap text-center no-underline">
+                            <a href="{% url 'view_individual_lab_request' request_id=l.request_id %}" class = "no-underline text-view">
                                 View
                             </a>
                         </th>

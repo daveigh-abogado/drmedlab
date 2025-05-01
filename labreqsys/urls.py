@@ -28,5 +28,7 @@ urlpatterns = [
     path('view_labresult/<int:pk>', views.view_lab_result, name='view_labresult'),
     path('save_patient', views.save_patient, name='save_patient'),
     path('packages', views.packages, name='packages'),
-    path('add_package', views.add_package, name='add_package')
+    path('add_package', views.add_package, name='add_package'),
+    path('change_collection_status/<int:request_id>', views.change_collection_status, name='change_collection_status')
 ]
+

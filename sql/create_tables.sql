@@ -137,9 +137,9 @@ CONSTRAINT result_value_fk2 FOREIGN KEY (field_id) REFERENCES template_field(fie
 CREATE TABLE collection_log 
 (collection_id	INTEGER NOT NULL auto_increment,
  request_id INTEGER NOT NULL,
- collected_by_customer VARCHAR(100) NOT NULL,
+ collected_by_customer VARCHAR(100),
  time_collected DATETIME,
- mode_of_collection ENUM('Pick-up', 'Email', 'Both') NOT NULL DEFAULT 'Pick-up',
+ mode_of_collection ENUM('Pick-up', 'Email') NOT NULL DEFAULT 'Pick-up',
  CONSTRAINT collection_log_pk PRIMARY KEY (collection_id),
  CONSTRAINT collection_log_fk FOREIGN KEY (request_id) REFERENCES lab_request(request_id));
 
