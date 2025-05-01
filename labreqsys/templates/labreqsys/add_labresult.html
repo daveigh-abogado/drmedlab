@@ -169,66 +169,92 @@
                 {% endfor %}
     
                 <!--Section title: Add Signature-->
-                <div class="self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+                <div class="w-full self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
                     <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Add Signature</div>
                 </div>
     
-                <div>
-                    <select id="lab_tech_1" name="lab_tech_1" onchange="updateLabTechInfo('lab_tech_1')" required>
+                <div class="mt-2 justify-center flex gap-5 px-2">
+                    <div>  
+                        <select id="lab_tech_1" name="lab_tech_1" onchange="updateLabTechInfo('lab_tech_1')" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Lab Tech Name</option>
                         {% for tech in lab_technicians %}
                             <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
                                 {{ tech.first_name }} {{ tech.last_name }}
                             </option>
                         {% endfor %}
-                    </select>
+                        </select>
     
-                    <p id="lab_tech_1_info">Role <br> License Number</p>
-    
-                    <select id="lab_tech_2" name="lab_tech_2" onchange="updateLabTechInfo('lab_tech_2')" required>
-                        <option value="">Lab Tech Name</option>
-                        {% for tech in lab_technicians %}
-                            <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
-                                {{ tech.first_name }} {{ tech.last_name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                    <p id="lab_tech_2_info">Role <br> License Number</p>
+                        <p id="lab_tech_1_info" class="text-base text-blue-900 text-center p-2">Role <br> License Number</p>
+                    </div>
+                    
+                    <div>
+                        <select id="lab_tech_2" name="lab_tech_2" onchange="updateLabTechInfo('lab_tech_2')" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                            <option value="">Lab Tech Name</option>
+                            {% for tech in lab_technicians %}
+                                <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
+                                    {{ tech.first_name }} {{ tech.last_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <p id="lab_tech_2_info" class="text-base text-blue-900 text-center p-2">Role <br> License Number</p>
+                    </div>   
                 </div>
-                
-    
                 
     
                 <input type="hidden" name="submission_type" id="submission_type" value="">
                 <!-- Modal Trigger Button -->
-                <button type="button" onclick="saveModal()">Save</button>
-                <button type="button" onclick="submitModal()">Submit</button>
+                <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
+                    <button type="button" onclick="saveModal()"
+                    class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-555 bg-opacity-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">
+                    Save
+                    </button>
+                    <button type="button" onclick="submitModal()"
+                    class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
+                        Submit
+                    </button>
+                </div>
+
+                <div id="modalBackdrop" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50"></div>
+        
+                <!--NEED TO EDIT HUHU BITCH DOESNT WANNA STAY IN THE MIDDLE-->
+                <!-- Save Modal -->
+                <div id="saveModal" tabindex="-1" aria-hidden="true" class="overflow-x-hidden fixed inset-0 flex z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
+                    <div class="relative p-4 w-full max-w-6xl h-full md:h-aut w-auto">
+                        <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
+                            <!-- Modal header -->
+                            <div class="flex justify-between items-center rounded-t sm:mb-5">
+                                <h3 class="text-mm font-semibold text-blue-900">
+                                    Save Results?
+                                </h3>
+                            </div>
+                            <p class="block mb-2 text-left text-sm font-medium text-gray-500">You may continue editing this form later.</p>
+                            <div class="modal-buttons">
+                                <button class="btn-confirm" onclick="submitForm()">Yes</button>
+                                <button class="btn-cancel" onclick="closeSaveModal()">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            
+                <!-- Confirmation Modal -->
+                <div id="confirmModal" class="modal">
+                    <div class="modal-content" style="background-color: white; width: 500px; margin-top: 400px; margin-left: 800px; padding: 50px;">
+                        <h2>Submit results?</h2>
+                        <p>You cannot edit this form upon submission.</p>
+                        <div class="modal-buttons">
+                            <button class="btn-confirm" onclick="submitForm()">Yes</button>
+                            <button class="btn-cancel" onclick="closeConfirmModal()">No</button>
+                        </div>
+                    </div>
+                </div>
+                
             </form>
         </div>
+
         
-        <!-- Save Modal -->
-        <div id="saveModal" class="modal">
-            <div class="modal-content" style="background-color: white; width: 500px; margin-top: 400px; margin-left: 800px; padding: 50px;">
-                <h2>Save results?</h2>
-                <p>You may continue editing this form later.</p>
-                <div class="modal-buttons">
-                    <button class="btn-confirm" onclick="submitForm()">Yes</button>
-                    <button class="btn-cancel" onclick="closeSaveModal()">No</button>
-                </div>
-            </div>
-        </div>
-    
-        <!-- Confirmation Modal -->
-        <div id="confirmModal" class="modal">
-            <div class="modal-content" style="background-color: white; width: 500px; margin-top: 400px; margin-left: 800px; padding: 50px;">
-                <h2>Submit results?</h2>
-                <p>You cannot edit this form upon submission.</p>
-                <div class="modal-buttons">
-                    <button class="btn-confirm" onclick="submitForm()">Yes</button>
-                    <button class="btn-cancel" onclick="closeConfirmModal()">No</button>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
