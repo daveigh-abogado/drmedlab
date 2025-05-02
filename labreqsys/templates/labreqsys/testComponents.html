@@ -106,7 +106,7 @@
                         </td>
                         <td class="px-6 py-2 text-center ">₱{{ t.component_price }}</td>
                         <th scope="row" class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center no-underline">
-                            <a href="#" class = "no-underline text-view">
+                            <a href="{% url 'view_component' component_id=t.component_id %}" class = "no-underline text-view">
                                 View Template
                             </a>
                         </th>

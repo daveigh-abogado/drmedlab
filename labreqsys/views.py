@@ -186,6 +186,30 @@ def add_testcomponent(request):
     return render(request, 'labreqsys/add_testcomponent.html', {
         'template_status': template_status})
 
+def view_component(request, component_id):
+    component = TestComponent.objects.get(component_id=component_id)
+    template = component.template
+    sections = TemplateSection.objects.filter(template=template)
+
+    section_data = []
+    for section in sections:
+        fields = TemplateField.objects.filter(section=section)
+        section_data.append({
+            'name': section.section_name,
+            'fields': fields
+        })
+
+    context = {
+        'component': component,
+        'template_name': template.template_name,
+        'sections': section_data
+    }
+
+    return render(request, 'labreqsys/view_component.html',
+                  {'component': component,
+                   'context': context
+                   })
+
 def create_testcomponent(request):
     """
     Add Test Component to the Database
