@@ -187,27 +187,22 @@ def add_testcomponent(request):
         'template_status': template_status})
 
 def view_component(request, component_id):
-    component = TestComponent.objects.get(component_id=component_id)
-    template = component.template
+    test_component = TestComponent.objects.get(component_id=component_id)
+    template = test_component.template
     sections = TemplateSection.objects.filter(template=template)
 
     section_data = []
-    for section in sections:
-        fields = TemplateField.objects.filter(section=section)
-        section_data.append({
-            'name': section.section_name,
-            'fields': fields
-        })
-
-    context = {
-        'component': component,
-        'template_name': template.template_name,
-        'sections': section_data
-    }
+    for s in sections:
+        fields = TemplateField.objects.filter(section_id=s.pk)
+        field_count = 0
+        for field in fields:
+            field_count+=1
+        section_data.append({'section': s, 'field_count': field_count, 'fields': fields})
 
     return render(request, 'labreqsys/view_component.html',
-                  {'component': component,
-                   'context': context
+                  {'component': test_component,
+                   'template': template,
+                   'sections': section_data
                    })
 
 def create_testcomponent(request):
