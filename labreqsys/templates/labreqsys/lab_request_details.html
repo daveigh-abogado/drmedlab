@@ -281,12 +281,16 @@
                                 </a>
                             {% endif %}
                         </td>
-                        <td class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center">
-                            <a href="{%url 'view_labresult' pk=line_item.line_item_id%}" class = "no-underline ">View</a>
-                        <!--
-                        <td class="px-6 py-2 font-medium text-view whitespace-nowrap text-center">
-                            <a href="#" class = "no-underline text-view">View</a>
-                        </td>-->
+                        {% if line_item.request_status == 'Not Started' or line_item.request_status == 'In Progress' %}
+                            <td class="px-6 py-2 text-center">
+                                -
+                            </td>
+                        {% else %}
+                            <td class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center">
+                                <a href="{%url 'view_labresult' pk=line_item.line_item_id%}" class = "no-underline ">View</a>
+                            </td>
+                        {% endif %}
+                        
                     </tr>
                     {% endfor %}
                 </tbody>
