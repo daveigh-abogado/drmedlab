@@ -12,9 +12,11 @@
 
         <span class="text-[#00BAFF]">View Lab Result</span>
     </nav>
+    <a href="{% url 'view_individual_lab_request' request_id=line_item.request.request_id %}">
         <button class="px-4 py-1 bg-blue-900-10 bg-opacity-10 no-underline text-blue-900 font-bold border-blue-900 border rounded-lg" type="button">
-            <a href="{% url 'view_individual_lab_request' request_id=line_item.request.request_id %}">Back</a>
+            Back
         </button>
+    </a>
 </div>
 <iframe src="{% url 'pdf' pk=line_item.line_item_id %}" 
     name="pdf"
