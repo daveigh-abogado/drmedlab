@@ -417,7 +417,7 @@ def add_patient (request):
                 'zip_code':zip_code,
                 'pwd_id_num':pwd_id_num,
                 'senior_id_num':senior_id_num,
-                'modal': True})
+                'mode': 'add'})
     else:
         return render(request, 'labreqsys/add_patient.html')
     
@@ -582,9 +582,8 @@ def pdf(request, pk):
     fields = []
     reviewed_by = [] # [MADS TO DO!] When ResultReview starts saving, pass reviewer data here
 
-    template_section = TemplateSection.objects.filter(template=template_form.template_id)
 
-    for section in template_section:
+    for section in TemplateSection.objects.filter(template=template_form.template_id):
         fields.append(TemplateField.objects.filter(section=section.section_id)) # list of all fields per section and appends to fields 'list'
 
         for column in fields:
@@ -666,7 +665,7 @@ def generatePDF(request):
 
         zip_buffer.seek(0)
         
-        filename_z = f"{line_item.request.patient.last_name}_{line_item.request.date_requested}.pdf"
+        filename_z = f"{line_item.request.patient.last_name}_{line_item.request.date_requested}.zip"
 
         response = HttpResponse(zip_buffer, content_type='application/zip')
         response['Content-Disposition'] = f'attachment; filename="{filename_z}"'
@@ -720,7 +719,8 @@ def add_package (request):
     if request.method == "POST":
         package_name = request.POST.get('package_name')
         price = request.POST.get('price')
-        components = request.POST.getlist('componentCheckbox')
+        components = request.POST.getlist('addComponentCheckbox')
+        print(components)
         
         if TestPackage.objects.filter(package_name=package_name).exists():
             return redirect('packages')
@@ -739,4 +739,61 @@ def add_package (request):
 
         return redirect('packages')
     else:
-        return render(request, 'labreqsys/add_package.html', {'components': test_components})
+        return render(request, 'labreqsys/add_edit_package.html', {'components': test_components, 'mode':'add'})
+    
+
+def edit_package(request, pk):
+    '''
+    Display packages
+    '''    
+
+    package = TestPackage.objects.get(package_id=pk)                  
+    test_components = TestComponent.objects.all()  
+    pc = TestPackageComponent.objects.filter(package__package_id=pk)                      
+    components = []                                                             
+    components.extend(                                                          
+        TestComponent.objects.get(component_id=p.component.component_id)
+        for p in pc 
+    )
+    
+    if request.method == "POST":
+        package_name = request.POST.get('package_name')
+        price = request.POST.get('price')
+        checked_s = request.POST.getlist('editComponentCheckboxS')
+        checked_n = request.POST.getlist('editComponentCheckboxN')
+
+        updated = []
+        
+        new = []
+        
+        for c in checked_s:
+            component = TestComponent.objects.get(component_id=c)
+            updated.append(component)
+            print(f"'{component.test_name}' still here ")
+        
+        for p in components:
+            if p not in updated:
+                tp = TestPackageComponent.objects.filter(package=package, component=p)
+                tp.delete()
+                
+            else: 
+                print("yippeeeee !")
+    
+                    
+                    
+            
+        for x in checked_n:
+            component = TestComponent.objects.get(component_id=x)
+            TestPackageComponent.objects.create(
+                package=package,
+                component=component
+            )        
+
+        return redirect('packages')
+        
+    else:
+        return render(request, 'labreqsys/add_edit_package.html', {
+            'components': test_components, 
+            'selectedComponents' : components,
+            'package':package, 
+            'mode': 'edit'})

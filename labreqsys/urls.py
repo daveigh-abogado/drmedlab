@@ -25,7 +25,8 @@ urlpatterns = [
     path('view_labresult/<int:pk>', views.view_lab_result, name='view_labresult'),
     path('save_patient', views.save_patient, name='save_patient'),
     path('packages', views.packages, name='packages'),
-    path('add_package', views.add_package, name='add_package')
+    path('add_package', views.add_package, name='add_package'),
+    path('edit_package/<int:pk>', views.edit_package, name='edit_package')
 
 ]
 #test

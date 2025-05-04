@@ -103,7 +103,7 @@
                         </td>
                         <td class="px-6 py-2">₱{{ p.package_price }}</td>
                         <th scope="row" class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center no-underline">
-                            <a href="#" class = "no-underline ">
+                            <a href="{% url 'edit_package' pk=p.package_id %}" class = "no-underline ">
                                 Edit
                             </a>
                         </th>
