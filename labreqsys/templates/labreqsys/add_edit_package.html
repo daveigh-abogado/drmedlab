@@ -10,7 +10,7 @@
 </div>
 
 
-<!-- ADDING MODE -->
+<!-- ADD MODE -->
 {% if mode == 'add' %}
 <div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
     <!-- Add Test Component Header -->
@@ -70,11 +70,9 @@
         </form> 
     </div>   
 </div>
-{% endif %}
-
 
 <!-- EDIT MODE -->
-{% if mode == 'edit' %}
+{% elif mode == 'edit' %}
 <div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
     <!-- Add Test Component Header -->
     <div class="flex justify-between items-center rounded-t border-b sm:mb-4">

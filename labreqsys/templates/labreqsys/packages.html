@@ -73,6 +73,17 @@
         </div>
     </div>
 </div>
+
+<!--- Error Message -->
+<div>
+    {% if messages %}
+    <ul class="mb-4">
+        {% for message in messages %}
+            <p class="text-red-500">{{ message }}</p>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
     
 
 

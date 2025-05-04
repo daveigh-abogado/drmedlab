@@ -385,19 +385,12 @@ def add_patient (request):
         
         query = Q(first_name__exact=first_name, last_name__exact=last_name, birthdate__exact=birthdate, sex=sex, city__exact=city)
         
-        if mobile_num:
-            query |= Q(mobile_num__icontains=mobile_num)
-        if landline_num:
-            query |= Q(landline_num__icontains=landline_num)
-        if email:
-            query |= Q(email__icontains=email)
-
         
         if Patient.objects.filter(query).exists():
             messages.error(request, "Patient already exists.")
             return redirect('patientList')
         else:    
-            return render(request, 'labreqsys/add_patient_details.html', {
+            return render(request, 'labreqsys/add_edit_patient_details.html', {
                 'last_name':last_name,
                 'first_name':first_name,
                 'middle_initial':middle_initial,
@@ -419,8 +412,79 @@ def add_patient (request):
                 'senior_id_num':senior_id_num,
                 'mode': 'add'})
     else:
-        return render(request, 'labreqsys/add_patient.html')
+        return render(request, 'labreqsys/add_edit_patient.html', {'mode': 'add'})
     
+def edit_patient (request, pk):
+    '''
+    
+    Takes edit patients, then processes for formatting
+    
+    '''
+    
+    p = get_object_or_404(Patient, pk=pk)
+    
+    if request.method == "POST":
+        last_name = request.POST.get('last_name')
+        first_name = request.POST.get('first_name')
+        middle_initial = request.POST.get('middle_initial')
+        suffix = request.POST.get('suffix')
+        sex = request.POST.get('sex')
+        civil_status = request.POST.get('civil_status') 
+        birthdate = request.POST.get('birthdate')
+        
+        mobile_num = request.POST.get('mobile_num')
+        # handles check statement in database
+        if mobile_num != "" and mobile_num.startswith ("63") == False :
+            mobile_num = "63" + mobile_num.lstrip("0")
+        
+        landline_num = request.POST.get('landline_num')
+
+        email = request.POST.get('email')
+        house_num = request.POST.get('house_num')
+        street = request.POST.get('street')
+        baranggay = request.POST.get('baranggay')
+        subdivision = request.POST.get('subdivision')
+        province = request.POST.get('province')
+        city = request.POST.get('city')
+        zip_code = request.POST.get('zip_code')
+        pwd_id_num = request.POST.get('pwd_id_num')
+        senior_id_num = request.POST.get('senior_id_num')
+        
+        query = Q(first_name__exact=first_name, last_name__exact=last_name, birthdate__exact=birthdate, sex=sex, city__exact=city)
+        
+        if mobile_num:
+            query |= Q(mobile_num__icontains=mobile_num)
+        if landline_num:
+            query |= Q(landline_num__icontains=landline_num)
+        if email:
+            query |= Q(email__icontains=email)
+
+        
+        return render(request, 'labreqsys/add_edit_patient_details.html', {
+            'patient': p,
+            'last_name':last_name,
+            'first_name':first_name,
+            'middle_initial':middle_initial,
+            'suffix':suffix,
+            'sex':sex,
+            'civil_status':civil_status,
+            'birthdate':birthdate,
+            'mobile_num':mobile_num,
+            'landline_num':landline_num,
+            'email':email,
+            'house_num':house_num,
+            'street':street,
+            'subdivision':subdivision,
+            'baranggay':baranggay,
+            'province':province,
+            'city':city,
+            'zip_code':zip_code,
+            'pwd_id_num':pwd_id_num,
+            'senior_id_num':senior_id_num, 
+            'mode':'edit'})
+    else:
+        return render(request, 'labreqsys/add_edit_patient.html', {'patient': p, 'mode': 'edit'})
+
 
 def add_patient_details(request):
     '''
@@ -451,14 +515,6 @@ def add_patient_details(request):
         
         query = Q(first_name__exact=first_name, last_name__exact=last_name, birthdate__exact=birthdate, sex=sex, city__exact=city)
         
-        if mobile_num:
-            query |= Q(mobile_num__icontains=mobile_num)
-        if landline_num:
-            query |= Q(landline_num__icontains=landline_num)
-        if email:
-            query |= Q(email__icontains=email)
-
-        
         if Patient.objects.filter(query).exists():
             messages.error(request, "Patient already exists.")
             return redirect('patientList')
@@ -487,7 +543,63 @@ def add_patient_details(request):
             p = Patient.objects.get(pk=new_p.patient_id)
             return redirect('view_patient', pk=p.pk)   
     else:
-        return render(request, 'labreqsys/add_patient_details.html')
+        return render(request, 'labreqsys/edit_patient_details.html')
+
+
+def edit_patient_details(request, pk):
+    '''
+    
+    Displays preview of Add Patient details, then saves
+    
+    ''' 
+
+    patient = get_object_or_404(Patient, pk=pk)
+    if request.method == "POST":
+        last_name = request.POST.get('last_name')      
+        first_name = request.POST.get('first_name')
+        middle_initial = request.POST.get('middle_initial')
+        suffix = request.POST.get('suffix')
+        sex = request.POST.get('sex')
+        civil_status = request.POST.get('civil_status') 
+        birthdate = request.POST.get('birthdate')
+        mobile_num = request.POST.get('mobile_num')
+        landline_num = request.POST.get('landline_num')
+        email = request.POST.get('email')
+        house_num = request.POST.get('house_num')
+        street = request.POST.get('street')
+        baranggay = request.POST.get('baranggay')
+        province = request.POST.get('province')
+        city = request.POST.get('city')
+        subdivision = request.POST.get('subdivision')
+        zip_code = request.POST.get('zip_code')
+        pwd_id_num = request.POST.get('pwd_id_num')
+        senior_id_num = request.POST.get('senior_id_num')
+        
+
+        patient.last_name = last_name
+        patient.first_name = first_name
+        patient.middle_initial = middle_initial
+        patient.suffix = suffix
+        patient.sex = sex
+        patient.civil_status = civil_status
+        patient.birthdate = birthdate
+        patient.mobile_num = mobile_num
+        patient.landline_num = landline_num
+        patient.email = email
+        patient.house_num = house_num
+        patient.street = street
+        patient.baranggay = baranggay
+        patient.province = province
+        patient.city = city
+        patient.zip_code = zip_code
+        patient.pwd_id_num = pwd_id_num
+        patient.senior_id_num = senior_id_num
+        patient.save()
+        return redirect('view_patient', pk=patient.pk)   
+    else:
+        return render(request, 'labreqsys/add_edit_patient_details.html')
+    
+    
 
 def save_patient(request):
     if request.method == "POST":
@@ -723,6 +835,7 @@ def add_package (request):
         print(components)
         
         if TestPackage.objects.filter(package_name=package_name).exists():
+            messages.error(request, "Package already exists.")
             return redirect('packages')
         else:
             package = TestPackage.objects.create(
@@ -759,36 +872,32 @@ def edit_package(request, pk):
     if request.method == "POST":
         package_name = request.POST.get('package_name')
         price = request.POST.get('price')
-        checked_s = request.POST.getlist('editComponentCheckboxS')
-        checked_n = request.POST.getlist('editComponentCheckboxN')
 
         updated = []
+        if TestPackage.objects.filter(package_name=package_name).exists():
+            messages.error(request, "Package already exists.")
+            return redirect('packages')
+        else:
+            package.package_name = package_name
+            package.package_price = price
+            package.save()
         
-        new = []
-        
-        for c in checked_s:
-            component = TestComponent.objects.get(component_id=c)
-            updated.append(component)
-            print(f"'{component.test_name}' still here ")
-        
-        for p in components:
-            if p not in updated:
-                tp = TestPackageComponent.objects.filter(package=package, component=p)
-                tp.delete()
+            for c in request.POST.getlist('editComponentCheckboxS'):
+                component = TestComponent.objects.get(component_id=c)
+                updated.append(component)
                 
-            else: 
-                print("yippeeeee !")
-    
-                    
-                    
-            
-        for x in checked_n:
-            component = TestComponent.objects.get(component_id=x)
-            TestPackageComponent.objects.create(
-                package=package,
-                component=component
-            )        
-
+            for p in components:
+                if p not in updated:
+                    tp = TestPackageComponent.objects.filter(package=package, component=p)
+                    tp.delete()
+                        
+                
+            for x in request.POST.getlist('editComponentCheckboxN'):
+                component = TestComponent.objects.get(component_id=x)
+                TestPackageComponent.objects.create(
+                    package=package,
+                    component=component
+                )
         return redirect('packages')
         
     else:
