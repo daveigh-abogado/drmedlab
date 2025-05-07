@@ -39,7 +39,7 @@
                             <span class="sr-only">Open user menu</span>
                             <!-- User initial as icon -->
                             {% if user.is_authenticated %}
-                                <span class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-600 text-white text-lg font-bold uppercase">
+                                <span class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-900 text-white text-lg font-bold uppercase">
                                     {{ user.username|first|default:"U" }}
                                 </span>
                             {% else %}
@@ -50,7 +50,7 @@
                             </button>
                         </div>
 
-                        <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg min-w-[200px]" id="dropdown-user">
+                        <div class="z-50 hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg min-w-[200px]" id="dropdown-user">
                             <div class="px-4 py-3" role="none">
                             {% if user.is_authenticated %}
                                 <p class="text-base font-semibold text-gray-900" role="none">
