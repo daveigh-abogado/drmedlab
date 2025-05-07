@@ -2,14 +2,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
 import json
-from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview
+from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview, UserProfile
 from django.db.models import Q
 from datetime import date, datetime
 from decimal import Decimal
 from django.utils import timezone
 from django.http import HttpResponse
 from django.urls import reverse
-from .forms import LabTechForm, EditLabTechForm
+from .forms import LabTechForm, EditLabTechForm, UserRegistrationForm, CustomAuthenticationForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 import pdfkit
 import platform
@@ -397,7 +400,7 @@ def summarize_labreq(request, pk):
                                 request_status="Not Started",
                                 template_used=package_component.component.template_id
                             )
-                            # Fetch fields for this component’s template, excluding Labels
+                            # Fetch fields for this component's template, excluding Labels
                             sections = TemplateSection.objects.filter(template_id=package_component.component.template_id)
                             for section in sections:
                                 fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
@@ -1052,3 +1055,44 @@ def add_package (request):
         return redirect('packages')
     else:
         return render(request, 'labreqsys/add_package.html', {'components': test_components})
+
+def user_login(request):
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('patientList')  # Redirect to patient list after login
+    else:
+        form = CustomAuthenticationForm()
+    return render(request, 'labreqsys/login.html', {'form': form})
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+@login_required
+def register_user(request):
+    # Only allow Owner/Admin to register users
+    try:
+        profile = request.user.userprofile
+    except UserProfile.DoesNotExist:
+        messages.error(request, 'No profile found for this user.')
+        return redirect('patientList')
+    if profile.role != 'owner':
+        messages.error(request, 'Only Owners can register new users.')
+        return redirect('patientList')
+
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            role = form.cleaned_data['role']
+            UserProfile.objects.create(user=user, role=role)
+            messages.success(request, 'User registered successfully!')
+            return redirect('patientList')
+    else:
+        form = UserRegistrationForm()
+    return render(request, 'labreqsys/register.html', {'form': form})
