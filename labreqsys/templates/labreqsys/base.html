@@ -43,8 +43,11 @@
                                     {{ user.username|first|default:"U" }}
                                 </span>
                             {% else %}
-                                <span class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-400 text-white text-lg font-bold uppercase">
-                                    G
+                                <span class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 text-gray-600">
+                                    <!-- Guest SVG icon -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196zM15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
                                 </span>
                             {% endif %}
                             </button>
