@@ -1,24 +1,32 @@
 {% extends 'labreqsys/base.html' %}
 {% block content %}
-<div class="flex items-center justify-center min-h-[80vh]">
-  <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
-    <h2 class="text-2xl font-bold text-blue-900 mb-6 text-center">Login</h2>
-    <form method="post" class="space-y-4">
-      {% csrf_token %}
-      {% for field in form %}
-        <div>
-          <label class="block text-gray-700 font-medium mb-1">{{ field.label }}</label>
-          {{ field }}
-          {% if field.errors %}
-            <p class="text-red-500 text-xs mt-1">{{ field.errors|striptags }}</p>
-          {% endif %}
+<div class="relative p-4 w-full max-w-6xl h-full md:h-auto mx-auto mt-10">
+    <div class="relative p-4 bg-white rounded-lg shadow sm:p-5 max-w-md mx-auto">
+        <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
+            <h3 class="text-mm font-semibold text-blue-900">
+                Login
+            </h3>
         </div>
-      {% endfor %}
-      <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded transition">Login</button>
-    </form>
-    {% if form.non_field_errors %}
-      <div class="mt-4 text-red-600 text-center text-sm">{{ form.non_field_errors }}</div>
-    {% endif %}
-  </div>
+        <form method="post" class="gap-2.5">{% csrf_token %}
+            <div class="grid gap-2.5 mb-4">
+                {% for field in form %}
+                <div>
+                    <label class="block mb-2 text-left text-sm font-medium text-gray-500">{{ field.label }}</label>
+                    {{ field|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' }}
+                    {% if field.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ field.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
+                <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+                Login
+            </button>
+            {% if form.non_field_errors %}
+                <div class="mt-4 text-red-600 text-center text-sm">{{ form.non_field_errors }}</div>
+            {% endif %}
+        </form>
+    </div>
 </div>
 {% endblock %} 
