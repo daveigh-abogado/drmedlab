@@ -172,3 +172,14 @@ Based on the finalized ERD and Data Dictionary (Feb 17, 2025 doc):
 *   **Storage:**
     *   Primary: Local MySQL database for all application data.
     *   Backup: Google Cloud Storage (or similar cloud service) for automated daily backups of critical data.
+
+### Signature & Lab Tech Account Flow (Updated)
+
+- **Admin creates account for Lab Tech** with a predetermined username and password (via a dedicated screen).
+- **Admin provides credentials to Lab Tech** (outside the system).
+- **Lab Tech logs in for the first time** and is forced to change their password and upload their signature image.
+- **Admin cannot edit or add the Lab Tech's signature or password** after account creation.
+- **Login log:** (Low priority) The system logs logins and enforces password change on first login for Lab Techs.
+- **Lab Tech can only select their own signature** when adding lab results. During result entry, the logged-in Lab Tech can only select their own signature (not others').
+- **First signature cannot be deleted:** The initial signature uploaded by the Lab Tech is permanent and cannot be deleted.
+- **Second signature (for approval):** Only "Ma'am Freya" (or a designated account) can log in and use the second signature in the system. Lab Techs are not allowed to add or select the second signature for approval.
