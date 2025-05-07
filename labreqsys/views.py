@@ -321,6 +321,12 @@ def add_labreq_details(request, pk):
     """
     p = get_object_or_404(Patient, pk=pk)
     if request.method == "POST":
+        # Safely delete previous lab request items from session
+        if 'selected_components' in request.session:
+            del request.session['selected_components']
+        if 'selected_packages' in request.session:
+            del request.session['selected_packages']
+
         selected_packages = request.POST.getlist('selected_packages')
         selected_components = request.POST.getlist('selected_components')
         request.session['selected_components'] = selected_components
