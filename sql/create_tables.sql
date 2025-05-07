@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS template_section;
 DROP TABLE IF EXISTS template_form;
 DROP TABLE IF EXISTS lab_request;
 DROP TABLE IF EXISTS patient;
-DROP TABLE IF EXISTS userprofile;
+DROP TABLE IF EXISTS labreqsys_userprofile;
 
 CREATE TABLE patient
 (patient_id INTEGER NOT NULL auto_increment,
@@ -174,7 +174,7 @@ END $$
 
 DELIMITER ;
 
-CREATE TABLE userprofile (
+CREATE TABLE labreqsys_userprofile (
     id INTEGER NOT NULL AUTO_INCREMENT,
     user_id INTEGER NOT NULL,
     role ENUM('owner', 'receptionist', 'lab_tech') NOT NULL,
