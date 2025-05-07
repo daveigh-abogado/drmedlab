@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Patient(models.Model):
     patient_id = models.AutoField(primary_key=True)
@@ -205,3 +206,15 @@ class ResultReview(models.Model):
         managed = False
         db_table = 'result_review'
         unique_together = (('lab_tech', 'result_value'),)
+
+class UserProfile(models.Model):
+    ROLE_CHOICES = [
+        ('owner', 'Owner'),
+        ('receptionist', 'Receptionist'),
+        ('lab_tech', 'Lab Technician'),
+    ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+
+    def __str__(self):
+        return f"{self.user.username} ({self.get_role_display()})"
