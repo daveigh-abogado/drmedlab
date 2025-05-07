@@ -17,53 +17,54 @@
         <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5">
 
             <!--Section title: Patient Information-->
-            <div class="self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+            <div class="self-stretch py-2.5 px-2.5 border-b border-gray-300 inline-flex justify-center items-center gap-1.5">
                 <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Patient Information</div>
             </div>
 
             <!--Section Content-->
-            <div class="inline-flex flex-col justify-start items-start gap-1.5">
+            <div class="self-stretch inline-flex justify-start items-start gap-4">
 
-                <div class="self-stretch inline-flex justify-between items-start">
+                <div class="inline-flex flex-col justify-start items-start gap-1.5">
+
                     <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                        <div class="w-[201px] px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Patient ID</div>
+                        <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-40 justify-center text-xs font-semibold text-blue-900 ">Patient ID</div>
                         </div>
-                        <div class="px-6 py-1 bg-gray-100 rounded-3xl flex justify-start items-center gap-1.5"> <!--indiv info-->
-                            <div class="justify-center text-black text-xs">{{request_details.patient.patient_id}}</div>
+                        <div class="px-6 py-2 bg-gray-100 rounded-3xl flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{request_details.patient.patient_id}}</div>
+                        </div>
+                    </div>
+
+                    <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                        <div class="px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-40 justify-center text-xs font-semibold text-blue-900 ">Patient Name</div>
+                        </div>
+                        <div class="px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{ request_details.patient.first_name }} {{ request_details.patient.last_name }}</div>
                         </div>
                     </div>
     
                     <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                        <div class="w-[201px] px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Date requested</div>
+                        <div class="w-[201px] px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-40 justify-center text-xs font-semibold text-blue-900 ">PWD ID</div>
+                        </div>
+                        <div class="px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs text-black font-normal">{{ request_details.patient.pwd_id_num }}</div>
+                        </div>
+                    </div>
+    
+                </div>
+
+                <div class="inline-flex flex-col justify-start items-start gap-1.5 w-full">
+                    <div class="inline-flex justify-end items-start gap-1.5 w-full"> <!--info row-->
+                        <div class="px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                            <div class="w-7 justify-center text-xs font-semibold text-blue-900 ">Date requested</div>
                         </div>
                         <div class="px-6 py-2 bg-gray-100 rounded-3xl flex justify-start items-center gap-1.5"> <!--indiv info-->
                             <div class="justify-center text-black text-xs">{{ request_details.date_requested }}</div>
                         </div>
-                    </div>
+                    </div>   
                 </div>
-                
-
-                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Patient Name</div>
-                    </div>
-                    <div class="px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{ request_details.patient.first_name }} {{ request_details.patient.last_name }}</div>
-                    </div>
-                </div>
-
-                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="w-[201px] px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">PWD ID</div>
-                    </div>
-                    <div class="px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{ request_details.patient.pwd_id_num }}</div>
-                    </div>
-                </div>
-                
-                
             </div>
         </div>
 
@@ -95,8 +96,8 @@
 
         <!-- Lab Request Tracker Section -->
         <div class="mb-8">
-            <div class="flex items-center justify-between px-2.5 py-2.5">
-                <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Lab Request Tracker</div>
+            <div class="flex items-center justify-between px-2.5">
+                <div class="flex-1 h-5 justify-center text-blue-900 text-mm font-semibold">Lab Request Tracker</div>
                 <!--TO FRONTEND: edit div-->
                 {% if request_details.overall_status == 'In Progress' or request_details.overall_status == 'Not Started' %}
                 <button disabled class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-white bg-blue-900-30 hover:bg-gray-50" onclick="handleButtonClick()">
@@ -116,12 +117,12 @@
                 <!-- madie is working on this one -->
             </div>
 
-            <hr class="bg-black/20">
+            <hr >
 
             <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                     <div class="px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Request ID</div>
+                        <div class="w-40 justify-center text-xs font-semibold text-blue-900 ">Request ID</div>
                     </div>
                     <div class="px-6 py-2 bg-gray-100 rounded-3xl flex justify-start items-center gap-1.5"> <!--indiv info-->
                         <div class="justify-center text-black text-xs">{{ request_details.request_id }}</div>
@@ -130,7 +131,7 @@
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                     <div class="px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Mode of Delivery</div>
+                        <div class="w-40 justify-center text-xs font-semibold text-blue-900 ">Mode of Delivery</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
                         <div class="w-7 justify-center text-xs text-black font-normal">{{ request_details.mode_of_release }}</div>
@@ -139,10 +140,22 @@
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                     <div class="px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Overall Status</div>
+                        <div class="w-9 justify-center text-xs font-semibold text-blue-900 ">Overall Status</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{ request_details.overall_status }}</div>
+                        
+                        <div class="w-40 justify-center text-xs text-black font-normal">
+                            {% if line_item.request_status == 'Not Started' %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-gray-100 text-gray-800 shadow-sm border-gray-200 border">
+                            {% elif line_item.request_status == 'Completed' %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-completed text-completed shadow-sm">
+                            {% else %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-progress text-progress shadow-sm">
+                            {% endif %}
+                                {{ request_details.overall_status }}
+                            </span>
+                        </div>
+                        
                     </div>
                 </div>
 
@@ -150,7 +163,7 @@
                     {% if request_details.overall_status == 'Not Started' or request_details.overall_status == 'In Progress' %}
                     <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                         <div class="px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                            <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Collection Status</div>
+                            <div class="w-32 justify-center text-xs font-semibold text-blue-900 ">Collection Status</div>
                         </div>
                         <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
                             <form method ="POST" action="{% url 'change_collection_status' request_id=request_details.request_id %}" id="collection-form">{% csrf_token %}
@@ -168,7 +181,7 @@
                     {% else %}
                         <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                             <div class="px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                                <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Collection Status</div>
+                                <div class="w-32 justify-center text-xs font-semibold text-blue-900 ">Collection Status</div>
                             </div>
                             <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
                                 <form method ="POST" action="{% url 'change_collection_status' request_id=request_details.request_id %}" id="collection-form">{% csrf_token %}
@@ -190,7 +203,7 @@
                     {% if request_details.overall_status == 'Not Started' or request_details.overall_status == 'In Progress' %}
                         <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                             <div class="px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                                <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Email Status</div>
+                                <div class="w-32 justify-center text-xs font-semibold text-blue-900 ">Email Status</div>
                             </div>
                             <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
                                 <form method ="POST" action="{% url 'change_collection_status' request_id=request_details.request_id %}" id="email-form">{% csrf_token %}
@@ -208,7 +221,7 @@
                     {% else %}
                         <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                             <div class="px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                                <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Email Status</div>
+                                <div class="w-32 justify-center text-xs font-semibold text-blue-900 ">Email Status</div>
                             </div>
                             <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
                                 <form method ="POST" action="{% url 'change_collection_status' request_id=request_details.request_id %}" id="email-form">{% csrf_token %}
