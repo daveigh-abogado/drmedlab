@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'labreqsys',
     'tailwind',
     'theme',
-    'django_browser_reload'
+    'django_browser_reload',
+    # For form field styling in templates (see README):
+    'widget_tweaks',
 ]
 
 

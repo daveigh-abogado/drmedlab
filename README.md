@@ -401,4 +401,40 @@ ISC License
 
 ## Support
 
-For support, please open an issue in the GitHub repository or contact the development team. 
+For support, please open an issue in the GitHub repository or contact the development team.
+
+## Form Styling with django-widget-tweaks
+
+This project uses [django-widget-tweaks](https://github.com/jazzband/django-widget-tweaks) to easily add Tailwind and custom classes to form fields in templates.
+
+### Installation
+
+```
+pip install django-widget-tweaks
+```
+
+Add `'widget_tweaks'` to your `INSTALLED_APPS` in `drmed_labreqsys/settings.py`:
+
+```
+INSTALLED_APPS = [
+    ...
+    'widget_tweaks',
+    ...
+]
+```
+
+### Usage in Templates
+
+At the top of your template, load the tag library:
+
+```
+{% load widget_tweaks %}
+```
+
+Then use the `add_class` filter to add Tailwind or other classes to form fields:
+
+```
+{{ field|add_class:'your-tailwind-classes' }}
+```
+
+This is used in `login.html` and `register.html` for consistent, modern form styling. 
