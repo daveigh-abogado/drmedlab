@@ -59,7 +59,9 @@
                                 <p class="text-base font-semibold text-gray-900" role="none">
                                     {{ user.username }}
                                 </p>
-                                {% if user|has_profile %}
+                                {% if user.is_superuser %}
+                                    <p class="text-sm text-gray-500 mb-1">Role: <span class="font-medium">Superuser (Owner)</span></p>
+                                {% elif user|has_profile %}
                                     <p class="text-sm text-gray-500 mb-1">Role: <span class="font-medium">{{ user.userprofile.get_role_display }}</span></p>
                                 {% endif %}
                             {% else %}

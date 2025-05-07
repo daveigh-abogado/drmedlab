@@ -1,0 +1,11 @@
+asgiref==3.8.1
+Django==5.2
+django-browser-reload==1.18.0
+django-tailwind==4.0.1
+django-widget-tweaks==1.5.0
+mysqlclient==2.2.7
+pdfkit==1.0.0
+pillow==11.2.1
+python-dateutil==2.9.0.post0
+six==1.17.0
+sqlparse==0.5.3

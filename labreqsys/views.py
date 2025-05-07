@@ -50,25 +50,34 @@ def discount(patient, price):
 def owner_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        user = request.user
-        if not user.is_authenticated:
+        # Check 1: Authentication
+        if not hasattr(request, 'user') or not request.user.is_authenticated:
             return render(request, 'labreqsys/forbidden.html', {
-                'message': "You must be logged in as an owner.",
-                'user': user
+                'message': "Authentication required to access this page.",
+                'user': getattr(request, 'user', None) # Pass user if available
             }, status=403)
-        if getattr(user, 'is_superuser', False):
+
+        # Check 2: Superuser Status (Grants immediate access)
+        if getattr(request.user, 'is_superuser', False):
             return view_func(request, *args, **kwargs)
+
+        # Check 3: Owner Role via UserProfile (Only if not superuser)
         try:
-            if user.userprofile.role == 'owner':
+            if hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'owner':
                 return view_func(request, *args, **kwargs)
-        except UserProfile.DoesNotExist:
-            pass
-        except AttributeError:
-            pass
-        return render(request, 'labreqsys/forbidden.html', {
-            'message': "You do not have permission to access this page.",
-            'user': user
-        }, status=403)
+            else:
+                # Has profile but not owner role
+                return render(request, 'labreqsys/forbidden.html', {
+                    'message': "You do not have Owner permissions for this page.",
+                    'user': request.user
+                }, status=403)
+        except (UserProfile.DoesNotExist, AttributeError):
+            # No profile found or attribute error
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "User profile not found or inaccessible; Owner permissions required.",
+                'user': request.user
+            }, status=403)
+            
     return _wrapped_view
 
 def receptionist_required(view_func):
@@ -83,11 +92,9 @@ def receptionist_required(view_func):
         if getattr(user, 'is_superuser', False):
             return view_func(request, *args, **kwargs) # Superusers are implicitly owners/all roles
         try:
-            if user.userprofile.role in ['receptionist', 'owner']:
+            if hasattr(user, 'userprofile') and user.userprofile.role in ['receptionist', 'owner']:
                 return view_func(request, *args, **kwargs)
-        except UserProfile.DoesNotExist:
-            pass
-        except AttributeError: 
+        except (UserProfile.DoesNotExist, AttributeError):
             pass        
         return render(request, 'labreqsys/forbidden.html', {
             'message': "You do not have receptionist permissions to access this page.",
@@ -107,11 +114,9 @@ def lab_tech_required(view_func):
         if getattr(user, 'is_superuser', False):
             return view_func(request, *args, **kwargs) # Superusers are implicitly owners/all roles
         try:
-            if user.userprofile.role in ['lab_tech', 'owner']:
+            if hasattr(user, 'userprofile') and user.userprofile.role in ['lab_tech', 'owner']:
                 return view_func(request, *args, **kwargs)
-        except UserProfile.DoesNotExist:
-            pass
-        except AttributeError: 
+        except (UserProfile.DoesNotExist, AttributeError):
             pass   
         return render(request, 'labreqsys/forbidden.html', {
             'message': "You do not have lab technician permissions to access this page.",
@@ -122,25 +127,35 @@ def lab_tech_required(view_func):
 def receptionist_or_lab_tech_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        user = request.user
-        if not user.is_authenticated:
+        # Check 1: Authentication
+        if not hasattr(request, 'user') or not request.user.is_authenticated:
             return render(request, 'labreqsys/forbidden.html', {
-                'message': "You must be logged in to access this page.",
-                'user': user
+                'message': "Authentication required to access this page.",
+                'user': getattr(request, 'user', None)
             }, status=403)
-        if getattr(user, 'is_superuser', False):
+
+        # Check 2: Superuser Status (Grants immediate access)
+        if getattr(request.user, 'is_superuser', False):
             return view_func(request, *args, **kwargs)
+
+        # Check 3: Allowed Roles via UserProfile (Only if not superuser)
         try:
-            if hasattr(user, 'userprofile') and user.userprofile.role in ['receptionist', 'lab_tech', 'owner']:
+            allowed_roles = ['receptionist', 'lab_tech', 'owner']
+            if hasattr(request.user, 'userprofile') and request.user.userprofile.role in allowed_roles:
                 return view_func(request, *args, **kwargs)
-        except UserProfile.DoesNotExist:
-            pass
-        except AttributeError:
-            pass
-        return render(request, 'labreqsys/forbidden.html', {
-            'message': "You do not have the required permissions (Receptionist or Lab Technician) to access this page.",
-            'user': user
-        }, status=403)
+            else:
+                # Has profile but not an allowed role
+                return render(request, 'labreqsys/forbidden.html', {
+                    'message': "You do not have the required permissions (Receptionist or Lab Technician) for this page.",
+                    'user': request.user
+                }, status=403)
+        except (UserProfile.DoesNotExist, AttributeError):
+            # No profile found or attribute error
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "User profile not found or inaccessible; Required permissions missing.",
+                'user': request.user
+            }, status=403)
+
     return _wrapped_view
 
 # View functions
@@ -369,7 +384,6 @@ def add_labreq_details(request, pk):
     """
     p = get_object_or_404(Patient, pk=pk)
     if request.method == "POST":
-        request.session.flush()
         selected_packages = request.POST.getlist('selected_packages')
         selected_components = request.POST.getlist('selected_components')
         request.session['selected_components'] = selected_components
@@ -1201,15 +1215,6 @@ def user_logout(request):
 
 @owner_required
 def register_user(request):
-    try:
-        profile = request.user.userprofile
-    except UserProfile.DoesNotExist:
-        messages.error(request, 'No profile found for this user.')
-        return redirect('patientList')
-    if profile.role != 'owner':
-        messages.error(request, 'Only Owners can register new users.')
-        return redirect('patientList')
-
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -1217,9 +1222,13 @@ def register_user(request):
             user.set_password(form.cleaned_data['password'])
             user.save()
             role = form.cleaned_data['role']
-            UserProfile.objects.create(user=user, role=role)
+            UserProfile.objects.update_or_create(
+                user=user,
+                defaults={'role': role}
+            )
             messages.success(request, 'User registered successfully!')
-            return redirect('patientList')
+            return redirect('patientList')  # Or redirect to a user list page if you create one
+        # If form is not valid, it will fall through to the render below
     else:
         form = UserRegistrationForm()
     return render(request, 'labreqsys/register.html', {'form': form})
