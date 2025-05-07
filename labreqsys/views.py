@@ -131,7 +131,7 @@ def receptionist_or_lab_tech_required(view_func):
         if getattr(user, 'is_superuser', False):
             return view_func(request, *args, **kwargs)
         try:
-            if user.userprofile.role in ['receptionist', 'lab_tech', 'owner']:
+            if hasattr(user, 'userprofile') and user.userprofile.role in ['receptionist', 'lab_tech', 'owner']:
                 return view_func(request, *args, **kwargs)
         except UserProfile.DoesNotExist:
             pass
@@ -184,7 +184,7 @@ def testComponents(request):
     
     return render(request, 'labreqsys/testComponents.html', {'testComponents': testComponents})
 
-@receptionist_or_lab_tech_required
+@receptionist_required
 def view_patient(request, pk):
     """
     Display detailed information about a specific patient.
@@ -588,6 +588,7 @@ def change_collection_status(request, request_id):
                 c.save()
     return redirect('view_individual_lab_request', request_id=request_id)
 
+@lab_tech_required
 def add_lab_result(request, line_item_id):
     line_item = get_object_or_404(RequestLineItem, pk=line_item_id)
     test_component = get_object_or_404(TestComponent, pk=line_item.component_id)
@@ -623,6 +624,7 @@ def add_lab_result(request, line_item_id):
         'lab_technicians': lab_techs
     })
 
+@lab_tech_required
 def submit_labresults(request, line_item_id):
     results = ResultValue.objects.filter(line_item_id=line_item_id)
 
@@ -665,7 +667,7 @@ def submit_labresults(request, line_item_id):
 
     return redirect('view_individual_lab_request', request_id=line_item.request_id)
 
-@receptionist_or_lab_tech_required
+@receptionist_required
 def add_patient (request):
     '''
     
@@ -738,7 +740,7 @@ def add_patient (request):
         return render(request, 'labreqsys/add_patient.html')
     
 
-@receptionist_or_lab_tech_required
+@receptionist_required
 def add_patient_details(request):
     '''
     
@@ -806,7 +808,7 @@ def add_patient_details(request):
     else:
         return render(request, 'labreqsys/add_patient_details.html')
 
-@receptionist_or_lab_tech_required
+@receptionist_required
 def save_patient(request):
     if request.method == "POST":
         last_name = request.POST.get('last_name')
@@ -857,6 +859,7 @@ def save_patient(request):
     else: 
         return HttpResponse ("dumbass bitch?")
     
+@receptionist_or_lab_tech_required
 @xframe_options_exempt
 def pdf(request, pk):
     '''
@@ -952,6 +955,7 @@ def pdf(request, pk):
                 })
 
 
+@receptionist_or_lab_tech_required
 def generatePDF(request):
     '''
     Request to generate PDF
@@ -996,6 +1000,7 @@ def generatePDF(request):
     
 
 # PDF generation function for a single patient
+@receptionist_or_lab_tech_required
 def savePDF(request, pk):
     '''
     Save PDF using pdfkit
@@ -1121,6 +1126,7 @@ def edit_lab_tech(request, lab_tech_id):
         'lab_tech': lab_tech
     })
 
+@lab_tech_required
 def view_lab_result(request, pk):
     """
     Display form builder to create a template.
@@ -1129,6 +1135,7 @@ def view_lab_result(request, pk):
     return render(request, 'labreqsys/view_lab_results.html', {'line_item' : line_item})
 
 
+@owner_required
 def packages (request):
     '''
     Display packages
@@ -1137,6 +1144,7 @@ def packages (request):
     pc = TestPackageComponent.objects.all()
     return render(request, 'labreqsys/packages.html', {'packages': packages, 'pc': pc})
 
+@owner_required
 def add_package (request):
     '''
     Display packages
