@@ -7,12 +7,13 @@ from django.db.models import Q
 from datetime import date, datetime
 from decimal import Decimal
 from django.utils import timezone
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.urls import reverse
 from .forms import LabTechForm, EditLabTechForm, UserRegistrationForm, CustomAuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from functools import wraps
 
 import pdfkit
 import platform
@@ -1010,6 +1011,7 @@ def edit_lab_tech(request, lab_tech_id):
         'form': form,
         'lab_tech': lab_tech
     })
+
 def view_lab_result(request, pk):
     """
     Display form builder to create a template.
@@ -1071,9 +1073,29 @@ def user_logout(request):
     logout(request)
     return redirect('login')
 
-@login_required
+def owner_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            # Render a forbidden page with login link
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "You must be logged in as an owner."
+            }, status=403)
+        if getattr(user, 'is_superuser', False):
+            return view_func(request, *args, **kwargs)
+        try:
+            if user.userprofile.role == 'owner':
+                return view_func(request, *args, **kwargs)
+        except Exception:
+            pass
+        return render(request, 'labreqsys/forbidden.html', {
+            'message': "You do not have permission to access this page."
+        }, status=403)
+    return _wrapped_view
+
+@owner_required
 def register_user(request):
-    # Only allow Owner/Admin to register users
     try:
         profile = request.user.userprofile
     except UserProfile.DoesNotExist:
@@ -1096,3 +1118,134 @@ def register_user(request):
     else:
         form = UserRegistrationForm()
     return render(request, 'labreqsys/register.html', {'form': form})
+
+@owner_required
+def add_testcomponent(request):
+    template_status = 'absent'
+    if request.method == "POST":
+        template_name = request.POST.get("template_name")
+        template = TemplateForm.objects.create(template_name=template_name)
+        section_index = 0
+        while f"sections[{section_index}][name]" in request.POST:
+            section_name = request.POST.get(f"sections[{section_index}][name]")
+            section = TemplateSection.objects.create(
+                template=template, section_name=section_name
+            )
+            field_index = 0
+            while f"sections[{section_index}][fields][{field_index}][label]" in request.POST:
+                label = request.POST.get(f"sections[{section_index}][fields][{field_index}][label]")
+                field_type = request.POST.get(f"sections[{section_index}][fields][{field_index}][type]")
+                fixed_value = request.POST.get(f"sections[{section_index}][fields][{field_index}][fixed_value]", "")
+                TemplateField.objects.create(
+                    section=section,
+                    label_name=label,
+                    field_type=field_type,
+                    field_value=fixed_value if fixed_value else None
+                )
+                field_index += 1
+            section_index += 1
+        template_status = 'present'
+    return render(request, 'labreqsys/add_testcomponent.html', {
+        'template_status': template_status})
+
+@owner_required
+def create_testcomponent(request):
+    if request.method == "POST":
+        last_template = TemplateForm.objects.order_by('-template_id').first()
+        print('check this girly')
+        print(TestComponent.objects.filter(template_id=last_template.template_id))
+        if TestComponent.objects.filter(template_id=last_template.template_id):
+            return redirect('add_testcomponent')
+        else:
+            test_code = request.POST.get('test_code')
+            test_name = request.POST.get('test_name')
+            category = request.POST.get('category')
+            component_price = request.POST.get('price')
+            TestComponent.objects.create(
+                template_id = last_template.template_id,
+                test_code = test_code,
+                test_name = test_name,
+                component_price = component_price,
+                category = category
+            )
+    return redirect('testComponents')
+
+@owner_required
+def add_template(request):
+    return render(request, 'labreqsys/add_template.html')
+
+@owner_required
+def add_lab_tech(request):
+    if request.method == 'POST':
+        form = LabTechForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                lab_tech = form.save(commit=False)
+                signature = form.cleaned_data['signature']
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                safe_name = "".join(c for c in lab_tech.last_name if c.isalnum())
+                filename = f"signature_{safe_name}_{timestamp}.png"
+                file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
+                os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                with open(file_path, 'wb+') as destination:
+                    for chunk in signature.chunks():
+                        destination.write(chunk)
+                lab_tech.signature_path = f'signatures/{filename}'
+                lab_tech.save()
+                messages.success(request, 'Lab technician added successfully!')
+                return redirect('view_lab_techs')
+            except Exception as e:
+                messages.error(request, f'Error saving lab technician: {str(e)}')
+                if 'file_path' in locals():
+                    try:
+                        os.remove(file_path)
+                    except:
+                        pass
+    else:
+        form = LabTechForm()
+    return render(request, 'labreqsys/add_lab_tech.html', {'form': form})
+
+@owner_required
+def edit_lab_tech(request, lab_tech_id):
+    lab_tech = get_object_or_404(LabTech, pk=lab_tech_id)
+    if request.method == 'POST':
+        form = EditLabTechForm(request.POST, request.FILES, instance=lab_tech)
+        if form.is_valid():
+            try:
+                lab_tech = form.save(commit=False)
+                if 'signature' in request.FILES:
+                    signature = request.FILES['signature']
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    safe_name = "".join(c for c in lab_tech.last_name if c.isalnum())
+                    filename = f"signature_{safe_name}_{timestamp}.png"
+                    file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
+                    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                    if lab_tech.signature_path:
+                        old_path = os.path.join('labreqsys', 'static', lab_tech.signature_path)
+                        if os.path.exists(old_path):
+                            os.remove(old_path)
+                    with open(file_path, 'wb+') as destination:
+                        for chunk in signature.chunks():
+                            destination.write(chunk)
+                    lab_tech.signature_path = f'signatures/{filename}'
+                lab_tech.save()
+                messages.success(request, 'Lab technician updated successfully!')
+                return redirect('view_lab_techs')
+            except Exception as e:
+                messages.error(request, f'Error updating lab technician: {str(e)}')
+                if 'file_path' in locals():
+                    try:
+                        os.remove(file_path)
+                    except:
+                        pass
+    else:
+        form = EditLabTechForm(instance=lab_tech)
+    return render(request, 'labreqsys/edit_lab_tech.html', {
+        'form': form,
+        'lab_tech': lab_tech
+    })
+
+@owner_required
+def view_lab_techs(request):
+    lab_techs = LabTech.objects.all()
+    return render(request, 'labreqsys/view_lab_techs.html', {'lab_techs': lab_techs})
