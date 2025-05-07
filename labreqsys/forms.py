@@ -1,6 +1,9 @@
 from django import forms
 from .models import LabTech
 import re
+from django.contrib.auth.models import User
+from .models import UserProfile
+from django.contrib.auth.forms import AuthenticationForm
 
 class LabTechForm(forms.ModelForm):
     title = forms.ChoiceField(
@@ -101,3 +104,20 @@ class EditLabTechForm(LabTechForm):
 
     class Meta(LabTechForm.Meta):
         fields = ['title', 'tech_role', 'license_num']  # Exclude name fields 
+
+class UserRegistrationForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+    role = forms.ChoiceField(choices=UserProfile.ROLE_CHOICES)
+
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'first_name', 'last_name', 'email']
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['role']
+
+class CustomAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput) 

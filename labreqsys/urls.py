@@ -31,6 +31,9 @@ urlpatterns = [
     path('save_patient', views.save_patient, name='save_patient'),
     path('packages', views.packages, name='packages'),
     path('add_package', views.add_package, name='add_package'),
-    path('change_collection_status/<int:request_id>', views.change_collection_status, name='change_collection_status')
+    path('change_collection_status/<int:request_id>', views.change_collection_status, name='change_collection_status'),
+    path('register/', views.register_user, name='register'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
 ]
 
