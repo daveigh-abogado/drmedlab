@@ -90,77 +90,74 @@
         <aside id="sidebar-multi-level-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 bg-gradient-to-tr from-blue-500 to-blue-900 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
             <div class="h-full overflow-y-auto bg-gradient-to-tr from-blue-500 to-blue-900  ">
                 <ul class="space-y-2 font-medium no-underline">
-                    <!-- RECORDS-->
-                    <li>
-                        <a class="flex text-xs items-center p-2 text-white rounded-lg dark:text-white group no-underline">
-                            <span class="ms-3 no-underline">RECORDS</span>
-                        </a>
-                    </li>
-
-                    <!--ACTUAL STATUS Lists-->
-                    <li>
-                    <a href="{% url 'patientList' %}" class="no-underline flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
-                        <span class="ms-5">Patient List</span>
-                    </a>
-                    </li>
-                    <li>
-                        <button type="button" class="flex items-center w-64 p-2 text-base transition duration-100 group  text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  active:bg-blue-300 active:text-blue-900" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-                              <span class="ms-5 text-left rtl:text-right whitespace-nowrap">Lab Requests</span>
-                              <svg class="w-3 h-3 ms-3 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                              </svg>
-                        </button>
-                        <ul id="dropdown-example" class="hidden space-y-2 group">
-                              <li>
-                                 <a href="{% url 'labRequests' %}" class="no-underline ms-5 flex items-center w-64 p-2 text-base transition duration-100 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  active:bg-blue-300 active:text-blue-900">All Requests</a>
-                              </li>
-                              <li>
-                                 <a href="#" class="no-underline  ms-5 flex items-center w-64 p-2 text-base transition duration-100 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  active:bg-blue-300 active:text-blue-900">Not Started</a>
-                              </li>
-                              <li>
-                                 <a href="#" class="no-underline  ms-5 flex items-center w-64 p-2 text-base transition duration-100 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  active:bg-blue-300 active:text-blue-900">In Progress</a>
-                              </li>
-                              <li>
-                                <a href="#" class="no-underline  ms-5 flex items-center w-64 p-2 text-base transition duration-100 rounded-lg pl-5 group text-white dark:text-white hover:dark:text-blue-900 hover:bg-blue-300  active:bg-blue-300 active:text-blue-900">Completed</a>
-                             </li>
-                        </ul>
-                    </li>
                     
-                    <!--OFFERINGS-->
+                    <!-- RECORDS - Visible to Receptionists and Lab Technicians -->
+                    {% if user.is_authenticated %}
+                      {% if user|is_receptionist or user|is_lab_tech %}
+                        <li>
+                            <a class="flex text-xs items-center p-2 text-white rounded-lg group no-underline">
+                                <span class="ms-3 no-underline">RECORDS</span>
+                            </a>
+                        </li>
+                        
+                        {% if user|is_receptionist %}
+                        <li>
+                            <a href="{% url 'patientList' %}" class="no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-blue-300 hover:text-blue-900 group">
+                                <span class="ms-5">Patient List</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <li>
+                            <button type="button" class="flex items-center w-64 p-2 text-base transition duration-100 group text-white rounded-lg hover:bg-blue-300 hover:text-blue-900" aria-controls="dropdown-lab-requests" data-collapse-toggle="dropdown-lab-requests">
+                                <span class="ms-5 text-left rtl:text-right whitespace-nowrap">Lab Requests</span>
+                                <svg class="w-3 h-3 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                </svg>
+                            </button>
+                            <ul id="dropdown-lab-requests" class="hidden py-2 space-y-2">
+                                <li>
+                                    <a href="{% url 'labRequests' %}" class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-blue-300 hover:text-blue-900">All Requests</a>
+                                </li>
+                                {# Add other lab request filtered views here if needed and protect them accordingly #}
+                            </ul>
+                        </li>
+                      {% endif %}{# End of is_receptionist or is_lab_tech #}
+                    {% endif %}{# End of is_authenticated #}
+                    
+                    <!-- OFFERINGS - Visible to Owners -->
+                    {% if user.is_authenticated and user|is_owner %}
                     <li>
-                        <a class="flex text-xs items-center p-2 text-white rounded-lg dark:text-white group no-underline">
+                        <a class="flex text-xs items-center p-2 text-white rounded-lg group no-underline">
                             <span class="ms-3 no-underline">OFFERINGS</span>
                         </a>
                     </li>
-
-                    <!--ACTUAL OFFERINGS Lists-->
                     <li>
-                        <a href="{% url 'testComponents' %}" class="no-underline flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
+                        <a href="{% url 'testComponents' %}" class="no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-blue-300 hover:text-blue-900 group">
                             <span class="ms-5">Component</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'packages' %}" class="no-underline flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
+                        <a href="{% url 'packages' %}" class="no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-blue-300 hover:text-blue-900 group">
                             <span class="ms-5">Package</span>
                         </a>
                     </li>
+                    {% endif %}
                     
-                    <!--STAFF-->
+                    <!-- STAFF - Visible to Owners -->
+                    {% if user.is_authenticated and user|is_owner %}
                     <li>
-                        <a class="flex text-xs items-center p-2 text-white rounded-lg dark:text-white group no-underline">
+                        <a class="flex text-xs items-center p-2 text-white rounded-lg group no-underline">
                             <span class="ms-3 no-underline">STAFF</span>
                         </a>
                     </li>
-
-                    <!--ACTUAL STAFF Lists-->
                     <li>
-                        <a href="{% url 'view_lab_techs' %}" class="no-underline flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
+                        <a href="{% url 'view_lab_techs' %}" class="no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-blue-300 hover:text-blue-900 group">
                             <span class="ms-5">Lab Technicians</span>
                         </a>
                     </li>
-                    {% if user.is_authenticated and user|has_profile and user.userprofile.role == 'owner' %}
                     <li>
-                        <a href="{% url 'register' %}" class="no-underline flex items-center p-2 w-64 text-white rounded-lg dark:text-white hover:dark:text-blue-900 hover:bg-blue-300 active:bg-blue-300 active:text-blue-900 group">
+                        <a href="{% url 'register' %}" class="no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-blue-300 hover:text-blue-900 group">
                             <span class="ms-5">User Management</span>
                         </a>
                     </li>

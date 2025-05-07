@@ -46,6 +46,103 @@ def discount(patient, price):
         payment = price - round(discount)
         return payment
 
+# Decorators
+def owner_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "You must be logged in as an owner.",
+                'user': user
+            }, status=403)
+        if getattr(user, 'is_superuser', False):
+            return view_func(request, *args, **kwargs)
+        try:
+            if user.userprofile.role == 'owner':
+                return view_func(request, *args, **kwargs)
+        except UserProfile.DoesNotExist:
+            pass
+        except AttributeError:
+            pass
+        return render(request, 'labreqsys/forbidden.html', {
+            'message': "You do not have permission to access this page.",
+            'user': user
+        }, status=403)
+    return _wrapped_view
+
+def receptionist_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "You must be logged in to access this page.",
+                'user': user
+            }, status=403)
+        if getattr(user, 'is_superuser', False):
+            return view_func(request, *args, **kwargs) # Superusers are implicitly owners/all roles
+        try:
+            if user.userprofile.role in ['receptionist', 'owner']:
+                return view_func(request, *args, **kwargs)
+        except UserProfile.DoesNotExist:
+            pass
+        except AttributeError: 
+            pass        
+        return render(request, 'labreqsys/forbidden.html', {
+            'message': "You do not have receptionist permissions to access this page.",
+            'user': user
+        }, status=403)
+    return _wrapped_view
+
+def lab_tech_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "You must be logged in to access this page.",
+                'user': user
+            }, status=403)
+        if getattr(user, 'is_superuser', False):
+            return view_func(request, *args, **kwargs) # Superusers are implicitly owners/all roles
+        try:
+            if user.userprofile.role in ['lab_tech', 'owner']:
+                return view_func(request, *args, **kwargs)
+        except UserProfile.DoesNotExist:
+            pass
+        except AttributeError: 
+            pass   
+        return render(request, 'labreqsys/forbidden.html', {
+            'message': "You do not have lab technician permissions to access this page.",
+            'user': user
+        }, status=403)
+    return _wrapped_view
+
+def receptionist_or_lab_tech_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "You must be logged in to access this page.",
+                'user': user
+            }, status=403)
+        if getattr(user, 'is_superuser', False):
+            return view_func(request, *args, **kwargs)
+        try:
+            if user.userprofile.role in ['receptionist', 'lab_tech', 'owner']:
+                return view_func(request, *args, **kwargs)
+        except UserProfile.DoesNotExist:
+            pass
+        except AttributeError:
+            pass
+        return render(request, 'labreqsys/forbidden.html', {
+            'message': "You do not have the required permissions (Receptionist or Lab Technician) to access this page.",
+            'user': user
+        }, status=403)
+    return _wrapped_view
+
 # View functions
 # delete this later
 def base(request):
@@ -54,6 +151,7 @@ def base(request):
     """
     return render(request, 'labreqsys/base.html')
 
+@receptionist_or_lab_tech_required
 def view_labreqs(request):
     """
     Display a list of all lab requests.
@@ -61,6 +159,7 @@ def view_labreqs(request):
     labreqs = LabRequest.objects.all()
     return render(request, 'labreqsys/view_labreqs.html', {'labreqs': labreqs})
 
+@receptionist_or_lab_tech_required
 def patientList(request):
     """
     Display a list of all patients.
@@ -68,6 +167,7 @@ def patientList(request):
     patients = Patient.objects.all()
     return render(request, 'labreqsys/patientList.html', {'patients': patients})
 
+@receptionist_or_lab_tech_required
 def labRequests(request):
     """
     Display a list of all lab requests.
@@ -84,6 +184,7 @@ def testComponents(request):
     
     return render(request, 'labreqsys/testComponents.html', {'testComponents': testComponents})
 
+@receptionist_or_lab_tech_required
 def view_patient(request, pk):
     """
     Display detailed information about a specific patient.
@@ -239,6 +340,7 @@ def add_template(request):
     """
     return render(request, 'labreqsys/add_template.html')
 
+@receptionist_or_lab_tech_required
 def add_labreq(request, pk):
     """
     Display a form to add a new lab request for a specific patient.
@@ -260,6 +362,7 @@ def add_labreq(request, pk):
         'package_data': json.dumps(package_data, cls=DjangoJSONEncoder),  # Convert to JSON for JS use
     })
 
+@receptionist_or_lab_tech_required
 def add_labreq_details(request, pk):
     """
     Handle the selection of components and packages for a new lab request.
@@ -273,6 +376,7 @@ def add_labreq_details(request, pk):
         request.session['selected_packages'] = selected_packages
     return render(request, 'labreqsys/add_labreq_details.html', {'patient': p})
 
+@receptionist_or_lab_tech_required
 def summarize_labreq(request, pk):
     """
     Summarize the selected components and packages for a new lab request and calculate the total cost.
@@ -436,6 +540,7 @@ def summarize_labreq(request, pk):
         'request_id': next_request_id
     })
 
+@receptionist_or_lab_tech_required
 def view_individual_lab_request(request, request_id):
     """
     Display detailed information about a specific lab request.
@@ -459,6 +564,7 @@ def view_individual_lab_request(request, request_id):
 
     return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details, 'collection_status': collection_status, 'email_status': email_status})
 
+@receptionist_or_lab_tech_required
 def change_collection_status(request, request_id):
     """
     Change email or collection status
@@ -559,6 +665,7 @@ def submit_labresults(request, line_item_id):
 
     return redirect('view_individual_lab_request', request_id=line_item.request_id)
 
+@receptionist_or_lab_tech_required
 def add_patient (request):
     '''
     
@@ -631,6 +738,7 @@ def add_patient (request):
         return render(request, 'labreqsys/add_patient.html')
     
 
+@receptionist_or_lab_tech_required
 def add_patient_details(request):
     '''
     
@@ -698,6 +806,7 @@ def add_patient_details(request):
     else:
         return render(request, 'labreqsys/add_patient_details.html')
 
+@receptionist_or_lab_tech_required
 def save_patient(request):
     if request.method == "POST":
         last_name = request.POST.get('last_name')
@@ -1064,7 +1173,16 @@ def user_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('patientList')  # Redirect to patient list after login
+            # Role-based redirect
+            if hasattr(user, 'userprofile') and user.userprofile.role == 'lab_tech':
+                return redirect('labRequests') 
+            elif hasattr(user, 'userprofile') and user.userprofile.role in ['owner', 'receptionist']:
+                return redirect('patientList')
+            else:
+                # Default redirect if role not set or unexpected, or for superuser without profile
+                if getattr(user, 'is_superuser', False):
+                     return redirect('patientList') # Superusers go to patientList
+                return redirect('login') # Fallback to login or a generic page
     else:
         form = CustomAuthenticationForm()
     return render(request, 'labreqsys/login.html', {'form': form})
@@ -1072,27 +1190,6 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect('login')
-
-def owner_required(view_func):
-    @wraps(view_func)
-    def _wrapped_view(request, *args, **kwargs):
-        user = request.user
-        if not user.is_authenticated:
-            # Render a forbidden page with login link
-            return render(request, 'labreqsys/forbidden.html', {
-                'message': "You must be logged in as an owner."
-            }, status=403)
-        if getattr(user, 'is_superuser', False):
-            return view_func(request, *args, **kwargs)
-        try:
-            if user.userprofile.role == 'owner':
-                return view_func(request, *args, **kwargs)
-        except Exception:
-            pass
-        return render(request, 'labreqsys/forbidden.html', {
-            'message': "You do not have permission to access this page."
-        }, status=403)
-    return _wrapped_view
 
 @owner_required
 def register_user(request):
