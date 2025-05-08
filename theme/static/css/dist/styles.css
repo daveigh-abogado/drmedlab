@@ -1474,6 +1474,12 @@ select {
   color: rgb(234 193 12 / var(--tw-border-opacity, 1));
 }
 
+.text-form-warning {
+  color:  rgba(222 38 32 / var(--tw-text-opacity, 1));
+  font-size: 0.875rem; /*14 px*/
+  line-height: 1rem;
+}
+
 /*BG BLUE*/
 .bg-blue-300 {
   --tw-bg-opacity: 1;

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
 import json
 from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview
 from django.db.models import Q
@@ -76,6 +77,7 @@ def testComponents(request):
     """
     Display a list of all test components.
     """
+    request.session.pop('testcomponent_form_data', None)
     testComponents = TestComponent.objects.all()
     
     return render(request, 'labreqsys/testComponents.html', {'testComponents': testComponents})
@@ -151,11 +153,20 @@ def view_patient(request, pk):
         'requests': request_details
     })
 
+def store_testcomponent_session(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        request.session['testcomponent_form_data'] = data
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'failed'}, status=400)
+
 def add_testcomponent(request):
     """
     Display a form to add a new test component.
     """
     template_status = 'absent'
+    show_warning = request.GET.get('show_warning', 'no')
+
     if request.method == "POST":
         template_name = request.POST.get("template_name")
         
@@ -183,8 +194,17 @@ def add_testcomponent(request):
                 field_index += 1
             section_index += 1
         template_status = 'present'
+        
+    form_data = request.session.get('testcomponent_form_data', {
+        'test_code': '',
+        'test_name': '',
+        'category': '',
+        'price': ''
+    })
     return render(request, 'labreqsys/add_testcomponent.html', {
-        'template_status': template_status})
+        'template_status': template_status,
+        'show_warning': show_warning,
+        'form_data': form_data})
 
 def view_component(request, component_id):
     test_component = TestComponent.objects.get(component_id=component_id)
@@ -209,12 +229,17 @@ def create_testcomponent(request):
     """
     Add Test Component to the Database
     """
+    
     if request.method == "POST":
         last_template = TemplateForm.objects.order_by('-template_id').first()
-        print('check this girly')
-        print(TestComponent.objects.filter(template_id=last_template.template_id))
         if TestComponent.objects.filter(template_id=last_template.template_id):
-            return redirect('add_testcomponent')
+           request.session['testcomponent_form_data'] = {
+               'test_code': request.POST.get('test_code', ''),
+               'test_name': request.POST.get('test_name', ''),
+               'category': request.POST.get('category', ''),
+               'price': request.POST.get('price', '')
+               }
+           return redirect(f"{reverse('add_testcomponent')}?show_warning=yes")
         else:
             test_code = request.POST.get('test_code')
             test_name = request.POST.get('test_name')
@@ -227,7 +252,87 @@ def create_testcomponent(request):
                 component_price = component_price,
                 category = category
             )
+            request.session.pop('testcomponent_form_data', None)
     return redirect('testComponents')
+
+def edit_testcomponent(request, component_id):
+    test_component = TestComponent.objects.get(component_id=component_id)
+
+    return render(request, 'labreqsys/edit_testcomponent.html',
+                {'component': test_component,
+                'template': test_component.template
+                })
+    
+def edit_testcomponent_details(request, component_id):
+    if request.method == "POST":
+        category = request.POST.get('category')
+        component_price = request.POST.get('price')
+        TestComponent.objects.filter(component_id=component_id).update(category=category, component_price=component_price)
+
+    return redirect('view_component', component_id)
+    
+def edit_template(request, component_id):
+    if request.method == "POST":
+        template_name = request.POST.get("template_name")
+        
+        template = TemplateForm.objects.create(template_name=template_name)
+
+        section_index = 0
+        while f"sections[{section_index}][name]" in request.POST:
+            section_name = request.POST.get(f"sections[{section_index}][name]")
+            section = TemplateSection.objects.create(
+                template=template, section_name=section_name
+            )
+
+            field_index = 0
+            while f"sections[{section_index}][fields][{field_index}][label]" in request.POST:
+                label = request.POST.get(f"sections[{section_index}][fields][{field_index}][label]")
+                field_type = request.POST.get(f"sections[{section_index}][fields][{field_index}][type]")
+                fixed_value = request.POST.get(f"sections[{section_index}][fields][{field_index}][fixed_value]", "")
+
+                TemplateField.objects.create(
+                    section=section,
+                    label_name=label,
+                    field_type=field_type,
+                    field_value=fixed_value if fixed_value else None
+                )
+                field_index += 1
+            section_index += 1
+        TestComponent.objects.filter(component_id=component_id).update(template=template)
+
+        return redirect ('edit_testcomponent', component_id)
+    else:
+        component = get_object_or_404(TestComponent, pk=component_id)
+        template = component.template
+
+        sections_data = []
+        sections = TemplateSection.objects.filter(template=template).order_by('section_id')
+
+        for section in sections:
+            fields = TemplateField.objects.filter(section=section).order_by('field_id')
+            field_data = []
+            for field in fields:
+                field_data.append({
+                    'label': field.label_name,
+                    'type': field.field_type,
+                    'fixed_value': field.field_value or ''
+                })
+            sections_data.append({
+                'name': section.section_name,
+                'fields': field_data
+            })
+
+        template_data = {
+            'template_name': template.template_name,
+            'sections': sections_data
+        }
+
+        context = {
+            'component': component,
+            'template' : template,
+            'initial_template_json': json.dumps(template_data, cls=DjangoJSONEncoder),
+        }
+        return render(request, 'labreqsys/edit_template.html', context)
 
 def add_template(request):
     """

@@ -1,0 +1,305 @@
+{% extends 'labreqsys/base.html' %}
+{% load static tailwind_tags %}
+
+{% block content %}
+<div class="breadbutton my-4">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'testComponents' %}">Test Component List</a></li>
+        <li><a href="{% url 'view_component' component_id=component.component_id %}">View Test Component</a></li>
+        <li><a href="{% url 'edit_testcomponent' component_id=component.component_id %}">Edit Test Component</a></li>
+        <li><a href="#" class="current">Edit Test Component Template</a></li>
+    </ul>
+</div>
+
+<div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
+    <div class="flex justify-between items-center rounded-t sm:mb-4 w-full">
+        <h1 class="text-mm font-semibold text-blue-900">Edit Template</h1>
+        <div class="flex gap-2">
+            <a href="{% url 'edit_testcomponent' component_id=component.component_id %}" class="text-blue-900 inline-flex items-center bg-blue-900-10 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline border">Cancel</a>
+            <button type="button" id="createTemplatebutton" data-modal-target="templateModal" data-modal-toggle="templateModal" class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Edit Template</button>
+        </div>
+    </div>
+
+    <form id="form" method="POST" action="#" class="w-full gap-2.5">{% csrf_token %}
+        <div class="grid gap-2.5 mb-4 sm:grid-cols-1 border-b pb-3">
+            <div>
+                <label for="template_name" class="block mb-2 text-left text-sm font-medium text-gray-500 uppercase">Form Name *</label>
+                <input type="text" name="template_name" id="template_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" placeholder="e.g. Blood Chemistry" required pattern="^[A-Za-z\s]+$" title="Use letters and spaces only." value="{{ component.template.template_name|default:'' }}">
+            </div>
+        </div>
+
+        <div id="sections-container"></div>
+
+        <div class="grid gap-2.5 mt-2 sm:grid-cols-1">
+            <div>
+                <button type="button" id="add-section-btn" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Section</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="templateModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-4xl h-full md:h-auto">
+        <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
+            <div id="modal-preview-content"></div>
+            <div class="grid gap-2.5 mb-4 sm:grid-cols-2 mt-4">
+                <button data-modal-hide="templateModal" type="button" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">Back to Editing</button>
+                <button type="submit" form="form" id="confirmSubmit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Save Template</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let sectionCount = 0;
+    const sectionsContainer = document.getElementById('sections-container');
+    const addSectionBtn = document.getElementById('add-section-btn');
+    const createTemplateButton = document.getElementById('createTemplatebutton');
+    const modalPreviewContent = document.getElementById('modal-preview-content');
+    const form = document.getElementById('form');
+
+    function createField(sectionIndex, fieldIndex, fieldData = {}) {
+        const { label = '', type = '', fixed_value = '' } = fieldData;
+        const isFixedDisabled = ['Text', 'Number', 'Image'].includes(type) ? 'disabled' : '';
+
+        return `
+        <div class="border border-gray-300 rounded p-2 mt-3 field-group" id="field-${sectionIndex}-${fieldIndex}" data-field-index="${fieldIndex}">
+            <div class="grid gap-2.5 mb-2 sm:grid-cols-4">
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Label *</label>
+                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][label]" value="${label}" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                </div>
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Type *</label>
+                    <select name="sections[${sectionIndex}][fields][${fieldIndex}][type]" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                        <option value="">Select field type</option>
+                        <option value="Label" ${type === 'Label' ? 'selected' : ''}>Label</option>
+                        <option value="Text" ${type === 'Text' ? 'selected' : ''}>Text</option>
+                        <option value="Image" ${type === 'Image' ? 'selected' : ''}>Image</option>
+                        <option value="Number" ${type === 'Number' ? 'selected' : ''}>Number</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Fixed Value</label>
+                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][fixed_value]" value="${fixed_value}" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" ${isFixedDisabled}>
+                </div>
+                <div class="flex items-center pt-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="34" width="34" viewBox="0 0 20 20" fill="currentColor" class="trash-icon cursor-pointer text-red-500 hover:text-red-700" title="Delete Field" onclick="this.closest('.field-group').remove()">
+                        <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function createSection(sectionIndex, sectionData = {}) {
+        const { name = '', fields = [] } = sectionData;
+        let sectionHTML = `
+        <div class="section border-b mb-4 pb-4" data-section-index="${sectionIndex}">
+            <div class="flex justify-between">
+                <h2 class="text-mm font-semibold text-blue-900">Section ${sectionIndex + 1}</h2>
+                <button type="button" class="delete-section-btn px-4 text-right bg-red-500 rounded text-white hover:bg-red-700">Delete Section</button>
+            </div>
+            <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Section Name *</label>
+            <input type="text" name="sections[${sectionIndex}][name]" value="${name}" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 mb-2" required>
+            <div class="fields-container">`;
+
+        fields.forEach((field, fieldIndex) => {
+            sectionHTML += createField(sectionIndex, fieldIndex, field);
+        });
+
+        sectionHTML += `</div>
+            <div class="mt-2 grid gap-2.5 sm:grid-cols-1" id="section-${sectionIndex}">
+                <button type="button" class="add-field-btn text-blue-900 border border-blue-900 bg-blue-100 hover:bg-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Field</button>
+            </div>
+        </div>`;
+        return sectionHTML;
+    }
+
+    function populateExistingTemplate() {
+        const templateData = JSON.parse('{{ initial_template_json|escapejs }}');
+        if (!templateData || !templateData.sections) return;
+
+        templateData.sections.forEach((section, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = createSection(index, section);
+            sectionsContainer.appendChild(wrapper);
+            sectionCount++;
+        });
+    }
+    
+
+    // Initial load
+    populateExistingTemplate();
+
+    addSectionBtn.addEventListener('click', () => {
+        const sectionHTML = document.createElement('div');
+        sectionHTML.innerHTML = createSection(sectionCount);
+        sectionsContainer.appendChild(sectionHTML);
+        sectionCount++;
+    });
+
+    function reindexSections() {
+        const sections = sectionsContainer.querySelectorAll('.section');
+        sections.forEach((section, newIndex) => {
+            section.dataset.sectionIndex = newIndex;
+
+            //update section header
+            const heading = section.querySelector('h2');
+            heading.textContent = `Section ${newIndex + 1}`;
+
+            //update section name
+            const sectionNameInput = section.querySelector('input[type="text"]');
+            sectionNameInput.name = `sections[${newIndex}][name]`;
+
+            //update all fields in this section
+            const fields = section.querySelectorAll('.field-group');
+            fields.forEach((field, fieldIndex) => {
+                field.dataset.fieldIndex = fieldIndex;
+
+                const inputs = field.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    if (input.name.includes('[label]')) {
+                        input.name = `sections[${newIndex}][fields][${fieldIndex}][label]`;
+                    } else if (input.name.includes('[type]')) {
+                        input.name = `sections[${newIndex}][fields][${fieldIndex}][type]`;
+                    } else if (input.name.includes('[fixed_value]')) {
+                        input.name = `sections[${newIndex}][fields][${fieldIndex}][fixed_value]`;
+                    }
+                });
+            });
+        });
+
+        //reset overall sectionCount
+        sectionCount = sections.length;
+    }
+
+    //event listener
+    sectionsContainer.addEventListener('click', function (e) {
+        const target = e.target;
+
+        if (target.classList.contains('add-field-btn')) {
+            const section = target.closest('.section');
+            const sectionIndex = section.dataset.sectionIndex;
+            const fieldsContainer = section.querySelector('.fields-container');
+            const fieldIndex = fieldsContainer.children.length;
+            const fieldHTML = document.createElement('div');
+            fieldHTML.innerHTML = createField(sectionIndex, fieldIndex);
+            fieldsContainer.appendChild(fieldHTML);
+        }
+
+        if (target.classList.contains('delete-field-btn')) {
+            target.closest('.field-group').remove();
+        }
+
+        if (target.classList.contains('delete-section-btn')) {
+            target.closest('.section').remove();
+            reindexSections();;
+        }
+    });
+
+    // field value input based on type
+    sectionsContainer.addEventListener('change', function (e) {
+        if (e.target.tagName === 'SELECT' && e.target.name.includes('[type]')) {
+            const selectedType = e.target.value;
+            const fieldGroup = e.target.closest('.field-group');
+            const fixedValueInput = fieldGroup.querySelector('input[name*="[fixed_value]"]');
+
+            if (['Text', 'Image', 'Number'].includes(selectedType)) {
+                fixedValueInput.disabled = true;
+                fixedValueInput.value = ''; //clears the value
+            } else {
+                fixedValueInput.disabled = false;
+            }
+        }
+    });
+
+    createTemplateButton.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent the default form submission
+
+        // get all of the form data
+        const formData = new FormData(form);
+        const templateName = formData.get('template_name');
+        const sectionsData = [];
+
+        const sections = sectionsContainer.querySelectorAll('.section');
+        sections.forEach((sectionElement) => {
+            const sectionName = sectionElement.querySelector('input[name^="sections"][name$="[name]"]').value;
+            const fieldsData = [];
+            const fields = sectionElement.querySelectorAll('.field-group');
+            fields.forEach((fieldElement) => {
+                const label = fieldElement.querySelector('input[name*="[label]"]').value;
+                const type = fieldElement.querySelector('select[name*="[type]"]').value;
+                const fixedValue = fieldElement.querySelector('input[name*="[fixed_value]"]').value;
+                fieldsData.push({ label: label, type: type, fixed_value: fixedValue });
+            });
+            sectionsData.push({ name: sectionName, fields: fieldsData });
+        });
+
+        // build preview content
+        let previewHTML = `<div class="flex justify-between items-center rounded-t border-b sm:mb-5">
+                <h3 class="text-mm font-semibold text-blue-900 uppercase">
+                    ${templateName}
+                </h3>
+            </div>`;
+        sectionsData.forEach((section, index) => {
+            let field_number = 0;
+            section.fields.forEach(field => {
+                field_number++;
+            });
+            previewHTML += `<div class="self-stretch h-8 justify-center font-semibold text-m-600 text-gray-500 mb-2">${section.name}</div>
+            <div class="grid gap-2.5 sm:grid-cols-${field_number}">`;
+            section.fields.forEach(field => {
+                previewHTML += `<div>`;
+                previewHTML += `<label for="test_code" class="block mb-2 text-center text-sm font-medium text-gray-500">${field.label}</label>`;
+                if (field.type == 'Label') {
+                    previewHTML += `<div class="text-center">${field.fixed_value}</div>`;
+                } else if ((field.type == 'Text')) {
+                    previewHTML += `<input disabled type="text" class="bg-gray-50 border border-gray-300 text-center text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">`;
+                } else if ((field.type == 'Number')) {
+                    previewHTML += `<input disabled type="number" class="bg-gray-50 border border-gray-300 text-center text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">`;
+                } else if ((field.type == 'Image')) {
+                    previewHTML += `<input disabled type="file" class="bg-gray-50 border border-gray-300 text-center text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">`;
+                }
+                previewHTML += `</div>`;
+            });
+            previewHTML += `</div>`;
+        });
+
+        // Update the modal content
+        modalPreviewContent.innerHTML = previewHTML;
+    });
+
+    // Handle the final form submission when "Confirm Create" is clicked
+    const confirmSubmitButton = document.getElementById('confirmSubmit');
+    confirmSubmitButton.addEventListener('click', () => {
+        form.action = "{% url 'edit_template' component_id=component.component_id %}";
+        form.submit();
+    });
+
+    
+</script>
+{% endblock content %}
+
+{% block styles %}
+<style>
+    ul.breadcrumb li {
+        display: inline;
+        font-size: 12px;
+    }
+
+    ul.breadcrumb li+li:before {
+        color: black;
+        content: "/\00a0";
+    }
+
+    ul.breadcrumb .current {
+        color: #00BAFF;
+    }
+
+    .breadbutton{
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+{% endblock styles %}

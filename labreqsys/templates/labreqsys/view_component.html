@@ -2,11 +2,16 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-<div class="breadbutton my-4">
+<div class="breadbutton space-between my-4">
     <ul class="breadcrumb">
         <li><a href="{% url 'testComponents' %}">Test Component List</a></li>
         <li><a href="#" class="current">View Test Component</a></li>
     </ul>
+    <div class="col ms-auto text-end">
+        <button class="text-white px-6 py-2 bg-primary-700 font-bold rounded-lg text-ssm" type="button">
+            <a href="{% url 'edit_testcomponent' component_id=component.component_id %}" class="text-white no-underline">Edit Test Component</a>
+        </button>
+    </div>
 </div>
 
 <div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
@@ -119,16 +124,6 @@
                     </select>
                     <p id="lab_tech_2_info" class="text-base text-blue-900 text-center p-2">Role <br> License Number</p>
                 </div>   
-            </div>
-
-            <input type="hidden" name="submission_type" id="submission_type" value="">
-            <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
-                <button disabled type="button" onclick="saveModal()" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-555 bg-opacity-10 font-medium rounded-lg text-sm px-5 py-2.5">
-                    Save
-                </button>
-                <button disabled type="button" onclick="submitModal()" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 font-medium rounded-lg text-sm px-5 py-2.5">
-                    Submit
-                </button>
             </div>
         </div>
     </div>

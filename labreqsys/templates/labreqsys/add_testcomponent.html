@@ -29,19 +29,19 @@
             <div class="grid gap-2.5 mb-4 sm:grid-cols-4">
                 <div>
                     <label for="test_code" class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Test Code *</label>
-                    <input type="text" name="test_code" id="test_code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Click and Type Test Code" required="" pattern="^[A-Za-z0-9\s]+$" title="Use letters, numbers, and spaces only.">
+                    <input type="text" value="{{ form_data.test_code }}" name="test_code" id="test_code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Click and Type Test Code" required="" pattern="^[A-Za-z0-9\s]+$" title="Use letters, numbers, and spaces only.">
                 </div>
                 <div>
                     <label for="test_name" class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Full Test Name *</label>
-                    <input type="text" name="test_name" id="test_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Click and Type Full Test Name" required="" pattern="^[A-Za-z0-9\s]+$" title="Use letters, numbers, and spaces only.">
+                    <input type="text" value="{{ form_data.test_name }}" name="test_name" id="test_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Click and Type Full Test Name" required="" pattern="^[A-Za-z0-9\s]+$" title="Use letters, numbers, and spaces only.">
                 </div>
                 <div>
                     <label for="category" class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Category *</label>
-                    <input type="text" name="category" id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Click and Type Category" required="" pattern="^[A-Za-z0-9\s]+$" title="Use letters, numbers, and spaces only.">
+                    <input type="text" value="{{ form_data.category }}" name="category" id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Click and Type Category" required="" pattern="^[A-Za-z0-9\s]+$" title="Use letters, numbers, and spaces only.">
                 </div>
                 <div> <!--TO FRONTEND: adjust price width to be smaller than the other fields plsplspls-->
                     <label for="price" class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Price *</label>
-                    <input type="text" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="00" required="" pattern="^\d+(\.\d{2})?$" title="Enter a valid price with exactly 2 decimal places (e.g., 12 or 12.34)">
+                    <input type="text" value="{{ form_data.price }}"name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="00" required="" pattern="^\d+(\.\d{2})?$" title="Enter a valid price with exactly 2 decimal places (e.g., 12 or 12.34)">
                 </div>
             </div>
 
@@ -49,7 +49,10 @@
             <div class="text-left text-m font-semibold text-blue-900 uppercase mb-2 mt-6">Template</div>
             {% if template_status == "absent" %}
                 <div class="grid gap-2.5 mb-4"> <!--TO FRONTEND: paayos ng hover-->
-                    <a href="{% url 'add_template' %}" class="w-full text-sm font-semibold justify-center text-blue-900 inline-flex items-center bg-blue-555 bg-opacity-10 hover:bg-blue-900-10 rounded-lg text-sm px-5 py-2.5 text-center no-underline" style="max-width: 15%;"> <!--TO FRONTEND: BUTTON WIDTH IS HARDCODED-->
+                    {% if show_warning == 'yes' %}
+                    <div class="text-form-warning">*Please make a template for the test component</div>
+                    {% endif %}
+                    <a href="{% url 'add_template' %}" onclick="storeFormToSession()" class="w-full text-sm font-semibold justify-center text-blue-900 inline-flex items-center bg-blue-555 bg-opacity-10 hover:bg-blue-900-10 rounded-lg text-sm px-5 py-2.5 text-center no-underline" style="max-width: 15%;"> <!--TO FRONTEND: BUTTON WIDTH IS HARDCODED-->
                         <svg class="w-auto h-auto " fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
                             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
                         </svg>
@@ -80,6 +83,26 @@
         </form> 
     </div>   
 </div>
+
+<script>
+    function storeFormToSession() {
+        const data = {
+            test_code: document.getElementById('test_code').value,
+            test_name: document.getElementById('test_name').value,
+            category: document.getElementById('category').value,
+            price: document.getElementById('price').value,
+        };
+        fetch("{% url 'store_testcomponent_session' %}", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify(data)
+        });
+    }
+    </script>
+    
 
 {% endblock content %}
 
