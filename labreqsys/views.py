@@ -25,6 +25,7 @@ import decimal
 from django.db.models import Max
 
 from django.views.decorators.clickjacking import xframe_options_exempt
+from django.views.decorators.http import require_GET
 
 # Determine wkhtmltopdf path based on OS
 if platform.system() == 'Windows':
@@ -1198,3 +1199,11 @@ def edit_lab_tech(request, lab_tech_id):
 def view_lab_techs(request):
     lab_techs = LabTech.objects.all()
     return render(request, 'labreqsys/view_lab_techs.html', {'lab_techs': lab_techs})
+
+@owner_required
+@require_GET
+def edit_user_profile_mockup(request):
+    """
+    Render the edit user profile mockup template for demo/preview purposes.
+    """
+    return render(request, 'labreqsys/edit_user_profile_mockup.html')
