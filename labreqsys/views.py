@@ -7,7 +7,7 @@ from django.db.models import Q
 from datetime import date, datetime
 from decimal import Decimal
 from django.utils import timezone
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 
 import pdfkit
@@ -363,7 +363,13 @@ def add_patient (request):
         suffix = request.POST.get('suffix')
         sex = request.POST.get('sex')
         civil_status = request.POST.get('civil_status') 
-        birthdate = request.POST.get('birthdate')
+        
+        birthdate  = request.POST.get('birthdate')
+        birthdate_format = date.fromisoformat(birthdate)
+        today = date.today()
+        
+        age = today.year - birthdate_format.year - ((today.month, today.day) < (birthdate_format.month, birthdate_format.day))
+        print(age)
         
         mobile_num = request.POST.get('mobile_num')
         # handles check statement in database
@@ -385,12 +391,32 @@ def add_patient (request):
         
         query = Q(first_name__exact=first_name, last_name__exact=last_name, birthdate__exact=birthdate, sex=sex, city__exact=city)
         
+        p_duplicate = []
+        if Patient.objects.filter(first_name=first_name, last_name=last_name).exists():
+            name_d = {f"Patient {x.patient_id}" for x in Patient.objects.filter(first_name=first_name, last_name=last_name)}
+            p_duplicate.append(f"Name: {name_d}")
+            
+        if email: 
+            if Patient.objects.filter(email=email):
+                email_d = {f"Patient {x.patient_id}" for x in Patient.objects.filter(email=email)}
+                p_duplicate.append(f"Email: {email_d}")
         
-        if Patient.objects.filter(query).exists():
-            messages.error(request, "Patient already exists.")
-            return redirect('patientList')
-        else:    
-            return render(request, 'labreqsys/add_edit_patient_details.html', {
+        if pwd_id_num:
+            if Patient.objects.filter(pwd_id_num=pwd_id_num):
+                pwd_d = {f"Patient {x.patient_id}" for x in Patient.objects.filter(pwd_id_num=pwd_id_num)}
+                p_duplicate.append(f"PWD Number: {pwd_d}")
+                
+        if senior_id_num:
+            if Patient.objects.filter(senior_id_num=senior_id_num):
+                senior_d = {f"Patient {x.patient_id}" for x in Patient.objects.filter(senior_id_num=senior_id_num)}
+                p_duplicate.append(f"Senior Number: {senior_d}")
+        
+        if len(p_duplicate) > 0:
+            return JsonResponse({'status': 'duplicate', 'p_duplicate':p_duplicate})
+        elif age >= 150:
+            return JsonResponse({'status': 'ghost'})
+        else:
+            request.session['new_patient'] = {
                 'last_name':last_name,
                 'first_name':first_name,
                 'middle_initial':middle_initial,
@@ -410,10 +436,120 @@ def add_patient (request):
                 'zip_code':zip_code,
                 'pwd_id_num':pwd_id_num,
                 'senior_id_num':senior_id_num,
-                'mode': 'add'})
+                'mode': 'add'
+            }
+            return JsonResponse({'status':'success', 'redirect_url':'/add_patient_details'})   
     else:
         return render(request, 'labreqsys/add_edit_patient.html', {'mode': 'add'})
     
+
+
+
+def add_patient_details(request):
+    '''
+    
+    Displays preview of Add Patient details, then saves
+    
+    '''
+    
+    new_patient = request.session.get('new_patient')
+    
+    if new_patient: 
+        last_name = new_patient['last_name']
+        first_name = new_patient['first_name']
+        middle_initial = new_patient['middle_initial']
+        suffix = new_patient['suffix']
+        sex = new_patient['sex']
+        civil_status = new_patient['civil_status']
+        birthdate = new_patient['birthdate']
+        mobile_num = new_patient['mobile_num']
+        landline_num = new_patient['landline_num']
+        email = new_patient['email']
+        house_num = new_patient['house_num']
+        street = new_patient['street']
+        subdivision = new_patient['subdivision']
+        baranggay = new_patient['baranggay']
+        province = new_patient['province']
+        city = new_patient['city']
+        zip_code = new_patient['zip_code']
+        pwd_id_num = new_patient['pwd_id_num']
+        senior_id_num = new_patient['senior_id_num']
+    else:
+        return HttpResponse('sad :(')  
+        
+    if request.method == "POST":
+        last_name = request.POST.get('last_name')      
+        first_name = request.POST.get('first_name')
+        middle_initial = request.POST.get('middle_initial')
+        suffix = request.POST.get('suffix')
+        sex = request.POST.get('sex')
+        civil_status = request.POST.get('civil_status') 
+        birthdate = request.POST.get('birthdate')
+        mobile_num = request.POST.get('mobile_num')
+        landline_num = request.POST.get('landline_num')
+        email = request.POST.get('email')
+        house_num = request.POST.get('house_num')
+        street = request.POST.get('street')
+        baranggay = request.POST.get('baranggay')
+        province = request.POST.get('province')
+        city = request.POST.get('city')
+        subdivision = request.POST.get('subdivision')
+        zip_code = request.POST.get('zip_code')
+        pwd_id_num = request.POST.get('pwd_id_num')
+        senior_id_num = request.POST.get('senior_id_num')
+        
+        query = Q(first_name__exact=first_name, last_name__exact=last_name, birthdate__exact=birthdate, sex=sex, city__exact=city)
+        
+        if Patient.objects.filter(query).exists():
+            messages.error(request, "Patient already exists.")
+            return redirect('patientList')
+        else:
+            new_p = Patient.objects.create(
+                        last_name=last_name,
+                        first_name=first_name,
+                        middle_initial=middle_initial,
+                        suffix=suffix,
+                        sex=sex,
+                        civil_status=civil_status,
+                        birthdate=birthdate,
+                        mobile_num=mobile_num,
+                        landline_num=landline_num,
+                        email=email,
+                        house_num=house_num,
+                        street=street,
+                        baranggay=baranggay,
+                        province=province,
+                        city=city,
+                        zip_code=zip_code,
+                        pwd_id_num=pwd_id_num,
+                        senior_id_num=senior_id_num
+                        )
+        
+            p = Patient.objects.get(pk=new_p.patient_id)
+            return redirect('view_patient', pk=p.pk)   
+    else:
+        return render(request, 'labreqsys/add_edit_patient_details.html', {
+                'last_name':last_name,
+                'first_name':first_name,
+                'middle_initial':middle_initial,
+                'suffix':suffix,
+                'sex':sex,
+                'civil_status':civil_status,
+                'birthdate':birthdate,
+                'mobile_num':mobile_num,
+                'landline_num':landline_num,
+                'email':email,
+                'house_num':house_num,
+                'street':street,
+                'subdivision':subdivision,
+                'baranggay':baranggay,
+                'province':province,
+                'city':city,
+                'zip_code':zip_code,
+                'pwd_id_num':pwd_id_num,
+                'senior_id_num':senior_id_num
+                })
+
 def edit_patient (request, pk):
     '''
     
@@ -484,68 +620,7 @@ def edit_patient (request, pk):
             'mode':'edit'})
     else:
         return render(request, 'labreqsys/add_edit_patient.html', {'patient': p, 'mode': 'edit'})
-
-
-def add_patient_details(request):
-    '''
     
-    Displays preview of Add Patient details, then saves
-    
-    '''    
-    if request.method == "POST":
-        last_name = request.POST.get('last_name')      
-        first_name = request.POST.get('first_name')
-        middle_initial = request.POST.get('middle_initial')
-        suffix = request.POST.get('suffix')
-        sex = request.POST.get('sex')
-        civil_status = request.POST.get('civil_status') 
-        birthdate = request.POST.get('birthdate')
-        mobile_num = request.POST.get('mobile_num')
-        landline_num = request.POST.get('landline_num')
-        email = request.POST.get('email')
-        house_num = request.POST.get('house_num')
-        street = request.POST.get('street')
-        baranggay = request.POST.get('baranggay')
-        province = request.POST.get('province')
-        city = request.POST.get('city')
-        subdivision = request.POST.get('subdivision')
-        zip_code = request.POST.get('zip_code')
-        pwd_id_num = request.POST.get('pwd_id_num')
-        senior_id_num = request.POST.get('senior_id_num')
-        
-        query = Q(first_name__exact=first_name, last_name__exact=last_name, birthdate__exact=birthdate, sex=sex, city__exact=city)
-        
-        if Patient.objects.filter(query).exists():
-            messages.error(request, "Patient already exists.")
-            return redirect('patientList')
-        else:
-            new_p = Patient.objects.create(
-                        last_name=last_name,
-                        first_name=first_name,
-                        middle_initial=middle_initial,
-                        suffix=suffix,
-                        sex=sex,
-                        civil_status=civil_status,
-                        birthdate=birthdate,
-                        mobile_num=mobile_num,
-                        landline_num=landline_num,
-                        email=email,
-                        house_num=house_num,
-                        street=street,
-                        baranggay=baranggay,
-                        province=province,
-                        city=city,
-                        zip_code=zip_code,
-                        pwd_id_num=pwd_id_num,
-                        senior_id_num=senior_id_num
-                        )
-        
-            p = Patient.objects.get(pk=new_p.patient_id)
-            return redirect('view_patient', pk=p.pk)   
-    else:
-        return render(request, 'labreqsys/edit_patient_details.html')
-
-
 def edit_patient_details(request, pk):
     '''
     

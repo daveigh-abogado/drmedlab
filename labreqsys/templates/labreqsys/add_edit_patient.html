@@ -9,9 +9,19 @@
     </ul>
 </div>
 
+<!--Modal-->
+<div id="duplicateModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <p>Error!</p>
+      <p id="error_type">None.</p>
+      <p id="error_message">Empty.</p>
+      <button onclick="closeModal()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">OK</button>
+    </div>
+</div>
+
+
 <!-- ADD MODE -->
 {% if mode == 'add' %}
-<div class="relative p-4 w-full max-w-6xl h-full md:h-auto">
     <!-- Modal content -->
     <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
         <!-- Modal header -->
@@ -77,11 +87,11 @@
                 </div>
                 <div>
                     <label for="mobile_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Mobile No.</label>
-                    <input type="text" name="mobile_num" id="mobile_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="+63 9" pattern="^(63)\d{10}$|^\d{10}$|^0\d{10}$" title="Input valid phone number.">
+                    <input type="text" name="mobile_num" id="mobile_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="639" pattern="^(63)\d{10}$|^\d{10}$|^0\d{10}$" title="Input valid phone number.">
                 </div>
                 <div>
                     <label for="landline_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Landline No.</label>
-                    <input type="text" name="landline_num" id="landline_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="+08 2" pattern="^0\d{9}$" title="Input valid landline number.">
+                    <input type="text" name="landline_num" id="landline_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="082" pattern="^0\d{9}$" title="Input valid landline number.">
                 </div>
                 <div>
                     <label for="email" class="block mb-2 text-left text-sm font-medium text-gray-500">Email</label>
@@ -229,13 +239,15 @@
                 Add Patient
             </button>
         </form>
+        <button type="button" onclick="history.back()" id="BackPatient" name="BackPatient" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
+            Back
+        </button>
     </div>
-</div>
+
 
 <!-- EDIT MODE -->
 {% elif mode == 'edit' %}
-<div class="relative p-4 w-full max-w-6xl h-full md:h-auto">
-    <!-- Modal content -->
+    
     <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
         <!-- Modal header -->
         <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
@@ -452,15 +464,75 @@
                 Edit Patient
             </button>
         </form>
+        <button type="button" onclick="history.back()" id="BackPatient" name="BackPatient" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
+            Back
+        </button>
     </div>
-</div>
 {% endif %}
 
 
 <script>
     const today = new Date().toISOString().split('T')[0];
-    const bday = document.getElementById("birthdate").setAttribute("max", today);
-    console.log(bday);
+    document.getElementById("birthdate").setAttribute("max", today); 
+
+    const form = document.getElementById('form');
+    const modal = document.getElementById('duplicateModal');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const formData = new FormData(form);
+
+        const phone = document.getElementById("mobile_num").value;
+        const landline = document.getElementById("landline_num").value;
+        const email = document.getElementById("email").value;
+
+        if (!phone && !landline && !email){
+            modal.classList.remove('hidden');
+            document.getElementById("error_type").innerHTML = 'Add atleast one:';
+            document.getElementById("error_message").innerHTML = 'Mobile Number, Landline Number, Email'
+        } else{
+            try {
+                const response = await fetch("{% url 'add_patient' %}", {
+                    method: 'POST',
+                    headers: {
+                    'X-CSRFToken': csrfToken,
+                    },
+                    body: formData,
+                });
+
+                const result = await response.json();
+                console.log(result); 
+
+                if (result.status === 'duplicate') {
+                    modal.classList.remove('hidden');
+                    const duplicates = result.p_duplicate; 
+                    let duplicatesList = Array.isArray(duplicates) ? duplicates : duplicates.split(',');
+                    document.getElementById("error_type").innerHTML = 'Potential Duplicates with the following:';
+                    document.getElementById("error_message").innerHTML = duplicatesList.join('<br>');
+                    console.log(result.p_duplicate)
+                    
+                } else if (result.status === 'ghost') {
+                    modal.classList.remove('hidden');
+                    document.getElementById("error_type").innerHTML = 'Potential Ghost Patient detected.';
+                    document.getElementById("error_message").innerHTML = 'Age of patient can not be more than 150.';
+
+                } else if (result.status === 'success') {
+                    window.location.href = result.redirect_url;
+
+                } else {
+                    alert("Unexpected response.");
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    });
+
+    function closeModal() {
+        document.getElementById('duplicateModal').classList.add('hidden');
+}
 
 </script>
 
