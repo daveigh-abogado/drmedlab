@@ -73,10 +73,7 @@
                             <ul class="py-1" role="none">
                             {% if user.is_authenticated %}
                                 <li>
-                                    <a href="/edit-user-profile/?role=receptionist" class="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-100" role="menuitem">Edit User Profile (Receptionist)</a>
-                                </li>
-                                <li>
-                                    <a href="/edit-user-profile/?role=labtech" class="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-100" role="menuitem">Edit User Profile (Lab Tech)</a>
+                                    <a href="/edit-user-profile/" class="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-100" role="menuitem">Edit Profile</a>
                                 </li>
                                 <li>
                                     <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100" role="menuitem">Sign out</a>
