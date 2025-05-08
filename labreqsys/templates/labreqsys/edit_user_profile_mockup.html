@@ -1,0 +1,92 @@
+{% extends 'labreqsys/base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="relative p-4 w-full max-w-3xl h-full md:h-auto mx-auto mt-10">
+    <div class="relative p-4 bg-white rounded-lg shadow sm:p-5 max-w-lg mx-auto">
+        <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
+            <h3 class="text-mm font-semibold text-blue-900">
+                Edit User Profile (Mockup)
+            </h3>
+        </div>
+        <!-- Receptionist Edit Form (Mockup) -->
+        <div class="mb-8">
+            <h4 class="text-base font-semibold text-blue-800 mb-2">Receptionist Profile</h4>
+            <form class="gap-2.5">
+                <div class="grid gap-2.5 mb-4">
+                    <div>
+                        <label class="block mb-2 text-left text-sm font-medium text-gray-500">Username</label>
+                        <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="receptionist1">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-left text-sm font-medium text-gray-500">First Name</label>
+                        <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="Maria">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-left text-sm font-medium text-gray-500">Last Name</label>
+                        <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="Dela Cruz">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-left text-sm font-medium text-gray-500">Email</label>
+                        <input type="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="receptionist@email.com">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-left text-sm font-medium text-gray-500">Role</label>
+                        <input type="text" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5" value="Receptionist" readonly>
+                    </div>
+                </div>
+                <button type="button" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+        <!-- Lab Tech Edit Form (Mockup) -->
+        <div>
+            <h4 class="text-base font-semibold text-blue-800 mb-2">Lab Technician Profile</h4>
+            <form class="gap-2.5" enctype="multipart/form-data">
+                <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
+                    <div>
+                        <label class="block mb-2 text-left text-sm font-medium text-gray-500">Last Name</label>
+                        <input type="text" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5" value="Santos" readonly>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-left text-sm font-medium text-gray-500">First Name</label>
+                        <input type="text" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5" value="Juan" readonly>
+                    </div>
+                </div>
+                <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
+                    <div>
+                        <label class="block mb-2 text-left text-sm font-medium text-gray-500">Title *</label>
+                        <select class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                            <option value="RMT">RMT (Registered Medical Technologist)</option>
+                            <option value="MD">MD (Medical Doctor)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-left text-sm font-medium text-gray-500">Role *</label>
+                        <select class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                            <option value="Medical Technologist">Medical Technologist</option>
+                            <option value="Pathologist">Pathologist</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-left text-sm font-medium text-gray-500">License Number *</label>
+                    <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="1234567">
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-left text-sm font-medium text-gray-500">Current Signature</label>
+                    <img src="/static/signatures/sample_signature.png" alt="Current Signature" class="h-16 mb-2">
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-left text-sm font-medium text-gray-500">Update Signature (PNG, Optional)</label>
+                    <input type="file" accept="image/png" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    <p class="mt-1 text-xs text-gray-500">Leave empty to keep current signature</p>
+                </div>
+                <button type="button" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 
