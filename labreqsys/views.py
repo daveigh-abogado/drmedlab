@@ -1202,8 +1202,8 @@ def view_lab_techs(request):
 
 @owner_required
 @require_GET
-def edit_user_profile_mockup(request):
+def edit_user_profile(request):
     """
-    Render the edit user profile mockup template for demo/preview purposes.
+    Render the edit user profile template for demo/preview purposes.
     """
-    return render(request, 'labreqsys/edit_user_profile_mockup.html')
+    return render(request, 'labreqsys/edit_user_profile.html')
