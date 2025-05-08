@@ -73,6 +73,12 @@
                             <ul class="py-1" role="none">
                             {% if user.is_authenticated %}
                                 <li>
+                                    <a href="/mockup/edit-user-profile/?role=receptionist" class="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-100" role="menuitem">Edit User Profile (Receptionist)</a>
+                                </li>
+                                <li>
+                                    <a href="/mockup/edit-user-profile/?role=labtech" class="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-100" role="menuitem">Edit User Profile (Lab Tech)</a>
+                                </li>
+                                <li>
                                     <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100" role="menuitem">Sign out</a>
                                 </li>
                             {% else %}
@@ -164,11 +170,7 @@
                         </a>
                     </li>
                     <!-- DEMO: Edit User Profile Mockup Link -->
-                    <li>
-                        <a href="/mockup/edit-user-profile/" class="no-underline flex items-center p-2 w-64 text-yellow-300 rounded-lg hover:bg-yellow-100 hover:text-blue-900 group font-semibold">
-                            <span class="ms-5">Edit User Profile (Mockup)</span>
-                        </a>
-                    </li>
+                    <!-- Removed from sidebar -->
                     {% endif %}
                 </ul>
             </div>
