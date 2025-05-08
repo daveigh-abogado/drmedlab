@@ -11,6 +11,16 @@
         <span class="text-[#00BAFF]">Lab Request Record</span>
     </nav>
 
+    <!--Modal-->
+    <div id="pdfModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+        <p>Error!</p>
+        <p id="error_type">None.</p>
+        <p id="error_message">Empty.</p>
+        <button onclick="closeModal()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">OK</button>
+        </div>
+    </div>
+
     <!-- Main content wrapper -->
     <div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
         <!-- Patient Information Section -->
@@ -74,14 +84,12 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-[#2F4B8C] text-xl font-bold">Lab Request Tracker</h2>
                 <!--TO FRONTEND: edit div-->
-                <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" onclick="handleButtonClick()">
+                <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" onclick="downloadPDF()">
                     <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                     </svg>
                     Download PDF
-                
                 </button>
-                <!-- madie is working on this one -->
             </div>
 
             <hr class="bg-black/20">
@@ -136,7 +144,7 @@
                 <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
                     <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
                         <th scope="col" class="w-12 px-6 py-3 text-left">
-                            <input type="checkbox" name="selectall" class="selectall h-4 w-4 rounded border-gray-300">
+                            <input type="checkbox" id="SelectAllCheckbox" class="selectall h-4 w-4 rounded border-gray-300">
                         </th>
                         <th scope="col" class="px-6 py-3 text-center">No.</th>
                         <th scope="col" class="px-6 py-3 text-start">Service Type</th>
@@ -151,7 +159,7 @@
                     {% for line_item in request_details.line_items %}
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <input type="checkbox" name="line_item-checkbox" value="{{line_item.line_item_id}}" class="line-item-checkbox h-4 w-4 rounded border-gray-300">
+                            <input type="checkbox" name="line_item-checkbox" value="{{line_item.line_item_id}}" data-status="{{line_item.request_status}}" class="line-item-checkbox h-4 w-4 rounded border-gray-300">
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {% if forloop.first %}01{% endif %}
@@ -165,7 +173,7 @@
                         <td class="px-6 py-2">
                             {{ line_item.component.test_name }}
                         </td>
-                        <td class="px-6 py-2 text-center">
+                        <td id="request_status" class="px-6 py-2 text-center">
                             {% if line_item.request_status == 'Not Started' %}
                                 <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-gray-100 text-gray-800 shadow-sm border-gray-200 border">
                             {% elif line_item.request_status == 'Completed' %}
@@ -237,7 +245,37 @@
 </style>
 
 <script>
-    function handleButtonClick() {
+    const modal = document.getElementById('pdfModal');
+    const selectAllCheckbox = document.getElementById("SelectAllCheckbox");
+    const itemCheckboxes = document.querySelectorAll('.line-item-checkbox');
+
+    itemCheckboxes.forEach(cb => {
+        if (cb.dataset.status !== 'Completed') {
+        cb.disabled = true;
+        cb.title = 'Only completed items can be selected';
+        }
+    });
+
+    selectAllCheckbox.addEventListener("change", function () {
+        itemCheckboxes.forEach(checkbox => {
+        // Check only enabled items
+        if (!checkbox.disabled) {
+            checkbox.checked = this.checked;
+        }
+        });
+    });
+    
+    itemCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", function () {
+        // Update "Select All" checkbox based on enabled items
+        if (!checkbox.disabled) {
+            selectAllCheckbox.checked = Array.from(itemCheckboxes).every(cb => 
+            cb.disabled || cb.checked
+            );
+        }
+        });
+    });
+    function downloadPDF() {
         const selected = document.querySelectorAll('.line-item-checkbox:checked');
         if (selected.length === 0) {
             alert('Select at least one line item!');
@@ -247,9 +285,10 @@
         const ids = Array.from(selected).map(cb => cb.value);
         console.log("Selected IDs:", ids); // Just for testing
 
+        
         // Redirect to Django view
         window.location.href = `/generatePDF?ids=${ids.join(',')}`;
-    }
+            }
 
 </script>
     
