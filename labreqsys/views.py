@@ -9,11 +9,12 @@ from decimal import Decimal
 from django.utils import timezone
 from django.http import HttpResponse, HttpResponseForbidden
 from django.urls import reverse
-from .forms import LabTechForm, EditLabTechForm, UserRegistrationForm, CustomAuthenticationForm
-from django.contrib.auth import authenticate, login, logout
+from .forms import LabTechForm, EditLabTechForm, UserRegistrationForm, CustomAuthenticationForm, EditReceptionistProfileForm, EditLabTechProfileForm
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from functools import wraps
+from django.contrib.auth.forms import PasswordChangeForm
 
 import pdfkit
 import platform
@@ -1200,10 +1201,63 @@ def view_lab_techs(request):
     lab_techs = LabTech.objects.all()
     return render(request, 'labreqsys/view_lab_techs.html', {'lab_techs': lab_techs})
 
-@owner_required
-@require_GET
+@login_required
 def edit_user_profile(request):
-    """
-    Render the edit user profile template for demo/preview purposes.
-    """
-    return render(request, 'labreqsys/edit_user_profile.html')
+    user = request.user
+    role = None
+    if hasattr(user, 'userprofile'):
+        role = user.userprofile.role
+    elif user.is_superuser:
+        role = 'owner'
+    else:
+        role = 'receptionist'  # fallback
+
+    profile_form = None
+    labtech_form = None
+    labtech = None
+
+    # Receptionist: edit User fields
+    if role == 'receptionist' or role == 'owner':
+        profile_form = EditReceptionistProfileForm(request.POST or None, instance=user, prefix='profile')
+    # Lab Tech: edit User and LabTech fields
+    elif role == 'lab_tech':
+        try:
+            labtech = LabTech.objects.get(first_name=user.first_name, last_name=user.last_name)
+        except LabTech.DoesNotExist:
+            labtech = None
+        profile_form = EditReceptionistProfileForm(request.POST or None, instance=user, prefix='profile')
+        labtech_form = EditLabTechProfileForm(request.POST or None, request.FILES or None, instance=labtech, prefix='labtech')
+
+    password_form = PasswordChangeForm(user, request.POST or None, prefix='password')
+
+    if request.method == 'POST':
+        if 'profile_submit' in request.POST:
+            valid_profile = profile_form.is_valid() if profile_form else True
+            valid_labtech = labtech_form.is_valid() if labtech_form else True
+            if valid_profile and valid_labtech:
+                if profile_form:
+                    profile_form.save()
+                if labtech_form:
+                    if 'signature_path' in request.FILES:
+                        labtech_form.instance.signature_path = request.FILES['signature_path']
+                    labtech_form.save()
+                messages.success(request, 'Profile updated successfully.')
+                return redirect('edit_user_profile')
+            else:
+                messages.error(request, 'Please correct the errors below in your profile.')
+        elif 'password_submit' in request.POST:
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Password changed successfully.')
+                return redirect('edit_user_profile')
+            else:
+                messages.error(request, 'Please correct the errors below in your password.')
+
+    return render(request, 'labreqsys/edit_user_profile.html', {
+        'profile_form': profile_form,
+        'labtech_form': labtech_form,
+        'password_form': password_form,
+        'role': role,
+        'user': user,
+    })
