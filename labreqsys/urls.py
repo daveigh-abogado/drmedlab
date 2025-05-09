@@ -26,7 +26,9 @@ urlpatterns = [
     path('add_labresult/<int:line_item_id>/', views.add_lab_result, name='add_labresult'),
     path('submit_labresults/<int:line_item_id>/', views.submit_labresults, name='submit_labresults'),
     path('add_patient', views.add_patient, name='add_patient'),
+    path('edit_patient/<int:pk>', views.edit_patient, name='edit_patient'),
     path('add_patient_details', views.add_patient_details, name='add_patient_details'),
+    path('edit_patient_details/<int:pk>', views.edit_patient_details, name='edit_patient_details'),
     path('generatePDF', views.generatePDF, name='generatePDF'),
     path('pdf/<int:pk>', views.pdf, name='pdf'),
     path('add_lab_tech/', views.add_lab_tech, name='add_lab_tech'),
@@ -36,6 +38,8 @@ urlpatterns = [
     path('save_patient', views.save_patient, name='save_patient'),
     path('packages', views.packages, name='packages'),
     path('add_package', views.add_package, name='add_package'),
-    path('change_collection_status/<int:request_id>', views.change_collection_status, name='change_collection_status')
+    path('change_collection_status/<int:request_id>', views.change_collection_status, name='change_collection_status'),
+    path('edit_package/<int:pk>', views.edit_package, name='edit_package')
+
 ]
 
