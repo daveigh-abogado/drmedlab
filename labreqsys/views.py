@@ -924,7 +924,7 @@ def edit_package(request, pk):
         price = request.POST.get('price')
 
         updated = []
-        if TestPackage.objects.filter(package_name=package_name).exists():
+        if package_name != package.package_name and TestPackage.objects.filter(package_name=package_name).exists():
             messages.error(request, "Package already exists.")
             return redirect('packages')
         else:
