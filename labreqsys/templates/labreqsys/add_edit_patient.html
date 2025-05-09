@@ -36,7 +36,7 @@
             </button>
         </div>
         <!-- Modal body -->
-        <form id="form" method="POST" action="{% url 'add_patient' %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
+        <form id="addForm" method="POST" action="{% url 'add_patient' %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
 
             <!--ROW 1-->
             <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2">Patient Information</div>
@@ -475,13 +475,14 @@
     const today = new Date().toISOString().split('T')[0];
     document.getElementById("birthdate").setAttribute("max", today); 
 
-    const form = document.getElementById('form');
+    const addForm = document.getElementById('addForm');
     const modal = document.getElementById('duplicateModal');
 
-    form.addEventListener('submit', async (e) => {
+    addForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log('add')
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        const formData = new FormData(form);
+        const formData = new FormData(addForm);
 
         const phone = document.getElementById("mobile_num").value;
         const landline = document.getElementById("landline_num").value;

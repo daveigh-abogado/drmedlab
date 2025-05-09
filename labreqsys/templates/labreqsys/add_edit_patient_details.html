@@ -9,9 +9,8 @@
     </ul>
 </div>
 
-<div class="relative p-4 w-full max-w-6xl h-full md:h-auto">
-    <!-- Modal content -->
-    <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
+{% if mode == 'add' %}
+<div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
         <!-- Modal header -->
         <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
             <h3 class="text-mm font-semibold text-blue-900">
@@ -129,7 +128,7 @@
 
         <button type="submit" id="SubmitPatient" name="SubmitPatient"class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
             <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-            Add Patient
+            Submit
         </button>
         
     </form>
@@ -137,6 +136,136 @@
         Back
     </button>
 </div>
+
+{% elif mode == 'edit' %}
+<!-- Modal content -->
+<div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
+        <!-- Modal header -->
+        <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
+            <h3 class="text-mm font-semibold text-blue-900">
+                Review Patient
+            </h3>
+        </div>
+    <!-- Modal body -->
+    <form id="saveEditPatient" method="POST" action="{% url 'edit_patient_details' pk=patient.pk %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
+        <!--ROW 1-->
+        <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2">Patient Information</div>
+            <div class="grid gap-2.5 mb-4 sm:grid-cols-6"> <!--TO BACKEND: don't forget to fill in for=""-->
+
+                <div>
+                    <label for="last_name" class="block mb-2 text-left text-sm font-medium text-gray-500">Last Name *</label>
+                    <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{last_name}}" disabled>
+                    <input type="hidden" name="last_name" id="last_name" value="{{last_name}}">
+                </div>
+                <div>
+                    <label for="first_name" class="block mb-2 text-left text-sm font-medium text-gray-500">First Name *</label>
+                    <input type="text" name="first_name" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"  value="{{first_name}}" readonly>
+                </div>
+                <div>
+                    <label for="middle_initial" class="block mb-2 text-left text-sm font-medium text-gray-500">M.I.</label>
+                    <input type="text" name="middle_initial" id="middle_initial" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value="{{middle_initial}}">
+                </div>
+                <div>
+                    <label for="suffix" class="block mb-2 text-left text-sm font-medium text-gray-500">Suffix</label>
+                    <input type="text" name="suffix" id="suffix" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value={{suffix}}>
+                </div>
+                <div>
+                    <label for="sex" class="block mb-2 text-left text-sm font-medium text-gray-500">Sex *</label>
+                    <input type="text" name="sex" id="sex" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value={{sex}}>
+                </div>
+                <div>
+                    <label for="Civil Status" class="block mb-2 text-left text-sm font-medium text-gray-500">Civil Status *</label>
+                    <input type="text" name="civil_status" id="civil_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value={{civil_status}}>
+                </div>
+            </div>
+
+        
+        <!--ROW 2-->
+        <div class="grid gap-2.5 mb-4 sm:grid-cols-4"> <!--TO BACKEND: don't forget to fill in for=""-->
+            <div>
+                <label for="birthdate" class="block mb-2 text-left text-sm font-medium text-gray-500">Birthday *</label>
+                <input type="date" name="birthdate" id="birthdate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="" readonly value={{birthdate}}>
+            </div>
+            <div>
+                <label for="mobile_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Mobile No.</label>
+                <input type="text" name="mobile_num" id="mobile_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"  readonly value="{{mobile_num}}" >
+            </div>
+            <div>
+                <label for="landline_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Landline No.</label>
+                <input type="text" name="landline_num" id="landline_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value={{landline_num}}>
+            </div>
+            <div>
+                <label for="email" class="block mb-2 text-left text-sm font-medium text-gray-500">Email</label>
+                <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value={{email}}>
+            </div>
+        </div>
+
+        <!--ROW 3-->
+        <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2 mt-6">Address</div>
+        <div class="grid gap-2.5 mb-4 sm:grid-cols-4"> <!--TO BACKEND: don't forget to fill in for=""-->
+            <div>
+                <label for="house_num" class="block mb-2 text-left text-sm font-medium text-gray-500">House No. *</label>
+                <input type="text" name="house_num" id="house_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type number" required="" readonly value="{{house_num}}" >
+            </div>
+            <div>
+                <label for="street" class="block mb-2 text-left text-sm font-medium text-gray-500">Street Name *</label>
+                <input type="text" name="street" id="street" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value="{{street}}" >
+
+            </div>
+
+            <div>
+                <label for="subdivision" class="block mb-2 text-left text-sm font-medium text-gray-500">Village/Subdivision</label>
+                <input type="text" name="subdivision" id="subdivision" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value="{{subdivision}}" >
+
+            </div>
+            <div>
+                <label for="baranggay" class="block mb-2 text-left text-sm font-medium text-gray-500">Barangay</label>
+                <input type="text" name="barangay" id="barangay" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value="{{baranggay}}" >
+            </div>
+        </div>
+
+        <!--ROW 4-->
+        <div class="grid gap-2.5 mb-4 sm:grid-cols-3"> <!--TO BACKEND: don't forget to fill in for=""-->
+            <div>
+                <label for="province" class="block mb-2 text-left text-sm font-medium text-gray-500">Province *</label>
+                <input type="text" name="province" id="province" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value="{{province}}" >
+        
+                </select>
+            </div>
+            <div>
+                <label for="city" class="block mb-2 text-left text-sm font-medium text-gray-500">City *</label>
+                <input type="text" name="city" id="city" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value="{{city}}" >
+            </div>
+            <div>
+                <label for="zip_code" class="block mb-2 text-left text-sm font-medium text-gray-500">Zip Code *</label>
+                <input type="text" name="zip_code" id="zip_code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value="{{zip_code}}">
+            </div>
+        </div>
+
+        <!--ROW 5: ID-->
+        <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2 mt-6">ID Information</div>
+        <div class="grid gap-2.5 mb-4 sm:grid-cols-2"> <!--TO BACKEND: don't forget to fill in for=""-->
+            <div>
+                <label for="pwd_id_num" class="block mb-2 text-left text-sm font-medium text-gray-500">PWD</label>
+                <input type="text" name="pwd_id_num" id="pwd_id_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value={{pwd_id_num}}>
+            </div>
+            <div>
+                <label for="senior_id_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Senior Citizen</label>
+                <input type="text" name="senior_id_num" id="senior_id_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" readonly value={{senior_id_num}}>
+            </div>
+        </div>
+
+        <button type="submit" id="SubmitPatient" name="SubmitPatient"class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
+            <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+            Submit
+        </button>
+        
+    </form>
+    <button type="button" onclick="history.back()" id="BackPatient" name="BackPatient" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
+        Back
+    </button>
+</div>
+{% endif %}
 
 <script>
 </script>
