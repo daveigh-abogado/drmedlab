@@ -167,9 +167,6 @@ def add_testcomponent(request):
     show_warning = request.GET.get('show_warning', 'no')
     show_code_warning = request.GET.get('show_code_warning', 'no')
 
-    if show_code_warning == 'yes':
-        template_status = 'present'
-
     if request.method == "POST":
         template_name = request.POST.get("template_name")
         
