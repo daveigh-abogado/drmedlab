@@ -3,14 +3,18 @@ from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 import json
-from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview
+from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview, UserProfile
 from django.db.models import Q
 from datetime import date, datetime
 from decimal import Decimal
 from django.utils import timezone
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.urls import reverse
-from .forms import LabTechForm, EditLabTechForm
+from .forms import LabTechForm, EditLabTechForm, UserRegistrationForm, CustomAuthenticationForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from functools import wraps
 
 import pdfkit
 import platform
@@ -43,6 +47,118 @@ def discount(patient, price):
         payment = price - round(discount)
         return payment
 
+# Decorators
+def owner_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        # Check 1: Authentication
+        if not hasattr(request, 'user') or not request.user.is_authenticated:
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "Authentication required to access this page.",
+                'user': getattr(request, 'user', None) # Pass user if available
+            }, status=403)
+
+        # Check 2: Superuser Status (Grants immediate access)
+        if getattr(request.user, 'is_superuser', False):
+            return view_func(request, *args, **kwargs)
+
+        # Check 3: Owner Role via UserProfile (Only if not superuser)
+        try:
+            if hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'owner':
+                return view_func(request, *args, **kwargs)
+            else:
+                # Has profile but not owner role
+                return render(request, 'labreqsys/forbidden.html', {
+                    'message': "You do not have Owner permissions for this page.",
+                    'user': request.user
+                }, status=403)
+        except (UserProfile.DoesNotExist, AttributeError):
+            # No profile found or attribute error
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "User profile not found or inaccessible; Owner permissions required.",
+                'user': request.user
+            }, status=403)
+            
+    return _wrapped_view
+
+def receptionist_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "You must be logged in to access this page.",
+                'user': user
+            }, status=403)
+        if getattr(user, 'is_superuser', False):
+            return view_func(request, *args, **kwargs) # Superusers are implicitly owners/all roles
+        try:
+            if hasattr(user, 'userprofile') and user.userprofile.role in ['receptionist', 'owner']:
+                return view_func(request, *args, **kwargs)
+        except (UserProfile.DoesNotExist, AttributeError):
+            pass        
+        return render(request, 'labreqsys/forbidden.html', {
+            'message': "You do not have receptionist permissions to access this page.",
+            'user': user
+        }, status=403)
+    return _wrapped_view
+
+def lab_tech_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "You must be logged in to access this page.",
+                'user': user
+            }, status=403)
+        if getattr(user, 'is_superuser', False):
+            return view_func(request, *args, **kwargs) # Superusers are implicitly owners/all roles
+        try:
+            if hasattr(user, 'userprofile') and user.userprofile.role in ['lab_tech', 'owner']:
+                return view_func(request, *args, **kwargs)
+        except (UserProfile.DoesNotExist, AttributeError):
+            pass   
+        return render(request, 'labreqsys/forbidden.html', {
+            'message': "You do not have lab technician permissions to access this page.",
+            'user': user
+        }, status=403)
+    return _wrapped_view
+
+def receptionist_or_lab_tech_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        # Check 1: Authentication
+        if not hasattr(request, 'user') or not request.user.is_authenticated:
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "Authentication required to access this page.",
+                'user': getattr(request, 'user', None)
+            }, status=403)
+
+        # Check 2: Superuser Status (Grants immediate access)
+        if getattr(request.user, 'is_superuser', False):
+            return view_func(request, *args, **kwargs)
+
+        # Check 3: Allowed Roles via UserProfile (Only if not superuser)
+        try:
+            allowed_roles = ['receptionist', 'lab_tech', 'owner']
+            if hasattr(request.user, 'userprofile') and request.user.userprofile.role in allowed_roles:
+                return view_func(request, *args, **kwargs)
+            else:
+                # Has profile but not an allowed role
+                return render(request, 'labreqsys/forbidden.html', {
+                    'message': "You do not have the required permissions (Receptionist or Lab Technician) for this page.",
+                    'user': request.user
+                }, status=403)
+        except (UserProfile.DoesNotExist, AttributeError):
+            # No profile found or attribute error
+            return render(request, 'labreqsys/forbidden.html', {
+                'message': "User profile not found or inaccessible; Required permissions missing.",
+                'user': request.user
+            }, status=403)
+
+    return _wrapped_view
+
 # View functions
 # delete this later
 def base(request):
@@ -51,6 +167,7 @@ def base(request):
     """
     return render(request, 'labreqsys/base.html')
 
+@receptionist_or_lab_tech_required
 def view_labreqs(request):
     """
     Display a list of all lab requests.
@@ -58,6 +175,7 @@ def view_labreqs(request):
     labreqs = LabRequest.objects.all()
     return render(request, 'labreqsys/view_labreqs.html', {'labreqs': labreqs})
 
+@receptionist_required
 def patientList(request):
     """
     Display a list of all patients.
@@ -65,6 +183,7 @@ def patientList(request):
     patients = Patient.objects.all()
     return render(request, 'labreqsys/patientList.html', {'patients': patients})
 
+@receptionist_or_lab_tech_required
 def labRequests(request):
     """
     Display a list of all lab requests.
@@ -73,6 +192,7 @@ def labRequests(request):
     
     return render(request, 'labreqsys/labRequests.html', {'labreqs': labreqs})
 
+@owner_required
 def testComponents(request):
     """
     Display a list of all test components.
@@ -82,6 +202,7 @@ def testComponents(request):
     
     return render(request, 'labreqsys/testComponents.html', {'testComponents': testComponents})
 
+@receptionist_required
 def view_patient(request, pk):
     """
     Display detailed information about a specific patient.
@@ -212,6 +333,7 @@ def add_testcomponent(request):
         'show_code_warning': show_code_warning,
         'form_data': form_data})
 
+@owner_required
 def view_component(request, component_id):
     test_component = TestComponent.objects.get(component_id=component_id)
     template = test_component.template
@@ -391,6 +513,7 @@ def edit_template_details(request):
    
     return render(request, 'labreqsys/add_template.html', context)
 
+@receptionist_or_lab_tech_required
 def add_labreq(request, pk):
     """
     Display a form to add a new lab request for a specific patient.
@@ -412,19 +535,26 @@ def add_labreq(request, pk):
         'package_data': json.dumps(package_data, cls=DjangoJSONEncoder),  # Convert to JSON for JS use
     })
 
+@receptionist_or_lab_tech_required
 def add_labreq_details(request, pk):
     """
     Handle the selection of components and packages for a new lab request.
     """
     p = get_object_or_404(Patient, pk=pk)
     if request.method == "POST":
-        request.session.flush()
+        # Safely delete previous lab request items from session
+        if 'selected_components' in request.session:
+            del request.session['selected_components']
+        if 'selected_packages' in request.session:
+            del request.session['selected_packages']
+
         selected_packages = request.POST.getlist('selected_packages')
         selected_components = request.POST.getlist('selected_components')
         request.session['selected_components'] = selected_components
         request.session['selected_packages'] = selected_packages
     return render(request, 'labreqsys/add_labreq_details.html', {'patient': p})
 
+@receptionist_or_lab_tech_required
 def summarize_labreq(request, pk):
     """
     Summarize the selected components and packages for a new lab request and calculate the total cost.
@@ -553,7 +683,7 @@ def summarize_labreq(request, pk):
                                 request_status="Not Started",
                                 template_used=package_component.component.template_id
                             )
-                            # Fetch fields for this component’s template, excluding Labels
+                            # Fetch fields for this component's template, excluding Labels
                             sections = TemplateSection.objects.filter(template_id=package_component.component.template_id)
                             for section in sections:
                                 fields = TemplateField.objects.filter(section=section).exclude(field_type='Label')
@@ -588,6 +718,7 @@ def summarize_labreq(request, pk):
         'request_id': next_request_id
     })
 
+@receptionist_or_lab_tech_required
 def view_individual_lab_request(request, request_id):
     """
     Display detailed information about a specific lab request.
@@ -611,6 +742,7 @@ def view_individual_lab_request(request, request_id):
 
     return render(request, 'labreqsys/lab_request_details.html', {'request_details': request_details, 'collection_status': collection_status, 'email_status': email_status})
 
+@receptionist_or_lab_tech_required
 def change_collection_status(request, request_id):
     """
     Change email or collection status
@@ -634,6 +766,7 @@ def change_collection_status(request, request_id):
                 c.save()
     return redirect('view_individual_lab_request', request_id=request_id)
 
+@lab_tech_required
 def add_lab_result(request, line_item_id):
     line_item = get_object_or_404(RequestLineItem, pk=line_item_id)
     test_component = get_object_or_404(TestComponent, pk=line_item.component_id)
@@ -669,6 +802,7 @@ def add_lab_result(request, line_item_id):
         'lab_technicians': lab_techs
     })
 
+@lab_tech_required
 def submit_labresults(request, line_item_id):
     results = ResultValue.objects.filter(line_item_id=line_item_id)
 
@@ -711,6 +845,7 @@ def submit_labresults(request, line_item_id):
 
     return redirect('view_individual_lab_request', request_id=line_item.request_id)
 
+@receptionist_required
 def add_patient (request):
     '''
     
@@ -956,8 +1091,61 @@ def edit_patient (request, pk):
             'mode':'edit'})
     else:
         return render(request, 'labreqsys/add_edit_patient.html', {'patient': p, 'mode': 'edit'})
-    
+
+@receptionist_required
 def edit_patient_details(request, pk):
+    '''
+    
+    Displays preview of Add Patient details, then saves
+    
+    ''' 
+
+    patient = get_object_or_404(Patient, pk=pk)
+    if request.method == "POST":
+        last_name = request.POST.get('last_name')      
+        first_name = request.POST.get('first_name')
+        middle_initial = request.POST.get('middle_initial')
+        suffix = request.POST.get('suffix')
+        sex = request.POST.get('sex')
+        civil_status = request.POST.get('civil_status') 
+        birthdate = request.POST.get('birthdate')
+        mobile_num = request.POST.get('mobile_num')
+        landline_num = request.POST.get('landline_num')
+        email = request.POST.get('email')
+        house_num = request.POST.get('house_num')
+        street = request.POST.get('street')
+        baranggay = request.POST.get('baranggay')
+        province = request.POST.get('province')
+        city = request.POST.get('city')
+        subdivision = request.POST.get('subdivision')
+        zip_code = request.POST.get('zip_code')
+        pwd_id_num = request.POST.get('pwd_id_num')
+        senior_id_num = request.POST.get('senior_id_num')
+        patient.last_name = last_name
+        patient.first_name = first_name
+        patient.middle_initial = middle_initial
+        patient.suffix = suffix
+        patient.sex = sex
+        patient.civil_status = civil_status
+        patient.birthdate = birthdate
+        patient.mobile_num = mobile_num
+        patient.landline_num = landline_num
+        patient.email = email
+        patient.house_num = house_num
+        patient.street = street
+        patient.baranggay = baranggay
+        patient.province = province
+        patient.city = city
+        patient.zip_code = zip_code
+        patient.pwd_id_num = pwd_id_num
+        patient.senior_id_num = senior_id_num
+        patient.save()
+        return redirect('view_patient', pk=patient.pk)
+    else:
+        return render(request, 'labreqsys/add_edit_patient_details.html')   
+
+@receptionist_required
+def add_patient_details(request):
     '''
     
     Displays preview of Add Patient details, then saves
@@ -1010,8 +1198,8 @@ def edit_patient_details(request, pk):
     else:
         return render(request, 'labreqsys/add_edit_patient_details.html')
     
-    
 
+@receptionist_required
 def save_patient(request):
     if request.method == "POST":
         last_name = request.POST.get('last_name')
@@ -1062,6 +1250,7 @@ def save_patient(request):
     else: 
         return HttpResponse ("dumbass bitch?")
     
+@receptionist_or_lab_tech_required
 @xframe_options_exempt
 def pdf(request, pk):
     '''
@@ -1156,6 +1345,7 @@ def pdf(request, pk):
                 })
 
 
+@receptionist_or_lab_tech_required
 def generatePDF(request):
     '''
     Request to generate PDF
@@ -1200,6 +1390,7 @@ def generatePDF(request):
     
 
 # PDF generation function for a single patient
+@receptionist_or_lab_tech_required
 def savePDF(request, pk):
     '''
     Save PDF using pdfkit
@@ -1217,113 +1408,7 @@ def savePDF(request, pk):
 
     return response
 
-def add_lab_tech(request):
-    """
-    Handle the addition of a new lab technician.
-    """
-    if request.method == 'POST':
-        form = LabTechForm(request.POST, request.FILES)
-        if form.is_valid():
-            try:
-                lab_tech = form.save(commit=False)
-                
-                # Handle signature file
-                signature = form.cleaned_data['signature']
-                # Create a unique filename using timestamp and tech's name
-                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                safe_name = "".join(c for c in lab_tech.last_name if c.isalnum())
-                filename = f"signature_{safe_name}_{timestamp}.png"
-                
-                # Save the signature file
-                file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
-                os.makedirs(os.path.dirname(file_path), exist_ok=True)
-                
-                with open(file_path, 'wb+') as destination:
-                    for chunk in signature.chunks():
-                        destination.write(chunk)
-                
-                # Save the path to the database
-                lab_tech.signature_path = f'signatures/{filename}'
-                lab_tech.save()
-                
-                messages.success(request, 'Lab technician added successfully!')
-                return redirect('view_lab_techs')
-            except Exception as e:
-                # If something goes wrong with file handling
-                messages.error(request, f'Error saving lab technician: {str(e)}')
-                # Try to clean up the file if it was created
-                if 'file_path' in locals():
-                    try:
-                        os.remove(file_path)
-                    except:
-                        pass
-    else:
-        form = LabTechForm()
-    
-    return render(request, 'labreqsys/add_lab_tech.html', {'form': form})
-
-def view_lab_techs(request):
-    """
-    Display a list of all lab technicians.
-    """
-    lab_techs = LabTech.objects.all()
-    return render(request, 'labreqsys/view_lab_techs.html', {'lab_techs': lab_techs})
-
-def edit_lab_tech(request, lab_tech_id):
-    """
-    Handle editing of an existing lab technician.
-    """
-    lab_tech = get_object_or_404(LabTech, pk=lab_tech_id)
-    
-    if request.method == 'POST':
-        form = EditLabTechForm(request.POST, request.FILES, instance=lab_tech)
-        if form.is_valid():
-            try:
-                lab_tech = form.save(commit=False)
-                
-                # Handle signature file if provided
-                if 'signature' in request.FILES:
-                    signature = request.FILES['signature']
-                    # Create a unique filename using timestamp and tech's name
-                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                    safe_name = "".join(c for c in lab_tech.last_name if c.isalnum())
-                    filename = f"signature_{safe_name}_{timestamp}.png"
-                    
-                    # Save the signature file
-                    file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
-                    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-                    
-                    # Delete old signature file if it exists
-                    if lab_tech.signature_path:
-                        old_path = os.path.join('labreqsys', 'static', lab_tech.signature_path)
-                        if os.path.exists(old_path):
-                            os.remove(old_path)
-                    
-                    with open(file_path, 'wb+') as destination:
-                        for chunk in signature.chunks():
-                            destination.write(chunk)
-                    
-                    # Update the path in the database
-                    lab_tech.signature_path = f'signatures/{filename}'
-                
-                lab_tech.save()
-                messages.success(request, 'Lab technician updated successfully!')
-                return redirect('view_lab_techs')
-            except Exception as e:
-                messages.error(request, f'Error updating lab technician: {str(e)}')
-                # Try to clean up the new file if it was created
-                if 'file_path' in locals():
-                    try:
-                        os.remove(file_path)
-                    except:
-                        pass
-    else:
-        form = EditLabTechForm(instance=lab_tech)
-    
-    return render(request, 'labreqsys/edit_lab_tech.html', {
-        'form': form,
-        'lab_tech': lab_tech
-    })
+@lab_tech_required
 def view_lab_result(request, pk):
     """
     Display form builder to create a template.
@@ -1332,6 +1417,7 @@ def view_lab_result(request, pk):
     return render(request, 'labreqsys/view_lab_results.html', {'line_item' : line_item})
 
 
+@owner_required
 def packages (request):
     '''
     Display packages
@@ -1340,6 +1426,7 @@ def packages (request):
     pc = TestPackageComponent.objects.all()
     return render(request, 'labreqsys/packages.html', {'packages': packages, 'pc': pc})
 
+@owner_required
 def add_package (request):
     '''
     Display packages
@@ -1424,3 +1511,179 @@ def edit_package(request, pk):
             'selectedComponents' : components,
             'package':package, 
             'mode': 'edit'})
+        return render(request, 'labreqsys/add_package.html', {'components': test_components})
+
+def user_login(request):
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            # Role-based redirect
+            if hasattr(user, 'userprofile') and user.userprofile.role == 'lab_tech':
+                return redirect('labRequests') 
+            elif hasattr(user, 'userprofile') and user.userprofile.role in ['owner', 'receptionist']:
+                return redirect('patientList')
+            else:
+                # Default redirect if role not set or unexpected, or for superuser without profile
+                if getattr(user, 'is_superuser', False):
+                     return redirect('patientList') # Superusers go to patientList
+                return redirect('login') # Fallback to login or a generic page
+    else:
+        form = CustomAuthenticationForm()
+    return render(request, 'labreqsys/login.html', {'form': form})
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+@owner_required
+def register_user(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            role = form.cleaned_data['role']
+            UserProfile.objects.update_or_create(
+                user=user,
+                defaults={'role': role}
+            )
+            messages.success(request, 'User registered successfully!')
+            return redirect('patientList')  # Or redirect to a user list page if you create one
+        # If form is not valid, it will fall through to the render below
+    else:
+        form = UserRegistrationForm()
+    return render(request, 'labreqsys/register.html', {'form': form})
+
+@owner_required
+def add_testcomponent(request):
+    template_status = 'absent'
+    if request.method == "POST":
+        template_name = request.POST.get("template_name")
+        template = TemplateForm.objects.create(template_name=template_name)
+        section_index = 0
+        while f"sections[{section_index}][name]" in request.POST:
+            section_name = request.POST.get(f"sections[{section_index}][name]")
+            section = TemplateSection.objects.create(
+                template=template, section_name=section_name
+            )
+            field_index = 0
+            while f"sections[{section_index}][fields][{field_index}][label]" in request.POST:
+                label = request.POST.get(f"sections[{section_index}][fields][{field_index}][label]")
+                field_type = request.POST.get(f"sections[{section_index}][fields][{field_index}][type]")
+                fixed_value = request.POST.get(f"sections[{section_index}][fields][{field_index}][fixed_value]", "")
+                TemplateField.objects.create(
+                    section=section,
+                    label_name=label,
+                    field_type=field_type,
+                    field_value=fixed_value if fixed_value else None
+                )
+                field_index += 1
+            section_index += 1
+        template_status = 'present'
+    return render(request, 'labreqsys/add_testcomponent.html', {
+        'template_status': template_status})
+
+@owner_required
+def create_testcomponent(request):
+    if request.method == "POST":
+        last_template = TemplateForm.objects.order_by('-template_id').first()
+        print('check this girly')
+        print(TestComponent.objects.filter(template_id=last_template.template_id))
+        if TestComponent.objects.filter(template_id=last_template.template_id):
+            return redirect('add_testcomponent')
+        else:
+            test_code = request.POST.get('test_code')
+            test_name = request.POST.get('test_name')
+            category = request.POST.get('category')
+            component_price = request.POST.get('price')
+            TestComponent.objects.create(
+                template_id = last_template.template_id,
+                test_code = test_code,
+                test_name = test_name,
+                component_price = component_price,
+                category = category
+            )
+    return redirect('testComponents')
+
+@owner_required
+def add_template(request):
+    return render(request, 'labreqsys/add_template.html')
+
+@owner_required
+def add_lab_tech(request):
+    if request.method == 'POST':
+        form = LabTechForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                lab_tech = form.save(commit=False)
+                signature = form.cleaned_data['signature']
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                safe_name = "".join(c for c in lab_tech.last_name if c.isalnum())
+                filename = f"signature_{safe_name}_{timestamp}.png"
+                file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
+                os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                with open(file_path, 'wb+') as destination:
+                    for chunk in signature.chunks():
+                        destination.write(chunk)
+                lab_tech.signature_path = f'signatures/{filename}'
+                lab_tech.save()
+                messages.success(request, 'Lab technician added successfully!')
+                return redirect('view_lab_techs')
+            except Exception as e:
+                messages.error(request, f'Error saving lab technician: {str(e)}')
+                if 'file_path' in locals():
+                    try:
+                        os.remove(file_path)
+                    except:
+                        pass
+    else:
+        form = LabTechForm()
+    return render(request, 'labreqsys/add_lab_tech.html', {'form': form})
+
+@owner_required
+def edit_lab_tech(request, lab_tech_id):
+    lab_tech = get_object_or_404(LabTech, pk=lab_tech_id)
+    if request.method == 'POST':
+        form = EditLabTechForm(request.POST, request.FILES, instance=lab_tech)
+        if form.is_valid():
+            try:
+                lab_tech = form.save(commit=False)
+                if 'signature' in request.FILES:
+                    signature = request.FILES['signature']
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    safe_name = "".join(c for c in lab_tech.last_name if c.isalnum())
+                    filename = f"signature_{safe_name}_{timestamp}.png"
+                    file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
+                    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                    if lab_tech.signature_path:
+                        old_path = os.path.join('labreqsys', 'static', lab_tech.signature_path)
+                        if os.path.exists(old_path):
+                            os.remove(old_path)
+                    with open(file_path, 'wb+') as destination:
+                        for chunk in signature.chunks():
+                            destination.write(chunk)
+                    lab_tech.signature_path = f'signatures/{filename}'
+                lab_tech.save()
+                messages.success(request, 'Lab technician updated successfully!')
+                return redirect('view_lab_techs')
+            except Exception as e:
+                messages.error(request, f'Error updating lab technician: {str(e)}')
+                if 'file_path' in locals():
+                    try:
+                        os.remove(file_path)
+                    except:
+                        pass
+    else:
+        form = EditLabTechForm(instance=lab_tech)
+    return render(request, 'labreqsys/edit_lab_tech.html', {
+        'form': form,
+        'lab_tech': lab_tech
+    })
+
+@owner_required
+def view_lab_techs(request):
+    lab_techs = LabTech.objects.all()
+    return render(request, 'labreqsys/view_lab_techs.html', {'lab_techs': lab_techs})

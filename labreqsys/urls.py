@@ -39,7 +39,9 @@ urlpatterns = [
     path('packages', views.packages, name='packages'),
     path('add_package', views.add_package, name='add_package'),
     path('change_collection_status/<int:request_id>', views.change_collection_status, name='change_collection_status'),
-    path('edit_package/<int:pk>', views.edit_package, name='edit_package')
-
+    path('edit_package/<int:pk>', views.edit_package, name='edit_package'),
+    path('register/', views.register_user, name='register'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
 ]
 

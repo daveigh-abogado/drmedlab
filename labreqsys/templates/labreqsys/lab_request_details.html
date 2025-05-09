@@ -1,5 +1,6 @@
 {% extends 'labreqsys/base.html' %}
 {% load static tailwind_tags %}
+{% load user_tags %}
 
 
 {% block content %}
@@ -104,26 +105,26 @@
 
 
         <!-- Lab Request Tracker Section -->
-        <div class="mb-8">
+        <div class="mb-8 w-full">
             <div class="flex items-center justify-between px-2.5 py-2.5">
                 <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Lab Request Tracker</div>
-                <!--TO FRONTEND: edit div-->
-                {% if request_details.overall_status == 'In Progress' or request_details.overall_status == 'Not Started' %}
-                <button disabled class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-white bg-blue-900-30 hover:bg-gray-50" onclick="handleButtonClick()">
-                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                    </svg>
-                    Download PDF
-                </button>
-                {% else %}
-                <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-gray-50" onclick="downloadPDF()">
-                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                    </svg>
-                    Download PDF
-                </button>
+                {% if request.user|is_receptionist or request.user|is_lab_tech %}
+                    {% if request_details.overall_status == 'Completed' %}
+                        <button class="inline-flex items-center px-4 py-2 border border-blue-900 rounded-md shadow-sm text-sm font-medium text-blue-900 bg-blue-50 hover:bg-blue-100" onclick="handleButtonClick()">
+                            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Download PDF
+                        </button>
+                    {% else %}
+                        <button disabled class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
+                            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Download PDF (Unavailable)
+                        </button>
+                    {% endif %}
                 {% endif %}
-                <!-- madie is working on this one -->
             </div>
 
             <hr class="bg-black/20">
@@ -168,8 +169,8 @@
                             <select name="collected" form="collection-form"
                             data-current-value="{{ collection_status }}"
                             onchange="confirmSubmission('collection-form', this)"
-                            class="w-40 h-auto px-6 py-2 bg-gray-100 rounded-2xl inline-flex justify-between items-center text-start justify-start text-xs"
-                            disabled>
+                            class="w-40 h-auto px-6 py-2 bg-gray-100 font-semibold rounded-2xl inline-flex justify-between items-center text-start justify-start text-xs {% if collection_status != 'Collected' and request_details.overall_status == 'Completed' and user|is_receptionist %}text-blue-900 cursor-pointer{% else %}text-gray-500 cursor-not-allowed{% endif %}"
+                            {% if collection_status == 'Collected' or request_details.overall_status != 'Completed' or not user|is_receptionist %}disabled{% endif %}>
                                 <option {% if collection_status == 'Uncollected' %}selected{% endif %} value="Uncollected">Uncollected</option>
                                 <option {% if collection_status == 'Collected' %}selected{% endif %} value="Collected">Collected</option>
                             </select>
@@ -186,8 +187,8 @@
                                 <select name="collected" form="collection-form"
                                         data-current-value="{{ collection_status }}"
                                         onchange="confirmSubmission('collection-form', this)"
-                                        class="w-40 h-auto px-6 py-2 bg-gray-100 font-semibold rounded-2xl inline-flex justify-between items-center text-start justify-start text-xs {% if collection_status != 'Collected' %}text-blue-900{% endif %}"
-                                        {% if collection_status == 'Collected' %}disabled{% endif %}>
+                                        class="w-40 h-auto px-6 py-2 bg-gray-100 font-semibold rounded-2xl inline-flex justify-between items-center text-start justify-start text-xs {% if collection_status != 'Collected' and request_details.overall_status == 'Completed' and user|is_receptionist %}text-blue-900 cursor-pointer{% else %}text-gray-500 cursor-not-allowed{% endif %}"
+                                        {% if collection_status == 'Collected' or request_details.overall_status != 'Completed' or not user|is_receptionist %}disabled{% endif %}>
                                     <option {% if collection_status == 'Uncollected' %}selected{% endif %} value="Uncollected">Uncollected</option>
                                     <option {% if collection_status == 'Collected' %}selected{% endif %} value="Collected">Collected</option>
                                 </select>
@@ -208,8 +209,8 @@
                                 <select name="emailed" form="email-form"
                                 data-current-value="{{ email_status }}"
                                 onchange="confirmSubmission('email-form', this)"
-                                class="w-40 h-auto px-6 py-2 bg-gray-100 rounded-2xl inline-flex justify-between items-center text-start justify-start text-xs"
-                                disabled>
+                                class="w-40 h-auto px-6 py-2 bg-gray-100 rounded-2xl inline-flex justify-between items-center text-start justify-start text-xs {% if email_status != 'Sent' and request_details.overall_status == 'Completed' and user|is_receptionist %}text-blue-900 cursor-pointer{% else %}text-gray-500 cursor-not-allowed{% endif %}"
+                                {% if email_status == 'Sent' or request_details.overall_status != 'Completed' or not user|is_receptionist %}disabled{% endif %}>
                                     <option value="Not Sent" {% if email_status == 'Not Sent' %}selected{% endif %}>Not Sent</option>
                                     <option value="Sent" {% if email_status == 'Sent' %}selected{% endif %}>Sent</option>
                                 </select>
@@ -226,8 +227,8 @@
                                 <select name="emailed" form="email-form"
                                         data-current-value="{{ email_status }}"
                                         onchange="confirmSubmission('email-form', this)"
-                                        class="w-40 h-auto px-6 py-2 bg-gray-100 rounded-2xl font-semibold inline-flex justify-between items-center text-start justify-start text-xs {% if email_status != 'Sent' %}text-blue-900{% endif %}"
-                                        {% if email_status == 'Sent' %}disabled{% endif %}>
+                                        class="w-40 h-auto px-6 py-2 bg-gray-100 rounded-2xl font-semibold inline-flex justify-between items-center text-start justify-start text-xs {% if email_status != 'Sent' and request_details.overall_status == 'Completed' and user|is_receptionist %}text-blue-900 cursor-pointer{% else %}text-gray-500 cursor-not-allowed{% endif %}"
+                                        {% if email_status == 'Sent' or request_details.overall_status != 'Completed' or not user|is_receptionist %}disabled{% endif %}>
                                     <option value="Not Sent" {% if email_status == 'Not Sent' %}selected{% endif %}>Not Sent</option>
                                     <option value="Sent" {% if email_status == 'Sent' %}selected{% endif %}>Sent</option>
                                 </select>
@@ -239,7 +240,7 @@
         </div>
 
         <!-- Lab Components Table -->
-        <div class="relative overflow-x-auto rounded-xl">
+        <div class="relative overflow-x-auto rounded-xl w-full">
             <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
                 <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
                     <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
@@ -251,7 +252,9 @@
                         <th scope="col" class="px-6 py-3 text-start">Component</th>
                         <th scope="col" class="px-6 py-3 text-center">Status</th>
                         <th scope="col" class="px-6 py-3 text-center">Uploaded Time</th>
+                        {% if user|is_lab_tech %}
                         <th scope="col" class="px-6 py-3 text-center">Action</th>
+                        {% endif %}
                         <th scope="col" class="px-6 py-3 text-center"></th>
                     </tr>
                 </thead>
@@ -287,6 +290,7 @@
                         <td class="px-6 py-2 text-center">
                             {{ line_item.progress_timestamp|default:"-" }}
                         </td>
+                        {% if user|is_lab_tech %}
                         <td class="py-2 text-center">
                             {% if line_item.request_status == 'Completed' %}
                                 <button class="px-4 py-2 rounded text-white font-medium bg-blue-900-30 text-xs cursor-not-allowed no-underline">
@@ -300,15 +304,18 @@
                                 </a>
                             {% endif %}
                         </td>
-                        {% if line_item.request_status == 'Not Started' or line_item.request_status == 'In Progress' %}
-                            <td class="px-6 py-2 text-center">
-                                -
-                            </td>
-                        {% else %}
-                            <td class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center">
-                                <a href="{%url 'view_labresult' pk=line_item.line_item_id%}" class = "no-underline ">View</a>
-                            </td>
                         {% endif %}
+                        <td class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center">
+                        {% if line_item.request_status == 'Completed' %}
+                          {% if user|is_receptionist or user|is_lab_tech %}
+                            <a href="{% url 'view_labresult' pk=line_item.line_item_id %}" class="no-underline">View</a>
+                          {% else %}
+                            -
+                          {% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                        </td>
                         
                     </tr>
                     {% endfor %}
