@@ -6,16 +6,26 @@
     <ul class="breadcrumb">
         <li><a href="{% url 'testComponents' %}">Test Component List</a></li>
         <li><a href="{% url 'add_testcomponent' %}">Add Test Component</a></li>
-        <li><a href="#" class="current">Create Template</a></li>
+        {% if editing == 'yes' %}
+            <li><a href="#" class="current">Edit Template</a></li>
+        {% else %}
+            <li><a href="#" class="current">Create Template</a></li>
+        {% endif %}
     </ul>
 </div>
 
 <div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
     <div class="flex justify-between items-center rounded-t sm:mb-4 w-full">
+        {% if editing == 'yes' %}
+        <h1 class="text-mm font-semibold text-blue-900">Edit Template</h1>
+        {% else %}
         <h1 class="text-mm font-semibold text-blue-900">Create Template</h1>
+        {% endif %}
         <div class="flex gap-2">
             <a href="{% url 'add_testcomponent' %}" class="text-blue-900 inline-flex items-center bg-blue-900-10 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline border">Cancel</a>
-            <button type="button" id="createTemplatebutton" data-modal-target="templateModal" data-modal-toggle="templateModal" class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Create Template</button>
+            <button type="button" id="createTemplatebutton" class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                {% if editing == 'yes' %}Edit{% else %}Create{% endif %} Template
+            </button>
         </div>
     </div>
 
@@ -23,7 +33,7 @@
         <div class="grid gap-2.5 mb-4 sm:grid-cols-1 border-b pb-3">
             <div>
                 <label for="template_name" class="block mb-2 text-left text-sm font-medium text-gray-500 uppercase">Form Name *</label>
-                <input type="text" name="template_name" id="template_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" placeholder="e.g. Blood Chemistry" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
+                <input type="text" name="template_name" id="template_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" placeholder="e.g. Blood Chemistry" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only." value="{{ template.template_name|default:'' }}">
             </div>
         </div>
 
@@ -43,8 +53,11 @@
             <div id="modal-preview-content">
                 </div>
             <div class="grid gap-2.5 mb-4 sm:grid-cols-2 mt-4">
-                <button data-modal-hide="templateModal" type="button" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">Back to Editing</button>
-                <button type="submit" form="form" id="confirmSubmit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Create Template</button>
+                <button id="backToEditingBtn" type="button" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">Back to Editing</button>
+                <button type="submit" form="form" id="confirmSubmit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                    {% if editing == 'yes' %}Save{% else %}Create{% endif %}
+                     Template
+                </button>
             </div>
         </div>
     </div>
@@ -59,63 +72,62 @@
     const modalPreviewContent = document.getElementById('modal-preview-content');
     const form = document.getElementById('form');
 
-    function createField(sectionIndex, fieldIndex) {
+    function createField(sectionIndex, fieldIndex, fieldData = {}) {
+        const { label = '', type = '', fixed_value = '' } = fieldData;
+        const isFixedDisabled = ['Text', 'Number', 'Image'].includes(type) ? 'disabled' : '';
+
         return `
-            <div class="border border-gray-300 rounded p-2 mt-3 field-group" data-field-index="${fieldIndex}">
-                <div class="grid gap-2.5 mb-2 sm:grid-cols-4">
-                    <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Label *</label>
-                        <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][label]" placeholder="e.g. X-Ray Image" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
-                    </div>
-                    <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Type *</label>
-                        <select name="sections[${sectionIndex}][fields][${fieldIndex}][type]" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
-                            <option value="">Select field type</option>
-                            <option value="Label">Label</option>
-                            <option value="Text">Text</option>
-                            <option value="Image">Image</option>
-                            <option value="Number">Number</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Fixed Value</label>
-                        <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][fixed_value]" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5">
-                    </div>
-                    <div class="flex items-center pt-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" 
-                                height="34"
-                                width="34"
-                                viewBox="0 0 20 20"  
-                                fill="currentColor" 
-                                class="trash-icon cursor-pointer text-red-500 hover:text-red-700" 
-                                title="Delete Field"
-                                onclick="this.closest('.field-group').remove()">
-                                <path fill-rule="evenodd" 
-                                    d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" 
-                                    clip-rule="evenodd" />
-                        </svg>                        
-                    </div>
+        <div class="border border-gray-300 rounded p-2 mt-3 field-group" id="field-${sectionIndex}-${fieldIndex}" data-field-index="${fieldIndex}">
+            <div class="grid gap-2.5 mb-2 sm:grid-cols-4">
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Label *</label>
+                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][label]" value="${label}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
                 </div>
-            </div>`;
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Type *</label>
+                    <select name="sections[${sectionIndex}][fields][${fieldIndex}][type]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
+                        <option value="">Select field type</option>
+                        <option value="Label" ${type === 'Label' ? 'selected' : ''}>Label</option>
+                        <option value="Text" ${type === 'Text' ? 'selected' : ''}>Text</option>
+                        <option value="Image" ${type === 'Image' ? 'selected' : ''}>Image</option>
+                        <option value="Number" ${type === 'Number' ? 'selected' : ''}>Number</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Fixed Value</label>
+                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][fixed_value]" value="${fixed_value}" class="bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg block w-full p-2.5" ${isFixedDisabled}>
+                </div>
+                <div class="flex items-center pt-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="34" width="34" viewBox="0 0 20 20" fill="currentColor" class="trash-icon cursor-pointer text-red-500 hover:text-red-700" title="Delete Field" onclick="this.closest('.field-group').remove()">
+                        <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </div>`;
     }
-    //TO FRONTEND: PLS TELL DV IF YOU'RE GONNA CHANGE THE SECTION HEADER TO NOT BE H2 BC CHANGING THIS BREAKS THE JS
 
-    function createSection(sectionIndex) {
-        return `
-            <div class="section border-b mb-4 pb-4" data-section-index="${sectionIndex}">
-                <div class="flex justify-between ">
-                    <h2 class="text-mm font-semibold text-blue-900">Section ${sectionIndex + 1}</h2>
-                    <button type="button" class="delete-section-btn px-4 text-right bg-red-500 rounded text-white hover:bg-red-700">Delete Section</button>
-                </div>
-                <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Section Name *</label>
-                <input type="text" name="sections[${sectionIndex}][name]" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 mb-2" required>
+    function createSection(sectionIndex, sectionData = {}) {
+        const { name = '', fields = [] } = sectionData;
+        let sectionHTML = `
+        <div class="section border-b mb-4 pb-4" data-section-index="${sectionIndex}">
+            <div class="flex justify-between">
+                <h2 class="text-mm font-semibold text-blue-900">Section ${sectionIndex + 1}</h2>
+                <button type="button" class="delete-section-btn px-4 text-right bg-red-500 rounded text-white hover:bg-red-700">Delete Section</button>
+            </div>
+            <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Section Name *</label>
+            <input type="text" name="sections[${sectionIndex}][name]" value="${name}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mb-2" required>
+            <div class="fields-container">`;
 
-                <div class="fields-container"></div>
+        fields.forEach((field, fieldIndex) => {
+            sectionHTML += createField(sectionIndex, fieldIndex, field);
+        });
 
-                <div class="mt-2 grid gap-2.5 sm:grid-cols-1">
-                    <button type="button" class="add-field-btn text-blue-900 border border-blue-900 bg-blue-100 hover:bg-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Field</button>
-                </div>
-            </div>`;
+        sectionHTML += `</div>
+            <div class="mt-2 grid gap-2.5 sm:grid-cols-1" id="section-${sectionIndex}">
+                <button type="button" class="add-field-btn text-blue-900 border border-blue-900 bg-blue-100 hover:bg-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Field</button>
+            </div>
+        </div>`;
+        return sectionHTML;
     }
 
     function reindexSections() {
@@ -199,9 +211,59 @@
             }
         }
     });
-
+    
     createTemplateButton.addEventListener('click', (event) => {
         event.preventDefault(); // Prevent the default form submission
+
+        let isValid = true;
+        const errors = [];
+
+        const templateNameInput = document.getElementById('template_name');
+        if (!templateNameInput.value.trim()) {
+            errors.push('Please enter a Form Name.');
+            isValid = false;
+        }
+
+        const containers = sectionsContainer.querySelectorAll('.section');
+        if (containers.length === 0) {
+            errors.push('Please add at least one section.');
+            isValid = false;
+        }
+
+        for (const section of containers) {
+            const sectionName = section.querySelector('input[name$="[name]"]');
+            if (!sectionName || !sectionName.value.trim()) {
+                errors.push('Please fill in all section names.');
+                isValid = false;
+            }
+
+            const fields = section.querySelectorAll('.field-group');
+            if (fields.length === 0) {
+                errors.push('Each section must have at least one field.');
+                isValid = false;
+            }
+
+            for (const field of fields) {
+                const labelInput = field.querySelector('input[name*="[label]"]');
+                const typeSelect = field.querySelector('select[name*="[type]"]');
+                const fixedValueInput = field.querySelector('input[name*="[fixed_value]"]');
+
+                if (!labelInput.value.trim() || !typeSelect.value) {
+                    errors.push('Please fill in all field labels and types.');
+                    isValid = false;
+                }
+
+                if (typeSelect.value === 'Label' && !fixedValueInput.value.trim()) {
+                    errors.push('Fixed value is required for Label type fields.');
+                    isValid = false;
+                }
+            }
+        }
+
+        if (!isValid) {
+            alert(errors.join('\n'));  // Display all errors in a simple alert
+            return; // Do not show modal
+        }
 
         // get all of the form data
         const formData = new FormData(form);
@@ -254,14 +316,38 @@
 
         // Update the modal content
         modalPreviewContent.innerHTML = previewHTML;
+        const modal = document.getElementById('templateModal');
+        if (modal) {
+            modal.classList.remove('hidden');
+        }
     });
 
+    document.getElementById('backToEditingBtn').addEventListener('click', function () {
+        document.getElementById('templateModal').classList.add('hidden');
+    });
+    
     // Handle the final form submission when "Confirm Create" is clicked
     const confirmSubmitButton = document.getElementById('confirmSubmit');
     confirmSubmitButton.addEventListener('click', () => {
         form.action = "{% url 'add_testcomponent' %}";
         form.submit();
     });
+
+    function populateExistingTemplate() {
+        const templateData = JSON.parse('{{ initial_template_json|escapejs }}');
+        if (!templateData || !templateData.sections) return;
+
+        templateData.sections.forEach((section, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = createSection(index, section);
+            sectionsContainer.appendChild(wrapper);
+            sectionCount++;
+        });
+    }
+    
+    // Initial load
+    populateExistingTemplate();
+
 </script>
 
 {% endblock content %}

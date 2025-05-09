@@ -164,8 +164,11 @@ def add_testcomponent(request):
     """
     Display a form to add a new test component.
     """
-    template_status = 'absent'
     show_warning = request.GET.get('show_warning', 'no')
+    show_code_warning = request.GET.get('show_code_warning', 'no')
+
+    if show_code_warning == 'yes':
+        template_status = 'present'
 
     if request.method == "POST":
         template_name = request.POST.get("template_name")
@@ -193,17 +196,23 @@ def add_testcomponent(request):
                 )
                 field_index += 1
             section_index += 1
-        template_status = 'present'
-        
+
     form_data = request.session.get('testcomponent_form_data', {
         'test_code': '',
         'test_name': '',
         'category': '',
         'price': ''
     })
+
+    last_template = TemplateForm.objects.order_by('-template_id').first()
+    if TestComponent.objects.filter(template_id=last_template.template_id):
+        template_status = 'absent'
+    else:
+        template_status = 'present'
     return render(request, 'labreqsys/add_testcomponent.html', {
         'template_status': template_status,
         'show_warning': show_warning,
+        'show_code_warning': show_code_warning,
         'form_data': form_data})
 
 def view_component(request, component_id):
@@ -232,6 +241,7 @@ def create_testcomponent(request):
     
     if request.method == "POST":
         last_template = TemplateForm.objects.order_by('-template_id').first()
+        test_code = request.POST.get('test_code')
         if TestComponent.objects.filter(template_id=last_template.template_id):
            request.session['testcomponent_form_data'] = {
                'test_code': request.POST.get('test_code', ''),
@@ -240,8 +250,15 @@ def create_testcomponent(request):
                'price': request.POST.get('price', '')
                }
            return redirect(f"{reverse('add_testcomponent')}?show_warning=yes")
+        elif TestComponent.objects.filter(test_code=test_code):
+            request.session['testcomponent_form_data'] = {
+               'test_code': request.POST.get('test_code', ''),
+               'test_name': request.POST.get('test_name', ''),
+               'category': request.POST.get('category', ''),
+               'price': request.POST.get('price', '')
+               }
+            return redirect(f"{reverse('add_testcomponent')}?show_code_warning=yes")
         else:
-            test_code = request.POST.get('test_code')
             test_name = request.POST.get('test_name')
             category = request.POST.get('category')
             component_price = request.POST.get('price')
@@ -338,7 +355,44 @@ def add_template(request):
     """
     Display form builder to create a template.
     """
-    return render(request, 'labreqsys/add_template.html')
+    editing = 'no'
+    return render(request, 'labreqsys/add_template.html', {'editing': editing})
+
+def edit_template_details(request):
+    """
+    Display form builder for template of a component being made
+    """
+    template = TemplateForm.objects.order_by('-template_id')[0]
+
+    sections_data = []
+    sections = TemplateSection.objects.filter(template=template).order_by('section_id')
+
+    for section in sections:
+        fields = TemplateField.objects.filter(section=section).order_by('field_id')
+        field_data = []
+        for field in fields:
+            field_data.append({
+                'label': field.label_name,
+                'type': field.field_type,
+                'fixed_value': field.field_value or ''
+            })
+        sections_data.append({
+            'name': section.section_name,
+            'fields': field_data
+        })
+
+    template_data = {
+        'template_name': template.template_name,
+        'sections': sections_data
+    }
+    editing = 'yes'
+    context = {
+        'template' : template,
+        'initial_template_json': json.dumps(template_data, cls=DjangoJSONEncoder),
+        'editing': editing
+    }
+   
+    return render(request, 'labreqsys/add_template.html', context)
 
 def add_labreq(request, pk):
     """
