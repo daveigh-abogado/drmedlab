@@ -1142,15 +1142,12 @@ def edit_patient_details(request, pk):
         patient.save()
         return redirect('view_patient', pk=patient.pk)
     else:
-        return render(request, 'labreqsys/add_edit_patient_details.html')   
+        return render(request, 'labreqsys/add_edit_patient_details.html') 
 
+'''
 @receptionist_required
 def add_patient_details(request):
-    '''
-    
-    Displays preview of Add Patient details, then saves
-    
-    ''' 
+    <!-- Displays preview of Add Patient details, then saves -->
 
     patient = get_object_or_404(Patient, pk=pk)
     if request.method == "POST":
@@ -1197,7 +1194,9 @@ def add_patient_details(request):
         return redirect('view_patient', pk=patient.pk)   
     else:
         return render(request, 'labreqsys/add_edit_patient_details.html')
-    
+
+
+'''  
 
 @receptionist_required
 def save_patient(request):
