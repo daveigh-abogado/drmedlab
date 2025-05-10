@@ -15,6 +15,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from functools import wraps
+from django.template.loader import render_to_string
+
 
 import pdfkit
 import platform
@@ -1395,16 +1397,57 @@ def savePDF(request, pk):
     '''
     Save PDF using pdfkit
     '''
-    
     line_item = RequestLineItem.objects.get(line_item_id=pk)
-    
+
     filename = f"{line_item.request.patient.last_name}, {line_item.request.patient.first_name[0]}_{line_item.component.test_name}_{line_item.request.date_requested}.pdf"
-    # Create PDF from URL (the URL will be a page where you render patient details)
-    pdf = pdfkit.from_url(request.build_absolute_uri(reverse('pdf', args=[pk])), False)
-    
-    # Return the PDF response
+
+    lab_request = line_item.request
+    patient = lab_request.patient
+    test_component = line_item.component
+    template_form = TemplateForm.objects.filter(template_id=line_item.component.template.template_id).order_by('-template_id')[0]
+
+    age = None
+    if patient.birthdate:
+        today = date.today()
+        age = today.year - patient.birthdate.year - ((today.month, today.day) < (patient.birthdate.month, patient.birthdate.day))
+
+    form = {}
+    fields = []
+    reviewed_by = []
+    for section in TemplateSection.objects.filter(template=template_form.template_id):
+        fields.append(TemplateField.objects.filter(section=section.section_id))
+        for column in fields:
+            result_value = {}
+            for field in column:
+                result_value[field] = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)
+        form[section] = result_value
+
+    results = ResultValue.objects.filter(line_item_id=line_item.line_item_id)
+    reviews = []
+    for rs in results:
+        review = ResultReview.objects.filter(result_value=rs)
+        for lt in review:
+            if not any(r.lab_tech.lab_tech_id == lt.lab_tech.lab_tech_id for r in reviews):
+                reviews.append(lt)
+
+    html = render_to_string('labreqsys/pdf.html', {
+        'lab_request': lab_request,
+        'patient': patient,
+        'test_component': test_component,
+        'age': age,
+        'address': "testing",
+        'form': form,
+        'reviewed_by': reviewed_by,
+        'lab_tech': reviews
+    })
+
+    options = {
+        'enable-local-file-access': ''
+    }
+    pdf = pdfkit.from_string(html, False, options=options)
+
     response = HttpResponse(pdf, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'  # Correct filename usage
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
     return response
 
