@@ -283,6 +283,7 @@ def store_testcomponent_session(request):
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'failed'}, status=400)
 
+@owner_required
 def add_testcomponent(request):
     """
     Display a form to add a new test component.
@@ -355,6 +356,7 @@ def view_component(request, component_id):
                    'sections': section_data
                    })
 
+@owner_required
 def create_testcomponent(request):
     """
     Add Test Component to the Database
@@ -393,6 +395,7 @@ def create_testcomponent(request):
             request.session.pop('testcomponent_form_data', None)
     return redirect('testComponents')
 
+@owner_required
 def edit_testcomponent(request, component_id):
     test_component = TestComponent.objects.get(component_id=component_id)
 
@@ -401,6 +404,7 @@ def edit_testcomponent(request, component_id):
                 'template': test_component.template
                 })
     
+@owner_required
 def edit_testcomponent_details(request, component_id):
     if request.method == "POST":
         category = request.POST.get('category')
@@ -409,6 +413,7 @@ def edit_testcomponent_details(request, component_id):
 
     return redirect('view_component', component_id)
     
+@owner_required
 def edit_template(request, component_id):
     if request.method == "POST":
         template_name = request.POST.get("template_name")
@@ -472,6 +477,7 @@ def edit_template(request, component_id):
         }
         return render(request, 'labreqsys/edit_template.html', context)
 
+@owner_required
 def add_template(request):
     """
     Display form builder to create a template.
@@ -479,6 +485,7 @@ def add_template(request):
     editing = 'no'
     return render(request, 'labreqsys/add_template.html', {'editing': editing})
 
+@owner_required
 def edit_template_details(request):
     """
     Display form builder for template of a component being made
@@ -1601,21 +1608,30 @@ def register_user(request):
 
 @owner_required
 def add_testcomponent(request):
-    template_status = 'absent'
+    """
+    Display a form to add a new test component.
+    """
+    show_warning = request.GET.get('show_warning', 'no')
+    show_code_warning = request.GET.get('show_code_warning', 'no')
+
     if request.method == "POST":
         template_name = request.POST.get("template_name")
+        
         template = TemplateForm.objects.create(template_name=template_name)
+
         section_index = 0
         while f"sections[{section_index}][name]" in request.POST:
             section_name = request.POST.get(f"sections[{section_index}][name]")
             section = TemplateSection.objects.create(
                 template=template, section_name=section_name
             )
+
             field_index = 0
             while f"sections[{section_index}][fields][{field_index}][label]" in request.POST:
                 label = request.POST.get(f"sections[{section_index}][fields][{field_index}][label]")
                 field_type = request.POST.get(f"sections[{section_index}][fields][{field_index}][type]")
                 fixed_value = request.POST.get(f"sections[{section_index}][fields][{field_index}][fixed_value]", "")
+
                 TemplateField.objects.create(
                     section=section,
                     label_name=label,
@@ -1624,20 +1640,51 @@ def add_testcomponent(request):
                 )
                 field_index += 1
             section_index += 1
+
+    form_data = request.session.get('testcomponent_form_data', {
+        'test_code': '',
+        'test_name': '',
+        'category': '',
+        'price': ''
+    })
+
+    last_template = TemplateForm.objects.order_by('-template_id').first()
+    if TestComponent.objects.filter(template_id=last_template.template_id):
+        template_status = 'absent'
+    else:
         template_status = 'present'
     return render(request, 'labreqsys/add_testcomponent.html', {
-        'template_status': template_status})
+        'template_status': template_status,
+        'show_warning': show_warning,
+        'show_code_warning': show_code_warning,
+        'form_data': form_data})
 
 @owner_required
 def create_testcomponent(request):
+    """
+    Add Test Component to the Database
+    """
+    
     if request.method == "POST":
         last_template = TemplateForm.objects.order_by('-template_id').first()
-        print('check this girly')
-        print(TestComponent.objects.filter(template_id=last_template.template_id))
+        test_code = request.POST.get('test_code')
         if TestComponent.objects.filter(template_id=last_template.template_id):
-            return redirect('add_testcomponent')
+           request.session['testcomponent_form_data'] = {
+               'test_code': request.POST.get('test_code', ''),
+               'test_name': request.POST.get('test_name', ''),
+               'category': request.POST.get('category', ''),
+               'price': request.POST.get('price', '')
+               }
+           return redirect(f"{reverse('add_testcomponent')}?show_warning=yes")
+        elif TestComponent.objects.filter(test_code=test_code):
+            request.session['testcomponent_form_data'] = {
+               'test_code': request.POST.get('test_code', ''),
+               'test_name': request.POST.get('test_name', ''),
+               'category': request.POST.get('category', ''),
+               'price': request.POST.get('price', '')
+               }
+            return redirect(f"{reverse('add_testcomponent')}?show_code_warning=yes")
         else:
-            test_code = request.POST.get('test_code')
             test_name = request.POST.get('test_name')
             category = request.POST.get('category')
             component_price = request.POST.get('price')
@@ -1648,6 +1695,7 @@ def create_testcomponent(request):
                 component_price = component_price,
                 category = category
             )
+            request.session.pop('testcomponent_form_data', None)
     return redirect('testComponents')
 
 @owner_required
