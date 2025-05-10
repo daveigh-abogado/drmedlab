@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from functools import wraps
 from django.template.loader import render_to_string
+from django.db.models import Count
 
 
 import pdfkit
@@ -48,6 +49,23 @@ def discount(patient, price):
         discount = price * Decimal(0.2)
         payment = price - round(discount)
         return payment
+
+def delete_unused_templates():
+    #delete the templates that were not used
+    unused_forms = []
+    past_records = list(RequestLineItem.objects.values_list('template_used', flat=True))
+    temp = TemplateForm.objects.filter(testcomponent__isnull=True).values_list('template_id', flat=True)
+    for t in temp:
+        if t not in past_records:
+            unused_forms.append(TemplateForm.objects.get(template_id=t))
+
+    unused_sections = TemplateSection.objects.filter(template__in=unused_forms)
+    unused_fields = TemplateField.objects.filter(section__in=unused_sections)
+
+    unused_fields.delete()
+    unused_sections.delete()
+    for obj in unused_forms:
+        obj.delete()
 
 # Decorators
 def owner_required(view_func):
@@ -201,7 +219,7 @@ def testComponents(request):
     """
     request.session.pop('testcomponent_form_data', None)
     testComponents = TestComponent.objects.all()
-    
+    delete_unused_templates()
     return render(request, 'labreqsys/testComponents.html', {'testComponents': testComponents})
 
 @receptionist_required
@@ -392,6 +410,7 @@ def create_testcomponent(request):
                 component_price = component_price,
                 category = category
             )
+            delete_unused_templates()
             request.session.pop('testcomponent_form_data', None)
     return redirect('testComponents')
 
