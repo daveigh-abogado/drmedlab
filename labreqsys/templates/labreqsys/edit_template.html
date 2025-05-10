@@ -67,11 +67,11 @@
             <div class="grid gap-2.5 mb-2 sm:grid-cols-4">
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Label *</label>
-                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][label]" value="${label}" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][label]" value="${label}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
                 </div>
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Type *</label>
-                    <select name="sections[${sectionIndex}][fields][${fieldIndex}][type]" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                    <select name="sections[${sectionIndex}][fields][${fieldIndex}][type]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
                         <option value="">Select field type</option>
                         <option value="Label" ${type === 'Label' ? 'selected' : ''}>Label</option>
                         <option value="Text" ${type === 'Text' ? 'selected' : ''}>Text</option>
@@ -81,7 +81,7 @@
                 </div>
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Fixed Value</label>
-                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][fixed_value]" value="${fixed_value}" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" ${isFixedDisabled}>
+                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][fixed_value]" value="${fixed_value}" class="bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg block w-full p-2.5" ${isFixedDisabled}>
                 </div>
                 <div class="flex items-center pt-3">
                     <svg xmlns="http://www.w3.org/2000/svg" height="34" width="34" viewBox="0 0 20 20" fill="currentColor" class="trash-icon cursor-pointer text-red-500 hover:text-red-700" title="Delete Field" onclick="this.closest('.field-group').remove()">
@@ -101,7 +101,7 @@
                 <button type="button" class="delete-section-btn px-4 text-right bg-red-500 rounded text-white hover:bg-red-700">Delete Section</button>
             </div>
             <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Section Name *</label>
-            <input type="text" name="sections[${sectionIndex}][name]" value="${name}" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 mb-2" required>
+            <input type="text" name="sections[${sectionIndex}][name]" value="${name}" class="bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg block w-full p-2.5 mb-2" required>
             <div class="fields-container">`;
 
         fields.forEach((field, fieldIndex) => {
