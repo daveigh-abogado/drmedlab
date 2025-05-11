@@ -1,16 +1,25 @@
 {% extends 'labreqsys/base.html' %}
 {% load static tailwind_tags %}
+{% load user_tags %}
 
 {% block content %}
+
 <div class="breadbutton my-4">
     <ul class="breadcrumb">
         <li><a href="{% url 'patientList' %}">Patient List</a></li>
         <li><a href="#" class="current">Patient Record</a></li>
     </ul>
     <div class="inline-flex justify-start items-center gap-2">
-        <button class="px-4 py-1 bg-blue-900-10 bg-opacity-10 text-blue-900 font-bold border-blue-900 border rounded-lg" type="button">
-            <a href ="{% url 'edit_patient' pk=patient.pk %}" class="no-underline"> Edit Patient </a>
+        {% if user|is_receptionist %}
+        <button onclick="edit()"class="px-4 py-1 bg-blue-900-10 bg-opacity-10 text-blue-900 font-bold border-blue-900 border rounded-lg" type="button">
+            Edit Patient
         </button>
+        {% endif %}
+        {% if user.is_authenticated and user|is_owner %}
+        <button onclick="password()" class="px-4 py-1 bg-blue-900-10 bg-opacity-10 text-blue-900 font-bold border-blue-900 border rounded-lg" type="button">
+            Generate Edit Patient Password
+        </button>
+        {% endif %}
         <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="button">
             <a href="{% url 'add_labreq' pk=patient.pk %}" class="text-white no-underline">Add Request</a>
         </button>
@@ -18,7 +27,28 @@
     </div>  
 </div>
 
+<!--Modal-->
+<div id="passwordModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+    <p>Edit Patient Password.</p>
+    <p id="pass">No Password.</p>
+    <button onclick="closePassModal()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">OK</button>
+    </div>
+</div>
 
+<div id="editModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <p>Edit Patient</p>
+        <form id="editForm" method="POST" action="{% url 'password' pk=patient.patient_id %}" class="gap-2.5">{% csrf_token %} 
+            <label for="password" class="block mb-2 text-left text-sm font-medium text-gray-500">Ask Owner for Password</label>    
+            <input type="number" name="password_input" id="password_input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" maxlength="5">
+            <p id="error_type" name="error_type" class="hidden"> Error Message. </p>
+            <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Confirm</button>
+        </form>
+    <button onclick="closeEditModal()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Cancel</button>
+    
+    </div>
+</div>
 
 <div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
     
@@ -227,6 +257,98 @@
 
     </div>
 </div>
+
+<script>
+
+    const passwordModal = document.getElementById('passwordModal');
+    const editModal = document.getElementById('editModal');
+    const editPSForm = document.getElementById('editForm');
+
+    async function password() {
+        try {
+            const response = await fetch("{% url 'generate_edit_password' pk=patient.patient_id %}", {
+                method: 'GET', // assuming you removed CSRF so GET is fine
+            });
+
+            const result = await response.json();
+            console.log("Result:", result); // Should log: { pass: "78373" }
+            console.error();
+
+            if (result && result.pass) {
+                document.getElementById("pass").innerText = result.pass;
+                passwordModal.classList.remove("hidden");
+            } else {
+                alert("Unexpected response format.");
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            alert("Error fetching password.");
+        }
+    }
+
+    if (editPSForm) {
+        console.log('editPSForm')
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const formData = new FormData(editPSForm);
+
+
+            try {
+                const response = await fetch("{% url 'password' pk=patient.patient_id  %}", {
+                    method: 'POST',
+                    headers: {
+                    'X-CSRFToken': csrfToken,
+                    },
+                    body: formData,
+                });
+
+                const result = await response.json();
+                console.log(result); 
+
+                if (result.error === 'expired') {
+                    document.getElementById("error_type").classList.remove('hidden');
+                    document.getElementById("error_type").innerHTML = 'Password has expired. Please ask owner to generate a password again.';
+                    console.log(result.error)
+                    
+                } else if (result.error === 'incorrect') {
+                    document.getElementById("error_type").classList.remove('hidden');
+                    document.getElementById("error_type").innerHTML = 'Password incorrect. Try again.';
+                    console.log(result.error)
+
+                } else if (result.error === 'passcode') {
+                    document.getElementById("password_input").classList.add('hidden');
+                    document.getElementById("error_type").classList.remove('hidden');
+                    document.getElementById("error_type").innerHTML = 'No password.';
+                    console.log(result.error)
+
+                } else if(result.error == 'success') {
+                    window.location.href = result.redirect_url;
+                } else{
+                    alert("Unexpected response.")
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function closePassModal() {
+        passwordModal.classList.add('hidden');
+    }
+    
+    function edit() {
+        editModal.classList.remove("hidden");
+    }
+    function closeEditModal() {
+        editModal.classList.add('hidden');
+        document.getElementById("password_input").classList.remove('hidden');
+        document.getElementById("error_type").classList.add('hidden');
+    }
+</script>
+
 
 {% endblock content %}
 

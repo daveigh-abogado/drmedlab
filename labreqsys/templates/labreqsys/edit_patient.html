@@ -19,235 +19,6 @@
     </div>
 </div>
 
-
-<!-- ADD MODE -->
-{% if mode == 'add' %}
-    <!-- Modal content -->
-    <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
-        <!-- Modal header -->
-        <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
-            <h3 class="text-mm font-semibold text-blue-900">
-                Add Patient
-            </h3>
-            <!-- FRONTEND: backbutton-->
-            <button type="button" id="closeModalButton" name="closeModalButton"class="text-blue-900 bg-transparent hover:bg-blue-800 hover:text-blue-800 rounded-lg text-sm p-1.5 ml-auto inline-flex items-right">
-                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                <span class="sr-only">Close modal</span>
-            </button>
-        </div>
-        <!-- Modal body -->
-        <form id="addForm" method="POST" action="{% url 'add_patient' %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
-
-            <!--ROW 1-->
-            <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2">Patient Information</div>
-
-            <div class="grid gap-2.5 mb-4 sm:grid-cols-6"> <!--TO BACKEND: don't forget to fill in for=""-->
-                <div>
-                    <label for="last_name" class="block mb-2 text-left text-sm font-medium text-gray-500">Last Name *</label>
-                    <input type="text" name="last_name" id="last_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type last name" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
-                </div>
-                <div>
-                    <label for="first_name" class="block mb-2 text-left text-sm font-medium text-gray-500">First Name *</label>
-                    <input type="text" name="first_name" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type first name" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
-                </div>
-                <div>
-                    <label for="middle_initial" class="block mb-2 text-left text-sm font-medium text-gray-500">M.I.</label>
-                    <input type="text" name="middle_initial" id="middle_initial" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type M.I." pattern="^[A-Za-z]{1,2}$" title="Maximum 2 letters only.">
-                </div>
-                <div>
-                    <label for="suffix" class="block mb-2 text-left text-sm font-medium text-gray-500">Suffix</label>
-                    <input type="text" name="suffix" id="suffix" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type Suffix" pattern="^[A-Za-z ]+$" title="Use letters and spaces only.">
-                </div>
-                <div>
-                    <label for="sex" class="block mb-2 text-left text-sm font-medium text-gray-500">Sex *</label>
-                    <select id="sex" name="sex" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="" v>
-                        <option value="" disabled selected>Select gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value=Other> Other </option>
-                    </select>
-                </div>
-                <div>
-                    <label for="Civil Status" class="block mb-2 text-left text-sm font-medium text-gray-500">Civil Status *</label>
-                    <select id="civil_status" name="civil_status" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
-                        <option value="" disabled selected>Select status</option>
-                        <option value=Single> Single </option>
-                        <option value=Married> Married </option>
-                        <option value=Widowed> Widowed </option>
-                        <option value=Other> Other </option>
-                    </select>
-                </div>
-            </div>
-
-            <!--ROW 2-->
-            <div class="grid gap-2.5 mb-4 sm:grid-cols-4"> <!--TO BACKEND: don't forget to fill in for=""-->
-                <div>
-                    <label for="birthdate" class="block mb-2 text-left text-sm font-medium text-gray-500">Birthday *</label>
-                    <input type="date" name="birthdate" id="birthdate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Birthday" required="" max="">
-                </div>
-                <div>
-                    <label for="mobile_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Mobile No.</label>
-                    <input type="text" name="mobile_num" id="mobile_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="639" pattern="^(63)\d{10}$|^\d{10}$|^0\d{10}$" title="Input valid phone number.">
-                </div>
-                <div>
-                    <label for="landline_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Landline No.</label>
-                    <input type="text" name="landline_num" id="landline_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="082" pattern="^0\d{9}$" title="Input valid landline number.">
-                </div>
-                <div>
-                    <label for="email" class="block mb-2 text-left text-sm font-medium text-gray-500">Email</label>
-                    <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="@">
-                </div>
-            </div>
-
-            <!--ROW 3-->
-            <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2 mt-6">Address</div>
-            <div class="grid gap-2.5 mb-4 sm:grid-cols-4"> <!--TO BACKEND: don't forget to fill in for=""-->
-                <div>
-                    <label for="house_num" class="block mb-2 text-left text-sm font-medium text-gray-500">House No. *</label>
-                    <input type="text" name="house_num" id="house_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type number" required="" pattern="^[A-Za-z0-9]+$" title="Use letters and numbers only." >
-                </div>
-                <div>
-                    <label for="street" class="block mb-2 text-left text-sm font-medium text-gray-500">Street Name *</label>
-                    <input type="text" name="street" id="street" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type street name" required="" pattern="^[A-Za-z0-9 .,]+$" title="Use letters, numbers, spaces, and periods only.">
-    
-                </div>
-                <div>
-                    <label for="subdivision" class="block mb-2 text-left text-sm font-medium text-gray-500">Village/Subdivision</label>
-                    <input type="text" name="subdivision" id="subdivision" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type village or subdivision" pattern="^[A-Za-z0-9 .,]+$" title="Use letters, numbers, spaces, and periods only.">
-                </div>
-                <div>
-                    <label for="baranggay" class="block mb-2 text-left text-sm font-medium text-gray-500">Barangay</label>
-                    <input type="text" name="baranggay" id="baranggay" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type barangay" pattern="^[A-Za-z0-9 .,]+$" title="Use letters, numbers, spaces, and periods only.">
-                </div>
-            </div>
-
-            <!--ROW 4-->
-            <div class="grid gap-2.5 mb-4 sm:grid-cols-3"> <!--TO BACKEND: don't forget to fill in for=""-->
-                <div>
-                    <label for="province" class="block mb-2 text-left text-sm font-medium text-gray-500">Province *</label>
-                    <select id="province" name="province" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
-                        <option value="" selected disabled>Select province</option>
-                        <option value="Metro Manila"> Metro Manila </option>
-                        <option value="Abra"> Abra </option>
-                        <option value="Agusan del Norte"> Agusan del Norte </option>
-                        <option value="Agusan del Sur"> Agusan del Sur </option>
-                        <option value="Aklan"> Aklan </option>
-                        <option value="Albay"> Albay </option>
-                        <option value="Antique"> Antique </option>
-                        <option value="Apayao"> Apayao </option>
-                        <option value="Aurora"> Aurora </option>
-                        <option value="Basilan"> Basilan </option>
-                        <option value="Bataan"> Bataan </option>
-                        <option value="Batanes"> Batanes </option>
-                        <option value="Batangas"> Batangas </option>
-                        <option value="Benguet"> Benguet </option>
-                        <option value="Biliran"> Biliran </option>
-                        <option value="Bohol"> Bohol </option>
-                        <option value="Bukidnon"> Bukidnon </option>
-                        <option value="Bulacan"> Bulacan </option>
-                        <option value="Cagayan"> Cagayan </option>
-                        <option value="Camarines Norte"> Camarines Norte </option>
-                        <option value="Camarines Sur"> Camarines Sur </option>
-                        <option value="Camiguin"> Camiguin </option>
-                        <option value="Capiz"> Capiz </option>
-                        <option value="Catanduanes"> Catanduanes </option>
-                        <option value="Cavite"> Cavite </option>
-                        <option value="Cebu"> Cebu </option>
-                        <option value="Cotabato"> Cotabato </option>
-                        <option value="Davao de Oro"> Davao de Oro </option>
-                        <option value="Davao del Norte"> Davao del Norte </option>
-                        <option value="Davao del Sur"> Davao del Sur </option>
-                        <option value="Davao Occidental"> Davao Occidental </option>
-                        <option value="Davao Oriental"> Davao Oriental </option>
-                        <option value="Dinagat Islands"> Davao Oriental </option>
-                        <option value="Eastern Samar"> Eastern Samar </option>
-                        <option value="Guimaras"> Guimaras </option>
-                        <option value="Ifugao"> Ifugao </option>
-                        <option value="Ilocos Norte"> Ilocos Norte </option>
-                        <option value="Ilocos Sur"> Ilocos Sur </option>
-                        <option value="Iloilo"> Iloilo </option>
-                        <option value="Isabela"> Isabela </option>
-                        <option value="Kalinga"> Kalinga </option>
-                        <option value="La Union"> La Union </option>
-                        <option value="Laguna"> Laguna </option>
-                        <option value="Lanao del Norte"> Lanao del Norte </option>
-                        <option value="Lanao del Sur"> Lanao del Sur </option>
-                        <option value="Leyte"> Leyte </option>
-                        <option value="Maguindanao del Norte"> Maguindanao del Norte </option>
-                        <option value="Maguindanao del Sur"> Maguindanao del Sur </option>
-                        <option value="Marinduque"> Marinduque </option>
-                        <option value="Masbate"> Masbate </option>
-                        <option value="Misamis Occidental"> Misamis Occidental </option>
-                        <option value="Misamis Oriental"> Misamis Oriental </option>
-                        <option value="Mountain Province"> Mountain Province </option>
-                        <option value="Negros Occidental"> Negros Occidental </option>
-                        <option value="Negros Oriental"> Negros Oriental </option>
-                        <option value="Northern Samar"> Northern Samar </option>
-                        <option value="Nueva Ecija"> Nueva Ecija </option>
-                        <option value="Nueva Vizcaya"> Nueva Vizcaya </option>
-                        <option value="Occidental Mindoro"> Occidental Mindoro </option>
-                        <option value="Oriental Mindoro"> Oriental Mindoro </option>
-                        <option value="Palawan"> Palawan </option>
-                        <option value="Pampanga"> Pampanga </option>
-                        <option value="Pangasinan"> Pangasinan </option>
-                        <option value="Quezon"> Quezon </option>
-                        <option value="Quirino"> Quirino </option>
-                        <option value="Rizal"> Rizal </option>
-                        <option value="Romblon"> Romblon </option>
-                        <option value="Samar"> Samar </option>
-                        <option value="Sarangani"> Sarangani </option>
-                        <option value="Siquijor"> Siquijor </option>
-                        <option value="Sorsogon"> Sorsogon </option>
-                        <option value="South Cotabato"> South Cotabato </option>
-                        <option value="Southern Leyte"> Southern Leyte </option>
-                        <option value="Sultan Kudarat"> Sultan Kudarat </option>
-                        <option value="Sulu"> Sulu </option>
-                        <option value="Surigao del Norte"> Surigao del Norte </option>
-                        <option value="Surigao del Sur"> Surigao del Sur </option>
-                        <option value="Tarlac"> Tarlac </option>
-                        <option value="Tawi-Tawi"> Tawi-Tawi </option>
-                        <option value="Zambales"> Zambales </option>
-                        <option value="Zamboanga del Norte"> Zamboanga del Norte </option>
-                        <option value="Zamboanga del Sur"> Zamboanga del Sur </option> <option value="Zamboanga Sibugay"> Zamboanga Sibugay </option>            
-                    </select>
-                </div>
-                <div>
-                    <label for="city" class="block mb-2 text-left text-sm font-medium text-gray-500">City *</label>
-                    <input type="text" name="city" id="city" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type city" required="" pattern="^[A-Za-z ]+$" title="Use letters and spaces only.">
-                </div>
-                <div>
-                    <label for="zip_code" class="block mb-2 text-left text-sm font-medium text-gray-500">Zip Code *</label>
-                    <input type="text" name="zip_code" id="zip_code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type zip code" pattern="[0-9]{4}" title="Enter correct zip code.">
-                </div>
-            </div>
-
-            <!--ROW 5: ID-->
-            <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2 mt-6">ID Information</div>
-            <div class="grid gap-2.5 mb-4 sm:grid-cols-2"> <!--TO BACKEND: don't forget to fill in for=""-->
-                <div>
-                    <label for="pwd_id_num" class="block mb-2 text-left text-sm font-medium text-gray-500">PWD</label>
-                    <input type="text" name="pwd_id_num" id="pwd_id_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type PWD number" pattern="^[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{3}-[0-9]{7}$" title="Enter correct PWD Number Format: [NN]-[NN]-[NN]-[NNN]-[NNNNNNN]">
-                </div>
-                <div>
-                    <label for="senior_id_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Senior Citizen</label>
-                    <input type="text" name="senior_id_num" id="senior_id_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type Senior Citizen ID number" pattern="^[a-zA-Z0-9\s]+$" title="Use letters and numbers only.">
-                </div>
-            </div>
-
-            <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
-                <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-                Add Patient
-            </button>
-        </form>
-        <button type="button" onclick="history.back()" id="BackPatient" name="BackPatient" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
-            Back
-        </button>
-    </div>
-
-
-<!-- EDIT MODE -->
-{% elif mode == 'edit' %}
-    
     <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
         <!-- Modal header -->
         <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
@@ -261,7 +32,7 @@
             </button>
         </div>
         <!-- Modal body -->
-        <form id="form" method="POST" action="{% url 'edit_patient' pk=patient.pk %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
+        <form id="editForm" method="POST" action="{% url 'edit_patient' pk=patient.pk %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
 
             <!--ROW 1-->
             <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2">Patient Information</div>
@@ -468,68 +239,73 @@
             Back
         </button>
     </div>
-{% endif %}
+
+
 
 
 <script>
     const today = new Date().toISOString().split('T')[0];
     document.getElementById("birthdate").setAttribute("max", today); 
-
-    const addForm = document.getElementById('addForm');
+    
+    const editForm = document.getElementById('editForm');
     const modal = document.getElementById('duplicateModal');
 
-    addForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        console.log('add')
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        const formData = new FormData(addForm);
 
-        const phone = document.getElementById("mobile_num").value;
-        const landline = document.getElementById("landline_num").value;
-        const email = document.getElementById("email").value;
+    if (editForm){
+        console.log('edit')
 
-        if (!phone && !landline && !email){
-            modal.classList.remove('hidden');
-            document.getElementById("error_type").innerHTML = 'Add atleast one:';
-            document.getElementById("error_message").innerHTML = 'Mobile Number, Landline Number, Email'
-        } else{
-            try {
-                const response = await fetch("{% url 'add_patient' %}", {
-                    method: 'POST',
-                    headers: {
-                    'X-CSRFToken': csrfToken,
-                    },
-                    body: formData,
-                });
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const formData = new FormData(editForm);
 
-                const result = await response.json();
-                console.log(result); 
+            const phone = document.getElementById("mobile_num").value;
+            const landline = document.getElementById("landline_num").value;
+            const email = document.getElementById("email").value;
 
-                if (result.status === 'duplicate') {
-                    modal.classList.remove('hidden');
-                    const duplicates = result.p_duplicate; 
-                    let duplicatesList = Array.isArray(duplicates) ? duplicates : duplicates.split(',');
-                    document.getElementById("error_type").innerHTML = 'Potential Duplicates with the following:';
-                    document.getElementById("error_message").innerHTML = duplicatesList.join('<br>');
-                    console.log(result.p_duplicate)
-                    
-                } else if (result.status === 'ghost') {
-                    modal.classList.remove('hidden');
-                    document.getElementById("error_type").innerHTML = 'Potential Ghost Patient detected.';
-                    document.getElementById("error_message").innerHTML = 'Age of patient can not be more than 150.';
+            if (!phone && !landline && !email){
+                modal.classList.remove('hidden');
+                document.getElementById("error_type").innerHTML = 'Add atleast one:';
+                document.getElementById("error_message").innerHTML = 'Mobile Number, Landline Number, Email'
+            } else{
+                try {
+                    const response = await fetch("{% url 'edit_patient' pk=patient.pk %}", {
+                        method: 'POST',
+                        headers: {
+                        'X-CSRFToken': csrfToken,
+                        },
+                        body: formData,
+                    });
 
-                } else if (result.status === 'success') {
-                    window.location.href = result.redirect_url;
+                    const result = await response.json();
+                    console.log(result); 
 
-                } else {
-                    alert("Unexpected response.");
+                    if (result.status === 'duplicate') {
+                        modal.classList.remove('hidden');
+                        const duplicates = result.p_duplicate; 
+                        let duplicatesList = Array.isArray(duplicates) ? duplicates : duplicates.split(',');
+                        document.getElementById("error_type").innerHTML = 'Potential Duplicates with the following:';
+                        document.getElementById("error_message").innerHTML = duplicatesList.join('<br>');
+                        console.log(result.p_duplicate)
+                        
+                    } else if (result.status === 'ghost') {
+                        modal.classList.remove('hidden');
+                        document.getElementById("error_type").innerHTML = 'Potential Ghost Patient detected.';
+                        document.getElementById("error_message").innerHTML = 'Age of patient can not be more than 150.';
+
+                    } else if (result.status === 'success') {
+                        window.location.href = result.redirect_url;
+
+                    } else {
+                        alert("Unexpected response.");
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
                 }
-
-            } catch (error) {
-                console.error('Error:', error);
             }
-        }
-    });
+        });
+    };
 
     function closeModal() {
         modal.classList.add('hidden');
