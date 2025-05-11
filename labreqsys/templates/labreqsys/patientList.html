@@ -16,6 +16,7 @@
                 <div class="w-full max-w-sm min-w-[200px]">
                     <div class="relative">
                         <input
+                            id="searchInput"
                             class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-blue-900 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-primary-700 hover:border-primary-700 shadow-sm focus:shadow"
                             placeholder="Search Patient ID, Last or First name" 
                         />
@@ -91,7 +92,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="patientTableBody">
                 {% for p in patients %}
                     <tr class="border-b border-gray-200 hover:bg-gray-200">
                         <th scope="row" class="px-6 py-3 font-medium text-blue-500 text-center">
@@ -115,8 +116,38 @@
 
 
 <script>
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById("birthdate").setAttribute("max", today);
+    const birthdateInput = document.getElementById("birthdate");
+    if (birthdateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        birthdateInput.setAttribute("max", today);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        if (!searchInput) return;
+
+        searchInput.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#patientTableBody tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td, th');
+                const patientId = cells[0]?.textContent.toLowerCase() || '';
+                const lastName = cells[1]?.textContent.toLowerCase() || '';
+                const firstName = cells[2]?.textContent.toLowerCase() || '';
+
+                if (
+                    patientId.includes(query) ||
+                    lastName.includes(query) ||
+                    firstName.includes(query)
+                ) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
 </script>
 
 {% endblock content %}
