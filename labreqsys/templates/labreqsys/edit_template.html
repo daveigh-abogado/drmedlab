@@ -16,7 +16,7 @@
         <h1 class="text-mm font-semibold text-blue-900">Edit Template</h1>
         <div class="flex gap-2">
             <a href="{% url 'edit_testcomponent' component_id=component.component_id %}" class="text-blue-900 inline-flex items-center bg-blue-900-10 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline border">Cancel</a>
-            <button type="button" id="createTemplatebutton" data-modal-target="templateModal" data-modal-toggle="templateModal" class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Edit Template</button>
+            <button type="button" id="createTemplatebutton" class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Edit Template</button>
         </div>
     </div>
 
@@ -43,7 +43,7 @@
         <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
             <div id="modal-preview-content"></div>
             <div class="grid gap-2.5 mb-4 sm:grid-cols-2 mt-4">
-                <button data-modal-hide="templateModal" type="button" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">Back to Editing</button>
+                <button id="backToEditingBtn" type="button" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">Back to Editing</button>
                 <button type="submit" form="form" id="confirmSubmit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Save Template</button>
             </div>
         </div>
@@ -67,11 +67,11 @@
             <div class="grid gap-2.5 mb-2 sm:grid-cols-4">
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Label *</label>
-                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][label]" value="${label}" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][label]" value="${label}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
                 </div>
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Type *</label>
-                    <select name="sections[${sectionIndex}][fields][${fieldIndex}][type]" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" required>
+                    <select name="sections[${sectionIndex}][fields][${fieldIndex}][type]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
                         <option value="">Select field type</option>
                         <option value="Label" ${type === 'Label' ? 'selected' : ''}>Label</option>
                         <option value="Text" ${type === 'Text' ? 'selected' : ''}>Text</option>
@@ -81,7 +81,7 @@
                 </div>
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Fixed Value</label>
-                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][fixed_value]" value="${fixed_value}" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5" ${isFixedDisabled}>
+                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][fixed_value]" value="${fixed_value}" class="bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg block w-full p-2.5" ${isFixedDisabled}>
                 </div>
                 <div class="flex items-center pt-3">
                     <svg xmlns="http://www.w3.org/2000/svg" height="34" width="34" viewBox="0 0 20 20" fill="currentColor" class="trash-icon cursor-pointer text-red-500 hover:text-red-700" title="Delete Field" onclick="this.closest('.field-group').remove()">
@@ -101,7 +101,7 @@
                 <button type="button" class="delete-section-btn px-4 text-right bg-red-500 rounded text-white hover:bg-red-700">Delete Section</button>
             </div>
             <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Section Name *</label>
-            <input type="text" name="sections[${sectionIndex}][name]" value="${name}" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 mb-2" required>
+            <input type="text" name="sections[${sectionIndex}][name]" value="${name}" class="bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg block w-full p-2.5 mb-2" required>
             <div class="fields-container">`;
 
         fields.forEach((field, fieldIndex) => {
@@ -115,22 +115,6 @@
         </div>`;
         return sectionHTML;
     }
-
-    function populateExistingTemplate() {
-        const templateData = JSON.parse('{{ initial_template_json|escapejs }}');
-        if (!templateData || !templateData.sections) return;
-
-        templateData.sections.forEach((section, index) => {
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = createSection(index, section);
-            sectionsContainer.appendChild(wrapper);
-            sectionCount++;
-        });
-    }
-    
-
-    // Initial load
-    populateExistingTemplate();
 
     addSectionBtn.addEventListener('click', () => {
         const sectionHTML = document.createElement('div');
@@ -217,6 +201,56 @@
     createTemplateButton.addEventListener('click', (event) => {
         event.preventDefault(); // Prevent the default form submission
 
+        let isValid = true;
+        const errors = [];
+
+        const templateNameInput = document.getElementById('template_name');
+        if (!templateNameInput.value.trim()) {
+            errors.push('Please enter a Form Name.');
+            isValid = false;
+        }
+
+        const containers = sectionsContainer.querySelectorAll('.section');
+        if (containers.length === 0) {
+            errors.push('Please add at least one section.');
+            isValid = false;
+        }
+
+        for (const section of containers) {
+            const sectionName = section.querySelector('input[name$="[name]"]');
+            if (!sectionName || !sectionName.value.trim()) {
+                errors.push('Please fill in all section names.');
+                isValid = false;
+            }
+
+            const fields = section.querySelectorAll('.field-group');
+            if (fields.length === 0) {
+                errors.push('Each section must have at least one field.');
+                isValid = false;
+            }
+
+            for (const field of fields) {
+                const labelInput = field.querySelector('input[name*="[label]"]');
+                const typeSelect = field.querySelector('select[name*="[type]"]');
+                const fixedValueInput = field.querySelector('input[name*="[fixed_value]"]');
+
+                if (!labelInput.value.trim() || !typeSelect.value) {
+                    errors.push('Please fill in all field labels and types.');
+                    isValid = false;
+                }
+
+                if (typeSelect.value === 'Label' && !fixedValueInput.value.trim()) {
+                    errors.push('Fixed value is required for Label type fields.');
+                    isValid = false;
+                }
+            }
+        }
+
+        if (!isValid) {
+            alert(errors.join('\n'));  // Display all errors in a simple alert
+            return; // Do not show modal
+        }
+
         // get all of the form data
         const formData = new FormData(form);
         const templateName = formData.get('template_name');
@@ -268,6 +302,14 @@
 
         // Update the modal content
         modalPreviewContent.innerHTML = previewHTML;
+        const modal = document.getElementById('templateModal');
+        if (modal) {
+            modal.classList.remove('hidden');
+        }
+    });
+
+    document.getElementById('backToEditingBtn').addEventListener('click', function () {
+        document.getElementById('templateModal').classList.add('hidden');
     });
 
     // Handle the final form submission when "Confirm Create" is clicked
@@ -276,6 +318,22 @@
         form.action = "{% url 'edit_template' component_id=component.component_id %}";
         form.submit();
     });
+
+    function populateExistingTemplate() {
+        const templateData = JSON.parse('{{ initial_template_json|escapejs }}');
+        if (!templateData || !templateData.sections) return;
+
+        templateData.sections.forEach((section, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = createSection(index, section);
+            sectionsContainer.appendChild(wrapper);
+            sectionCount++;
+        });
+    }
+    
+
+    // Initial load
+    populateExistingTemplate();
 
     
 </script>

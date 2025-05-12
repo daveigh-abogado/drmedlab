@@ -15,6 +15,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from functools import wraps
+from django.template.loader import render_to_string
+from django.db.models import Count
+
 
 import pdfkit
 import platform
@@ -46,6 +49,23 @@ def discount(patient, price):
         discount = price * Decimal(0.2)
         payment = price - round(discount)
         return payment
+
+def delete_unused_templates():
+    #delete the templates that were not used
+    unused_forms = []
+    past_records = list(RequestLineItem.objects.values_list('template_used', flat=True))
+    temp = TemplateForm.objects.filter(testcomponent__isnull=True).values_list('template_id', flat=True)
+    for t in temp:
+        if t not in past_records:
+            unused_forms.append(TemplateForm.objects.get(template_id=t))
+
+    unused_sections = TemplateSection.objects.filter(template__in=unused_forms)
+    unused_fields = TemplateField.objects.filter(section__in=unused_sections)
+
+    unused_fields.delete()
+    unused_sections.delete()
+    for obj in unused_forms:
+        obj.delete()
 
 # Decorators
 def owner_required(view_func):
@@ -199,7 +219,7 @@ def testComponents(request):
     """
     request.session.pop('testcomponent_form_data', None)
     testComponents = TestComponent.objects.all()
-    
+    delete_unused_templates()
     return render(request, 'labreqsys/testComponents.html', {'testComponents': testComponents})
 
 @receptionist_required
@@ -281,6 +301,7 @@ def store_testcomponent_session(request):
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'failed'}, status=400)
 
+@owner_required
 def add_testcomponent(request):
     """
     Display a form to add a new test component.
@@ -353,6 +374,7 @@ def view_component(request, component_id):
                    'sections': section_data
                    })
 
+@owner_required
 def create_testcomponent(request):
     """
     Add Test Component to the Database
@@ -388,9 +410,11 @@ def create_testcomponent(request):
                 component_price = component_price,
                 category = category
             )
+            delete_unused_templates()
             request.session.pop('testcomponent_form_data', None)
     return redirect('testComponents')
 
+@owner_required
 def edit_testcomponent(request, component_id):
     test_component = TestComponent.objects.get(component_id=component_id)
 
@@ -399,6 +423,7 @@ def edit_testcomponent(request, component_id):
                 'template': test_component.template
                 })
     
+@owner_required
 def edit_testcomponent_details(request, component_id):
     if request.method == "POST":
         category = request.POST.get('category')
@@ -407,6 +432,7 @@ def edit_testcomponent_details(request, component_id):
 
     return redirect('view_component', component_id)
     
+@owner_required
 def edit_template(request, component_id):
     if request.method == "POST":
         template_name = request.POST.get("template_name")
@@ -470,6 +496,7 @@ def edit_template(request, component_id):
         }
         return render(request, 'labreqsys/edit_template.html', context)
 
+@owner_required
 def add_template(request):
     """
     Display form builder to create a template.
@@ -477,6 +504,7 @@ def add_template(request):
     editing = 'no'
     return render(request, 'labreqsys/add_template.html', {'editing': editing})
 
+@owner_required
 def edit_template_details(request):
     """
     Display form builder for template of a component being made
@@ -1394,16 +1422,57 @@ def savePDF(request, pk):
     '''
     Save PDF using pdfkit
     '''
-    
     line_item = RequestLineItem.objects.get(line_item_id=pk)
-    
+
     filename = f"{line_item.request.patient.last_name}, {line_item.request.patient.first_name[0]}_{line_item.component.test_name}_{line_item.request.date_requested}.pdf"
-    # Create PDF from URL (the URL will be a page where you render patient details)
-    pdf = pdfkit.from_url(request.build_absolute_uri(reverse('pdf', args=[pk])), False)
-    
-    # Return the PDF response
+
+    lab_request = line_item.request
+    patient = lab_request.patient
+    test_component = line_item.component
+    template_form = TemplateForm.objects.filter(template_id=line_item.component.template.template_id).order_by('-template_id')[0]
+
+    age = None
+    if patient.birthdate:
+        today = date.today()
+        age = today.year - patient.birthdate.year - ((today.month, today.day) < (patient.birthdate.month, patient.birthdate.day))
+
+    form = {}
+    fields = []
+    reviewed_by = []
+    for section in TemplateSection.objects.filter(template=template_form.template_id):
+        fields.append(TemplateField.objects.filter(section=section.section_id))
+        for column in fields:
+            result_value = {}
+            for field in column:
+                result_value[field] = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)
+        form[section] = result_value
+
+    results = ResultValue.objects.filter(line_item_id=line_item.line_item_id)
+    reviews = []
+    for rs in results:
+        review = ResultReview.objects.filter(result_value=rs)
+        for lt in review:
+            if not any(r.lab_tech.lab_tech_id == lt.lab_tech.lab_tech_id for r in reviews):
+                reviews.append(lt)
+
+    html = render_to_string('labreqsys/pdf.html', {
+        'lab_request': lab_request,
+        'patient': patient,
+        'test_component': test_component,
+        'age': age,
+        'address': "testing",
+        'form': form,
+        'reviewed_by': reviewed_by,
+        'lab_tech': reviews
+    })
+
+    options = {
+        'enable-local-file-access': ''
+    }
+    pdf = pdfkit.from_string(html, False, options=options)
+
     response = HttpResponse(pdf, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'  # Correct filename usage
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
     return response
 
@@ -1421,9 +1490,16 @@ def packages (request):
     '''
     Display packages
     '''
-    packages = TestPackage.objects.all()
+    package = TestPackage.objects.all()
     pc = TestPackageComponent.objects.all()
-    return render(request, 'labreqsys/packages.html', {'packages': packages, 'pc': pc})
+    
+    packages = {}
+    for p in package:
+        components = TestPackageComponent.objects.filter(package=p)
+        packages[p] = components
+    
+    print (packages)
+    return render(request, 'labreqsys/packages.html', {'packages': packages})
 
 @owner_required
 def add_package (request):
@@ -1558,21 +1634,30 @@ def register_user(request):
 
 @owner_required
 def add_testcomponent(request):
-    template_status = 'absent'
+    """
+    Display a form to add a new test component.
+    """
+    show_warning = request.GET.get('show_warning', 'no')
+    show_code_warning = request.GET.get('show_code_warning', 'no')
+
     if request.method == "POST":
         template_name = request.POST.get("template_name")
+        
         template = TemplateForm.objects.create(template_name=template_name)
+
         section_index = 0
         while f"sections[{section_index}][name]" in request.POST:
             section_name = request.POST.get(f"sections[{section_index}][name]")
             section = TemplateSection.objects.create(
                 template=template, section_name=section_name
             )
+
             field_index = 0
             while f"sections[{section_index}][fields][{field_index}][label]" in request.POST:
                 label = request.POST.get(f"sections[{section_index}][fields][{field_index}][label]")
                 field_type = request.POST.get(f"sections[{section_index}][fields][{field_index}][type]")
                 fixed_value = request.POST.get(f"sections[{section_index}][fields][{field_index}][fixed_value]", "")
+
                 TemplateField.objects.create(
                     section=section,
                     label_name=label,
@@ -1581,20 +1666,51 @@ def add_testcomponent(request):
                 )
                 field_index += 1
             section_index += 1
+
+    form_data = request.session.get('testcomponent_form_data', {
+        'test_code': '',
+        'test_name': '',
+        'category': '',
+        'price': ''
+    })
+
+    last_template = TemplateForm.objects.order_by('-template_id').first()
+    if TestComponent.objects.filter(template_id=last_template.template_id):
+        template_status = 'absent'
+    else:
         template_status = 'present'
     return render(request, 'labreqsys/add_testcomponent.html', {
-        'template_status': template_status})
+        'template_status': template_status,
+        'show_warning': show_warning,
+        'show_code_warning': show_code_warning,
+        'form_data': form_data})
 
 @owner_required
 def create_testcomponent(request):
+    """
+    Add Test Component to the Database
+    """
+    
     if request.method == "POST":
         last_template = TemplateForm.objects.order_by('-template_id').first()
-        print('check this girly')
-        print(TestComponent.objects.filter(template_id=last_template.template_id))
+        test_code = request.POST.get('test_code')
         if TestComponent.objects.filter(template_id=last_template.template_id):
-            return redirect('add_testcomponent')
+           request.session['testcomponent_form_data'] = {
+               'test_code': request.POST.get('test_code', ''),
+               'test_name': request.POST.get('test_name', ''),
+               'category': request.POST.get('category', ''),
+               'price': request.POST.get('price', '')
+               }
+           return redirect(f"{reverse('add_testcomponent')}?show_warning=yes")
+        elif TestComponent.objects.filter(test_code=test_code):
+            request.session['testcomponent_form_data'] = {
+               'test_code': request.POST.get('test_code', ''),
+               'test_name': request.POST.get('test_name', ''),
+               'category': request.POST.get('category', ''),
+               'price': request.POST.get('price', '')
+               }
+            return redirect(f"{reverse('add_testcomponent')}?show_code_warning=yes")
         else:
-            test_code = request.POST.get('test_code')
             test_name = request.POST.get('test_name')
             category = request.POST.get('category')
             component_price = request.POST.get('price')
@@ -1605,6 +1721,7 @@ def create_testcomponent(request):
                 component_price = component_price,
                 category = category
             )
+            request.session.pop('testcomponent_form_data', None)
     return redirect('testComponents')
 
 @owner_required

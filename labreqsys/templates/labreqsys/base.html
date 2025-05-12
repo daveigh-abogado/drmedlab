@@ -95,7 +95,7 @@
                     
                     <!-- RECORDS - Visible to Receptionists and Lab Technicians -->
                     {% if user.is_authenticated %}
-                      {% if user|is_receptionist or user|is_lab_tech %}
+                    {% if user|is_receptionist or user|is_lab_tech %}
                         <li>
                             <a class="flex text-xs items-center p-2 text-white rounded-lg group no-underline">
                                 <span class="ms-3 no-underline">RECORDS</span>
