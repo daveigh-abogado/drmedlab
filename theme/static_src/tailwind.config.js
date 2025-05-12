@@ -54,6 +54,21 @@ module.exports = {
                     highlight: 'rgba(0, 186, 255, 1)', // For highlight
                     borderPrimary: 'rgba(39, 66, 145, 0.6)', // For borders
                 },
+                complete: {
+                    primary: 'rgba(31, 116, 32, 1)',      // Text
+                    secondary: 'rgba(31, 116, 32, 0.2)',  // Background
+                    borderPrimary: 'rgba(31, 116, 32, 0.4)', // Border
+                },
+                progress: {
+                    primary: 'rgba(234, 193, 12, 1)',      // Text
+                    secondary: 'rgba(234, 193, 12, 0.2)',  // Background
+                    borderPrimary: 'rgba(234, 193, 12, 0.4)', // Border
+                },
+                unstarted: {
+                    primary: 'rgba(188, 196, 221, 1)',      // Text
+                    secondary: '#E9ECF4',  // Background
+                    borderPrimary: '#BCC4DD', // Border
+                },
             },
         },
     },

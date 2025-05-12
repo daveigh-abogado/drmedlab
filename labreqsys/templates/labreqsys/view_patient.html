@@ -2,17 +2,19 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-<div class="breadbutton my-4">
-    <ul class="breadcrumb">
-        <li><a href="{% url 'patientList' %}">Patient List</a></li>
-        <li><a href="#" class="current">Patient Record</a></li>
+<div class="breadbutton mb-4">
+    <ul class="breadcrumb text-xs pt-2">
+            <a href="{% url 'patientList' %}" class="text-myblue-primary">Patient List/</a>
+            <a href="#" class="text-myblue-highlight"> View Patient</a>
+        </li>
     </ul>
+
     <div class="inline-flex justify-start items-center gap-2">
-        <button class="px-4 py-1 bg-blue-900-10 bg-opacity-10 text-blue-900 font-bold border-blue-900 border rounded-lg" type="button">
-            <a href ="{% url 'edit_patient' pk=patient.pk %}" class="no-underline"> Edit Patient </a>
+        <button class="px-4 py-1 bg-myblue-secondary text-myblue-primary font-semibold border-myblue-borderPrimary border rounded-lg" type="button">
+            <a href ="{% url 'edit_patient' pk=patient.pk %}" class="no-underline text-sm"> Edit Patient </a>
         </button>
-        <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="button">
-            <a href="{% url 'add_labreq' pk=patient.pk %}" class="text-white no-underline">Add Request</a>
+        <button class="text-white px-4 py-1 bg-myblue-primary font-semibold rounded-lg" type="button">
+            <a href="{% url 'add_labreq' pk=patient.pk %}" class="text-white no-underline text-sm">Add Request</a>
         </button>
         
     </div>  
@@ -20,11 +22,11 @@
 
 
 
-<div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
+<div class="w-full h-hug p-8 pt-6 bg-white rounded-lg shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
     
     <!--PATIENT ID-->
-    <div class="w-[132px] inline-flex justify-start items-center gap-1.5">
-        <div class="w-[206px] py-2.5 px-2.5 flex justify-start items-center gap-1.5">
+    <div class="inline-flex justify-start items-center gap-1.5">
+        <div class="w-36 py-2.5 px-2.5 flex justify-start items-center gap-1.5">
             <div class="text-blue-900 text-xs"> Patient ID </div>
         </div>
         <div class="px-6 py-1 bg-gray-100 rounded-3xl flex justify-center items-center gap-1.5">
@@ -35,8 +37,8 @@
     <!--SECTION 1: PATIENT INFORMATION-->
     <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section-->
         <!--Section title: Patient Information-->
-        <div class="self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
-            <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Patient Information</div>
+        <div class="self-stretch py-2 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+            <div class="flex-1 justify-center text-blue-900 text-lg font-semibold">Patient Information</div>
         </div>
 
         <!--Section Content-->
@@ -45,46 +47,46 @@
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Patient Name</div>
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900">Patient Name</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{full_name}}</div>
-                    </div>
-                </div>
-
-                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Sex</div>
-                    </div>
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.sex}}</div>
+                        <div class="w-36 justify-center text-sm text-black font-normal">{{full_name}}</div>
                     </div>
                 </div>
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Civil Status</div>
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Sex</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.civil_status}}</div>
-                    </div>
-                </div>
-
-                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Age</div>
-                    </div>
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{age}}</div>
+                        <div class="w-36 justify-center text-sm text-black font-normal">{{patient.sex}}</div>
                     </div>
                 </div>
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Birthday</div>
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Civil Status</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.birthdate}}</div>
+                        <div class="w-36 justify-center text-sm text-black font-normal">{{patient.civil_status}}</div>
+                    </div>
+                </div>
+
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Age</div>
+                    </div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-36 justify-center text-sm text-black font-normal">{{age}}</div>
+                    </div>
+                </div>
+
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Birthday</div>
+                    </div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-36 justify-center text-sm text-black font-normal">{{patient.birthdate}}</div>
                     </div>
                 </div>
 
@@ -94,38 +96,38 @@
             <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--indiv column: Column 2-->
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="w-7 flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Mobile No.</div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Mobile No.</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-14 justify-center text-xs text-black font-normal">{{patient.mobile_num}}</div>
-                    </div>
-                </div>
-
-                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Landline No.</div>
-                    </div>
-                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-14 justify-center text-xs text-black font-normal">{{patient.landline_num}}</div>
+                        <div class="w-72 justify-center text-sm text-black font-normal">{{patient.mobile_num}}</div>
                     </div>
                 </div>
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Email</div>
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Landline No.</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-14 justify-center text-xs text-black font-normal">{{patient.email}}</div>
+                        <div class="w-72 justify-center text-sm text-black font-normal">{{patient.landline_num}}</div>
                     </div>
                 </div>
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-28 justify-center text-xs font-semibold text-blue-900 ">Address</div>
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Email</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-14 justify-center text-xs text-black font-normal text-start">{{address}}</div>
+                        <div class="w-72 justify-center text-sm text-black font-normal">{{patient.email}}</div>
+                    </div>
+                </div>
+
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Address</div>
+                    </div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-72 justify-center text-sm text-black font-normal text-start">{{address}}</div>
                     </div>
                 </div>
 
@@ -135,10 +137,10 @@
     </div>
 
     <!--SECTION 2: ID INFORMATION-->
-    <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section-->
+    <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5 mt-2"> <!--section-->
         <!--Section title: ID Information-->
-        <div class="self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
-            <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">ID</div>
+        <div class="self-stretch py-2 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+            <div class="flex-1 justify-center text-blue-900 text-lg font-semibold">ID</div>
         </div>
 
         <!--Section Content-->
@@ -146,11 +148,11 @@
             <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--indiv column-->
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="w-7 flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="justify-center text-xs font-semibold text-blue-900 ">PWD</div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">PWD</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.pwd_id_num}}</div>
+                        <div class="w-36 justify-center text-sm text-black font-normal">{{patient.pwd_id_num}}</div>
                     </div>
                 </div>
             </div>
@@ -159,11 +161,11 @@
             <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--indiv column: Column 2-->
 
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
-                    <div class="w-7 flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="justify-center text-xs font-semibold text-blue-900 ">Senior citizen</div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Senior citizen</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-7 justify-center text-xs text-black font-normal">{{patient.senior_id_num}}</div>
+                        <div class="w-72 justify-center text-sm text-black font-normal">{{patient.senior_id_num}}</div>
                     </div>
                 </div>
             </div>
@@ -173,10 +175,10 @@
 
     
     <!--SECTION 3: LABORATORY REQUEST RECORD-->
-    <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section-->
+    <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5 mt-2"> <!--section-->
         <!--Section title: Patient Information-->
-        <div class="self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
-            <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Laboratory Request Record</div>
+        <div class="self-stretch py-2 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+            <div class="flex-1 justify-center text-blue-900 text-lg font-semibold">Laboratory Request Record</div>
         </div>
 
         <!--Section Content-->
@@ -185,7 +187,7 @@
             <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
                 <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
                     <th scope="col" class="px-6 py-3">Date Requested</th>
-                    <th scope="col" class="px-6 py-3">Request ID</th>
+                    <th scope="col" class="px-6 py-3 text-center">Request ID</th>
                     <th scope="col" class="px-6 py-3">Overall Status</th>
                     <th scope="col" class="px-6 py-3">Pick-Up Status</th>
                     <th scope="col" class="px-6 py-3">Email Status</th>
@@ -194,30 +196,25 @@
             
             <tbody>
                 {% for r in requests %}
-                    <tr class="border-b border-gray-200 hover:bg-gray-200">
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
                         <td class="px-6 py-3">
-                            <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
-                                {{ r.date_requested }}
-                            </a>
+                            {{ r.date_requested }}
+                        </td>
+                        <td class="px-6 py-3 text-center">
+                            {{ r.request_id }}
                         </td>
                         <td class="px-6 py-3">
-                            <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
-                                {{ r.request_id }}
-                            </a>
+                            {{ r.overall_status }}
                         </td>
                         <td class="px-6 py-3">
-                            <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
-                                {{ r.overall_status }}
-                            </a>
+                            {{ r.pickup_status }}
                         </td>
                         <td class="px-6 py-3">
-                            <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
-                                {{ r.pickup_status }}
-                            </a>
+                            {{ r.email_status }}
                         </td>
-                        <td class="px-6 py-3">
+                        <td class="px-6 py-3 text-myblue-highlight text-center">
                             <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
-                                {{ r.email_status }}
+                                View
                             </a>
                         </td>
                     </tr>
@@ -232,19 +229,6 @@
 
 {% block styles %}
 <style>
-    ul.breadcrumb li {
-        display: inline;
-        font-size: 12px;
-    }
-    
-    ul.breadcrumb li+li:before {
-        color: black;
-        content: "/\00a0";
-    }
-
-    ul.breadcrumb .current {
-        color: #00BAFF;
-    }
 
     .breadbutton{
         display: flex;
