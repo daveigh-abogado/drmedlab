@@ -5,7 +5,7 @@ from django.http import JsonResponse
 import json
 from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview, UserProfile
 from django.db.models import Q
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from django.utils import timezone
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
@@ -27,8 +27,10 @@ from io import BytesIO
 import os
 import decimal
 from django.db.models import Max
-
+from django.db.models.functions import TruncDate
 from django.views.decorators.clickjacking import xframe_options_exempt
+from collections import defaultdict, OrderedDict
+
 
 # Determine wkhtmltopdf path based on OS
 if platform.system() == 'Windows':
@@ -208,9 +210,31 @@ def labRequests(request):
     """
     Display a list of all lab requests.
     """
+    today = date.today()
     labreqs = LabRequest.objects.select_related('patient').all()
+    yesterday = date.today() - timedelta(days=1)
     
-    return render(request, 'labreqsys/labRequests.html', {'labreqs': labreqs})
+    lab_requests_by_date = defaultdict(list)
+
+    for r in labreqs:
+        lab_requests_by_date[r.date_requested].append(r)
+    
+    ordered_lab_requests = OrderedDict()
+
+    if today in lab_requests_by_date:
+        ordered_lab_requests[today] = lab_requests_by_date.pop(today)
+
+    if yesterday in lab_requests_by_date:
+        ordered_lab_requests[yesterday] = lab_requests_by_date.pop(yesterday)
+
+    for date_key in sorted(lab_requests_by_date.keys(), reverse=True):
+        ordered_lab_requests[date_key] = lab_requests_by_date[date_key]
+
+    return render(request, 'labreqsys/labRequests.html', {
+        'labreqs': labreqs,
+        'today': today,
+        'yesterday': yesterday,
+        'ordered_lab_requests': ordered_lab_requests})
 
 @owner_required
 def testComponents(request):
