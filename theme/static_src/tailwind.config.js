@@ -46,7 +46,15 @@ module.exports = {
             fontFamily: {
                 sans: ['Roboto', 'system-ui', 'sans-serif'],
                 // Add more custom font families as needed
-              },
+            },
+            colors: {
+                myblue: {
+                    primary: 'rgba(39, 66, 145, 1)',       // For solid buttons
+                    secondary: 'rgba(39, 66, 145, 0.12)',  // For cancel buttons
+                    highlight: 'rgba(0, 186, 255, 1)', // For highlight
+                    borderPrimary: 'rgba(39, 66, 145, 0.6)', // For borders
+                },
+            },
         },
     },
     plugins: [
