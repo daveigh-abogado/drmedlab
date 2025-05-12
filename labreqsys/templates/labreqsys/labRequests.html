@@ -69,7 +69,7 @@
         {% else %}
             <div class="dateheader font-semibold text-m text-gray-500 mt-4 px-3">{{ date|date:"M d" }}</div>
         {% endif %}
-        <div class="labreqtable bg-white rounded-3xl shadow-md p-0 mt-3">
+        <div class="labRequestsTable bg-white rounded-3xl shadow-md p-0 mt-3">
             <div class="relative overflow-x-auto rounded-xl"> <!--TO FRONTEND: the table columns vary in size per table bc i think some patient names being longer affect the length of patient name column-->
                 <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start">
                     <thead class="uppercase bg-gray-50 text-gray-450 text-xs border-b">
@@ -80,7 +80,7 @@
                             <th scope="col" class="px-6 py-3 text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="labRequestsTable">
+                    <tbody>
                     {% for l in requests %}
                         <tr class="border-b border-gray-200 hover:bg-gray-200">
                             <th scope="row" class="px-6 py-3 font-medium text-center">
@@ -120,7 +120,7 @@
         const searchInput = document.getElementById('searchInput');
         if (!searchInput) return;
 
-        const sections = document.querySelectorAll('.labreqtable'); // each request table section
+        const sections = document.querySelectorAll('.labRequestsTable'); // each table
 
         searchInput.addEventListener('input', function () {
             const query = this.value.toLowerCase();
