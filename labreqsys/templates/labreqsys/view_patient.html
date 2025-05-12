@@ -288,7 +288,7 @@
 
     if (editPSForm) {
         console.log('editPSForm')
-        editForm.addEventListener('submit', async (e) => {
+        editPSForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -323,8 +323,9 @@
                     document.getElementById("error_type").innerHTML = 'No password.';
                     console.log(result.error)
 
-                } else if(result.error == 'success') {
+                } else if(result.success === 'found') {
                     window.location.href = result.redirect_url;
+                    console.log(result.error)
                 } else{
                     alert("Unexpected response.")
                 }

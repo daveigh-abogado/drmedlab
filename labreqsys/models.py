@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import timedelta
 
 class Patient(models.Model):
     patient_id = models.AutoField(primary_key=True)
@@ -218,3 +219,11 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} ({self.get_role_display()})"
+    
+class EditPatientPasscode (models.Model):
+    patient_id = models.OneToOneField(Patient,on_delete=models.CASCADE)
+    code = models.CharField(max_length=5)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def is_expired(self):
+        return timezone.now() > self.created_at + timedelta(minutes=5)

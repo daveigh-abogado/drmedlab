@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 import json
-from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview, UserProfile
+from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview, UserProfile, EditPatientPasscode
 from django.db.models import Q
 from datetime import date, datetime, timedelta
 from decimal import Decimal
@@ -1200,39 +1200,25 @@ def edit_patient_details(request, pk):
 @owner_required
 def generate_edit_password(request, pk):
     passcode = ''.join(random.choices('0123456789', k=5))
-    print(passcode)
-
-    cache.set(f"edit_passcode_{pk}", {
-        'passcode': passcode,
-        'created_at': timezone.now(),
-    }, timeout=300)  # 300 seconds = 5 minutes
-
+    patient = get_object_or_404(Patient, pk=pk)
+    EditPatientPasscode.objects.filter(patient_id=patient).delete()
+    EditPatientPasscode.objects.create(patient_id=patient, code=passcode)
+    
     return JsonResponse({'pass': passcode})
 
 def password(request, pk):
-    cached_data = cache.get(f"edit_passcode_{pk}")
-    if not cached_data:
-        return JsonResponse({"error": "passcode"})
-    
-    passcode = cached_data['passcode']
-    created_at = cached_data['created_at']
-
-    expiration_time = timedelta(minutes=5)
-    if timezone.now() > created_at + expiration_time:
-        # If expired, delete from cache and return error
-        cache.delete(f"edit_passcode_{pk}")
-        return JsonResponse({"error": "expired"})
-
     if request.method == "POST":
-        entered_passcode = request.POST.get('password_input')
-        print(entered_passcode)
-        if entered_passcode == passcode:
-            cache.delete(f"edit_passcode_{pk}")
-            print("hehe")
-            return JsonResponse({'error':'success', 'redirect_url':f"/edit_patient/{pk}"})
-        else:
+        input_code = request.POST.get('password_input')
+        try:
+            passcode = EditPatientPasscode.objects.get(patient_id=pk, code=input_code)
+        except EditPatientPasscode.DoesNotExist:
             return JsonResponse({"error": "incorrect"})
-    return JsonResponse({"error": "invalid method"}, status=405) 
+        
+        if timezone.now() > passcode.created_at + timedelta(minutes=5):
+            passcode.delete()
+            return JsonResponse({"error":"expired"})
+        passcode.delete()
+        return JsonResponse({"success": 'found', "redirect_url": f"/edit_patient/{pk}"})
         
 #@receptionist_or_lab_tech_required
 @xframe_options_exempt
