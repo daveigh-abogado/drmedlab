@@ -49,7 +49,7 @@
             <!--TEMPLATE-->
             <div class="text-left text-m font-semibold text-blue-900 uppercase mb-2 mt-6">Template</div>
                 <div class="grid gap-2.5 mb-4"> <!--TO FRONTEND: paayos ng hover-->
-                    <a href="{% url 'edit_template' component_id=component.component_id %}" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline" style="max-width: 17%;"> <!--TO FRONTEND: BUTTON WIDTH IS HARDCODED-->
+                    <a href="{% url 'edit_template' component_id=component.component_id %}" onclick="storeFormToSession()" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline" style="max-width: 17%;"> <!--TO FRONTEND: BUTTON WIDTH IS HARDCODED-->
                         Edit Template
                     </a>
                 </div>
@@ -70,7 +70,25 @@
         </form> 
     </div>   
 </div>
-    
+
+<script>
+    function storeFormToSession() {
+        const data = {
+            test_code: document.getElementById('test_code').value,
+            test_name: document.getElementById('test_name').value,
+            category: document.getElementById('category').value,
+            price: document.getElementById('price').value,
+        };
+        fetch("{% url 'store_testcomponent_session' %}", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify(data)
+        });
+    }
+</script>
 
 {% endblock content %}
 
