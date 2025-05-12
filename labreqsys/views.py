@@ -182,7 +182,6 @@ def receptionist_or_lab_tech_required(view_func):
     return _wrapped_view
 
 # View functions
-# delete this later
 def base(request):
     """
     Render the base template.
@@ -206,13 +205,23 @@ def patientList(request):
     return render(request, 'labreqsys/patientList.html', {'patients': patients})
 
 @receptionist_or_lab_tech_required
-def labRequests(request):
+def labRequests(request, requested_status):
     """
     Display a list of all lab requests.
     """
     today = date.today()
-    labreqs = LabRequest.objects.select_related('patient').all()
     yesterday = date.today() - timedelta(days=1)
+    
+    if requested_status == 0:
+        labreqs = LabRequest.objects.select_related('patient').all()
+    elif requested_status == 1:
+        labreqs = LabRequest.objects.select_related('patient').filter(overall_status='Not Started')
+    elif requested_status == 2:
+        labreqs = LabRequest.objects.select_related('patient').filter(overall_status='In Progress')
+    elif requested_status == 3:
+        labreqs = LabRequest.objects.select_related('patient').filter(overall_status='Completed')
+    elif requested_status == 4:
+        labreqs = LabRequest.objects.select_related('patient').filter(overall_status='Released')
     
     lab_requests_by_date = defaultdict(list)
 

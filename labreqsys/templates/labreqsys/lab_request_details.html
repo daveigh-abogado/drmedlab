@@ -7,7 +7,7 @@
 <div class="flex-1 p-3">
     <!-- Breadcrumb -->
     <nav class="mb-4 flex items-center text-sm">
-        <a href="{% url 'labRequests' %}" class="text-gray-600 hover:text-gray-900">Lab Requests</a>
+        <a href="{% url 'labRequests' requested_status=0 %}" class="text-gray-600 hover:text-gray-900">Lab Requests</a>
         <span class="mx-2 text-gray-600">/</span>
         <span class="text-[#00BAFF]">Lab Request Record</span>
     </nav>

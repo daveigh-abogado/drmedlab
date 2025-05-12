@@ -47,29 +47,7 @@ VALUES
 (NULL, '1', '2025-02-06', 'Dr. Adams', 'Email', 'Not Started'),
 (NULL, '2', '2025-02-06', 'Dr. Baker', 'Pick-up', 'In Progress'),
 (NULL, '3', '2025-02-06', 'Dr. Carter', 'Both', 'Completed'),
-(NULL, '4', '2025-02-06', 'Dr. House', 'Both', 'Not Started'),
-(NULL, '5', '2025-02-07', 'Dr. Alice Reyes', 'Email', 'Not Started'),
-(NULL, '6', '2025-02-07', 'Dr. Bryan Cruz', 'Pick-up', 'In Progress'),
-(NULL, '7', '2025-02-08', 'Dr. Carla Santos', 'Both', 'Completed'),
-(NULL, '8', '2025-02-08', 'Dr. Dennis Lee', 'Email', 'Released'),
-(NULL, '9', '2025-02-09', 'Dr. Elisa Tan', 'Pick-up', 'Not Started'),
-(NULL, '10', '2025-02-09', 'Dr. Frank Navarro', 'Both', 'In Progress'),
-(NULL, '11', '2025-02-10', 'Dr. Grace Uy', 'Pick-up', 'Completed'),
-(NULL, '12', '2025-02-10', 'Dr. Harold Sy', 'Email', 'Released'),
-(NULL, '13', '2025-02-11', 'Dr. Irene Mendoza', 'Both', 'Not Started'),
-(NULL, '14', '2025-02-11', 'Dr. Jake Aquino', 'Pick-up', 'In Progress'),
-(NULL, '15', '2025-02-12', 'Dr. Karen Lim', 'Email', 'Completed'),
-(NULL, '16', '2025-02-12', 'Dr. Leo Fernandez', 'Both', 'Released'),
-(NULL, '17', '2025-02-13', 'Dr. Maria Gonzales', 'Pick-up', 'Not Started'),
-(NULL, '18', '2025-02-13', 'Dr. Noel Ramos', 'Email', 'In Progress'),
-(NULL, '19', '2025-02-14', 'Dr. Olivia Chavez', 'Both', 'Completed'),
-(NULL, '20', '2025-02-14', 'Dr. Peter Santos', 'Pick-up', 'Released'),
-(NULL, '21', '2025-02-15', 'Dr. Queenie Ong', 'Email', 'Not Started'),
-(NULL, '22', '2025-02-15', 'Dr. Rafael Reyes', 'Both', 'In Progress'),
-(NULL, '23', '2025-02-16', 'Dr. Sandra Villanueva', 'Pick-up', 'Completed'),
-(NULL, '24', '2025-02-16', 'Dr. Tomas Garcia', 'Email', 'Released'),
-(NULL, '25', '2025-05-11', 'Dr. Ursula Dy', 'Both', 'Not Started');
-
+(NULL, '4', '2025-02-06', 'Dr. House', 'Both', 'Not Started');
 
 INSERT INTO template_form
 VALUES 

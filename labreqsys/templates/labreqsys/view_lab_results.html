@@ -4,7 +4,7 @@
 {% block content %}
 <div class="breadbuttons my-4 flex justify-between items-center w-full">
     <nav class="mb-4 flex items-center text-sm">
-        <a href="{% url 'labRequests' %}" class="text-gray-600 hover:text-gray-900">Lab Requests</a>
+        <a href="{% url 'labRequests' requested_status=0 %}" class="text-gray-600 hover:text-gray-900">Lab Requests</a>
         <span class="mx-2 text-gray-600">/</span>
 
         <a href="{% url 'view_individual_lab_request' request_id=line_item.request.request_id %}" class="text-gray-600 hover:text-gray-900">View Lab Request</a>
