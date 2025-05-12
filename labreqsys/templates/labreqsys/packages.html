@@ -122,13 +122,16 @@
                         </th>
                     </tr>
                     <tr id="dropdown-{{ p.package_id }}" class="hidden py-2 space-y-2">
-                        <td></td><td></td>
-                        <td class="px-6 py-2">
-                        <ul>Inclusions
-                            {% for component in c %}
-                                <li>{{component.component.test_name}}</li>
-                            {% endfor %}
-                        </ul>
+                        <td></td>
+                        <td colspan="4" class="px-6 py-2">
+                            <div>
+                                <div>Inclusions</div>
+                                <div>
+                                {% for component in c %}
+                                    {{component.component.test_name}}
+                                {% endfor %}
+                                </div>
+                            </div>
                         </td>
                     </tr>
                     
