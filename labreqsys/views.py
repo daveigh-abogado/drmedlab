@@ -215,18 +215,26 @@ def labRequests(request, requested_status):
     if requested_status == 0:
         labreqs = LabRequest.objects.select_related('patient').all()
     elif requested_status == 1:
-        labreqs = LabRequest.objects.select_related('patient').filter(overall_status='Not Started')
+        labreqs = LabRequest.objects.filter(overall_status='Not Started').select_related('patient')
     elif requested_status == 2:
-        labreqs = LabRequest.objects.select_related('patient').filter(overall_status='In Progress')
+        labreqs = LabRequest.objects.filter(overall_status='In Progress').select_related('patient')
     elif requested_status == 3:
-        labreqs = LabRequest.objects.select_related('patient').filter(overall_status='Completed')
+        labreqs = LabRequest.objects.filter(overall_status='Completed').select_related('patient')
     elif requested_status == 4:
-        labreqs = LabRequest.objects.select_related('patient').filter(overall_status='Released')
+        labreqs = LabRequest.objects.filter(overall_status='Released').select_related('patient')
     
     lab_requests_by_date = defaultdict(list)
 
-    for r in labreqs:
-        lab_requests_by_date[r.date_requested].append(r)
+    sort_order = request.GET.get('sortby', 'latest')
+    reverse_sort = True if sort_order == 'latest' else False
+    
+    if sort_order == 'latest':
+        for r in reversed(labreqs):
+            lab_requests_by_date[r.date_requested].append(r)
+    else:
+        for r in labreqs:
+            lab_requests_by_date[r.date_requested].append(r)
+
     
     ordered_lab_requests = OrderedDict()
 
@@ -236,7 +244,7 @@ def labRequests(request, requested_status):
     if yesterday in lab_requests_by_date:
         ordered_lab_requests[yesterday] = lab_requests_by_date.pop(yesterday)
 
-    for date_key in sorted(lab_requests_by_date.keys(), reverse=True):
+    for date_key in sorted(lab_requests_by_date.keys(), reverse=reverse_sort):
         ordered_lab_requests[date_key] = lab_requests_by_date[date_key]
 
     return render(request, 'labreqsys/labRequests.html', {
