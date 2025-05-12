@@ -10,50 +10,50 @@
 </div>
 
 <!--Tabs-->
-<div class="tab-section rounded-t-lg inline-flex">
+<div class="tab-section rounded-t-lg inline-flex mt-2">
     <div class="flex flex-wrap gap-1">
-        <button onclick="showTab(0)" class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
+        <button onclick="showTab(0)" class="py-2 px-4 rounded-t-lg text-gray-700 hover:bg-white hover:bg-opacity-40 "
         data-tab-target="#tab1">Package</button>
-        <button onclick="showTab(1)" class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-white hover:bg-opacity-40  w-80"
+        <button onclick="showTab(1)" class="py-2 px-4 rounded-t-lg text-gray-700 hover:bg-white hover:bg-opacity-40 "
         data-tab-target="#tab1">Component</button>
     </div>
 </div>
 
 <!--Content-->
-<div class="flex h-tabcol1 gap-1"> 
+<div class="flex gap-1"> 
     <div class="">
-        <form id="form" class="flex-start" method= "POST" action="{% url 'add_labreq_details' pk=patient.pk %}">{% csrf_token %}
+        <form id="form" class="flex w-full" method= "POST" action="{% url 'add_labreq_details' pk=patient.pk %}">{% csrf_token %}
             <div class="bg-white p-6 pt-13 rounded-b-lg rounded-tr-lg shadow">
                 <!--PACKAGE NAME-->
-                <div class="tab active gap-1 w-36 " id="tab-0">
-                    <h1 class="text-mm font-bold text-blue-900">Select a Package</h1>
+                <div class="tab active gap-1 flex-1 w-96" id="tab-0">
+                    <h1 class="text-lg font-semibold text-blue-900">Select a Package</h1>
                     <hr>
                     <!-- search bar -->
                     <input type="text" placeholder="Search Package Name"
-                            class="w-full h-8 text-ssm border rounded-lg text-blue-900">
+                            class="w-full h-8 text-xs mt-2 border border-gray-300 rounded-lg text-myblue-primary">
 
                     <!--checkboxes-->
                     <div class="mt-2 space-y-2">
                         {% for pa in test_packages %}
                         <label class="flex items-center space-x-2 gap-1">
                             <input type="checkbox" name="packages" value="{{ pa.pk }}" 
-                            class="package-checkbox border border-blue-900"
+                            class="package-checkbox border border-blue-900 rounded-sm"
                             data-name="{{ pa.package_name }}" 
                             data-price="{{ pa.package_price }}" 
                             data-components='{{ pa.components|safe }}' >
-                            <span class="text-blue-900"> {{ pa.package_name }}</span>
+                            <span class="text-myblue-primary"> {{ pa.package_name }}</span>
                         </label>
                         {% endfor %}
                     </div>
                 </div>
 
                 <!--COMPONENT NAME-->
-                <div class="tab active gap-1 w-36" id="tab-1">
-                    <h1 class="text-mm font-bold text-blue-900">Select a Component</h1>
+                <div class="tab active gap-1 flex-1 w-96" id="tab-1">
+                    <h1 class="text-lg font-semibold text-blue-900">Select a Component</h1>
                     <hr>
                     <!-- insert search bar here -->
                     <input type="text" placeholder="Search Component Name"
-                            class="w-full h-8 text-ssm border rounded-lg text-blue-900">
+                            class="w-full h-8 text-xs border border-gray-300 rounded-lg mt-2 text-blue-900">
 
                     <!--checkboxes-->
                     <div class="mt-2 space-y-2">
@@ -62,8 +62,8 @@
                             <input type="checkbox" name="components" value="{{ c.pk }}" 
                             data-name="{{ c.test_name }}" 
                             data-price="{{ c.component_price }}" 
-                            class="border border-blue-900">
-                            <span class="text-blue-900">{{ c.test_name }}</span>
+                            class="border border-blue-900 rounded-sm">
+                            <span class="text-myblue-primary">{{ c.test_name }}</span>
                         </label>
                         {% endfor %}
                     </div>
@@ -71,13 +71,13 @@
 
                 <!--ADD OPTIONS BUTTON-->
                 <div class="mt-4 flex justify-end">
-                    <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="button" onclick="addOptions()">Add Options</button>
+                    <button class="text-white px-5 py-2 bg-blue-900 font-semibold text-sm rounded-lg" type="button" onclick="addOptions()">Add Options</button>
                 </div>
             </div>
             
             <!--SELECTED OPTIONS: always have to be inside the form-->
             <div class="half bg-white p-6 pt-13 rounded-lg shadow ml-3 px-8">
-                <h1 class="text-mm font-bold text-blue-900 flex-start">Selected Options</h1>
+                <h1 class="text-lg font-semibold text-blue-900 flex-start">Selected Options</h1>
                 <hr>
 
                 <div class="mt-4 text-blue-900 ml-0">
@@ -87,7 +87,7 @@
                 <hr class="mt-4">
 
                 <!-- Subtotal section in one row -->
-                <div class="flex justify-between items-center text-mm font-bold text-blue-900">
+                <div class="flex justify-between items-center text-m font-semibold text-blue-900">
                     <h2 class="text-m">Subtotal</h2>
                     <div class="flex justify-end text-m text-left">
                         <p>₱</p>
@@ -97,13 +97,12 @@
 
                 <!--NEXT BUTTON-->
                 <div class="mt-4 flex justify-end">
-                    <button class="text-white px-4 py-1 bg-blue-900 font-bold rounded-lg" type="submit">Next</button>
+                    <button class="text-white px-5 py-2 bg-myblue-primary text-sm font-semibold rounded-lg" type="submit">Next</button>
                 </div>
             </div>          
         </form>
     </div>
 
-    
 </div>
 
 
@@ -189,9 +188,9 @@
         li.setAttribute('data-name', name);
         li.innerHTML = `
             <div class="self-stretch py-2.5 justify-start inline-flex items-center w-full ml-0 gap-5"> 
-                <span class="option-number font-bold text-xl text-center justify-center text-blue-900"></span> 
-                <div class="max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap justify-center text-xl font-normal text-blue-900"> ${name} </div>
-                <div class="flex-1 justify-center text-sm font-normal"> ₱${price.toFixed(2)} </div>
+                <span class="option-number font-semibold text-sm text-center justify-center text-blue-900"></span> 
+                <div class="max-w-25 overflow-hidden text-ellipsis whitespace-nowrap justify-center text-sm font-normal text-blue-900"> ${name} </div>
+                <div class="flex-1 justify-start text-sm font-normal"> ₱${price.toFixed(2)} </div>
 
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"  fill="currentColor" class="trash-icon size-5 cursor-pointer text-red-500 hover:text-red-700" onclick="removeOption(this, '${id}', '${name}', ${isPackage})">
                 <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" 
@@ -207,7 +206,7 @@
         const li = document.createElement('li');
         li.setAttribute('data-name', name);
         li.setAttribute('data-package-id', packageId);
-        li.classList.add('package-component', 'text-blue-800', 'text-sm', 'pl-16'); 
+        li.classList.add('package-component', 'text-blue-900', 'text-sm', 'pl-12'); 
         li.textContent = `${name}`;
         selectedList.appendChild(li);
     }
