@@ -1515,8 +1515,7 @@ def add_package (request):
         print(components)
         
         if TestPackage.objects.filter(package_name=package_name).exists():
-            messages.error(request, "Package already exists.")
-            return redirect('packages')
+            return JsonResponse({'status': 'duplicate'})
         else:
             package = TestPackage.objects.create(
                 package_name=package_name,
@@ -1530,9 +1529,9 @@ def add_package (request):
                     component=component
                 )
 
-        return redirect('packages')
+        return JsonResponse({'status':'success', 'redirect_url':'/packages'})
     else:
-        return render(request, 'labreqsys/add_edit_package.html', {'components': test_components, 'mode':'add'})
+        return render(request, 'labreqsys/add_package.html', {'components': test_components})
     
 
 def edit_package(request, pk):
@@ -1555,8 +1554,7 @@ def edit_package(request, pk):
 
         updated = []
         if package_name != package.package_name and TestPackage.objects.filter(package_name=package_name).exists():
-            messages.error(request, "Package already exists.")
-            return redirect('packages')
+            return JsonResponse({'status': 'duplicate'})
         else:
             package.package_name = package_name
             package.package_price = price
@@ -1578,15 +1576,14 @@ def edit_package(request, pk):
                     package=package,
                     component=component
                 )
-        return redirect('packages')
+        return JsonResponse({'status':'success', 'redirect_url':'/packages'})
         
     else:
-        return render(request, 'labreqsys/add_edit_package.html', {
+        return render(request, 'labreqsys/edit_package.html', {
             'components': test_components, 
             'selectedComponents' : components,
             'package':package, 
             'mode': 'edit'})
-        return render(request, 'labreqsys/add_package.html', {'components': test_components})
 
 def user_login(request):
     if request.method == 'POST':
