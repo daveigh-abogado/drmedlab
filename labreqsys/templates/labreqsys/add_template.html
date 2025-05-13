@@ -45,27 +45,39 @@
 
         <div class="grid gap-2.5 mt-2 sm:grid-cols-1">
             <div>
-                <button type="button" id="add-section-btn" class="w-full justify-center text-white inline-flex items-center bg-myblue-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Section</button>
+                <button type="button" id="add-section-btn" class="w-full justify-center text-white inline-flex items-center bg-myblue-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Row</button>
             </div>
         </div>
     </form>
 </div>
 
-<div id="templateModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-4xl h-full md:h-auto">
-        <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
-            <div id="modal-preview-content">
+<div id="templateModal" tabindex="-1" aria-hidden="true" class="relative z-10 hidden modal" role="dialog">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-gray-500/75 transition-opacity" aria-hidden="true"></div>
+
+    <!-- Modal Wrapper -->
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+
+            <!-- Content -->
+            <div class="relative p-4 w-full max-w-4xl max-h-full ">
+                <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
+                    <div id="modal-preview-content">
+                        </div>
+                    <div class="grid gap-2.5 mb-4 sm:grid-cols-2 mt-4">
+                        <button id="backToEditingBtn" type="button" class="w-full justify-center text-blue-900 inline-flex items-center border bg-myblue-secondary border-myblue-borderPrimary font-semibold rounded-lg text-sm px-5 py-2.5 text-center no-underline">Back to Editing</button>
+                        <button type="submit" form="form" id="confirmSubmit" class="text-white bg-myblue-primary font-semibold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                            {% if editing == 'yes' %}Save{% else %}Create{% endif %}
+                            Template
+                        </button>
+                    </div>
                 </div>
-            <div class="grid gap-2.5 mb-4 sm:grid-cols-2 mt-4">
-                <button id="backToEditingBtn" type="button" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">Back to Editing</button>
-                <button type="submit" form="form" id="confirmSubmit" class="text-white bg-myblue-primary font-semibold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                    {% if editing == 'yes' %}Save{% else %}Create{% endif %}
-                     Template
-                </button>
             </div>
+
         </div>
     </div>
 </div>
+
 
 <script>
     let sectionCount = 0;
@@ -125,10 +137,10 @@
                 </svg>
             </div>
             
-            <label class="block mb-2 text-sm font-medium text-gray-800 uppercase">Section Name *</label>
-            <input type="text" name="sections[${sectionIndex}][name]" value="${name}" placeholder="Leave blank to add table row"
+            <label class="block mb-2 text-sm font-medium text-gray-800 uppercase">Table Name *</label>
+            <input type="text" name="sections[${sectionIndex}][name]" value="${name}" placeholder="Leave blank to add row in the same table"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mb-2" required>
-            
+            <div class="text-myblue-primary text-xs"> * Press 'Add Column' to add columns</div>
             <div class="fields-container">`;
 
         fields.forEach((field, fieldIndex) => {
@@ -137,7 +149,7 @@
 
         sectionHTML += `</div>
             <div class="mt-2 grid gap-2.5 sm:grid-cols-1" id="section-${sectionIndex}">
-                <button type="button" class="add-field-btn text-blue-900 border border-myblue-borderPrimary bg-myblue-secondary text-sm font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Field</button>
+                <button type="button" class="add-field-btn text-blue-900 border border-myblue-borderPrimary bg-myblue-secondary text-sm font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Column</button>
             </div>
         </div>`;
         return sectionHTML;
@@ -299,7 +311,7 @@
 
         // build preview content
         let previewHTML = `<div class="flex justify-between items-center rounded-t border-b sm:mb-5">
-                <h3 class="text-mm font-semibold text-blue-900 uppercase">
+                <h3 class="text-lg font-semibold text-blue-900 uppercase py-2">
                     ${templateName}
                 </h3>
             </div>`;
@@ -308,7 +320,7 @@
             section.fields.forEach(field => {
                 field_number++;
             });
-            previewHTML += `<div class="self-stretch h-8 justify-center font-semibold text-m-600 text-gray-500 mb-2">${section.name}</div>
+            previewHTML += `<div class="self-stretch py-2 justify-center font-semibold text-sm text-myblue-primary mb-2">${section.name}</div>
             <div class="grid gap-2.5 sm:grid-cols-${field_number}">`;
             section.fields.forEach(field => {
                 previewHTML += `<div>`;

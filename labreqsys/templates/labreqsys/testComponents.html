@@ -66,7 +66,7 @@
                 <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
                     <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
                         <th scope="col" class="px-6 py-3 text-center">ID</th>
-                        <th scope="col" class="px-6 py-3 ">Test Code</th>
+                        <th scope="col" class="px-6 py-3">Test Code</th>
                         <th scope="col" class="px-6 py-3">Test Name</th>
                         <th scope="col" class="px-6 py-3 text-center">Price</th>
                         <th scope="col" class="px-6 py-3 text-center">Action</th>
@@ -79,10 +79,10 @@
                         <th scope="row" class="px-6 py-3 font-medium text-center">
                             {{ t.component_id|stringformat:"02d" }}
                         </th>
-                        <td class="px-6 py-2">{{ t.test_code }}</td>
+                        <td class="px-6 py-2 uppercase">{{ t.test_code }}</td>
                         <td class="px-6 py-2">
-                            <div>{{ t.test_name }}</div>
-                            <div class="text-sm text-gray-500">{{ t.category }}</div>
+                            <div class="capitalize">{{ t.test_name }}</div>
+                            <div class="text-sm text-gray-500 capitalize">{{ t.category }}</div>
                         </td>
                         <td class="px-6 py-2 text-center ">₱{{ t.component_price }}</td>
                         <th scope="row" class="px-6 py-2 font-medium text-myblue-highlight whitespace-nowrap text-center no-underline">
