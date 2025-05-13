@@ -2,19 +2,23 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-<div class="breadbutton my-4">
-    <ul class="breadcrumb">
-        <li><a href="{% url 'testComponents' %}">Test Component List</a></li>
-        <li><a href="{% url 'add_testcomponent' %}">Add Test Component</a></li>
-        {% if editing == 'yes' %}
-            <li><a href="#" class="current">Edit Template</a></li>
-        {% else %}
-            <li><a href="#" class="current">Create Template</a></li>
-        {% endif %}
+
+<!--BREADCRUMb-->
+<div class="breadbutton mb-4">
+    <ul class="breadcrumb text-xs pt-2">
+        <li>
+            <a href="{% url 'testComponents' %}" class="text-myblue-primary">Test Component/</a>
+            <a href="{% url 'add_testcomponent' %}" class="text-myblue-primary"> Add Test Component/</a>
+            {% if editing == 'yes' %}
+                <a href="#" class="text-myblue-highlight">Edit Template</a>
+            {% else %}
+                <a href="#" class="text-myblue-highlight">Create Template</a>
+            {% endif %}
+        </li>
     </ul>
 </div>
 
-<div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
+<div class="w-full h-hug p-8 pt-6 bg-white rounded-lg shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
     <div class="flex justify-between items-center rounded-t sm:mb-4 w-full">
         {% if editing == 'yes' %}
         <h1 class="text-mm font-semibold text-blue-900">Edit Template</h1>
@@ -22,8 +26,8 @@
         <h1 class="text-mm font-semibold text-blue-900">Create Template</h1>
         {% endif %}
         <div class="flex gap-2">
-            <a href="{% url 'add_testcomponent' %}" class="text-blue-900 inline-flex items-center bg-blue-900-10 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline border">Cancel</a>
-            <button type="button" id="createTemplatebutton" class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+            <a href="{% url 'add_testcomponent' %}" class="text-blue-900 bg-myblue-secondary border-myblue-borderPrimary border inline-flex items-center bg-blue-900-10 font-medium rounded-lg text-sm px-5 py-2 text-center no-underline">Cancel</a>
+            <button type="button" id="createTemplatebutton" class="text-white inline-flex items-center bg-myblue-primary  font-medium rounded-lg text-sm px-5 py-2 text-center">
                 {% if editing == 'yes' %}Edit{% else %}Create{% endif %} Template
             </button>
         </div>
@@ -32,7 +36,7 @@
     <form id="form" method="POST" action="#" class="w-full gap-2.5">{% csrf_token %}
         <div class="grid gap-2.5 mb-4 sm:grid-cols-1 border-b pb-3">
             <div>
-                <label for="template_name" class="block mb-2 text-left text-sm font-medium text-gray-500 uppercase">Form Name *</label>
+                <label for="template_name" class="block mb-2 text-left text-sm font-medium text-gray-900 uppercase">Form Name *</label>
                 <input type="text" name="template_name" id="template_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" placeholder="e.g. Blood Chemistry" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only." value="{{ template.template_name|default:'' }}">
             </div>
         </div>
@@ -41,7 +45,7 @@
 
         <div class="grid gap-2.5 mt-2 sm:grid-cols-1">
             <div>
-                <button type="button" id="add-section-btn" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Section</button>
+                <button type="button" id="add-section-btn" class="w-full justify-center text-white inline-flex items-center bg-myblue-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Section</button>
             </div>
         </div>
     </form>
@@ -54,7 +58,7 @@
                 </div>
             <div class="grid gap-2.5 mb-4 sm:grid-cols-2 mt-4">
                 <button id="backToEditingBtn" type="button" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">Back to Editing</button>
-                <button type="submit" form="form" id="confirmSubmit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                <button type="submit" form="form" id="confirmSubmit" class="text-white bg-myblue-primary font-semibold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                     {% if editing == 'yes' %}Save{% else %}Create{% endif %}
                      Template
                 </button>
@@ -80,12 +84,13 @@
         <div class="border border-gray-300 rounded p-2 mt-3 field-group" id="field-${sectionIndex}-${fieldIndex}" data-field-index="${fieldIndex}">
             <div class="grid gap-2.5 mb-2 sm:grid-cols-4">
                 <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Label *</label>
-                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][label]" value="${label}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
+                    <label class="block mb-2 text-sm font-medium text-gray-800 uppercase">Label *</label>
+                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][label]" value="${label}" placeholder="Column header"
+                    class="bg-gray-50 border border-gray-300 text-gray-800 text-sm rounded-lg block w-full p-2.5" required>
                 </div>
                 <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Type *</label>
-                    <select name="sections[${sectionIndex}][fields][${fieldIndex}][type]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
+                    <label class="block mb-2 text-sm font-medium text-gray-800 uppercase">Type *</label>
+                    <select name="sections[${sectionIndex}][fields][${fieldIndex}][type]" class="bg-gray-50 border border-gray-300 text-gray-800 text-sm rounded-lg block w-full p-2.5" required>
                         <option value="">Select field type</option>
                         <option value="Label" ${type === 'Label' ? 'selected' : ''}>Label</option>
                         <option value="Text" ${type === 'Text' ? 'selected' : ''}>Text</option>
@@ -94,11 +99,12 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Fixed Value</label>
+                    <label class="block mb-2 text-sm font-medium text-gray-800 uppercase">Fixed Value</label>
                     <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][fixed_value]" value="${fixed_value}" class="bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg block w-full p-2.5" ${isFixedDisabled}>
                 </div>
                 <div class="flex items-center pt-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="34" width="34" viewBox="0 0 20 20" fill="currentColor" class="trash-icon cursor-pointer text-red-500 hover:text-red-700" title="Delete Field" onclick="this.closest('.field-group').remove()">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="34" width="25" viewBox="0 0 20 20" fill="currentColor" 
+                    class="trash-icon cursor-pointer text-red-500 hover:text-red-700 pt-3" title="Delete Field" onclick="this.closest('.field-group').remove()">
                         <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" />
                     </svg>
                 </div>
@@ -110,12 +116,19 @@
         const { name = '', fields = [] } = sectionData;
         let sectionHTML = `
         <div class="section border-b mb-4 pb-4" data-section-index="${sectionIndex}">
-            <div class="flex justify-between">
-                <h2 class="text-mm font-semibold text-blue-900">Section ${sectionIndex + 1}</h2>
-                <button type="button" class="delete-section-btn px-4 text-right bg-red-500 rounded text-white hover:bg-red-700">Delete Section</button>
+            <div class="flex justify-between mb-2">
+                <div class="text-m font-semibold text-blue-900">Section ${sectionIndex + 1}</div>
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" 
+                class="size-6 delete-section-btn text-myblue-primary cursor-pointer">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
             </div>
-            <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Section Name *</label>
-            <input type="text" name="sections[${sectionIndex}][name]" value="${name}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mb-2" required>
+            
+            <label class="block mb-2 text-sm font-medium text-gray-800 uppercase">Section Name *</label>
+            <input type="text" name="sections[${sectionIndex}][name]" value="${name}" placeholder="Leave blank to add table row"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mb-2" required>
+            
             <div class="fields-container">`;
 
         fields.forEach((field, fieldIndex) => {
@@ -124,7 +137,7 @@
 
         sectionHTML += `</div>
             <div class="mt-2 grid gap-2.5 sm:grid-cols-1" id="section-${sectionIndex}">
-                <button type="button" class="add-field-btn text-blue-900 border border-blue-900 bg-blue-100 hover:bg-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Field</button>
+                <button type="button" class="add-field-btn text-blue-900 border border-myblue-borderPrimary bg-myblue-secondary text-sm font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Field</button>
             </div>
         </div>`;
         return sectionHTML;
