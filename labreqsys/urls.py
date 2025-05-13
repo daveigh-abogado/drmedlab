@@ -7,7 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='/patientList', permanent=True)),  # Redirect root URL to /patientList
     path('patientList', views.patientList, name='patientList'),
-    path('labRequests', views.labRequests, name='labRequests'),
+    path('labRequests/<int:requested_status>/', views.labRequests, name='labRequests'),
     path('testComponents', views.testComponents, name='testComponents'),
     path('add_testcomponent', views.add_testcomponent, name='add_testcomponent'),
     path('edit_testcomponent/<int:component_id>', views.edit_testcomponent, name='edit_testcomponent'),

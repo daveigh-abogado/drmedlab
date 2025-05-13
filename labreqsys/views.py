@@ -26,8 +26,10 @@ from io import BytesIO
 import os
 import decimal
 from django.db.models import Max
-
+from django.db.models.functions import TruncDate
 from django.views.decorators.clickjacking import xframe_options_exempt
+from collections import defaultdict, OrderedDict
+
 
 import random
 from django.core.cache import cache
@@ -182,7 +184,6 @@ def receptionist_or_lab_tech_required(view_func):
     return _wrapped_view
 
 # View functions
-# delete this later
 def base(request):
     """
     Render the base template.
@@ -206,13 +207,53 @@ def patientList(request):
     return render(request, 'labreqsys/patientList.html', {'patients': patients})
 
 @receptionist_or_lab_tech_required
-def labRequests(request):
+def labRequests(request, requested_status):
     """
     Display a list of all lab requests.
     """
-    labreqs = LabRequest.objects.select_related('patient').all()
+    today = date.today()
+    yesterday = date.today() - timedelta(days=1)
     
-    return render(request, 'labreqsys/labRequests.html', {'labreqs': labreqs})
+    if requested_status == 0:
+        labreqs = LabRequest.objects.select_related('patient').all()
+    elif requested_status == 1:
+        labreqs = LabRequest.objects.filter(overall_status='Not Started').select_related('patient')
+    elif requested_status == 2:
+        labreqs = LabRequest.objects.filter(overall_status='In Progress').select_related('patient')
+    elif requested_status == 3:
+        labreqs = LabRequest.objects.filter(overall_status='Completed').select_related('patient')
+    elif requested_status == 4:
+        labreqs = LabRequest.objects.filter(overall_status='Released').select_related('patient')
+    
+    lab_requests_by_date = defaultdict(list)
+
+    sort_order = request.GET.get('sortby', 'latest')
+    reverse_sort = True if sort_order == 'latest' else False
+    
+    if sort_order == 'latest':
+        for r in reversed(labreqs):
+            lab_requests_by_date[r.date_requested].append(r)
+    else:
+        for r in labreqs:
+            lab_requests_by_date[r.date_requested].append(r)
+
+    
+    ordered_lab_requests = OrderedDict()
+
+    if today in lab_requests_by_date:
+        ordered_lab_requests[today] = lab_requests_by_date.pop(today)
+
+    if yesterday in lab_requests_by_date:
+        ordered_lab_requests[yesterday] = lab_requests_by_date.pop(yesterday)
+
+    for date_key in sorted(lab_requests_by_date.keys(), reverse=reverse_sort):
+        ordered_lab_requests[date_key] = lab_requests_by_date[date_key]
+
+    return render(request, 'labreqsys/labRequests.html', {
+        'labreqs': labreqs,
+        'today': today,
+        'yesterday': yesterday,
+        'ordered_lab_requests': ordered_lab_requests})
 
 @owner_required
 def testComponents(request):

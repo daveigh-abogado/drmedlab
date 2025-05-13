@@ -46,7 +46,7 @@ INSERT INTO lab_request
 VALUES 
 (NULL, '1', '2025-02-06', 'Dr. Adams', 'Email', 'Not Started'),
 (NULL, '2', '2025-02-06', 'Dr. Baker', 'Pick-up', 'In Progress'),
-(NULL, '3', '2025-02-06', 'Dr. Carter', 'Both', 'Completed'),
+(NULL, '3', '2025-02-06', 'Dr. Carter', 'Both', 'Released'),
 (NULL, '4', '2025-02-06', 'Dr. House', 'Both', 'Not Started');
 
 INSERT INTO template_form

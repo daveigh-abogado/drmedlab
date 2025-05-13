@@ -6,11 +6,9 @@
 {% block content %}
 
 <!-- Breadcrumb -->
-
-
 <div class="breadbutton mb-4">
     <ul class="breadcrumb text-xs pt-2">
-            <a href="{% url 'labRequests' %}" class="text-myblue-primary">Lab Request/</a>
+            <a href="{% url 'labRequests' requested_status=0 %}" class="text-gray-600 hover:text-gray-900">Lab Requests</a>
             <a href="#" class="text-myblue-highlight"> View Lab Request</a>
         </li>
     </ul>

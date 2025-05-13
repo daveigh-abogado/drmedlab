@@ -17,9 +17,9 @@
                         <input
                         id="searchInput"
                         class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Search test component name, code, etc." />
+                        placeholder="Search Test Code, Test Name, or Test Category" />
                         
-                        <button type="submit" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700">
+                        <button type="submit" style="cursor: default;" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700">
                             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                             </svg>
@@ -81,7 +81,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="testComponents">
                 {% for t in testComponents %}
                     <tr class="border-b border-gray-200 hover:bg-gray-200">
                         <th scope="row" class="px-6 py-3 font-medium text-center">
@@ -106,6 +106,31 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        if (!searchInput) return;
+
+        searchInput.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#testComponents tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td, th');
+                const testCode = cells[1]?.textContent.toLowerCase() || '';
+                const testName = cells[2]?.textContent.toLowerCase() || '';
+                if (
+                    testCode.includes(query) ||
+                    testName.includes(query)
+                ) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
 
 
 {% endblock content %}

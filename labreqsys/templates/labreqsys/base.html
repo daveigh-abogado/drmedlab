@@ -119,7 +119,19 @@
                             </button>
                             <ul id="dropdown-lab-requests" class="hidden py-2 space-y-2">
                                 <li>
-                                    <a href="{% url 'labRequests' %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-blue-300 hover:text-blue-900">All Requests</a>
+                                    <a href="{% url 'labRequests' requested_status=0 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-blue-300 hover:text-blue-900">All Requests</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'labRequests' requested_status=1 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-blue-300 hover:text-blue-900">Not Started</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'labRequests' requested_status=2 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-blue-300 hover:text-blue-900">In Progress</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'labRequests' requested_status=3 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-blue-300 hover:text-blue-900">Completed</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'labRequests' requested_status=4 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-blue-300 hover:text-blue-900">Released</a>
                                 </li>
                                 {# Add other lab request filtered views here if needed and protect them accordingly #}
                             </ul>

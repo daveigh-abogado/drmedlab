@@ -13,111 +13,147 @@
 
 
         <!-- SEARCH -->
-          <div class="col">
-            <form class="max-w-lg">
-                <div class="flex">
-                    <label for="search-dropdown" class="mb-2 text-sm font-medium text-gray-500 sr-only dark:text-white">Patient ID</label>
-                    <button id="dropdown-button" data-dropdown-toggle="dropdown" class="shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-500 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none" type="button">
-                        Patient ID 
-                        <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"> <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+        <div class="col ms-auto">
+            <div class="flex max-w-sm min-w-[200px]">
+                <div class="relative w-full">
+                    <input
+                    id="searchInput"
+                    class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Search Request ID, Last Name, or Given Name" />
+                    
+                    <button type="submit" style="cursor: default;" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                         </svg>
+                        <span class="sr-only">Search</span>
                     </button>
-
-                    <div id="dropdown" class="z-10 hidden bg-white divide-gray-100 rounded-lg shadow-sm w-44">
-                        <ul class="py-2 text-sm text-gray-700 list-none" aria-labelledby="dropdown-button">
-                        <li>
-                            <button type="button" class="inline-flex px-1 py-1 w-full text-left hover:bg-gray-100">Patient ID</button>
-                        </li>
-                        <li>
-                            <button type="button" class="inline-flex px-1 py-1 w-full text-left hover:bg-gray-100">Last Name</button>
-                        </li>
-                        <li>
-                            <button type="button" class="inline-flex px-1 py-1 w-full text-left hover:bg-gray-100">Given Name</button>
-                        </li>
-                        <li>
-                            <button type="button" class="inline-flex px-1 py-1 w-full text-left hover:bg-gray-100">Email</button>
-                        </li>
-                        </ul>
-                    </div>
-                    <div class="relative w-full">
-                        <input type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Who are you looking for?" required />
-                        <button type="submit" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
-                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                            </svg>
-                            <span class="sr-only">Search</span>
-                        </button>
-                    </div>
                 </div>
-            </form>
-          </div>
+            </div>
+        </div>
 
 
           <!-- Sort By Container -->
           <div class="col ms-auto text-end">
-                <label class="text-sm font-medium text-gray-500 px-2"> Sort by </label>
-                <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Patient ID
-                    <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                    </svg> 
-                </button>
+            <form action="" method="get">
+                <label class="text-sm font-medium text-gray-500 px-2"> Sort by </label> <!--TO FRONTEND: the dropdown is grey aksdhjkasd paconvert to white im losing my mind-->
+                <select name="sortby" onchange="this.form.submit()" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <option value="latest" {% if request.GET.sortby == 'latest' %}selected{% endif %}>Latest First</option>
+                    <option value="oldest" {% if request.GET.sortby == 'oldest' %}selected{% endif %}>Oldest First</option>
+                </select>
+            </form>
                 
-                <!-- Dropdown menu -->
-                <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
-                    <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownHoverButton">
-                        <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Patient ID</a>
-                        </li>
-                        <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Last Name</a>
-                        </li>
-                        <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Given Name</a>
-                        </li>
-                        <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Email</a>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
-    
 
-    <div class="bg-white rounded-3xl shadow-md mt-4 p-0">
-
-        <!-- TABLE -->
-        
-        <div class = "relative overflow-x-auto rounded-xl">
-            <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
-                <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
-                    <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
-                        <th scope="col" class="px-6 py-3 text-center">Request ID</th>
-                        <th scope="col" class="px-6 py-3">Patient Name</th>
-                        <th scope="col" class="px-6 py-3 text-center">Overall Status</th>
-                        <th scope="col" class="px-6 py-3 text-center">Action</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                {% for l in labreqs %}
-                    <tr class="border-b border-gray-200 hover:bg-gray-200">
-                        <th scope="row" class="px-6 py-3 font-medium text-center">
-                            {{ l.request_id }}
-                        </th>
-                        <td class="px-6 py-2">{{ l.patient.last_name }}, {{ l.patient.first_name }}</td>
-                        <td class="px-6 py-2 text-center">{{ l.overall_status }}</td>
-                        <th scope="row" class="px-6 py-2 font-medium text-view whitespace-nowrap text-center no-underline">
-                            <a href="{% url 'view_individual_lab_request' request_id=l.request_id %}" class = "no-underline text-view">
-                                View Request
-                            </a>
-                        </th>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+    {% for date, requests in ordered_lab_requests.items %}
+        {% if date == today %}
+            <div class="dateheader font-normal text-xs text-gray-500 px-3 mt-4">Today</div>
+            <div class="dateheader font-semibold text-m text-gray-500 px-3">{{ date|date:"M d" }}</div>
+        {% elif date == yesterday %}
+            <div class="dateheader font-normal text-xs text-gray-500 mt-4 px-3">Yesterday</div>
+            <div class="dateheader font-semibold text-m text-gray-500 px-3">{{ date|date:"M d" }}</div>
+        {% else %}
+            <div class="dateheader font-semibold text-m text-gray-500 mt-4 px-3">{{ date|date:"M d" }}</div>
+        {% endif %}
+        <div class="labRequestsTable bg-white rounded-3xl shadow-md p-0 mt-3">
+            <div class="relative overflow-x-auto rounded-xl"> <!--TO FRONTEND: the table columns vary in size per table bc i think some patient names being longer affect the length of patient name column-->
+                <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start">
+                    <thead class="uppercase bg-gray-50 text-gray-450 text-xs border-b">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-center">Request ID</th>
+                            <th scope="col" class="px-6 py-3">Patient Name</th>
+                            <th scope="col" class="px-6 py-3 text-center">Overall Status</th>
+                            <th scope="col" class="px-6 py-3 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for l in requests %}
+                        <tr class="border-b border-gray-200 hover:bg-gray-200">
+                            <th scope="row" class="px-6 py-3 font-medium text-center">
+                                {{ l.request_id }}
+                            </th>
+                            <td class="px-6 py-2">{{ l.patient.last_name }}, {{ l.patient.first_name }}{% if l.patient.middle_initial %}, {{ l.patient.middle_initial }}.{% endif %}{% if l.patient.suffix %}, {{ l.patient.suffix }}{% endif %}
+                            </td>
+                            <td class="px-6 py-2 text-center">
+                                {% if l.overall_status == 'Not Started' %}
+                                    <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-gray-100 text-gray-800 shadow-sm border-gray-200 border">
+                                {% elif l.overall_status == 'Completed' %}
+                                    <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-completed text-completed shadow-sm border border-completed">
+                                <!--TO FRONTEND: Released overall status pill needs to be modified-->
+                                {% elif l.overall_status == 'Released' %}
+                                    <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-completed text-completed shadow-sm">
+                                {% else %}
+                                    <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-progress text-progress shadow-sm">
+                                {% endif %}
+                                    {{ l.overall_status }}
+                            </td>
+                            <td class="px-6 py-2 text-view text-center">
+                                <a href="{% url 'view_individual_lab_request' request_id=l.request_id %}" class="no-underline text-view">
+                                    View Request
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+{% endfor %}
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        if (!searchInput) return;
+
+        const sections = document.querySelectorAll('.labRequestsTable'); // each table
+
+        searchInput.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+
+            sections.forEach(section => {
+                const rows = section.querySelectorAll('tbody tr');
+                const header = section.querySelector('thead');
+                let anyRowVisible = false;
+
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td, th');
+                    const requestID = cells[0]?.textContent.toLowerCase() || '';
+                    const fullName = cells[1]?.textContent.toLowerCase() || '';
+
+                    if (
+                        requestID.includes(query) ||
+                        fullName.includes(query)
+                    ) {
+                        row.style.display = '';
+                        anyRowVisible = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                if (header) {
+                    header.style.display = anyRowVisible ? '' : 'none';
+                }
+
+                const previousDateLabels = [];
+                let sibling = section.previousElementSibling;
+
+                while (sibling && sibling.classList.contains('dateheader')) {
+                    previousDateLabels.push(sibling);
+                    sibling = sibling.previousElementSibling;
+                }
+
+                section.style.display = anyRowVisible ? '' : 'none';
+                previousDateLabels.forEach(label => {
+                    label.style.display = anyRowVisible ? '' : 'none';
+                });
+            });
+        });
+    });
+</script>
+
 </div>
 
 
