@@ -1679,7 +1679,21 @@ def create_testcomponent(request):
         last_template = TemplateForm.objects.order_by('-template_id').first()
         test_code = request.POST.get('test_code')
         if TestComponent.objects.filter(template_id=last_template.template_id):
-            return redirect('add_testcomponent')
+           request.session['testcomponent_form_data'] = {
+               'test_code': request.POST.get('test_code', ''),
+               'test_name': request.POST.get('test_name', ''),
+               'category': request.POST.get('category', ''),
+               'price': request.POST.get('price', '')
+               }
+           return redirect(f"{reverse('add_testcomponent')}?show_warning=yes")
+        elif TestComponent.objects.filter(test_code=test_code):
+            request.session['testcomponent_form_data'] = {
+               'test_code': request.POST.get('test_code', ''),
+               'test_name': request.POST.get('test_name', ''),
+               'category': request.POST.get('category', ''),
+               'price': request.POST.get('price', '')
+               }
+            return redirect(f"{reverse('add_testcomponent')}?show_code_warning=yes")
         else:
             test_name = request.POST.get('test_name')
             category = request.POST.get('category')
