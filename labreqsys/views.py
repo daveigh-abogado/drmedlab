@@ -3,9 +3,9 @@ from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 import json
-from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview, UserProfile
+from .models import Patient, LabRequest, CollectionLog, TestComponent, TemplateForm, TestPackage, TestPackageComponent, RequestLineItem, TemplateSection, TemplateField, LabTech, ResultValue, ResultReview, UserProfile, EditPatientPasscode
 from django.db.models import Q
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from django.utils import timezone
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
@@ -22,13 +22,15 @@ from django.db.models import Count
 import pdfkit
 import platform
 import zipfile
-import zipfile
 from io import BytesIO
 import os
 import decimal
 from django.db.models import Max
 
 from django.views.decorators.clickjacking import xframe_options_exempt
+
+import random
+from django.core.cache import cache
 
 # Determine wkhtmltopdf path based on OS
 if platform.system() == 'Windows':
@@ -918,22 +920,19 @@ def add_patient (request):
             name_d = {f"Patient {x.patient_id}" for x in Patient.objects.filter(first_name=first_name, last_name=last_name)}
             p_duplicate.append(f"Name: {name_d}")
             
-        if email: 
-            if Patient.objects.filter(email=email):
+        if email and Patient.objects.filter(email=email):
                 email_d = {f"Patient {x.patient_id}" for x in Patient.objects.filter(email=email)}
                 p_duplicate.append(f"Email: {email_d}")
         
-        if pwd_id_num:
-            if Patient.objects.filter(pwd_id_num=pwd_id_num):
+        if pwd_id_num and Patient.objects.filter(pwd_id_num=pwd_id_num):
                 pwd_d = {f"Patient {x.patient_id}" for x in Patient.objects.filter(pwd_id_num=pwd_id_num)}
                 p_duplicate.append(f"PWD Number: {pwd_d}")
                 
-        if senior_id_num:
-            if Patient.objects.filter(senior_id_num=senior_id_num):
+        if senior_id_num and Patient.objects.filter(senior_id_num=senior_id_num):
                 senior_d = {f"Patient {x.patient_id}" for x in Patient.objects.filter(senior_id_num=senior_id_num)}
                 p_duplicate.append(f"Senior Number: {senior_d}")
         
-        if len(p_duplicate) > 0:
+        if p_duplicate:
             return JsonResponse({'status': 'duplicate', 'p_duplicate':p_duplicate})
         elif age >= 150:
             return JsonResponse({'status': 'ghost'})
@@ -962,11 +961,11 @@ def add_patient (request):
             }
             return JsonResponse({'status':'success', 'redirect_url':'/add_patient_details'})   
     else:
-        return render(request, 'labreqsys/add_edit_patient.html', {'mode': 'add'})
+        return render(request, 'labreqsys/add_patient.html', {'mode': 'add'})
     
 
 
-
+@receptionist_required
 def add_patient_details(request):
     '''
     
@@ -1049,6 +1048,7 @@ def add_patient_details(request):
                 'mode':mode
                 })
 
+@receptionist_required
 def edit_patient (request, pk):
     '''
     
@@ -1058,17 +1058,25 @@ def edit_patient (request, pk):
     
     p = get_object_or_404(Patient, pk=pk)
     
+    
     if request.method == "POST":
         last_name = request.POST.get('last_name')
         first_name = request.POST.get('first_name')
+        name = last_name + first_name
+        
         middle_initial = request.POST.get('middle_initial')
         suffix = request.POST.get('suffix')
         sex = request.POST.get('sex')
         civil_status = request.POST.get('civil_status') 
-        birthdate = request.POST.get('birthdate')
+        
+        birthdate  = request.POST.get('birthdate')
+        birthdate_format = date.fromisoformat(birthdate)
+        today = date.today()
+        
+        age = today.year - birthdate_format.year - ((today.month, today.day) < (birthdate_format.month, birthdate_format.day))
+        print(age)
         
         mobile_num = request.POST.get('mobile_num')
-        # handles check statement in database
         if mobile_num != "" and mobile_num.startswith ("63") == False :
             mobile_num = "63" + mobile_num.lstrip("0")
         
@@ -1085,40 +1093,58 @@ def edit_patient (request, pk):
         pwd_id_num = request.POST.get('pwd_id_num')
         senior_id_num = request.POST.get('senior_id_num')
         
-        query = Q(first_name__exact=first_name, last_name__exact=last_name, birthdate__exact=birthdate, sex=sex, city__exact=city)
+        p_duplicate = []
         
-        if mobile_num:
-            query |= Q(mobile_num__icontains=mobile_num)
-        if landline_num:
-            query |= Q(landline_num__icontains=landline_num)
-        if email:
-            query |= Q(email__icontains=email)
-
+        p_name = p.last_name + p.first_name
+        if name != p_name and Patient.objects.filter(first_name=first_name, last_name=last_name).exists():
+            name_d = {f"Patient {x.patient_id}" for x in Patient.objects.filter(first_name=first_name, last_name=last_name)}
+            p_duplicate.append(f"Name: {name_d}")
+            
+        if email and email != p.email and Patient.objects.filter(email=email):
+                email_d = {f"Patient {x.patient_id}" for x in Patient.objects.filter(email=email)}
+                p_duplicate.append(f"Email: {email_d}")
         
-        return render(request, 'labreqsys/add_edit_patient_details.html', {
-            'patient': p,
-            'last_name':last_name,
-            'first_name':first_name,
-            'middle_initial':middle_initial,
-            'suffix':suffix,
-            'sex':sex,
-            'civil_status':civil_status,
-            'birthdate':birthdate,
-            'mobile_num':mobile_num,
-            'landline_num':landline_num,
-            'email':email,
-            'house_num':house_num,
-            'street':street,
-            'subdivision':subdivision,
-            'baranggay':baranggay,
-            'province':province,
-            'city':city,
-            'zip_code':zip_code,
-            'pwd_id_num':pwd_id_num,
-            'senior_id_num':senior_id_num, 
-            'mode':'edit'})
+        if pwd_id_num and pwd_id_num != p.pwd_id_num and Patient.objects.filter(pwd_id_num=pwd_id_num):
+                pwd_d = {f"Patient {x.patient_id}" for x in Patient.objects.filter(pwd_id_num=pwd_id_num)}
+                p_duplicate.append(f"PWD Number: {pwd_d}")
+                
+        if senior_id_num and senior_id_num != p.senior_id_num and Patient.objects.filter(senior_id_num=senior_id_num):
+                senior_d = {f"Patient {x.patient_id}" for x in Patient.objects.filter(senior_id_num=senior_id_num)}
+                p_duplicate.append(f"Senior Number: {senior_d}")
+        
+        if p_duplicate:
+            return JsonResponse({'status': 'duplicate', 'p_duplicate':p_duplicate})
+        elif age >= 150:
+            return JsonResponse({'status': 'ghost'})
+        else:
+            request.session['edit_patient'] = {
+                'last_name':last_name,
+                'first_name':first_name,
+                'middle_initial':middle_initial,
+                'suffix':suffix,
+                'sex':sex,
+                'civil_status':civil_status,
+                'birthdate':birthdate,
+                'mobile_num':mobile_num,
+                'landline_num':landline_num,
+                'email':email,
+                'house_num':house_num,
+                'street':street,
+                'subdivision':subdivision,
+                'baranggay':baranggay,
+                'province':province,
+                'city':city,
+                'zip_code':zip_code,
+                'pwd_id_num':pwd_id_num,
+                'senior_id_num':senior_id_num,
+                'mode': 'edit'
+            }
+            redirect_url = reverse('edit_patient_details', args=[p.patient_id])
+            return JsonResponse({'status': 'success', 'redirect_url': redirect_url})
+        
     else:
-        return render(request, 'labreqsys/add_edit_patient.html', {'patient': p, 'mode': 'edit'})
+        print('NOT POST.')
+        return render(request, 'labreqsys/edit_patient.html', {'patient': p, 'mode': 'edit'})
 
 @receptionist_required
 def edit_patient_details(request, pk):
@@ -1129,26 +1155,32 @@ def edit_patient_details(request, pk):
     ''' 
 
     patient = get_object_or_404(Patient, pk=pk)
+    
+    edit_patient = request.session.get('edit_patient')
+    
+    if edit_patient:
+        last_name = edit_patient['last_name']
+        first_name = edit_patient['first_name']
+        middle_initial = edit_patient['middle_initial']
+        suffix = edit_patient['suffix']
+        sex = edit_patient['sex']
+        civil_status = edit_patient['civil_status']
+        birthdate = edit_patient['birthdate']
+        mobile_num = edit_patient['mobile_num']
+        landline_num = edit_patient['landline_num']
+        email = edit_patient['email']
+        house_num = edit_patient['house_num']
+        street = edit_patient['street']
+        subdivision = edit_patient['subdivision']
+        baranggay = edit_patient['baranggay']
+        province = edit_patient['province']
+        city = edit_patient['city']
+        zip_code = edit_patient['zip_code']
+        pwd_id_num = edit_patient['pwd_id_num']
+        senior_id_num = edit_patient['senior_id_num']
+        mode = edit_patient['mode']
+    
     if request.method == "POST":
-        last_name = request.POST.get('last_name')      
-        first_name = request.POST.get('first_name')
-        middle_initial = request.POST.get('middle_initial')
-        suffix = request.POST.get('suffix')
-        sex = request.POST.get('sex')
-        civil_status = request.POST.get('civil_status') 
-        birthdate = request.POST.get('birthdate')
-        mobile_num = request.POST.get('mobile_num')
-        landline_num = request.POST.get('landline_num')
-        email = request.POST.get('email')
-        house_num = request.POST.get('house_num')
-        street = request.POST.get('street')
-        baranggay = request.POST.get('baranggay')
-        province = request.POST.get('province')
-        city = request.POST.get('city')
-        subdivision = request.POST.get('subdivision')
-        zip_code = request.POST.get('zip_code')
-        pwd_id_num = request.POST.get('pwd_id_num')
-        senior_id_num = request.POST.get('senior_id_num')
         patient.last_name = last_name
         patient.first_name = first_name
         patient.middle_initial = middle_initial
@@ -1170,114 +1202,54 @@ def edit_patient_details(request, pk):
         patient.save()
         return redirect('view_patient', pk=patient.pk)
     else:
-        return render(request, 'labreqsys/add_edit_patient_details.html') 
+        return render(request, 'labreqsys/add_edit_patient_details.html', {
+                'patient':patient,
+                'last_name':last_name,
+                'first_name':first_name,
+                'middle_initial':middle_initial,
+                'suffix':suffix,
+                'sex':sex,
+                'civil_status':civil_status,
+                'birthdate':birthdate,
+                'mobile_num':mobile_num,
+                'landline_num':landline_num,
+                'email':email,
+                'house_num':house_num,
+                'street':street,
+                'subdivision':subdivision,
+                'baranggay':baranggay,
+                'province':province,
+                'city':city,
+                'zip_code':zip_code,
+                'pwd_id_num':pwd_id_num,
+                'senior_id_num':senior_id_num,
+                'mode':mode
+                })
 
-'''
-@receptionist_required
-def add_patient_details(request):
-    <!-- Displays preview of Add Patient details, then saves -->
-
+@owner_required
+def generate_edit_password(request, pk):
+    passcode = ''.join(random.choices('0123456789', k=5))
     patient = get_object_or_404(Patient, pk=pk)
-    if request.method == "POST":
-        last_name = request.POST.get('last_name')      
-        first_name = request.POST.get('first_name')
-        middle_initial = request.POST.get('middle_initial')
-        suffix = request.POST.get('suffix')
-        sex = request.POST.get('sex')
-        civil_status = request.POST.get('civil_status') 
-        birthdate = request.POST.get('birthdate')
-        mobile_num = request.POST.get('mobile_num')
-        landline_num = request.POST.get('landline_num')
-        email = request.POST.get('email')
-        house_num = request.POST.get('house_num')
-        street = request.POST.get('street')
-        baranggay = request.POST.get('baranggay')
-        province = request.POST.get('province')
-        city = request.POST.get('city')
-        subdivision = request.POST.get('subdivision')
-        zip_code = request.POST.get('zip_code')
-        pwd_id_num = request.POST.get('pwd_id_num')
-        senior_id_num = request.POST.get('senior_id_num')
-        
-
-        patient.last_name = last_name
-        patient.first_name = first_name
-        patient.middle_initial = middle_initial
-        patient.suffix = suffix
-        patient.sex = sex
-        patient.civil_status = civil_status
-        patient.birthdate = birthdate
-        patient.mobile_num = mobile_num
-        patient.landline_num = landline_num
-        patient.email = email
-        patient.house_num = house_num
-        patient.street = street
-        patient.baranggay = baranggay
-        patient.province = province
-        patient.city = city
-        patient.zip_code = zip_code
-        patient.pwd_id_num = pwd_id_num
-        patient.senior_id_num = senior_id_num
-        patient.save()
-        return redirect('view_patient', pk=patient.pk)   
-    else:
-        return render(request, 'labreqsys/add_edit_patient_details.html')
-
-
-'''  
-
-@receptionist_required
-def save_patient(request):
-    if request.method == "POST":
-        last_name = request.POST.get('last_name')
-        print(f"ast:{last_name}")
-        
-        first_name = request.POST.get('first_name')
-        middle_initial = request.POST.get('middle_initial')
-        suffix = request.POST.get('suffix')
-        sex = request.POST.get('sex')
-        civil_status = request.POST.get('civil_status') 
-        birthdate = request.POST.get('birthdate')
-        mobile_num = request.POST.get('mobile_num')
-        landline_num = request.POST.get('landline_num')
-        email = request.POST.get('email')
-        house_num = request.POST.get('house_num')
-        street = request.POST.get('street')
-        baranggay = request.POST.get('baranggay')
-        province = request.POST.get('province')
-        city = request.POST.get('city')
-        subdivision = request.POST.get('subdivision')
-        zip_code = request.POST.get('zip_code')
-        pwd_id_num = request.POST.get('pwd_id_num')
-        senior_id_num = request.POST.get('senior_id_num')
+    EditPatientPasscode.objects.filter(patient_id=patient).delete()
+    EditPatientPasscode.objects.create(patient_id=patient, code=passcode)
     
-        new_p = Patient.objects.create(
-                    last_name=last_name,
-                    first_name=first_name,
-                    middle_initial=middle_initial,
-                    suffix=suffix,
-                    sex=sex,
-                    civil_status=civil_status,
-                    birthdate=birthdate,
-                    mobile_num=mobile_num,
-                    landline_num=landline_num,
-                    email=email,
-                    house_num=house_num,
-                    street=street,
-                    baranggay=baranggay,
-                    province=province,
-                    city=city,
-                    zip_code=zip_code,
-                    pwd_id_num=pwd_id_num,
-                    senior_id_num=senior_id_num
-                    )
-            
-        p = Patient.objects.get(pk=new_p.patient_id)
-        return redirect('view_patient', pk=p.pk)
-    else: 
-        return HttpResponse ("dumbass bitch?")
-    
-@receptionist_or_lab_tech_required
+    return JsonResponse({'pass': passcode})
+
+def password(request, pk):
+    if request.method == "POST":
+        input_code = request.POST.get('password_input')
+        try:
+            passcode = EditPatientPasscode.objects.get(patient_id=pk, code=input_code)
+        except EditPatientPasscode.DoesNotExist:
+            return JsonResponse({"error": "incorrect"})
+        
+        if timezone.now() > passcode.created_at + timedelta(minutes=5):
+            passcode.delete()
+            return JsonResponse({"error":"expired"})
+        passcode.delete()
+        return JsonResponse({"success": 'found', "redirect_url": f"/edit_patient/{pk}"})
+        
+#@receptionist_or_lab_tech_required
 @xframe_options_exempt
 def pdf(request, pk):
     '''
@@ -1416,7 +1388,6 @@ def generatePDF(request):
     return HttpResponse("No PDFs.")
     
 
-# PDF generation function for a single patient
 @receptionist_or_lab_tech_required
 def savePDF(request, pk):
     '''
@@ -1425,6 +1396,16 @@ def savePDF(request, pk):
     line_item = RequestLineItem.objects.get(line_item_id=pk)
 
     filename = f"{line_item.request.patient.last_name}, {line_item.request.patient.first_name[0]}_{line_item.component.test_name}_{line_item.request.date_requested}.pdf"
+    # Create PDF from URL (the URL will be a page where you render patient details)
+    
+    options = {
+    'enable-local-file-access': None,
+    'no-stop-slow-scripts': None,
+    'debug-javascript': None,
+    }
+    pdf = pdfkit.from_url(request.build_absolute_uri(reverse('pdf', args=[pk])), False, options=options)
+    
+    # Return the PDF response
 
     lab_request = line_item.request
     patient = lab_request.patient

@@ -1,0 +1,317 @@
+{% extends 'labreqsys/base.html' %}
+{% load static tailwind_tags %}
+
+{% block content %}
+<div class="breadbutton mb-4">
+    <ul class="breadcrumb text-sm">
+        <li>
+            <a href="{% url 'patientList' %}" class="text-myblue-primary">Patient List/</a>
+            <a href="#" class="text-myblue-highlight"> Patient Record</a></li>
+    </ul>
+</div>
+
+<!--Modal-->
+<div id="duplicateModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+    <p>Error!</p>
+    <p id="error_type">None.</p>
+    <p id="error_message">Empty.</p>
+    <button onclick="closeModal()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">OK</button>
+    </div>
+</div>
+
+    <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
+        <!-- Modal header -->
+        <div class="flex justify-between items-center pb-2 mb-4 rounded-t border-b sm:mb-5">
+            <h3 class="text-mm font-semibold text-blue-900">
+                Edit Patient
+            </h3>
+        </div>
+        <!-- Modal body -->
+        <form id="editForm" method="POST" action="{% url 'edit_patient' pk=patient.pk %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
+
+            <!--ROW 1-->
+            <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2">Patient Information</div>
+
+            <div class="grid gap-2.5 mb-4 sm:grid-cols-6"> <!--TO BACKEND: don't forget to fill in for=""-->
+                <div>
+                    <label for="last_name" class="block mb-2 text-left text-sm font-medium text-gray-500">Last Name *</label>
+                    <input type="text" name="last_name" id="last_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type last name" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only." value="{{patient.last_name}}">
+                </div>
+                <div>
+                    <label for="first_name" class="block mb-2 text-left text-sm font-medium text-gray-500">First Name *</label>
+                    <input type="text" name="first_name" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type first name" required="" pattern="^[A-Za-z\s]+$" title="Use letters and spaces only." value="{{patient.first_name}}">
+                </div>
+                <div>
+                    <label for="middle_initial" class="block mb-2 text-left text-sm font-medium text-gray-500">M.I.</label>
+                    <input type="text" name="middle_initial" id="middle_initial" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type M.I." pattern="^[A-Za-z]{1,2}$" title="Maximum 2 letters only." value="{{patient.middle_initial}}">
+                </div>
+                <div>
+                    <label for="suffix" class="block mb-2 text-left text-sm font-medium text-gray-500">Suffix</label>
+                    <input type="text" name="suffix" id="suffix" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type Suffix" pattern="^[A-Za-z ]+$" title="Use letters and spaces only." value="{{patient.suffix}}">
+                </div>
+                <div>
+                    <label for="sex" class="block mb-2 text-left text-sm font-medium text-gray-500">Sex *</label>
+                    <select id="sex" name="sex" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="" >
+                        <option value="Male" {% if patient.sex == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if patient.sex == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if patient.sex == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="Civil Status" class="block mb-2 text-left text-sm font-medium text-gray-500">Civil Status *</label>
+                    <select id="civil_status" name="civil_status" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
+                        <option value="" disabled selected>Select status</option>
+                        <option value=Single {% if patient.civil_status == 'Single' %}selected{% endif %}> Single </option>
+                        <option value=Married  {% if patient.civil_status == 'Married' %}selected{% endif %}> Married </option>
+                        <option value=Widowed  {% if patient.civil_status == 'Widowed' %}selected{% endif %}> Widowed </option>
+                        <option value=Other  {% if patient.civil_status == 'Other' %}selected{% endif %}> Other </option>
+                    </select>
+                </div>
+            </div>
+
+            <!--ROW 2-->
+            <div class="grid gap-2.5 mb-4 sm:grid-cols-4"> <!--TO BACKEND: don't forget to fill in for=""-->
+                <div>
+                    <label for="birthdate" class="block mb-2 text-left text-sm font-medium text-gray-500">Birthday *</label>
+                    <input type="date" name="birthdate" id="birthdate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{patient.birthdate|date:'Y-m-d'}}" required="" max="" >
+                </div>
+                <div>
+                    <label for="mobile_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Mobile No.</label>
+                    <input type="text" name="mobile_num" id="mobile_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="639" pattern="^(63)\d{10}$|^\d{10}$|^0\d{10}$" title="Input valid phone number." value="{{patient.mobile_num}}">
+                </div>
+                <div>
+                    <label for="landline_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Landline No.</label>
+                    <input type="text" name="landline_num" id="landline_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="082" pattern="^0\d{9}$" title="Input valid landline number." value="{{patient.landline_num}}">
+                </div>
+                <div>
+                    <label for="email" class="block mb-2 text-left text-sm font-medium text-gray-500">Email</label>
+                    <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="@" value="{{patient.email}}">
+                </div>
+            </div>
+
+            <!--ROW 3-->
+            <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2 mt-6">Address</div>
+            <div class="grid gap-2.5 mb-4 sm:grid-cols-4"> <!--TO BACKEND: don't forget to fill in for=""-->
+                <div>
+                    <label for="house_num" class="block mb-2 text-left text-sm font-medium text-gray-500">House No. *</label>
+                    <input type="text" name="house_num" id="house_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type number" required="" pattern="^[A-Za-z0-9]+$" title="Use letters and numbers only."value="{{patient.house_num}}" >
+                </div>
+                <div>
+                    <label for="street" class="block mb-2 text-left text-sm font-medium text-gray-500">Street Name *</label>
+                    <input type="text" name="street" id="street" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type street name" required="" pattern="^[A-Za-z0-9 .,]+$" title="Use letters, numbers, spaces, and periods only." value="{{patient.street}}">
+    
+                </div>
+                <div>
+                    <label for="subdivision" class="block mb-2 text-left text-sm font-medium text-gray-500">Village/Subdivision</label>
+                    <input type="text" name="subdivision" id="subdivision" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type village or subdivision" pattern="^[A-Za-z0-9 .,]+$" title="Use letters, numbers, spaces, and periods only." value="{{patient.subdivision}}">
+                </div>
+                <div>
+                    <label for="baranggay" class="block mb-2 text-left text-sm font-medium text-gray-500">Barangay</label>
+                    <input type="text" name="baranggay" id="baranggay" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type barangay" pattern="^[A-Za-z0-9 .,]+$" title="Use letters, numbers, spaces, and periods only." value="{{patient.baranggay}}">
+                </div>
+            </div>
+
+            <!--ROW 4-->
+            <div class="grid gap-2.5 mb-4 sm:grid-cols-3"> <!--TO BACKEND: don't forget to fill in for=""-->
+                <div>
+                    <label for="province" class="block mb-2 text-left text-sm font-medium text-gray-500">Province *</label>
+                    <select id="province" name="province" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
+                        <option value="" selected disabled>Select province</option>
+                        <option value="Metro Manila" {% if patient.province == 'Metro Manila' %}selected{% endif %}> Metro Manila </option>
+                        <option value="Abra" {% if patient.province == 'Abra' %}selected{% endif %}> Abra </option>
+                        <option value="Agusan del Norte" {% if patient.province == 'Agusan del Norte' %}selected{% endif %}> Agusan del Norte </option>
+                        <option value="Agusan del Sur" {% if patient.province == 'Agusan del Sur' %}selected{% endif %}> Agusan del Sur </option>
+                        <option value="Aklan" {% if patient.province == 'Aklan' %}selected{% endif %}> Aklan </option>
+                        <option value="Albay" {% if patient.province == 'Albay' %}selected{% endif %}> Albay </option>
+                        <option value="Antique" {% if patient.province == 'Antique' %}selected{% endif %}> Antique </option>
+                        <option value="Apayao" {% if patient.province == 'Apayao' %}selected{% endif %}> Apayao </option>
+                        <option value="Aurora" {% if patient.province == 'Aurora' %}selected{% endif %}> Aurora </option>
+                        <option value="Basilan" {% if patient.province == 'Basilan' %}selected{% endif %}> Basilan </option>
+                        <option value="Bataan" {% if patient.province == 'Bataan' %}selected{% endif %}> Bataan </option>
+                        <option value="Batanes" {% if patient.province == 'Batanes' %}selected{% endif %}> Batanes </option>
+                        <option value="Batangas" {% if patient.province == 'Batangas' %}selected{% endif %}> Batangas </option>
+                        <option value="Benguet" {% if patient.province == 'Benguet' %}selected{% endif %}> Benguet </option>
+                        <option value="Biliran" {% if patient.province == 'Biliran' %}selected{% endif %}> Biliran </option>
+                        <option value="Bohol" {% if patient.province == 'Bohol' %}selected{% endif %}> Bohol </option>
+                        <option value="Bukidnon" {% if patient.province == 'Bukidnon' %}selected{% endif %}> Bukidnon </option>
+                        <option value="Bulacan" {% if patient.province == 'Bulacan' %}selected{% endif %}> Bulacan </option>
+                        <option value="Cagayan" {% if patient.province == 'Cagayan' %}selected{% endif %}> Cagayan </option>
+                        <option value="Camarines Norte" {% if patient.province == 'Camarines Norte' %}selected{% endif %}> Camarines Norte </option>
+                        <option value="Camarines Sur" {% if patient.province == 'Camarines Sur' %}selected{% endif %}> Camarines Sur </option>
+                        <option value="Camiguin" {% if patient.province == 'Camiguin' %}selected{% endif %}> Camiguin </option>
+                        <option value="Capiz" {% if patient.province == 'Capiz' %}selected{% endif %}> Capiz </option>
+                        <option value="Catanduanes" {% if patient.province == 'Catanduanes' %}selected{% endif %}> Catanduanes </option>
+                        <option value="Cavite" {% if patient.province == 'Cavite' %}selected{% endif %}> Cavite </option>
+                        <option value="Cebu" {% if patient.province == 'Cebu' %}selected{% endif %}> Cebu </option>
+                        <option value="Cotabato" {% if patient.province == 'Cotabato' %}selected{% endif %}> Cotabato </option>
+                        <option value="Davao de Oro" {% if patient.province == 'Davao de Oro' %}selected{% endif %}> Davao de Oro </option>
+                        <option value="Davao del Norte" {% if patient.province == 'Davao del Norte' %}selected{% endif %}> Davao del Norte </option>
+                        <option value="Davao del Sur" {% if patient.province == 'Davao del Sur' %}selected{% endif %}> Davao del Sur </option>
+                        <option value="Davao Occidental" {% if patient.province == 'Davao Occidental' %}selected{% endif %}> Davao Occidental </option>
+                        <option value="Davao Oriental" {% if patient.province == 'Davao Oriental' %}selected{% endif %}> Davao Oriental </option>
+                        <option value="Dinagat Islands" {% if patient.province == 'Dinagat Islands' %}selected{% endif %}> Davao Oriental </option>
+                        <option value="Eastern Samar" {% if patient.province == 'Eastern Samar' %}selected{% endif %}> Eastern Samar </option>
+                        <option value="Guimaras" {% if patient.province == 'Guimaras' %}selected{% endif %}> Guimaras </option>
+                        <option value="Ifugao" {% if patient.province == 'Ifugao' %}selected{% endif %}> Ifugao </option>
+                        <option value="Ilocos Norte" {% if patient.province == 'Ilocos Norte' %}selected{% endif %}> Ilocos Norte </option>
+                        <option value="Ilocos Sur" {% if patient.province == 'Ilocos Sur' %}selected{% endif %}> Ilocos Sur </option>
+                        <option value="Iloilo" {% if patient.province == 'Iloilo' %}selected{% endif %}> Iloilo </option>
+                        <option value="Isabela" {% if patient.province == 'Isabela' %}selected{% endif %}> Isabela </option>
+                        <option value="Kalinga" {% if patient.province == 'Kalinga' %}selected{% endif %}> Kalinga </option>
+                        <option value="La Union" {% if patient.province == 'La Union' %}selected{% endif %}> La Union </option>
+                        <option value="Laguna" {% if patient.province == 'Laguna' %}selected{% endif %}> Laguna </option>
+                        <option value="Lanao del Norte" {% if patient.province == 'Lanao del Norte' %}selected{% endif %}> Lanao del Norte </option>
+                        <option value="Lanao del Sur" {% if patient.province == 'Lanao del Sur' %}selected{% endif %}> Lanao del Sur </option>
+                        <option value="Leyte" {% if patient.province == 'Leyte' %}selected{% endif %}> Leyte </option>
+                        <option value="Maguindanao del Norte" {% if patient.province == 'Maguindanao del Norte' %}selected{% endif %}> Maguindanao del Norte </option>
+                        <option value="Maguindanao del Sur" {% if patient.province == 'Maguindanao del Sur' %}selected{% endif %}> Maguindanao del Sur </option>
+                        <option value="Marinduque" {% if patient.province == 'Marinduque' %}selected{% endif %}> Marinduque </option>
+                        <option value="Masbate" {% if patient.province == 'Masbate' %}selected{% endif %}> Masbate </option>
+                        <option value="Misamis Occidental" {% if patient.province == 'Misamis Occidental' %}selected{% endif %}> Misamis Occidental </option>
+                        <option value="Misamis Oriental" {% if patient.province == 'Misamis Oriental' %}selected{% endif %}> Misamis Oriental </option>
+                        <option value="Mountain Province" {% if patient.province == 'Mountain Province' %}selected{% endif %}> Mountain Province </option>
+                        <option value="Negros Occidental" {% if patient.province == 'Negros Occidental' %}selected{% endif %}> Negros Occidental </option>
+                        <option value="Negros Oriental" {% if patient.province == 'Negros Oriental' %}selected{% endif %}> Negros Oriental </option>
+                        <option value="Northern Samar" {% if patient.province == 'Northern Samar' %}selected{% endif %}> Northern Samar </option>
+                        <option value="Nueva Ecija" {% if patient.province == 'Nueva Ecija' %}selected{% endif %}> Nueva Ecija </option>
+                        <option value="Nueva Vizcaya" {% if patient.province == 'Nueva Vizcaya' %}selected{% endif %}> Nueva Vizcaya </option>
+                        <option value="Occidental Mindoro" {% if patient.province == 'Occidental Mindoro' %}selected{% endif %}> Occidental Mindoro </option>
+                        <option value="Oriental Mindoro" {% if patient.province == 'Oriental Mindoro' %}selected{% endif %}> Oriental Mindoro </option>
+                        <option value="Palawan" {% if patient.province == 'Palawan' %}selected{% endif %}> Palawan </option>
+                        <option value="Pampanga" {% if patient.province == 'Pampanga' %}selected{% endif %}> Pampanga </option>
+                        <option value="Pangasinan" {% if patient.province == 'Pangasinan' %}selected{% endif %}> Pangasinan </option>
+                        <option value="Quezon" {% if patient.province == 'Quezon' %}selected{% endif %}> Quezon </option>
+                        <option value="Quirino" {% if patient.province == 'Quirino' %}selected{% endif %}> Quirino </option>
+                        <option value="Rizal" {% if patient.province == 'Rizal' %}selected{% endif %}> Rizal </option>
+                        <option value="Romblon" {% if patient.province == 'Romblon' %}selected{% endif %}> Romblon </option>
+                        <option value="Samar" {% if patient.province == 'Samar' %}selected{% endif %}> Samar </option>
+                        <option value="Sarangani" {% if patient.province == 'Sarangani' %}selected{% endif %}> Sarangani </option>
+                        <option value="Siquijor" {% if patient.province == 'Siquijor' %}selected{% endif %}> Siquijor </option>
+                        <option value="Sorsogon" {% if patient.province == 'Sorsogon' %}selected{% endif %}> Sorsogon </option>
+                        <option value="South Cotabato" {% if patient.province == 'South Cotabato' %}selected{% endif %}> South Cotabato </option>
+                        <option value="Southern Leyte" {% if patient.province == 'Southern Leyte' %}selected{% endif %}> Southern Leyte </option>
+                        <option value="Sultan Kudarat" {% if patient.province == 'Sultan Kudarat' %}selected{% endif %}> Sultan Kudarat </option>
+                        <option value="Sulu" {% if patient.province == 'Sulu' %}selected{% endif %}> Sulu </option>
+                        <option value="Surigao del Norte" {% if patient.province == 'Surigao del Norte' %}selected{% endif %}> Surigao del Norte </option>
+                        <option value="Surigao del Sur" {% if patient.province == 'Surigao del Sur' %}selected{% endif %}> Surigao del Sur </option>
+                        <option value="Tarlac" {% if patient.province == 'Tarlac' %}selected{% endif %}> Tarlac </option>
+                        <option value="Tawi-Tawi" {% if patient.province == 'Tawi-Tawi' %}selected{% endif %}> Tawi-Tawi </option>
+                        <option value="Zambales" {% if patient.province == 'Zambales' %}selected{% endif %}> Zambales </option>
+                        <option value="Zamboanga del Norte" {% if patient.province == 'Zamboanga del Norte' %}selected{% endif %}> Zamboanga del Norte </option>
+                        <option value="Zamboanga del Sur" {% if patient.province == 'Zamboanga del Sur' %}selected{% endif %}> Zamboanga del Sur </option>
+                        <option value="Zamboanga Sibugay" {% if patient.province == 'Zamboanga Sibugay' %}selected{% endif %}> Zamboanga Sibugay </option>           
+                    </select>
+                </div>
+                <div>
+                    <label for="city" class="block mb-2 text-left text-sm font-medium text-gray-500">City *</label>
+                    <input type="text" name="city" id="city" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type city" required="" pattern="^[A-Za-z ]+$" title="Use letters and spaces only." value="{{patient.city}}">
+                </div>
+                <div>
+                    <label for="zip_code" class="block mb-2 text-left text-sm font-medium text-gray-500">Zip Code *</label>
+                    <input type="text" name="zip_code" id="zip_code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type zip code" pattern="[0-9]{4}" title="Enter correct zip code." value="{{patient.zip_code}}">
+                </div>
+            </div>
+
+            <!--ROW 5: ID-->
+            <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2 mt-6">ID Information</div>
+            <div class="grid gap-2.5 mb-4 sm:grid-cols-2"> <!--TO BACKEND: don't forget to fill in for=""-->
+                <div>
+                    <label for="pwd_id_num" class="block mb-2 text-left text-sm font-medium text-gray-500">PWD</label>
+                    <input type="text" name="pwd_id_num" id="pwd_id_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type PWD number" pattern="^[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{3}-[0-9]{7}$" title="Enter correct PWD Number Format: [NN]-[NN]-[NN]-[NNN]-[NNNNNNN]" value="{{patient.pwd_id_num}}">
+                </div>
+                <div>
+                    <label for="senior_id_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Senior Citizen</label>
+                    <input type="text" name="senior_id_num" id="senior_id_num" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type Senior Citizen ID number" pattern="^[a-zA-Z0-9\s]+$" title="Use letters and numbers only." value="{{patient.senior_id_num}}">
+                </div>
+            </div>
+
+            <div class="flex pb-5 w-full justify-center items-center gap-2.5">
+                <button type="button" onclick="history.back()" id="BackPatient" name="BackPatient" class="flex-1 flex justify-center text-myblue-primary items-center bg-myblue-secondary border border-myblue-borderPrimary hover:bg-gray-300  font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
+                    Back
+                </button>
+                
+                <button type="submit" class="flex flex-1 justify-center text-white items-center bg-myblue-primary  font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
+                    Edit Information
+                </button>
+            </div>
+
+        </form>
+        
+    </div>
+
+
+
+
+<script>
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("birthdate").setAttribute("max", today); 
+    
+    const editForm = document.getElementById('editForm');
+    const modal = document.getElementById('duplicateModal');
+
+
+    if (editForm){
+        console.log('edit')
+
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const formData = new FormData(editForm);
+
+            const phone = document.getElementById("mobile_num").value;
+            const landline = document.getElementById("landline_num").value;
+            const email = document.getElementById("email").value;
+
+            if (!phone && !landline && !email){
+                modal.classList.remove('hidden');
+                document.getElementById("error_type").innerHTML = 'Add atleast one:';
+                document.getElementById("error_message").innerHTML = 'Mobile Number, Landline Number, Email'
+            } else{
+                try {
+                    const response = await fetch("{% url 'edit_patient' pk=patient.pk %}", {
+                        method: 'POST',
+                        headers: {
+                        'X-CSRFToken': csrfToken,
+                        },
+                        body: formData,
+                    });
+
+                    const result = await response.json();
+                    console.log(result); 
+
+                    if (result.status === 'duplicate') {
+                        modal.classList.remove('hidden');
+                        const duplicates = result.p_duplicate; 
+                        let duplicatesList = Array.isArray(duplicates) ? duplicates : duplicates.split(',');
+                        document.getElementById("error_type").innerHTML = 'Potential Duplicates with the following:';
+                        document.getElementById("error_message").innerHTML = duplicatesList.join('<br>');
+                        console.log(result.p_duplicate)
+                        
+                    } else if (result.status === 'ghost') {
+                        modal.classList.remove('hidden');
+                        document.getElementById("error_type").innerHTML = 'Potential Ghost Patient detected.';
+                        document.getElementById("error_message").innerHTML = 'Age of patient can not be more than 150.';
+
+                    } else if (result.status === 'success') {
+                        window.location.href = result.redirect_url;
+
+                    } else {
+                        alert("Unexpected response.");
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        });
+    };
+
+    function closeModal() {
+        modal.classList.add('hidden');
+}
+
+</script>
+
+{% endblock %}
+
