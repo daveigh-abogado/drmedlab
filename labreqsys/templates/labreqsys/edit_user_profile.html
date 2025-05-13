@@ -5,7 +5,7 @@
     <div class="relative p-4 bg-white rounded-lg shadow sm:p-5 max-w-lg mx-auto">
         <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
             <h3 class="text-mm font-semibold text-blue-900">
-                Edit User Profile
+                Edit User Profile 
             </h3>
         </div>
         <div class="mb-4 text-xs text-gray-500">Required fields are marked with <span class="text-red-600">*</span></div>
@@ -26,7 +26,7 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        </div>
+                </div>
         <!-- Profile Update Form -->
         <form method="post" enctype="multipart/form-data" class="gap-2.5" autocomplete="off">
             {% csrf_token %}
@@ -34,7 +34,7 @@
                 {% if profile_form %}
                     <h4 class="text-sm font-semibold text-blue-800 mb-2 mt-2 tracking-wide uppercase">User Information</h4>
                     {% for field in profile_form %}
-                        <div class="mb-4">
+                <div class="mb-4">
                             <label class="block mb-2 text-left text-sm font-medium text-gray-500">
                                 {{ field.label }}{% if field.field.required %}<span class="text-red-600">*</span>{% endif %}
                             </label>
@@ -42,7 +42,7 @@
                             {% if field.errors %}
                                 <p class="text-red-500 text-xs mt-1">{{ field.errors|striptags }}</p>
                             {% endif %}
-                        </div>
+                </div>
                     {% endfor %}
                 {% endif %}
                 {% if labtech_form %}
@@ -50,13 +50,13 @@
                     {% for field in labtech_form %}
                         {% if field.name == 'signature_path' %}
                             {% if labtech_form.instance.signature_path %}
-                                <div class="mb-4">
-                                    <label class="block mb-2 text-left text-sm font-medium text-gray-500">Current Signature</label>
+                <div class="mb-4">
+                    <label class="block mb-2 text-left text-sm font-medium text-gray-500">Current Signature</label>
                                     <img src="{{ labtech_form.instance.signature_path.url }}" alt="Current Signature" class="h-16 mb-2">
-                                </div>
+                </div>
                             {% endif %}
                         {% endif %}
-                        <div class="mb-4">
+                <div class="mb-4">
                             <label class="block mb-2 text-left text-sm font-medium text-gray-500">
                                 {{ field.label }}{% if field.field.required %}<span class="text-red-600">*</span>{% endif %}
                             </label>
@@ -64,7 +64,7 @@
                             {% if field.errors %}
                                 <p class="text-red-500 text-xs mt-1">{{ field.errors|striptags }}</p>
                             {% endif %}
-                        </div>
+                </div>
                     {% endfor %}
                 {% endif %}
             {% else %}
@@ -78,14 +78,14 @@
                             {% if field.errors %}
                                 <p class="text-red-500 text-xs mt-1">{{ field.errors|striptags }}</p>
                             {% endif %}
-                        </div>
+                    </div>
                     {% endfor %}
                 {% endif %}
             {% endif %}
             <button type="submit" name="profile_submit" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">
                 Save Profile
-            </button>
-        </form>
+                </button>
+            </form>
         <!-- Password Change Form -->
         <form method="post" class="gap-2.5 mt-8" autocomplete="off">
             {% csrf_token %}
@@ -102,11 +102,11 @@
                         {% endif %}
                     </div>
                 {% endfor %}
-            </div>
+                    </div>
             <button type="submit" name="password_submit" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">
                 Change Password
-            </button>
-        </form>
+                </button>
+            </form>
     </div>
 </div>
 <style>

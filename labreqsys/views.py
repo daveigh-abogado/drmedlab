@@ -1198,8 +1198,50 @@ def edit_lab_tech(request, lab_tech_id):
 
 @owner_required
 def view_lab_techs(request):
-    lab_techs = LabTech.objects.all()
-    return render(request, 'labreqsys/view_lab_techs.html', {'lab_techs': lab_techs})
+    from django.contrib.auth.models import User
+    from .models import UserProfile, LabTech
+
+    staff_profiles = UserProfile.objects.select_related('user').all()
+    owners = []
+    receptionists = []
+    labtechs = []
+    labtechs_with_user = set()
+
+    for profile in staff_profiles:
+        entry = {
+            'user': profile.user,
+            'role': profile.role,
+            'labtech': None,
+            'has_user_account': True,
+        }
+        if profile.role == 'owner':
+            owners.append(entry)
+        elif profile.role == 'receptionist':
+            receptionists.append(entry)
+        elif profile.role == 'lab_tech':
+            try:
+                labtech = LabTech.objects.get(first_name=profile.user.first_name, last_name=profile.user.last_name)
+                entry['labtech'] = labtech
+                labtechs_with_user.add(labtech.lab_tech_id)
+            except LabTech.DoesNotExist:
+                entry['labtech'] = None
+            labtechs.append(entry)
+
+    # Add LabTechs with no user account
+    for labtech in LabTech.objects.all():
+        if labtech.lab_tech_id not in labtechs_with_user:
+            labtechs.append({
+                'user': None,
+                'role': 'lab_tech',
+                'labtech': labtech,
+                'has_user_account': False,
+            })
+
+    return render(request, 'labreqsys/view_lab_techs.html', {
+        'owners': owners,
+        'receptionists': receptionists,
+        'labtechs': labtechs,
+    })
 
 @login_required
 def edit_user_profile(request):

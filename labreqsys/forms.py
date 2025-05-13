@@ -120,7 +120,7 @@ class UserProfileForm(forms.ModelForm):
 
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(max_length=150)
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput) 
 
 class EditReceptionistProfileForm(forms.ModelForm):
     class Meta:
