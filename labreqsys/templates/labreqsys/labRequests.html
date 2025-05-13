@@ -25,12 +25,14 @@
 
 
         <!-- Sort By Container -->
-        <div class="justify-end">                   
-            <label class="text-sm font-medium text-gray-500 px-2"> Sort by </label> <!--TO FRONTEND: the dropdown is grey aksdhjkasd paconvert to white im losing my mind-->
-            <select name="sortby" onchange="this.form.submit()" class="text-white bg-myblue-primary hover:bg-blue-800 font-medium rounded-lg text-sm px-7 py-2 text-center inline-flex items-center">
-                <option value="latest" {% if request.GET.sortby == 'latest' %}selected{% endif %}>Latest First</option>
-                <option value="oldest" {% if request.GET.sortby == 'oldest' %}selected{% endif %}>Oldest First</option>
-            </select>
+        <div class="justify-end">   
+            <form action="" method="get">             
+                <label class="text-sm font-medium text-gray-500 px-2"> Sort by </label> <!--TO FRONTEND: the dropdown is grey aksdhjkasd paconvert to white im losing my mind-->
+                <select name="sortby" onchange="this.form.submit()" class="text-white bg-myblue-primary hover:bg-blue-800 font-medium rounded-lg text-sm px-7 py-2 text-center inline-flex items-center">
+                    <option value="latest" {% if request.GET.sortby == 'latest' %}selected{% endif %}>Latest First</option>
+                    <option value="oldest" {% if request.GET.sortby == 'oldest' %}selected{% endif %}>Oldest First</option>
+                </select>
+            </form>   
         </div>
     </div>
 </div>
