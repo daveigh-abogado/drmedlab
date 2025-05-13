@@ -2,20 +2,30 @@
 {% load static tailwind_tags %}
 
 {% block content %}
+<<<<<<< HEAD
 
 <div class="breadbutton mb-4">
     <ul class="breadcrumb text-sm">
         <li>
             <a href="{% url 'patientList' %}" class="text-myblue-primary">Patient List/</a>
             <a href="#" class="text-myblue-highlight"> Patient Record</a></li>
+=======
+<div class="breadbutton my-4">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'patientList' %}">Patient List</a></li>
+        <li><a href="#" class="current">Patient Record</a></li>
+>>>>>>> parent of 01708f5 (patient module)
     </ul>
 </div>
 
 {% if mode == 'add' %}
 <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
-    <!-- Modal header -->
-    <div class="text-left text-base font-semibold text-blue-900 uppercase mb-2">Review Information</div>
-
+        <!-- Modal header -->
+        <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
+            <h3 class="text-mm font-semibold text-blue-900">
+                Review Patient
+            </h3>
+        </div>
     <!-- Modal body -->
     <form id="savePatient" method="POST" action="{% url 'add_patient_details' %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
         <!--ROW 1-->
@@ -254,19 +264,15 @@
             </div>
         </div>
 
-        <div class="flex pb-5 w-full justify-center items-center gap-2.5">
-            <button type="button" onclick="history.back()" id="BackPatient" name="BackPatient" class="h-11 flex-1 flex justify-center border-myblue-borderPrimary text-myblue-primary items-center bg-myblue-secondary hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
-                Back
-            </button>
-            
-            <button type="submit" id="SubmitPatient" name="SubmitPatient" 
-            class="flex flex-1 justify-center text-white items-center bg-myblue-primary hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
-                <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-                Submit
-            </button>
-        </div>
+        <button type="submit" id="SubmitPatient" name="SubmitPatient"class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
+            <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+            Submit
+        </button>
         
     </form>
+    <button type="button" onclick="history.back()" id="BackPatient" name="BackPatient" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
+        Back
+    </button>
 </div>
 {% endif %}
 

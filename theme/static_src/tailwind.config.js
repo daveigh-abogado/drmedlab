@@ -46,6 +46,7 @@ module.exports = {
             fontFamily: {
                 sans: ['Roboto', 'system-ui', 'sans-serif'],
                 // Add more custom font families as needed
+<<<<<<< HEAD
             },
             colors: {
                 myblue: {
@@ -70,6 +71,9 @@ module.exports = {
                     borderPrimary: '#BCC4DD', // Border
                 },
             },
+=======
+              },
+>>>>>>> parent of 01708f5 (patient module)
         },
     },
     plugins: [

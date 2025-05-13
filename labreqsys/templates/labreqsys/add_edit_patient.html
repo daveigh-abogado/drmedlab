@@ -2,6 +2,7 @@
 {% load static tailwind_tags %}
 
 {% block content %}
+<<<<<<< HEAD
 <div class="breadbutton mb-4">
     <ul class="breadcrumb text-sm">
         <li>
@@ -10,16 +11,40 @@
     </ul>
 </div>
 
+=======
+<div class="breadbutton my-4">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'patientList' %}">Patient List</a></li>
+        <li><a href="#" class="current">Patient Record</a></li>
+    </ul>
+</div>
+
+<!--Modal-->
+<div id="duplicateModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <p>Error!</p>
+      <p id="error_type">None.</p>
+      <p id="error_message">Empty.</p>
+      <button onclick="closeModal()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">OK</button>
+    </div>
+</div>
+
+>>>>>>> parent of 01708f5 (patient module)
 
 <!-- ADD MODE -->
 {% if mode == 'add' %}
     <!-- Modal content -->
     <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
-        <!-- header -->
-        <div class="flex justify-between items-center pb-2 mb-4 rounded-t border-b sm:mb-5">
-            <h3 class="text-lg font-semibold text-blue-900">
+        <!-- Modal header -->
+        <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
+            <h3 class="text-mm font-semibold text-blue-900">
                 Add Patient
             </h3>
+            <!-- FRONTEND: backbutton-->
+            <button type="button" id="closeModalButton" name="closeModalButton"class="text-blue-900 bg-transparent hover:bg-blue-800 hover:text-blue-800 rounded-lg text-sm p-1.5 ml-auto inline-flex items-right">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                <span class="sr-only">Close modal</span>
+            </button>
         </div>
         <!-- Modal body -->
         <form id="addForm" method="POST" action="{% url 'add_patient' %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
@@ -46,8 +71,8 @@
                 </div>
                 <div>
                     <label for="sex" class="block mb-2 text-left text-sm font-medium text-gray-500">Sex *</label>
-                    <select id="sex" name="sex" class="bg-gray-50 border border-gray-300 text-sm text-gray-700 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
-                        <option value="" class="" disabled selected>Select gender</option>
+                    <select id="sex" name="sex" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="" v>
+                        <option value="" disabled selected>Select gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                         <option value=Other> Other </option>
@@ -55,7 +80,7 @@
                 </div>
                 <div>
                     <label for="Civil Status" class="block mb-2 text-left text-sm font-medium text-gray-500">Civil Status *</label>
-                    <select id="civil_status" name="civil_status" class="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
+                    <select id="civil_status" name="civil_status" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
                         <option value="" disabled selected>Select status</option>
                         <option value=Single> Single </option>
                         <option value=Married> Married </option>
@@ -69,7 +94,7 @@
             <div class="grid gap-2.5 mb-4 sm:grid-cols-4"> <!--TO BACKEND: don't forget to fill in for=""-->
                 <div>
                     <label for="birthdate" class="block mb-2 text-left text-sm font-medium text-gray-500">Birthday *</label>
-                    <input type="date" name="birthdate" id="birthdate" class="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Birthday" required="" max="">
+                    <input type="date" name="birthdate" id="birthdate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Birthday" required="" max="">
                 </div>
                 <div>
                     <label for="mobile_num" class="block mb-2 text-left text-sm font-medium text-gray-500">Mobile No.</label>
@@ -111,7 +136,7 @@
             <div class="grid gap-2.5 mb-4 sm:grid-cols-3"> <!--TO BACKEND: don't forget to fill in for=""-->
                 <div>
                     <label for="province" class="block mb-2 text-left text-sm font-medium text-gray-500">Province *</label>
-                    <select id="province" name="province" class="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
+                    <select id="province" name="province" class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="">
                         <option value="" selected disabled>Select province</option>
                         <option value="Metro Manila"> Metro Manila </option>
                         <option value="Abra"> Abra </option>
@@ -220,19 +245,14 @@
                 </div>
             </div>
 
-            <div class="flex pb-5 w-full justify-center items-center gap-2.5">
-                <button type="button" onclick="history.back()" id="BackPatient" name="BackPatient" class="h-11 flex-1 flex justify-center border-myblue-borderPrimary text-myblue-primary items-center bg-myblue-secondary hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
-                    Back
-                </button>
-                
-                <button type="submit" class="flex flex-1 justify-center text-white items-center bg-myblue-primary hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
-                    <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-                    Add Patient
-                </button>
-            </div>
-            
+            <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
+                <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+                Add Patient
+            </button>
         </form>
-        
+        <button type="button" onclick="history.back()" id="BackPatient" name="BackPatient" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
+            Back
+        </button>
     </div>
 
 
@@ -241,10 +261,15 @@
     
     <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
         <!-- Modal header -->
-        <div class="flex justify-between items-center pb-2 mb-4 rounded-t border-b sm:mb-5">
+        <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
             <h3 class="text-mm font-semibold text-blue-900">
                 Edit Patient
             </h3>
+            <!-- FRONTEND: backbutton-->
+            <button type="button" id="closeModalButton" name="closeModalButton"class="text-blue-900 bg-transparent hover:bg-blue-800 hover:text-blue-800 rounded-lg text-sm p-1.5 ml-auto inline-flex items-right">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                <span class="sr-only">Close modal</span>
+            </button>
         </div>
         <!-- Modal body -->
         <form id="form" method="POST" action="{% url 'edit_patient' pk=patient.pk %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
@@ -445,18 +470,14 @@
                 </div>
             </div>
 
-            <div class="flex pb-5 w-full justify-center items-center gap-2.5">
-                <button type="button" onclick="history.back()" id="BackPatient" name="BackPatient" class="flex-1 flex justify-center text-myblue-primary items-center bg-myblue-secondary border border-myblue-borderPrimary hover:bg-gray-300  font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
-                    Back
-                </button>
-                
-                <button type="submit" class="flex flex-1 justify-center text-white items-center bg-myblue-primary  font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
-                    Edit Information
-                </button>
-            </div>
-
+            <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
+                <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+                Edit Patient
+            </button>
         </form>
-        
+        <button type="button" onclick="history.back()" id="BackPatient" name="BackPatient" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
+            Back
+        </button>
     </div>
 {% endif %}
 

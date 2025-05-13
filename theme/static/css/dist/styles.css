@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -143,6 +147,7 @@
 7. Disable tap highlights on iOS
 */
 
+/*Settings*/
 html,
 :host {
   line-height: 1.5;
@@ -154,7 +159,7 @@ html,
   -o-tab-size: 4;
      tab-size: 4;
   /* 3 */
-  font-family: Roboto, system-ui, sans-serif;
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", "roboto";
   /* 4 */
   font-feature-settings: normal;
   /* 5 */
@@ -220,7 +225,7 @@ Reset links to optimize for opt-in styling instead of opt-out.
 
 a {
   color: inherit;
-  text-decoration: inherit;
+  text-decoration: none;
 }
 
 /*
@@ -321,7 +326,7 @@ textarea {
   /* 1 */
   letter-spacing: inherit;
   /* 1 */
-  color: inherit;
+  color: rgb(156 163 175 / var(--tw-text-opacity, 1));
   /* 1 */
   margin: 0;
   /* 2 */
@@ -336,6 +341,7 @@ Remove the inheritance of text transform in Edge and Firefox.
 button,
 select {
   text-transform: none;
+  text-decoration: none;
 }
 
 /*
@@ -559,7 +565,7 @@ video {
      -moz-appearance: none;
           appearance: none;
   background-color: #fff;
-  border-color: #6b7280;
+  border-color: #C4C4C4;
   border-width: 1px;
   border-radius: 0px;
   padding-top: 0.5rem;
@@ -590,8 +596,9 @@ input::-moz-placeholder, textarea::-moz-placeholder {
 }
 
 input::placeholder,textarea::placeholder {
-  color: #6b7280;
+  color: #C4C4C4;
   opacity: 1;
+
 }
 
 ::-webkit-datetime-edit-fields-wrapper {
@@ -606,6 +613,8 @@ input::placeholder,textarea::placeholder {
 ::-webkit-datetime-edit {
   display: inline-flex;
 }
+
+
 
 ::-webkit-datetime-edit,::-webkit-datetime-edit-year-field,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute-field,::-webkit-datetime-edit-second-field,::-webkit-datetime-edit-millisecond-field,::-webkit-datetime-edit-meridiem-field {
   padding-top: 0;
@@ -648,15 +657,16 @@ select {
   flex-shrink: 0;
   height: 1rem;
   width: 1rem;
-  color: #2563eb;
+  color: #274291;
   background-color: #fff;
-  border-color: #6b7280;
+  border-color:   #274291;
+  opacity: 100%;
   border-width: 1px;
   --tw-shadow: 0 0 #0000;
 }
 
 [type='checkbox'] {
-  border-radius: 0px;
+  border-radius: 0.25rem;
 }
 
 [type='radio'] {
@@ -669,14 +679,14 @@ select {
   --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
   --tw-ring-offset-width: 2px;
   --tw-ring-offset-color: #fff;
-  --tw-ring-color: #2563eb;
+  --tw-ring-color: #274291;
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
 }
 
 [type='checkbox']:checked,[type='radio']:checked {
-  border-color: transparent;
+  border-color: #274291;
   background-color: currentColor;
   background-size: 100% 100%;
   background-position: center;
@@ -708,7 +718,7 @@ select {
 }
 
 [type='checkbox']:checked:hover,[type='checkbox']:checked:focus,[type='radio']:checked:hover,[type='radio']:checked:focus {
-  border-color: transparent;
+  border-color: #274291;
   background-color: currentColor;
 }
 
@@ -730,7 +740,7 @@ select {
 }
 
 [type='checkbox']:indeterminate:hover,[type='checkbox']:indeterminate:focus {
-  border-color: transparent;
+  border-color: #274291;
   background-color: currentColor;
 }
 
@@ -756,6 +766,10 @@ select {
 @media (min-width: 640px) {
   .container {
     max-width: 640px;
+  }
+
+  .sm\:p-5 {
+    padding: 1.25rem; /* 20px */
   }
 }
 
@@ -823,16 +837,20 @@ select {
   position: sticky;
 }
 
-.inset-0 {
-  inset: 0px;
-}
-
 .end-0 {
   inset-inline-end: 0px;
 }
 
 .left-0 {
   left: 0px;
+}
+
+.top-0 {
+  top: 0px;
+}
+
+.top-1 {
+  top: 0.25rem;
 }
 
 .right-0 {
@@ -843,13 +861,6 @@ select {
   right: 0.25rem;
 }
 
-.top-0 {
-  top: 0px;
-}
-
-.top-1 {
-  top: 0.25rem;
-}
 
 .z-10 {
   z-index: 10;
@@ -867,17 +878,8 @@ select {
   z-index: 50;
 }
 
-.m-3 {
-  margin: 0.75rem;
-}
-
-.m-4 {
-  margin: 1rem;
-}
-
-.mx-2 {
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
+.m-auto {
+  margin: auto;
 }
 
 .mx-auto {
@@ -890,6 +892,7 @@ select {
   margin-bottom: 1rem;
 }
 
+<<<<<<< HEAD
 .-ml-1 {
   margin-left: -0.25rem;
 }
@@ -898,19 +901,65 @@ select {
   margin-bottom: 0.25rem;
 }
 
+=======
+>>>>>>> parent of 01708f5 (patient module)
 .mb-2 {
   margin-bottom: 0.5rem;
 }
 
-.mb-3 {
-  margin-bottom: 0.75rem;
+.-ml-\[6px\] {
+  margin-left: -6px;
+}
+
+.-ml-1 {
+  margin-left: -0.25rem; /* -4px */
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+
+.ml-\[10px\] {
+  margin-left: 10px;
+}
+
+.mr-1 {
+  margin-right: 0.25rem; /* 4px */
+}
+
+.mr-4 {
+  margin-right: 1rem;
+}
+
+.mt-2 {
+  margin-top: 0.25rem;
+}
+
+.mt-3 {
+  margin-top: 0.5rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.mt-7 {
+  margin-top: 0.75rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.375rem;
 }
 
 .mb-4 {
   margin-bottom: 1rem;
 }
 
-.mb-8 {
+.mb-7 {
   margin-bottom: 2rem;
 }
 
@@ -918,28 +967,8 @@ select {
   margin-inline-end: 0.75rem;
 }
 
-.ml-0 {
-  margin-left: 0px;
-}
-
-.ml-3 {
-  margin-left: 0.75rem;
-}
-
-.ml-auto {
-  margin-left: auto;
-}
-
-.mr-1 {
-  margin-right: 0.25rem;
-}
-
 .mr-2 {
   margin-right: 0.5rem;
-}
-
-.mr-4 {
-  margin-right: 1rem;
 }
 
 .ms-2 {
@@ -958,40 +987,52 @@ select {
   margin-inline-start: 1.25rem;
 }
 
-.ms-auto {
-  margin-inline-start: auto;
+.mt-4 {
+  margin-top: 1rem;
 }
 
-.mt-1 {
-  margin-top: 0.25rem;
+.ms-6 {
+  margin-inline-start: 2rem;
 }
 
-.mt-10 {
-  margin-top: 2.5rem;
+.ms-7 {
+  margin-inline-start: 2.25rem;
+}
+
+.ms-8 {
+  margin-inline-start: 2.5rem;
+}
+
+.ms-9 {
+  margin-inline-start: 9rem;
+}
+
+.mt-14 {
+  margin-top: 3.5rem;
+}
+
+.ml-2\.5 {
+  margin-left: 0.625rem;
+}
+
+.ml-3 {
+  margin-left: 0.75rem;
 }
 
 .mt-2 {
   margin-top: 0.5rem;
 }
 
-.mt-3 {
-  margin-top: 0.75rem;
+.ms-auto {
+  margin-inline-start: auto;
 }
 
-.mt-4 {
-  margin-top: 1rem;
-}
-
-.mt-6 {
-  margin-top: 1.5rem;
+.me-auto {
+  margin-inline-end: auto;
 }
 
 .block {
   display: block;
-}
-
-.inline-block {
-  display: inline-block;
 }
 
 .inline {
@@ -1009,6 +1050,15 @@ select {
 .table {
   display: table;
 }
+.flex-wrap {
+  display: flex;  
+  flex-wrap: wrap; 
+}
+
+.flex-start {
+  display: flex;  
+  align-items: flex-start;
+}
 
 .grid {
   display: grid;
@@ -1022,6 +1072,7 @@ select {
   display: none;
 }
 
+<<<<<<< HEAD
 .size-5 {
   width: 1.25rem;
   height: 1.25rem;
@@ -1045,6 +1096,8 @@ select {
   height: 4rem;
 }
 
+=======
+>>>>>>> parent of 01708f5 (patient module)
 .h-2\.5 {
   height: 0.625rem;
 }
@@ -1058,7 +1111,7 @@ select {
 }
 
 .h-5 {
-  height: 1.25rem;
+  height: 1.25rem; /* 20px */
 }
 
 .h-6 {
@@ -1069,30 +1122,22 @@ select {
   height: 2rem;
 }
 
-.h-9 {
-  height: 2.25rem;
-}
-
-.h-\[42px\] {
-  height: 42px;
-}
-
-.h-\[calc\(100\%-1rem\)\] {
-  height: calc(100% - 1rem);
-}
-
-.h-auto {
-  height: auto;
-}
-
 .h-full {
   height: 100%;
+}
+.h-tabcol1 {
+  height: 48rem; /* add package column */
+}
+
+.w-\[18px\] {
+  width: 18px;
 }
 
 .h-screen {
   height: 100vh;
 }
 
+<<<<<<< HEAD
 .h-2 {
   height: 0.5rem;
 }
@@ -1115,30 +1160,26 @@ select {
 
 .w-14 {
   width: 3.5rem;
+=======
+.h-16 {
+  height: 4rem;
+}
+
+.w-1\/4 {
+  width: 25%;
+>>>>>>> parent of 01708f5 (patient module)
 }
 
 .w-2\.5 {
   width: 0.625rem;
 }
 
-.w-28 {
-  width: 7rem;
-}
-
 .w-3 {
   width: 0.75rem;
 }
 
-.w-36 {
-  width: 9rem;
-}
-
 .w-4 {
   width: 1rem;
-}
-
-.w-40 {
-  width: 10rem;
 }
 
 .w-44 {
@@ -1146,21 +1187,27 @@ select {
 }
 
 .w-5 {
-  width: 1.25rem;
+  width: 6.5rem;
 }
 
 .w-6 {
   width: 1.5rem;
 }
 
-.w-60 {
-  width: 15rem;
+.w-7 {
+  width: 7rem;
 }
+
+.w-14 {
+  width: 14.375rem;
+}
+
 
 .w-64 {
   width: 16rem;
 }
 
+<<<<<<< HEAD
 .w-7 {
   width: 1.75rem;
 }
@@ -1169,10 +1216,13 @@ select {
   width: 18rem;
 }
 
+=======
+>>>>>>> parent of 01708f5 (patient module)
 .w-8 {
   width: 2rem;
 }
 
+<<<<<<< HEAD
 .w-80 {
   width: 20rem;
 }
@@ -1251,38 +1301,58 @@ select {
 
 .max-w-6xl {
   max-width: 72rem;
+=======
+.w-full {
+  width: 100%;
+}
+.w-36 {
+  width: 36rem;
+}
+
+.max-w-\[300px\] {
+  max-width: 300px;
+>>>>>>> parent of 01708f5 (patient module)
 }
 
 .max-w-\[250px\] {
   max-width: 250px;
+}
+.max-w-sm {
+  max-width: 384px; /*24 rem*/
+}
+
+.w-40 {
+  width: 10rem;
+}
+
+.w-16 {
+  width: 4rem;
+}
+
+
+.min-w-max {
+  min-width: -moz-max-content;
+  min-width: max-content;
 }
 
 .max-w-lg {
   max-width: 32rem;
 }
 
-.max-w-md {
-  max-width: 28rem;
+.max-w-2xl {
+  max-width: 42rem; /* 672px */
 }
 
-.max-w-sm {
-  max-width: 24rem;
+.max-w-6xl {
+  max-width: 72rem; /* 672px */
 }
 
 .flex-1 {
   flex: 1 1 0%;
 }
 
-.flex-auto {
-  flex: 1 1 auto;
-}
-
 .shrink-0 {
   flex-shrink: 0;
-}
-
-.flex-grow {
-  flex-grow: 1;
 }
 
 .border-collapse {
@@ -1308,20 +1378,12 @@ select {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-.cursor-not-allowed {
-  cursor: not-allowed;
-}
-
-.cursor-pointer {
-  cursor: pointer;
-}
-
 .list-none {
   list-style-type: none;
 }
 
-.grid-cols-1 {
-  grid-template-columns: repeat(1, minmax(0, 1fr));
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .flex-row {
@@ -1332,14 +1394,11 @@ select {
   flex-direction: column;
 }
 
-.flex-wrap {
-  flex-wrap: wrap;
-}
-
 .content-start {
   align-content: flex-start;
 }
 
+<<<<<<< HEAD
 .items-start {
   align-items: flex-start;
 }
@@ -1348,6 +1407,8 @@ select {
   align-items: flex-end;
 }
 
+=======
+>>>>>>> parent of 01708f5 (patient module)
 .items-center {
   align-items: center;
 }
@@ -1368,28 +1429,21 @@ select {
   justify-content: space-between;
 }
 
+<<<<<<< HEAD
 .justify-items-center {
   justify-items: center;
+=======
+.justify-evenly {
+  justify-content: space-evenly;
+>>>>>>> parent of 01708f5 (patient module)
 }
 
 .gap-1 {
-  gap: 0.25rem;
+  gap: 0.5rem;
 }
 
 .gap-1\.5 {
   gap: 0.375rem;
-}
-
-.gap-2 {
-  gap: 0.5rem;
-}
-
-.gap-2\.5 {
-  gap: 0.625rem;
-}
-
-.gap-3 {
-  gap: 0.75rem;
 }
 
 .gap-4 {
@@ -1400,6 +1454,7 @@ select {
   gap: 1.25rem;
 }
 
+<<<<<<< HEAD
 .gap-8 {
   gap: 2rem;
 }
@@ -1410,6 +1465,10 @@ select {
 
 .gap-24 {
   gap: 6rem;
+=======
+.gap-2\.5 {
+  gap: 0.625rem;
+>>>>>>> parent of 01708f5 (patient module)
 }
 
 .gap-60 {
@@ -1424,16 +1483,16 @@ select {
   gap: 20rem;
 }
 
-.space-x-2 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-x-reverse: 0;
-  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
-  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
-}
-
 .space-y-2 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+}
+
+.space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(1rem * var(--tw-space-x-reverse));
+  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
 .space-y-4 > :not([hidden]) ~ :not([hidden]) {
@@ -1453,12 +1512,12 @@ select {
   border-color: rgb(243 244 246 / var(--tw-divide-opacity, 1));
 }
 
-.self-stretch {
-  align-self: stretch;
-}
-
 .overflow-hidden {
   overflow: hidden;
+}
+
+.overflow-x-hidden {
+  overflow-x: hidden;
 }
 
 .overflow-x-auto {
@@ -1469,28 +1528,8 @@ select {
   overflow-y: auto;
 }
 
-.overflow-x-hidden {
-  overflow-x: hidden;
-}
-
-.text-ellipsis {
-  text-overflow: ellipsis;
-}
-
 .whitespace-nowrap {
   white-space: nowrap;
-}
-
-.rounded {
-  border-radius: 0.25rem;
-}
-
-.rounded-2xl {
-  border-radius: 1rem;
-}
-
-.rounded-3xl {
-  border-radius: 1.5rem;
 }
 
 .rounded-full {
@@ -1505,10 +1544,42 @@ select {
   border-radius: 0.375rem;
 }
 
+.rounded-3xl {
+  border-radius: 1.5rem;
+}
+
+.rounded-t-lg {
+  border-top-left-radius: 0.5rem; /* Rounds the top-left corner */
+  border-top-right-radius: 0.5rem; /* Rounds the top-right corner */
+}
+
+.rounded-t {
+  border-top-left-radius: 0.25rem; /* 4px */
+  border-top-right-radius: 0.25rem; /* 4px */
+}
+
+.rounded-b-lg {
+  border-bottom-left-radius: 0.5rem; /* Rounds the top-left corner */
+  border-bottom-right-radius: 0.5rem; /* Rounds the top-right corner */
+}
+
+.rounded-tr-lg {
+  border-top-right-radius: 0.5rem; /* Rounds the top-right corner */
+}
+
+.rounded-sm {
+  border-radius: 0.125rem;
+}
+
+.rounded-m {
+  border-radius: 0.5rem;
+}
+
 .rounded-xl {
   border-radius: 0.75rem;
 }
 
+<<<<<<< HEAD
 .rounded-sm {
   border-radius: 0.125rem;
 }
@@ -1516,6 +1587,14 @@ select {
 .rounded-b-lg {
   border-bottom-right-radius: 0.5rem;
   border-bottom-left-radius: 0.5rem;
+=======
+.rounded-2xl {
+  border-radius: 1rem;
+}
+
+.rounded-3xl {
+  border-radius: 1.5rem;
+>>>>>>> parent of 01708f5 (patient module)
 }
 
 .rounded-e-lg {
@@ -1528,42 +1607,35 @@ select {
   border-end-start-radius: 0.5rem;
 }
 
-.rounded-t {
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
+.rounded-l-md {
+  border-top-left-radius: 0.375rem;
+  border-bottom-left-radius: 0.375rem;
 }
 
-.rounded-t-lg {
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
-}
-
-.rounded-tr-lg {
-  border-top-right-radius: 0.5rem;
+.rounded-r-md {
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
 }
 
 .border {
   border-width: 1px;
 }
 
-.border-2 {
-  border-width: 2px;
-}
-
-.border-b {
-  border-bottom-width: 1px;
-}
-
 .border-s-2 {
   border-inline-start-width: 2px;
 }
 
+<<<<<<< HEAD
 .border-b-2 {
   border-bottom-width: 2px;
 }
 
 .border-black\/20 {
   border-color: rgb(0 0 0 / 0.2);
+=======
+.border-b {
+  border-bottom-width: 1px;
+>>>>>>> parent of 01708f5 (patient module)
 }
 
 .border-blue-700 {
@@ -1573,12 +1645,7 @@ select {
 
 .border-blue-900 {
   --tw-border-opacity: 1;
-  border-color: rgb(30 58 138 / var(--tw-border-opacity, 1));
-}
-
-.border-gray-200 {
-  --tw-border-opacity: 1;
-  border-color: rgb(229 231 235 / var(--tw-border-opacity, 1));
+  border-color: rgb(30 64 175 / var(--tw-border-opacity, 1));
 }
 
 .border-gray-300 {
@@ -1586,6 +1653,7 @@ select {
   border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
 }
 
+<<<<<<< HEAD
 .border-myblue-borderPrimary {
   border-color: rgba(39, 66, 145, 0.6);
 }
@@ -1615,6 +1683,16 @@ select {
   --tw-border-opacity: 1;
   border-left-color: rgb(188 196 221 / var(--tw-border-opacity, 1));
   border-right-color: rgb(188 196 221 / var(--tw-border-opacity, 1));
+=======
+.border-gray-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(229 231 235 / var(--tw-border-opacity, 1));
+}
+
+.border-gray-196 {
+  --tw-border-opacity: 1;
+  border-color: rgb(196 196 196 / var(--tw-border-opacity, 1));
+>>>>>>> parent of 01708f5 (patient module)
 }
 
 .border-s-gray-50 {
@@ -1622,13 +1700,57 @@ select {
   border-inline-start-color: rgb(249 250 251 / var(--tw-border-opacity, 1));
 }
 
-.bg-black {
-  --tw-bg-opacity: 1;
-  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
+.border-completed {
+  --tw-border-opacity: 0.4;
+  border-color: rgb(31 116 32 / var(--tw-border-opacity, 0.4));
 }
 
-.bg-black\/20 {
-  background-color: rgb(0 0 0 / 0.2);
+.bg-completed {
+  --tw-bg-opacity: 0.2;
+  background-color: rgb(31 116 32 / var(--tw-bg-opacity, 0.2));
+}
+
+.text-completed {
+  --tw-border-opacity: 1;
+  color: rgb(31 116 32 / var(--tw-border-opacity, 1));
+}
+
+.border-progress {
+  --tw-border-opacity: 1;
+  border-color: rgb(234 193 12 / var(--tw-border-opacity, 1));
+}
+
+.bg-progress {
+  --tw-bg-opacity: 0.2;
+  background-color: rgb(234 193 12 / var(--tw-bg-opacity, 0.2));
+}
+
+.text-progress {
+  --tw-border-opacity: 1;
+  color: rgb(234 193 12 / var(--tw-border-opacity, 1));
+}
+
+.text-form-warning {
+  color:  rgba(222 38 32 / var(--tw-text-opacity, 1));
+  font-size: 0.875rem; /*14 px*/
+  line-height: 1rem;
+}
+
+/*BG BLUE*/
+.bg-blue-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
+}
+
+.bg-\[\#FF3D3D\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 61 61 / var(--tw-bg-opacity, 1));
+}
+
+
+.bg-white {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
 .bg-blue-100 {
@@ -1636,44 +1758,16 @@ select {
   background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1));
 }
 
-.bg-blue-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(147 197 253 / var(--tw-bg-opacity, 1));
-}
-
-.bg-blue-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(59 130 246 / var(--tw-bg-opacity, 1));
-}
-
-.bg-blue-700 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(29 78 216 / var(--tw-bg-opacity, 1));
-}
-
-.bg-blue-800 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(30 64 175 / var(--tw-bg-opacity, 1));
-}
-
-.bg-blue-900 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(30 58 138 / var(--tw-bg-opacity, 1));
-}
-
 .bg-gray-100 {
   --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
-}
+  background-color: rgb(233 234 240 / var(--tw-bg-opacity, 1));
+} /*used for light backgroundsw*/
 
-.bg-gray-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(209 213 219 / var(--tw-bg-opacity, 1));
-}
 
-.bg-gray-50 {
+
+.bg-gray-tab {
   --tw-bg-opacity: 1;
-  background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
+  background-color: rgb(241 243 247 / var(--tw-bg-opacity, 1));
 }
 
 .bg-gray-800 {
@@ -1681,6 +1775,7 @@ select {
   background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
 }
 
+<<<<<<< HEAD
 .bg-myblue-primary {
   background-color: rgba(39, 66, 145, 1);
 }
@@ -1690,12 +1785,64 @@ select {
 }
 
 .bg-red-500 {
+=======
+.bg-blue-500 {
+>>>>>>> parent of 01708f5 (patient module)
   --tw-bg-opacity: 1;
-  background-color: rgb(239 68 68 / var(--tw-bg-opacity, 1));
+  background-color: rgb(59 130 246 / var(--tw-bg-opacity, 1));
 }
 
-.bg-transparent {
-  background-color: transparent;
+.bg-blue-900 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(39 66 145 / var(--tw-bg-opacity, 1));
+} /*Main Blue*/
+
+.bg-blue-900-10 {
+  background-color: rgba(39, 66, 145, 0.1);
+}
+
+.bg-blue-900-30 {
+  background-color: rgba(39, 66, 145, 0.3);
+}
+
+.bg-blue-555 {
+  background-color: rgba(188, 196, 221, 1.0);
+} /*added this for + template button*/
+
+.bg-red-500 {
+  background-color: rgba(222, 38, 32, 1.0);
+}
+
+.bg-red-700 {
+  background-color: rgb(150, 16, 11);
+}
+
+.bg-blue-950 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(23 37 84 / var(--tw-bg-opacity, 1));
+}
+
+.bg-blue-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 64 175 / var(--tw-bg-opacity, 1));
+}
+
+.bg-blue-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(29 78 216 / var(--tw-bg-opacity, 1));
+}
+
+
+
+.bg-gray-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
+}
+
+
+.bg-gray-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
 }
 
 .bg-white {
@@ -1703,6 +1850,7 @@ select {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
+<<<<<<< HEAD
 .bg-gray-400 {
   --tw-bg-opacity: 1;
   background-color: rgb(156 163 175 / var(--tw-bg-opacity, 1));
@@ -1746,18 +1894,48 @@ select {
 .bg-blue-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1));
+=======
+.bg-gray-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(209 213 219 / var(--tw-bg-opacity, 1));
 }
 
-.bg-opacity-10 {
-  --tw-bg-opacity: 0.1;
+.bg-gray-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
+>>>>>>> parent of 01708f5 (patient module)
 }
 
-.bg-opacity-50 {
-  --tw-bg-opacity: 0.5;
+.bg-blue-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1));
+}
+
+.bg-blue-900 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 58 138 / var(--tw-bg-opacity, 1));
+}
+
+.bg-blue-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(59 130 246 / var(--tw-bg-opacity, 1));
+}
+
+.bg-primary-700 {
+  background-color: #1e40af; /* Default primary-700 color */
 }
 
 .bg-gradient-to-tr {
   background-image: linear-gradient(to top right, var(--tw-gradient-stops));
+}
+
+.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+}
+
+.bg-transparent {
+  --tw-bg-opacity: 1;
+  background-color: transparent;
 }
 
 .from-blue-500 {
@@ -1773,9 +1951,22 @@ select {
 .p-0 {
   padding: 0px;
 }
+.fill-current {
+  fill: currentColor;
+}
+
+.object-cover {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.object-center {
+  -o-object-position: center;
+     object-position: center;
+}
 
 .p-1\.5 {
-  padding: 0.375rem;
+  padding: 0.375rem; /* 6px */
 }
 
 .p-2 {
@@ -1790,26 +1981,42 @@ select {
   padding: 0.75rem;
 }
 
+.p-6 {
+  padding: 1.5rem;
+}
+
 .p-4 {
   padding: 1rem;
 }
 
+.p-5 {
+  padding: 1.3rem;
+}
+
 .p-6 {
-  padding: 1.5rem;
+  padding: 1.25rem;
 }
 
 .p-8 {
   padding: 2rem;
 }
 
+
+
+.px-\[18px\] {
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.py-\[10px\] {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
-}
-
-.px-10 {
-  padding-left: 2.5rem;
-  padding-right: 2.5rem;
 }
 
 .px-2 {
@@ -1827,11 +2034,6 @@ select {
   padding-right: 0.75rem;
 }
 
-.px-3\.5 {
-  padding-left: 0.875rem;
-  padding-right: 0.875rem;
-}
-
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -1842,15 +2044,22 @@ select {
   padding-right: 1.25rem;
 }
 
+
 .px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+
+.px-7 {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
 }
 
 .px-8 {
   padding-left: 2rem;
   padding-right: 2rem;
 }
+
 
 .py-1 {
   padding-top: 0.25rem;
@@ -1867,11 +2076,6 @@ select {
   padding-bottom: 0.625rem;
 }
 
-.py-20 {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-}
-
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
@@ -1882,6 +2086,7 @@ select {
   padding-bottom: 1rem;
 }
 
+<<<<<<< HEAD
 .py-6 {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
@@ -1915,26 +2120,60 @@ select {
   padding-left: 0.75rem;
 }
 
+=======
+>>>>>>> parent of 01708f5 (patient module)
 .pl-5 {
   padding-left: 1.25rem;
 }
 
-.pr-28 {
-  padding-right: 7rem;
-}
-
-.pt-20 {
-  padding-top: 5rem;
+.pt-1 {
+  padding-top: 0.25rem;
 }
 
 .pt-3 {
   padding-top: 0.75rem;
 }
 
+.pl-9 {
+  padding-left: 2.25rem;
+}
+
+.pl-16 {
+  padding-left: 4rem;
+}
+
+
+
+.pr-9 {
+  padding-right: 2.25rem;
+}
+
+.pr-\[10px\] {
+  padding-right: 10px;
+}
+
+.pr-28 {
+  padding-right: 7rem;
+}
+
+
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
+.pb-9 {
+  padding-bottom: 2rem;
+}
+
+.pt-0 {
+  padding-top: 0px;
+}
+
 .pt-6 {
   padding-top: 1.5rem;
 }
 
+<<<<<<< HEAD
 .pt-2 {
   padding-top: 0.5rem;
 }
@@ -1957,6 +2196,10 @@ select {
 
 .pl-12 {
   padding-left: 3rem;
+=======
+.pt-20 {
+  padding-top: 5rem;
+>>>>>>> parent of 01708f5 (patient module)
 }
 
 .text-left {
@@ -1967,10 +2210,6 @@ select {
   text-align: center;
 }
 
-.text-right {
-  text-align: right;
-}
-
 .text-start {
   text-align: start;
 }
@@ -1979,13 +2218,44 @@ select {
   text-align: end;
 }
 
+<<<<<<< HEAD
 .align-middle {
   vertical-align: middle;
+=======
+.text-lg {
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.75rem; /* 28px */
+}
+
+.pt-8 {
+  padding-top: 2rem;
+}
+
+.pt-9 {
+  padding-top: 2.25rem;
+}
+
+.pt-13 {
+  padding-top: 3.25rem;
+}
+
+.pt-14 {
+  padding-top: 3.5rem;
+>>>>>>> parent of 01708f5 (patient module)
 }
 
 .font-serif {
   font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
+
+.font-sans {
+  font-family: "Roboto";
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
 
 .text-5xl {
   font-size: 3rem;
@@ -1997,48 +2267,74 @@ select {
   line-height: 1.5rem;
 }
 
-.text-lg {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
+.text-ssm {
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
 .text-sm {
-  font-size: 0.875rem;
+  font-size: 0.875rem; /*14 px*/
   line-height: 1.25rem;
 }
 
-.text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
-.text-xs {
-  font-size: 0.75rem;
+.text-xxs {
+  font-size: 0.68rem;
   line-height: 1rem;
 }
 
-.font-bold {
-  font-weight: 700;
+
+.text-xs {
+  font-size: 0.875rem; /*14 px*/
+  line-height: 1rem;
+}
+
+.text-s {
+  font-size: 1rem;
+  line-height: normal;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.text-s-600 {
+  font-size: 1rem;
+  line-height: normal;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.text-m {
+  font-size: 1.25rem;
+  line-height: normal;
+  font-weight:600;
+  font-style: normal;
+}
+
+.text-m-600 {
+  font-size: 1.25rem;
+  line-height: normal;
+  font-weight:600;
+  font-style: normal;
+}
+
+
+.text-mm {
+  font-size: 1.5rem;
+  line-height: normal;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.text-l {
+  font-size: 2rem;
+  line-height: normal;
 }
 
 .font-medium {
   font-weight: 500;
 }
 
-.font-normal {
-  font-weight: 400;
-}
-
-.font-semibold {
-  font-weight: 600;
-}
-
 .uppercase {
   text-transform: uppercase;
-}
-
-.capitalize {
-  text-transform: capitalize;
 }
 
 .leading-normal {
@@ -2049,16 +2345,6 @@ select {
   letter-spacing: 0em;
 }
 
-.text-\[\#00BAFF\] {
-  --tw-text-opacity: 1;
-  color: rgb(0 186 255 / var(--tw-text-opacity, 1));
-}
-
-.text-black {
-  --tw-text-opacity: 1;
-  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
-}
-
 .text-blue-500 {
   --tw-text-opacity: 1;
   color: rgb(59 130 246 / var(--tw-text-opacity, 1));
@@ -2066,12 +2352,27 @@ select {
 
 .text-blue-800 {
   --tw-text-opacity: 1;
-  color: rgb(30 64 175 / var(--tw-text-opacity, 1));
+  color: rgb(39 66 145 0.8/ var(--tw-text-opacity, 1));
 }
+
+.text-view {
+  --tw-text-opacity: 1;
+  color: rgb(8 173 236/ var(--tw-text-opacity, 1));
+}
+
 
 .text-blue-900 {
   --tw-text-opacity: 1;
-  color: rgb(30 58 138 / var(--tw-text-opacity, 1));
+  color: rgb(39 66 145 / var(--tw-text-opacity, 1));
+}
+
+.text-red-500 {
+  color:  rgba(222 38 32 / var(--tw-text-opacity, 1))
+}
+
+.text-gray-196 {
+  --tw-bg-opacity: 1;
+  color: rgb(196 196 196 / var(--tw-bg-opacity, 1));
 }
 
 .text-gray-400 {
@@ -2084,19 +2385,9 @@ select {
   color: rgb(107 114 128 / var(--tw-text-opacity, 1));
 }
 
-.text-gray-600 {
-  --tw-text-opacity: 1;
-  color: rgb(75 85 99 / var(--tw-text-opacity, 1));
-}
-
 .text-gray-700 {
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity, 1));
-}
-
-.text-gray-800 {
-  --tw-text-opacity: 1;
-  color: rgb(31 41 55 / var(--tw-text-opacity, 1));
 }
 
 .text-gray-900 {
@@ -2104,6 +2395,7 @@ select {
   color: rgb(17 24 39 / var(--tw-text-opacity, 1));
 }
 
+<<<<<<< HEAD
 .text-myblue-highlight {
   color: rgba(0, 186, 255, 1);
 }
@@ -2127,11 +2419,14 @@ select {
   color: rgb(51 65 85 / var(--tw-text-opacity, 1));
 }
 
+=======
+>>>>>>> parent of 01708f5 (patient module)
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+<<<<<<< HEAD
 .text-blue-300 {
   --tw-text-opacity: 1;
   color: rgb(147 197 253 / var(--tw-text-opacity, 1));
@@ -2183,6 +2478,16 @@ select {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+=======
+.text-gray-400 {
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity, 1));
+}
+
+.text-black-600 {
+  --tw-text-opacity: 0.6;
+  color: rgb(0 0 0 / var(--tw-text-opacity, 0.6));
+>>>>>>> parent of 01708f5 (patient module)
 }
 
 .shadow-lg {
@@ -2203,6 +2508,7 @@ select {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+<<<<<<< HEAD
 .shadow-xl {
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
@@ -2227,6 +2533,16 @@ select {
 .ring-gray-500 {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(107 114 128 / var(--tw-ring-opacity, 1));
+=======
+.shadow-gray-300 {
+  --tw-shadow-color: #d1d5db;
+  --tw-shadow: var(--tw-shadow-colored);
+}
+
+.outline-none {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+>>>>>>> parent of 01708f5 (patient module)
 }
 
 .filter {
@@ -2237,12 +2553,6 @@ select {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-.transition-all {
-  transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
@@ -2263,22 +2573,24 @@ select {
   transition-duration: 100ms;
 }
 
-.duration-300 {
-  transition-duration: 300ms;
-}
-
 .duration-75 {
   transition-duration: 75ms;
 }
 
+<<<<<<< HEAD
 .duration-200 {
   transition-duration: 200ms;
+=======
+.duration-300 {
+  transition-duration: 300ms;
+>>>>>>> parent of 01708f5 (patient module)
 }
 
 .ease-in-out {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+<<<<<<< HEAD
 .ease-in {
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
@@ -2298,23 +2610,34 @@ select {
 }
 
 .hover\:bg-blue-100:hover {
+=======
+.odd\:bg-white:nth-child(odd) {
+>>>>>>> parent of 01708f5 (patient module)
   --tw-bg-opacity: 1;
-  background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1));
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:bg-blue-200:hover {
+.even\:bg-gray-50:nth-child(even) {
   --tw-bg-opacity: 1;
-  background-color: rgb(191 219 254 / var(--tw-bg-opacity, 1));
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-primary-800:hover {
+  background-color: #1e3a8a; /* Default primary-800 color */
+}
+
+<<<<<<< HEAD
+=======
+.hover\:bg-blue-300:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 186 255 / var(--tw-bg-opacity, 1));
+}
+
+
+>>>>>>> parent of 01708f5 (patient module)
 .hover\:bg-blue-800:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(30 64 175 / var(--tw-bg-opacity, 1));
-}
-
-.hover\:bg-blue-900:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(30 58 138 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-gray-100:hover {
@@ -2327,6 +2650,7 @@ select {
   background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
 }
 
+<<<<<<< HEAD
 .hover\:bg-gray-300:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(209 213 219 / var(--tw-bg-opacity, 1));
@@ -2399,14 +2723,22 @@ select {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+=======
+>>>>>>> parent of 01708f5 (patient module)
 .hover\:underline:hover {
   text-decoration-line: underline;
 }
 
-.hover\:shadow:hover {
-  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+.hover\:border-primary-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: #1e40af;
+}
+
+
+
+.no-underline {
+  text-decoration: none;
+  text-decoration-line: none;
 }
 
 .focus\:border-blue-500:focus {
@@ -2414,25 +2746,28 @@ select {
   border-color: rgb(59 130 246 / var(--tw-border-opacity, 1));
 }
 
-.focus\:bg-slate-700:focus {
-  --tw-bg-opacity: 1;
-  background-color: rgb(51 65 85 / var(--tw-bg-opacity, 1));
-}
-
 .focus\:underline:focus {
   text-decoration-line: underline;
 }
 
 .focus\:shadow:focus {
-  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 
+               0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 
+                       0 1px 2px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), 
+               var(--tw-ring-shadow, 0 0 #0000), 
+               var(--tw-shadow);
 }
 
-.focus\:shadow-none:focus {
-  --tw-shadow: 0 0 #0000;
-  --tw-shadow-colored: 0 0 #0000;
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+.hover\:bg-white:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:text-white:hover {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
 .focus\:outline-none:focus {
@@ -2462,11 +2797,17 @@ select {
   --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity, 1));
 }
 
+.focus\:ring-gray-100:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(243 244 246 / var(--tw-ring-opacity, 1));
+}
+
 .focus\:ring-gray-200:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(229 231 235 / var(--tw-ring-opacity, 1));
 }
 
+<<<<<<< HEAD
 .focus\:ring-myblue-highlight:focus {
   --tw-ring-color: rgba(0, 186, 255, 1);
 }
@@ -2479,20 +2820,37 @@ select {
 .focus\:ring-white:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity, 1));
+=======
+.focus\:ring-gray-300:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(209 213 219 / var(--tw-ring-opacity, 1));
 }
 
-.active\:bg-slate-700:active {
+.focus\:ring-primary-600:focus {
+  box-shadow: 0 0 0 2px #1D4ED8; /* Assuming primary-600 is #1D4ED8 */
+}
+
+.focus\:ring-primary-300:focus {
+  box-shadow: 0 0 0 2px #93c5fd; /* Default primary-300 color */
+>>>>>>> parent of 01708f5 (patient module)
+}
+
+.focus\:border-primary-700:focus {
+  border-color: #1D4ED8; 
+}
+
+.active\:bg-blue-300:active {
   --tw-bg-opacity: 1;
-  background-color: rgb(51 65 85 / var(--tw-bg-opacity, 1));
+  background-color: rgb(147 197 253 / var(--tw-bg-opacity, 1));
 }
 
-.active\:shadow-none:active {
-  --tw-shadow: 0 0 #0000;
-  --tw-shadow-colored: 0 0 #0000;
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+.active\:text-blue-900:active {
+  --tw-text-opacity: 1;
+  color: rgb(30 58 138 / var(--tw-text-opacity, 1));
 }
 
 @media (min-width: 640px) {
+<<<<<<< HEAD
   .sm\:mx-0 {
     margin-left: 0px;
     margin-right: 0px;
@@ -2531,10 +2889,13 @@ select {
     display: flex;
   }
 
+=======
+>>>>>>> parent of 01708f5 (patient module)
   .sm\:hidden {
     display: none;
   }
 
+<<<<<<< HEAD
   .sm\:size-10 {
     width: 2.5rem;
     height: 2.5rem;
@@ -2543,6 +2904,13 @@ select {
   .sm\:w-auto {
     width: auto;
   }
+=======
+  .sm\:ml-64 {
+    margin-left: 16rem; /* 256px : DO NOT TOUCH!!! this affects the body content margins.  */ 
+    margin-top: 2.8rem;
+    margin-bottom: 1rem
+}
+>>>>>>> parent of 01708f5 (patient module)
 
   .sm\:w-full {
     width: 100%;
@@ -2557,10 +2925,11 @@ select {
   }
 
   .sm\:translate-x-0 {
-    --tw-translate-x: 0px;
+    --tw-translate-x: 0 px;
     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   }
 
+<<<<<<< HEAD
   .sm\:translate-y-0 {
     --tw-translate-y: 0px;
     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -2580,6 +2949,14 @@ select {
 
   .sm\:grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
+=======
+  .sm\:rounded-xl {
+    border-radius: 0.75rem;
+  }
+
+  .sm\:mb-5 {
+    margin-bottom: 1.25rem; /* 20px */
+>>>>>>> parent of 01708f5 (patient module)
   }
 
   .sm\:grid-cols-2 {
@@ -2591,10 +2968,11 @@ select {
   }
 
   .sm\:grid-cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr)); /* 4 equal-width columns */
   }
 
   .sm\:grid-cols-6 {
+<<<<<<< HEAD
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
@@ -2612,6 +2990,9 @@ select {
 
   .sm\:p-5 {
     padding: 1.25rem;
+=======
+    grid-template-columns: repeat(6, minmax(0, 1fr)); /* 6 equal-width columns */
+>>>>>>> parent of 01708f5 (patient module)
   }
 
   .sm\:p-0 {
@@ -2637,24 +3018,35 @@ select {
 }
 
 @media (min-width: 768px) {
-  .md\:inset-0 {
-    inset: 0px;
-  }
-
   .md\:me-24 {
     margin-inline-end: 6rem;
   }
 
-  .md\:h-auto {
-    height: auto;
+  .md\:p-8 {
+    padding: 2rem; /* 32px */
+  }
+
+  .md\:rounded-xl {
+    border-radius: 0.75rem;
+  }
+
+  .md\:rounded-3xl {
+    border-radius: 1.5rem;
+  }
+
+  .md\:inset-0 {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
 
   .md\:h-full {
     height: 100%;
   }
 
-  .md\:grid-cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .md\:h-auto {
+    height: auto;
   }
 
   .md\:grid-cols-2 {
@@ -2671,6 +3063,10 @@ select {
   .lg\:pl-3 {
     padding-left: 0.75rem;
   }
+
+  .lg\:p-10 {
+    padding: 2.5rem; /* 40px */
+  }
 }
 
 .rtl\:justify-end:where([dir="rtl"], [dir="rtl"] *) {
@@ -2682,6 +3078,26 @@ select {
 }
 
 @media (prefers-color-scheme: dark) {
+  .dark\:divide-gray-600 > :not([hidden]) ~ :not([hidden]) {
+    --tw-divide-opacity: 1;
+    border-color: rgb(75 85 99 / var(--tw-divide-opacity, 1));
+  }
+
+  .dark\:border-gray-600 {
+    --tw-border-opacity: 1;
+    border-color: rgb(75 85 99 / var(--tw-border-opacity, 1));
+  }
+
+  .dark\:border-gray-700 {
+    --tw-border-opacity: 1;
+    border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));
+  }
+
+  .dark\:border-s-gray-700 {
+    --tw-border-opacity: 1;
+    border-inline-start-color: rgb(55 65 81 / var(--tw-border-opacity, 1));
+  }
+
   .dark\:bg-blue-600 {
     --tw-bg-opacity: 1;
     background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1));
@@ -2692,9 +3108,19 @@ select {
     background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
   }
 
+  .dark\:bg-gray-800 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
+  }
+
   .dark\:text-gray-200 {
     --tw-text-opacity: 1;
     color: rgb(229 231 235 / var(--tw-text-opacity, 1));
+  }
+
+  .dark\:text-gray-300 {
+    --tw-text-opacity: 1;
+    color: rgb(209 213 219 / var(--tw-text-opacity, 1));
   }
 
   .dark\:text-gray-400 {
@@ -2705,6 +3131,31 @@ select {
   .dark\:text-white {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+  }
+
+  .dark\:placeholder-gray-400::-moz-placeholder {
+    --tw-placeholder-opacity: 1;
+    color: rgb(156 163 175 / var(--tw-placeholder-opacity, 1));
+  }
+
+  .dark\:placeholder-gray-400::placeholder {
+    --tw-placeholder-opacity: 1;
+    color: rgb(156 163 175 / var(--tw-placeholder-opacity, 1));
+  }
+
+  .odd\:dark\:bg-gray-900:nth-child(odd) {
+    --tw-bg-opacity: 1;
+    background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));
+  }
+
+  .even\:dark\:bg-gray-800:nth-child(even) {
+    --tw-bg-opacity: 1;
+    background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
+  }
+
+  .dark\:hover\:bg-blue-300:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(147 197 253 / var(--tw-bg-opacity, 1));
   }
 
   .dark\:hover\:bg-blue-700:hover {
@@ -2727,6 +3178,16 @@ select {
     color: rgb(255 255 255 / var(--tw-text-opacity, 1));
   }
 
+  .hover\:dark\:text-blue-900:hover {
+    --tw-text-opacity: 1;
+    color: rgb(30 58 138 / var(--tw-text-opacity, 1));
+  }
+
+  .dark\:focus\:border-blue-500:focus {
+    --tw-border-opacity: 1;
+    border-color: rgb(59 130 246 / var(--tw-border-opacity, 1));
+  }
+
   .dark\:focus\:ring-blue-800:focus {
     --tw-ring-opacity: 1;
     --tw-ring-color: rgb(30 64 175 / var(--tw-ring-opacity, 1));
@@ -2736,4 +3197,52 @@ select {
     --tw-ring-opacity: 1;
     --tw-ring-color: rgb(75 85 99 / var(--tw-ring-opacity, 1));
   }
+<<<<<<< HEAD
 }
+=======
+
+  .dark\:focus\:ring-gray-700:focus {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(55 65 81 / var(--tw-ring-opacity, 1));
+  }
+
+  .package-checkbox {
+    display: show; /* Hide default checkbox */
+  }
+
+  /* Custom checkbox */
+  .package-checkbox + div {
+      width: 20px;
+      height: 20px;
+      border: 2px solid gray;
+      border-radius: 4px;
+      display: inline-block;
+      transition: all 0.3s ease;
+  }
+
+  /* When checkbox is checked, change styles */
+  .package-checkbox:checked + div {
+      border-color: #1e40af; /* Tailwind blue-900 */
+      background-color: #1e40af;
+  }
+
+  /* Change label text color when checked */
+  .package-checkbox:checked + div + span {
+      color: #1e40af;
+      font-weight: 500;
+  }
+
+  .h-modal {
+    height: calc(100% - 2rem); /* Adjust height with some spacing */
+    max-height: 100vh; /* Prevents it from exceeding the viewport height */
+  }
+
+  .inset-0 {
+    position: absolute;  /* or relative, fixed, or sticky depending on the context */
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+}
+>>>>>>> parent of 01708f5 (patient module)
