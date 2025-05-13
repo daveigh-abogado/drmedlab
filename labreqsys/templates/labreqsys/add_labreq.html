@@ -112,6 +112,7 @@
     let counter = 1;
     const packageData = JSON.parse('{{ package_data|escapejs }}');
     let disabledComponents = {};
+       
 
     function showTab(index) {
         document.querySelectorAll('.tab').forEach((tab, i) => {
@@ -141,51 +142,66 @@
 
         const selectedList = document.getElementById('selectedList');
         const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        const next = document.getElementById('next');
 
         console.log("Number of checked checkboxes:", checkboxes.length);
 
         if (checkboxes.length === 0) {
             alert('Please select at least one package or component');
-        }
+        } else {
+            checkboxes.forEach(checkbox => {
+                const name = checkbox.getAttribute('data-name');
+                const price = parseFloat(checkbox.getAttribute('data-price')) || 0;
+                const id = checkbox.value;
+                const isPackage = checkbox.classList.contains('package-checkbox');
+                const isComponent = checkbox.classList.contains('component-checkbox');
 
-        checkboxes.forEach(checkbox => {
-            const name = checkbox.getAttribute('data-name');
-            const price = parseFloat(checkbox.getAttribute('data-price')) || 0;
-            const id = checkbox.value;
-            const isPackage = checkbox.classList.contains('package-checkbox');
-            const isComponent = checkbox.classList.contains('component-checkbox');
+                console.log("Checkbox:", name, id, isPackage, isComponent);
 
-            console.log("Checkbox:", name, id, isPackage, isComponent);
+                if (!document.querySelector(`#selectedList li[data-name="${name}"]`)) {
+                    console.log("Adding option:", name);
+                    addSelectedOption(name, price, id, isPackage);
 
-            if (!document.querySelector(`#selectedList li[data-name="${name}"]`)) {
-                console.log("Adding option:", name);
-                addSelectedOption(name, price, id, isPackage);
+                    if (isPackage && packageData[id]) {
+                        console.log("Adding package components for:", name);
+                        packageData[id].forEach(componentName => {
+                            if (!document.querySelector(`#selectedList li[data-name="${componentName}"]`)) {
+                                addSelectedComponent(componentName, id);
+                                disableComponentCheckbox(componentName, true, id);
+                            }
+                        });
+                    }
 
-                if (isPackage && packageData[id]) {
-                    console.log("Adding package components for:", name);
-                    packageData[id].forEach(componentName => {
-                        if (!document.querySelector(`#selectedList li[data-name="${componentName}"]`)) {
-                            addSelectedComponent(componentName, id);
-                            disableComponentCheckbox(componentName, true, id);
-                        }
-                    });
-                }
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = isPackage ? 'selected_packages' : 'selected_components';
+                    hiddenInput.value = id;
+                    hiddenInput.id = 'selected';
+                    hiddenInput.setAttribute('data-id', id);
+                    document.getElementById('form').appendChild(hiddenInput);
+                    const hidden = document.getElementById('selected');
+                    
+                    
 
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = isPackage ? 'selected_packages' : 'selected_components';
-                hiddenInput.value = id;
-                hiddenInput.setAttribute('data-id', id);
-                document.getElementById('form').appendChild(hiddenInput);
+                    if (hidden) {
+                        next.disabled = false
+                        console.log(next.disabled);
+                    } else {
+                        next.disabled = true
+                        console.log(next.disabled);
+                    }
 
-                checkbox.checked = false;
-                checkbox.disabled = true;
+                    checkbox.checked = false;
+                    checkbox.disabled = true;
+            
             }
         });
-
+    }
         renumberOptions();
         recalculateTotal();
     }
+
+
 
     function addSelectedOption(name, price, id, isPackage) {
         const selectedList = document.getElementById('selectedList');
@@ -226,6 +242,7 @@
 
         // Remove the list item
         li.remove();
+        
 
         // Remove the hidden input
         document.querySelector(`input[data-id="${id}"]`)?.remove();
@@ -249,6 +266,17 @@
         } else {
             enableComponentCheckbox(name);
         }
+
+        const hidden = document.getElementById('selected');
+        if (hidden) {
+            next.disabled = false
+            console.log(next.disabled);
+        } else {
+            next.disabled = true
+            console.log(next.disabled);
+        }
+
+        
 
         // Update the UI
         renumberOptions();
