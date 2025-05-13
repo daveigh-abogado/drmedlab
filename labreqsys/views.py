@@ -825,6 +825,7 @@ def change_collection_status(request, request_id):
         lab_request = get_object_or_404(LabRequest, pk=request_id)
         c_mode = request.POST.get('collected')
         e_mode = request.POST.get('emailed')
+        
         try:
             if 'Collected' in c_mode:
                 c = CollectionLog.objects.get(request=lab_request, mode_of_collection='Pick-up')
@@ -835,6 +836,21 @@ def change_collection_status(request, request_id):
                 c = CollectionLog.objects.get(request=lab_request, mode_of_collection='Email')
                 c.time_collected=timezone.now()
                 c.save()
+        
+        
+        
+        if lab_request.mode_of_release == 'Both':
+            c = CollectionLog.objects.get(request=lab_request, mode_of_collection='Pick-up')
+            e = CollectionLog.objects.get(request=lab_request, mode_of_collection='Email')
+            
+            if c.time_collected and e.time_collected:
+                lab_request.overall_status = 'Released'
+                lab_request.save()
+                
+        else:
+            lab_request.overall_status = 'Released'
+            lab_request.save()
+                
     return redirect('view_individual_lab_request', request_id=request_id)
 
 @lab_tech_required
@@ -1438,61 +1454,9 @@ def savePDF(request, pk):
 
     filename = f"{line_item.request.patient.last_name}, {line_item.request.patient.first_name[0]}_{line_item.component.test_name}_{line_item.request.date_requested}.pdf"
     # Create PDF from URL (the URL will be a page where you render patient details)
-    
-    options = {
-    'enable-local-file-access': None,
-    'no-stop-slow-scripts': None,
-    'debug-javascript': None,
-    }
-    pdf = pdfkit.from_url(request.build_absolute_uri(reverse('pdf', args=[pk])), False, options=options)
+    pdf = pdfkit.from_url(request.build_absolute_uri(reverse('pdf', args=[pk])), False)
     
     # Return the PDF response
-
-    lab_request = line_item.request
-    patient = lab_request.patient
-    test_component = line_item.component
-    template_form = TemplateForm.objects.filter(template_id=line_item.component.template.template_id).order_by('-template_id')[0]
-
-    age = None
-    if patient.birthdate:
-        today = date.today()
-        age = today.year - patient.birthdate.year - ((today.month, today.day) < (patient.birthdate.month, patient.birthdate.day))
-
-    form = {}
-    fields = []
-    reviewed_by = []
-    for section in TemplateSection.objects.filter(template=template_form.template_id):
-        fields.append(TemplateField.objects.filter(section=section.section_id))
-        for column in fields:
-            result_value = {}
-            for field in column:
-                result_value[field] = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)
-        form[section] = result_value
-
-    results = ResultValue.objects.filter(line_item_id=line_item.line_item_id)
-    reviews = []
-    for rs in results:
-        review = ResultReview.objects.filter(result_value=rs)
-        for lt in review:
-            if not any(r.lab_tech.lab_tech_id == lt.lab_tech.lab_tech_id for r in reviews):
-                reviews.append(lt)
-
-    html = render_to_string('labreqsys/pdf.html', {
-        'lab_request': lab_request,
-        'patient': patient,
-        'test_component': test_component,
-        'age': age,
-        'address': "testing",
-        'form': form,
-        'reviewed_by': reviewed_by,
-        'lab_tech': reviews
-    })
-
-    options = {
-        'enable-local-file-access': ''
-    }
-    pdf = pdfkit.from_string(html, False, options=options)
-
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
@@ -1512,9 +1476,16 @@ def packages (request):
     '''
     Display packages
     '''
-    packages = TestPackage.objects.all()
+    package = TestPackage.objects.all()
     pc = TestPackageComponent.objects.all()
-    return render(request, 'labreqsys/packages.html', {'packages': packages, 'pc': pc})
+    
+    packages = {}
+    for p in package:
+        components = TestPackageComponent.objects.filter(package=p)
+        packages[p] = components
+    
+    print (packages)
+    return render(request, 'labreqsys/packages.html', {'packages': packages})
 
 @owner_required
 def add_package (request):
@@ -1530,8 +1501,7 @@ def add_package (request):
         print(components)
         
         if TestPackage.objects.filter(package_name=package_name).exists():
-            messages.error(request, "Package already exists.")
-            return redirect('packages')
+            return JsonResponse({'status': 'duplicate'})
         else:
             package = TestPackage.objects.create(
                 package_name=package_name,
@@ -1545,9 +1515,9 @@ def add_package (request):
                     component=component
                 )
 
-        return redirect('packages')
+        return JsonResponse({'status':'success', 'redirect_url':'/packages'})
     else:
-        return render(request, 'labreqsys/add_edit_package.html', {'components': test_components, 'mode':'add'})
+        return render(request, 'labreqsys/add_package.html', {'components': test_components})
     
 
 def edit_package(request, pk):
@@ -1570,8 +1540,7 @@ def edit_package(request, pk):
 
         updated = []
         if package_name != package.package_name and TestPackage.objects.filter(package_name=package_name).exists():
-            messages.error(request, "Package already exists.")
-            return redirect('packages')
+            return JsonResponse({'status': 'duplicate'})
         else:
             package.package_name = package_name
             package.package_price = price
@@ -1593,15 +1562,14 @@ def edit_package(request, pk):
                     package=package,
                     component=component
                 )
-        return redirect('packages')
+        return JsonResponse({'status':'success', 'redirect_url':'/packages'})
         
     else:
-        return render(request, 'labreqsys/add_edit_package.html', {
+        return render(request, 'labreqsys/edit_package.html', {
             'components': test_components, 
             'selectedComponents' : components,
             'package':package, 
             'mode': 'edit'})
-        return render(request, 'labreqsys/add_package.html', {'components': test_components})
 
 def user_login(request):
     if request.method == 'POST':
@@ -1617,7 +1585,7 @@ def user_login(request):
             else:
                 # Default redirect if role not set or unexpected, or for superuser without profile
                 if getattr(user, 'is_superuser', False):
-                     return redirect('patientList') # Superusers go to patientList
+                    return redirect('patientList') # Superusers go to patientList
                 return redirect('login') # Fallback to login or a generic page
     else:
         form = CustomAuthenticationForm()
@@ -1710,21 +1678,7 @@ def create_testcomponent(request):
         last_template = TemplateForm.objects.order_by('-template_id').first()
         test_code = request.POST.get('test_code')
         if TestComponent.objects.filter(template_id=last_template.template_id):
-           request.session['testcomponent_form_data'] = {
-               'test_code': request.POST.get('test_code', ''),
-               'test_name': request.POST.get('test_name', ''),
-               'category': request.POST.get('category', ''),
-               'price': request.POST.get('price', '')
-               }
-           return redirect(f"{reverse('add_testcomponent')}?show_warning=yes")
-        elif TestComponent.objects.filter(test_code=test_code):
-            request.session['testcomponent_form_data'] = {
-               'test_code': request.POST.get('test_code', ''),
-               'test_name': request.POST.get('test_name', ''),
-               'category': request.POST.get('category', ''),
-               'price': request.POST.get('price', '')
-               }
-            return redirect(f"{reverse('add_testcomponent')}?show_code_warning=yes")
+            return redirect('add_testcomponent')
         else:
             test_name = request.POST.get('test_name')
             category = request.POST.get('category')

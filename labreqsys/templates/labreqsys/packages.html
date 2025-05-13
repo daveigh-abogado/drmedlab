@@ -2,9 +2,6 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-
-
-
 <div class="flex-1 p-3"> <!-- WHOLE SPACE -->
 
     <!-- TOP BAR -->
@@ -95,7 +92,8 @@
             <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
                 <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
                     <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
-                        <th scope="col" class="px-6 py-3 text-center">ID</th>
+                        <th scope="col" class="px-2 py-3 text-center"></th>
+                        <th scope="col" class="px-2 py-3 text-center">ID</th>
                         <th scope="col" class="px-6 py-3">Package Name</th>
                         <th scope="col" class="px-6 py-3">Price</th>
                         <th scope="col" class="px-6 py-3 text-center">Action</th>
@@ -103,9 +101,13 @@
                 </thead>
 
                 <tbody>
-                {% for p in packages %}
-                    <tr class="border-b border-gray-200 hover:bg-gray-200">
-                        <th scope="row" class="px-6 py-3 font-medium text-center">
+                {% for p, c in packages.items %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-200" aria-controls="dropdown-{{ p.package_id }}" data-collapse-toggle="dropdown-{{ p.package_id }}">
+                        <th scope="row" class="px-2 py-3 flex items-center justify-center"> 
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+                        </th>
+                        <th class="px-2 py-2 text-center">
                             {{ p.package_id|stringformat:"02d" }}
                         </th>
                         <td class="px-6 py-2">
@@ -118,17 +120,18 @@
                                 Edit
                             </a>
                         </th>
-                        
                     </tr>
-                    <tr class="border-b border-gray-200 hover:bg-gray-200">
+                    <tr id="dropdown-{{ p.package_id }}" class="hidden py-2 space-y-2">
                         <td></td>
-                        <td>
-                            {% for component in pc %}
-                                    {% if p.package_id == component.package.package_id %} 
-                                        {{component.component.test_name}}   
-                                    {% endif %}
-                            {% endfor %}
-
+                        <td colspan="4" class="px-6 py-2">
+                            <div>
+                                <div>Inclusions</div>
+                                <div>
+                                {% for component in c %}
+                                    {{component.component.test_name}}
+                                {% endfor %}
+                                </div>
+                            </div>
                         </td>
                     </tr>
                     
@@ -140,8 +143,7 @@
         </div>
     </div>
 
-
-{% endblock content %}
+    {% endblock content %}
 
 {% block styles %}
 <!--insert styles here-->
