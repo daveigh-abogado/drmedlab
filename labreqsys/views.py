@@ -782,6 +782,7 @@ def change_collection_status(request, request_id):
         lab_request = get_object_or_404(LabRequest, pk=request_id)
         c_mode = request.POST.get('collected')
         e_mode = request.POST.get('emailed')
+        
         try:
             if 'Collected' in c_mode:
                 c = CollectionLog.objects.get(request=lab_request, mode_of_collection='Pick-up')
@@ -792,6 +793,21 @@ def change_collection_status(request, request_id):
                 c = CollectionLog.objects.get(request=lab_request, mode_of_collection='Email')
                 c.time_collected=timezone.now()
                 c.save()
+        
+        
+        
+        if lab_request.mode_of_release == 'Both':
+            c = CollectionLog.objects.get(request=lab_request, mode_of_collection='Pick-up')
+            e = CollectionLog.objects.get(request=lab_request, mode_of_collection='Email')
+            
+            if c.time_collected and e.time_collected:
+                lab_request.overall_status = 'Released'
+                lab_request.save()
+                
+        else:
+            lab_request.overall_status = 'Released'
+            lab_request.save()
+                
     return redirect('view_individual_lab_request', request_id=request_id)
 
 @lab_tech_required
@@ -1599,7 +1615,7 @@ def user_login(request):
             else:
                 # Default redirect if role not set or unexpected, or for superuser without profile
                 if getattr(user, 'is_superuser', False):
-                     return redirect('patientList') # Superusers go to patientList
+                    return redirect('patientList') # Superusers go to patientList
                 return redirect('login') # Fallback to login or a generic page
     else:
         form = CustomAuthenticationForm()
@@ -1692,20 +1708,20 @@ def create_testcomponent(request):
         last_template = TemplateForm.objects.order_by('-template_id').first()
         test_code = request.POST.get('test_code')
         if TestComponent.objects.filter(template_id=last_template.template_id):
-           request.session['testcomponent_form_data'] = {
-               'test_code': request.POST.get('test_code', ''),
-               'test_name': request.POST.get('test_name', ''),
-               'category': request.POST.get('category', ''),
-               'price': request.POST.get('price', '')
-               }
-           return redirect(f"{reverse('add_testcomponent')}?show_warning=yes")
+            request.session['testcomponent_form_data'] = {
+                'test_code': request.POST.get('test_code', ''),
+                'test_name': request.POST.get('test_name', ''),
+                'category': request.POST.get('category', ''),
+                'price': request.POST.get('price', '')
+                }
+            return redirect(f"{reverse('add_testcomponent')}?show_warning=yes")
         elif TestComponent.objects.filter(test_code=test_code):
             request.session['testcomponent_form_data'] = {
-               'test_code': request.POST.get('test_code', ''),
-               'test_name': request.POST.get('test_name', ''),
-               'category': request.POST.get('category', ''),
-               'price': request.POST.get('price', '')
-               }
+                'test_code': request.POST.get('test_code', ''),
+                'test_name': request.POST.get('test_name', ''),
+                'category': request.POST.get('category', ''),
+                'price': request.POST.get('price', '')
+                }
             return redirect(f"{reverse('add_testcomponent')}?show_code_warning=yes")
         else:
             test_name = request.POST.get('test_name')

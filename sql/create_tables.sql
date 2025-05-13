@@ -56,7 +56,7 @@ CREATE TABLE lab_request
  date_requested DATE NOT NULL,
  physician VARCHAR(100),
  mode_of_release ENUM('Pick-up', 'Email', 'Both') NOT NULL DEFAULT 'Pick-up',
- overall_status ENUM('Not Started', 'In Progress', 'Completed') NOT NULL DEFAULT 'Not Started',
+ overall_status ENUM('Not Started', 'In Progress', 'Completed', 'Released') NOT NULL DEFAULT 'Not Started',
  CONSTRAINT lab_request_pk PRIMARY KEY (request_id),
  CONSTRAINT lab_request_fk FOREIGN KEY (patient_id) REFERENCES patient(patient_id));
 
