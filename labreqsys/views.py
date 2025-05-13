@@ -953,6 +953,7 @@ def add_patient (request):
         today = date.today()
         
         age = today.year - birthdate_format.year - ((today.month, today.day) < (birthdate_format.month, birthdate_format.day))
+        print(age)
         
         mobile_num = request.POST.get('mobile_num')
         # handles check statement in database
@@ -1014,10 +1015,11 @@ def add_patient (request):
                 'zip_code':zip_code,
                 'pwd_id_num':pwd_id_num,
                 'senior_id_num':senior_id_num,
+                'mode': 'add'
             }
             return JsonResponse({'status':'success', 'redirect_url':'/add_patient_details'})   
     else:
-        return render(request, 'labreqsys/add_patient.html')
+        return render(request, 'labreqsys/add_patient.html', {'mode': 'add'})
     
 
 
@@ -1051,6 +1053,7 @@ def add_patient_details(request):
         zip_code = new_patient['zip_code']
         pwd_id_num = new_patient['pwd_id_num']
         senior_id_num = new_patient['senior_id_num']
+        mode = new_patient['mode']
     else:
         return HttpResponse('There was an error in saving the session. Please refresh your connection.')  
         
@@ -1099,7 +1102,8 @@ def add_patient_details(request):
                 'city':city,
                 'zip_code':zip_code,
                 'pwd_id_num':pwd_id_num,
-                'senior_id_num':senior_id_num
+                'senior_id_num':senior_id_num,
+                'mode':mode
                 })
 
 @receptionist_required
@@ -1128,6 +1132,7 @@ def edit_patient (request, pk):
         today = date.today()
         
         age = today.year - birthdate_format.year - ((today.month, today.day) < (birthdate_format.month, birthdate_format.day))
+        print(age)
         
         mobile_num = request.POST.get('mobile_num')
         if mobile_num != "" and mobile_num.startswith ("63") == False :
@@ -1189,13 +1194,15 @@ def edit_patient (request, pk):
                 'city':city,
                 'zip_code':zip_code,
                 'pwd_id_num':pwd_id_num,
-                'senior_id_num':senior_id_num
+                'senior_id_num':senior_id_num,
+                'mode': 'edit'
             }
             redirect_url = reverse('edit_patient_details', args=[p.patient_id])
             return JsonResponse({'status': 'success', 'redirect_url': redirect_url})
         
     else:
-        return render(request, 'labreqsys/edit_patient.html', {'patient': p})
+        print('NOT POST.')
+        return render(request, 'labreqsys/edit_patient.html', {'patient': p, 'mode': 'edit'})
 
 @receptionist_required
 def edit_patient_details(request, pk):
@@ -1229,6 +1236,7 @@ def edit_patient_details(request, pk):
         zip_code = edit_patient['zip_code']
         pwd_id_num = edit_patient['pwd_id_num']
         senior_id_num = edit_patient['senior_id_num']
+        mode = edit_patient['mode']
     
     if request.method == "POST":
         patient.last_name = last_name
@@ -1272,7 +1280,8 @@ def edit_patient_details(request, pk):
                 'city':city,
                 'zip_code':zip_code,
                 'pwd_id_num':pwd_id_num,
-                'senior_id_num':senior_id_num
+                'senior_id_num':senior_id_num,
+                'mode':mode
                 })
 
 @owner_required
@@ -1486,26 +1495,20 @@ def add_package (request):
     '''
     test_components = TestComponent.objects.all()
     
-    tpc = []
-    for p in TestPackage.objects.all():
-        pc = TestPackageComponent.objects.filter(package=p)
-        cmp = []
-        for c in pc:
-            comp = TestComponent.objects.get(component_id=c.component.component_id).component_id
-            cmp.append(f"{comp}")
-        tpc.append(cmp)
-    
     if request.method == "POST":
         package_name = request.POST.get('package_name')
         price = request.POST.get('price')
         components = request.POST.getlist('addComponentCheckbox')
+        print(components)
         
         if TestPackage.objects.filter(package_name=package_name).exists():
-            return JsonResponse({'status': 'duplicate1'})
-        elif components in tpc:
-            return JsonResponse({'status': 'duplicate2'})
+            return JsonResponse({'status': 'duplicate'})
         else:
-            package = TestPackage.objects.create(package_name=package_name, package_price=price)
+            package = TestPackage.objects.create(
+                package_name=package_name,
+                package_price=price
+                )
+            
             for c in components:
                 component = TestComponent.objects.get(component_id=c)
                 TestPackageComponent.objects.create(
@@ -1513,8 +1516,7 @@ def add_package (request):
                     component=component
                 )
 
-            return JsonResponse({'status':'success', 'redirect_url':'/packages'})
-        
+        return JsonResponse({'status':'success', 'redirect_url':'/packages'})
     else:
         return render(request, 'labreqsys/add_package.html', {'components': test_components})
     
@@ -1525,74 +1527,50 @@ def edit_package(request, pk):
     '''    
 
     package = TestPackage.objects.get(package_id=pk)                  
-    all_components = TestComponent.objects.all()  
+    test_components = TestComponent.objects.all()  
     pc = TestPackageComponent.objects.filter(package__package_id=pk)                      
-    selected_components = []                                                             
-    selected_components.extend(                                                          
+    components = []                                                             
+    components.extend(                                                          
         TestComponent.objects.get(component_id=p.component.component_id)
         for p in pc 
     )
     
-    tpc = []
-    for p in TestPackage.objects.all():
-        packs = TestPackageComponent.objects.filter(package=p)
-        cmp = []
-        for c in packs:
-            comp = TestComponent.objects.get(component_id=c.component.component_id).component_id
-            cmp.append(f"{comp}")
-        tpc.append(cmp)
-    
-    scmp = []
-    for s in selected_components:
-        scmp.append(str(s.component_id))
-    if scmp in tpc:
-        tpc.remove(scmp)
-    
     if request.method == "POST":
         package_name = request.POST.get('package_name')
         price = request.POST.get('price')
-        select = request.POST.getlist('editComponentCheckboxS')
-        new = request.POST.getlist('editComponentCheckboxN')
-        
-        all_comp = select + new
-        print (f"yes: {all_comp}")
 
         updated = []
-            
-        package.package_name = package_name
-        package.package_price = price
-        package.save()        
-        
         if package_name != package.package_name and TestPackage.objects.filter(package_name=package_name).exists():
-            print ("here1")
-            return JsonResponse({'status': 'duplicate1'})
-        elif all_comp in tpc:
-            print ("here2")
-            return JsonResponse({'status': 'duplicate2'})
+            return JsonResponse({'status': 'duplicate'})
         else:
-            for c in select:
+            package.package_name = package_name
+            package.package_price = price
+            package.save()
+        
+            for c in request.POST.getlist('editComponentCheckboxS'):
                 component = TestComponent.objects.get(component_id=c)
                 updated.append(component)
-                print(f"huhu: {component}")
-        
-            for p in selected_components:
+                
+            for p in components:
                 if p not in updated:
                     tp = TestPackageComponent.objects.filter(package=package, component=p)
                     tp.delete()
                         
                 
-            for x in new:
+            for x in request.POST.getlist('editComponentCheckboxN'):
                 component = TestComponent.objects.get(component_id=x)
                 TestPackageComponent.objects.create(
                     package=package,
                     component=component
                 )
         return JsonResponse({'status':'success', 'redirect_url':'/packages'})
+        
     else:
         return render(request, 'labreqsys/edit_package.html', {
-            'components': all_components, 
-            'selectedComponents' : selected_components,
-            'package':package})
+            'components': test_components, 
+            'selectedComponents' : components,
+            'package':package, 
+            'mode': 'edit'})
 
 def user_login(request):
     if request.method == 'POST':
@@ -1701,20 +1679,20 @@ def create_testcomponent(request):
         last_template = TemplateForm.objects.order_by('-template_id').first()
         test_code = request.POST.get('test_code')
         if TestComponent.objects.filter(template_id=last_template.template_id):
-            request.session['testcomponent_form_data'] = {
-                'test_code': request.POST.get('test_code', ''),
-                'test_name': request.POST.get('test_name', ''),
-                'category': request.POST.get('category', ''),
-                'price': request.POST.get('price', '')
-            }
-            return redirect(f"{reverse('add_testcomponent')}?show_warning=yes")
+           request.session['testcomponent_form_data'] = {
+               'test_code': request.POST.get('test_code', ''),
+               'test_name': request.POST.get('test_name', ''),
+               'category': request.POST.get('category', ''),
+               'price': request.POST.get('price', '')
+               }
+           return redirect(f"{reverse('add_testcomponent')}?show_warning=yes")
         elif TestComponent.objects.filter(test_code=test_code):
             request.session['testcomponent_form_data'] = {
-                'test_code': request.POST.get('test_code', ''),
-                'test_name': request.POST.get('test_name', ''),
-                'category': request.POST.get('category', ''),
-                'price': request.POST.get('price', '')
-            }
+               'test_code': request.POST.get('test_code', ''),
+               'test_name': request.POST.get('test_name', ''),
+               'category': request.POST.get('category', ''),
+               'price': request.POST.get('price', '')
+               }
             return redirect(f"{reverse('add_testcomponent')}?show_code_warning=yes")
         else:
             test_name = request.POST.get('test_name')

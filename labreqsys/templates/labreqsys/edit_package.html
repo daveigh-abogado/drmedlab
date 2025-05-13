@@ -121,16 +121,11 @@
                     const result = await response.json();
                     console.log(result); 
 
-                    if (result.status === 'duplicate1') {
+                    if (result.status === 'duplicate') {
                         modal.classList.remove('hidden');
                         document.getElementById("error_type").innerHTML = 'Duplicate Package Name Detected.';
                         document.getElementById("error_message").innerHTML = 'Please change the package name';
-                    console.log(result.status)                     
-                    } else if (result.status === 'duplicate2') {
-                        modal.classList.remove('hidden');
-                        document.getElementById("error_type").innerHTML = 'Duplicate Package Name Detected.';
-                        document.getElementById("error_message").innerHTML = 'Package with same components already exists.';
-                    console.log(result.status)                        
+                        console.log(result.status)                        
                     } else if (result.status === 'success') {
                         window.location.href = result.redirect_url;
                         console.log(result.status)
