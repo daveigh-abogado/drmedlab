@@ -412,6 +412,9 @@ def view_component(request, component_id):
         for field in fields:
             field_count+=1
         section_data.append({'section': s, 'field_count': field_count, 'fields': fields})
+    
+    delete_unused_templates()
+    request.session.pop('testcomponent_form_data', None)
 
     return render(request, 'labreqsys/view_component.html',
                   {'component': test_component,
@@ -462,10 +465,17 @@ def create_testcomponent(request):
 @owner_required
 def edit_testcomponent(request, component_id):
     test_component = TestComponent.objects.get(component_id=component_id)
+    form_data = request.session.get('testcomponent_form_data', {
+        'test_code': test_component.test_code,
+        'test_name': test_component.test_name,
+        'category': test_component.category,
+        'price': test_component.component_price,
+        })
 
     return render(request, 'labreqsys/edit_testcomponent.html',
                 {'component': test_component,
-                'template': test_component.template
+                'template': test_component.template,
+                'form_data': form_data
                 })
     
 @owner_required
@@ -474,7 +484,8 @@ def edit_testcomponent_details(request, component_id):
         category = request.POST.get('category')
         component_price = request.POST.get('price')
         TestComponent.objects.filter(component_id=component_id).update(category=category, component_price=component_price)
-
+        delete_unused_templates()
+        request.session.pop('testcomponent_form_data', None)
     return redirect('view_component', component_id)
     
 @owner_required
