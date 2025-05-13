@@ -102,8 +102,8 @@
 
                 <tbody>
                 {% for p, c in packages.items %}
-                    <tr class="border-b border-gray-200 hover:bg-gray-200" aria-controls="dropdown-{{ p.package_id }}" data-collapse-toggle="dropdown-{{ p.package_id }}">
-                        <th scope="row" class="px-2 py-3 flex items-center justify-center"> 
+                    <tr class="border-b border-gray-200 hover:bg-gray-200">
+                        <th scope="row" class="px-2 py-3 flex items-center justify-center" aria-controls="dropdown-{{ p.package_id }}" data-collapse-toggle="dropdown-{{ p.package_id }}"> 
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
                         </th>
