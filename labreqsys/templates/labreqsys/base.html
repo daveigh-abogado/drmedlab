@@ -73,7 +73,10 @@
                             <ul class="" role="none">
                             {% if user.is_authenticated %}
                                 <li>
-                                    <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-myblue-highlight hover:text-white" role="menuitem">Sign out</a>
+                                    <a href="/edit-user-profile/" class="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-100" role="menuitem">Edit Profile</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100" role="menuitem">Sign out</a>
                                 </li>
                             {% else %}
                                 <li>
@@ -175,6 +178,8 @@
                             <span class="ms-5">User Management</span>
                         </a>
                     </li>
+                    <!-- DEMO: Edit User Profile Mockup Link -->
+                    <!-- Removed from sidebar -->
                     {% endif %}
                 </ul>
             </div>

@@ -3,7 +3,7 @@ from .models import LabTech
 import re
 from django.contrib.auth.models import User
 from .models import UserProfile
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
 class LabTechForm(forms.ModelForm):
     title = forms.ChoiceField(
@@ -121,3 +121,44 @@ class UserProfileForm(forms.ModelForm):
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(max_length=150)
     password = forms.CharField(widget=forms.PasswordInput) 
+
+class EditReceptionistProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+
+class EditLabTechProfileForm(forms.ModelForm):
+    title = forms.ChoiceField(
+        choices=[
+            ('', 'Select title'),
+            ('RMT', 'RMT (Registered Medical Technologist)'),
+            ('MD', 'MD (Medical Doctor)'),
+        ],
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    tech_role = forms.ChoiceField(
+        choices=[
+            ('', 'Select role'),
+            ('Medical Technologist', 'Medical Technologist'),
+            ('Pathologist', 'Pathologist'),
+        ],
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    class Meta:
+        model = LabTech
+        fields = ['title', 'tech_role', 'license_num', 'signature_path']
+        widgets = {
+            'license_num': forms.TextInput(attrs={'class': 'form-control'}),
+            'signature_path': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/png'}),
+        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['signature_path'].required = False 

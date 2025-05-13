@@ -171,24 +171,13 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="bg-white rounded-3xl mt-4 p-0 shadow">
-        <!-- TABLE -->
-        <div class="relative overflow-x-auto rounded-xl">
-            <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
+        <div class="self-stretch">
+            <table class="w-full bg-white rounded-xl text-left text-gray-500 items-start relative overflow-x-auto">
                 <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
                     <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
-                        <th scope="col" class="px-6 py-3">Name</th>
-                        <th scope="col" class="px-6 py-3">Title</th>
-                        <th scope="col" class="px-6 py-3 text-center">Role</th>
-                        <th scope="col" class="px-6 py-3 text-center">License</th>
-                        <th scope="col" class="px-6 py-3 text-center uppercase ">
-                            Signature
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-center uppercase ">
-                            Actions
-                        </th>
+                        <th class="px-6 py-3">Username</th>
+                        <th class="px-6 py-3">Name</th>
+                        <th class="px-6 py-3">Email</th>
                     </tr>
                 </thead>
                 <tbody id="labTechs">
@@ -210,23 +199,51 @@
                             {% if tech.signature_path %}
                             <img src="{% static tech.signature_path %}" alt="Signature" class="h-8">
                             {% else %}
-                            <span>No signature</span>
+                                Unknown
                             {% endif %}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <button onclick="openEditModal({{ tech.lab_tech_id }}, '{{ tech.first_name }}', '{{ tech.last_name }}', '{{ tech.title }}', '{{ tech.tech_role }}', '{{ tech.license_num }}', '{% static tech.signature_path %}')" class="text-view hover:text-primary-800">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-view" viewBox="0 0 20 20" fill="#08ADEC">
-                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                </svg>
-                            </button>
+                        <td class="px-6 py-3">
+                            {% if entry.labtech %}
+                                {{ entry.labtech.title }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-3 text-center">
+                            {% if entry.labtech %}
+                                {{ entry.labtech.tech_role }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-3 text-center">
+                            {% if entry.labtech %}
+                                {{ entry.labtech.license_num }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-3 text-center">
+                            {% if entry.labtech and entry.labtech.signature_path %}
+                                <img src="{% static entry.labtech.signature_path %}" alt="Signature" class="h-8">
+                            {% elif entry.labtech %}
+                                <span>No signature</span>
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-3 text-center">
+                            {% if entry.has_user_account %}
+                                <span class="text-green-600 font-semibold">User Account</span>
+                            {% elif entry.labtech %}
+                                <span class="text-red-600 font-semibold">No user account</span>
+                            {% else %}
+                                N/A
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}
-                    <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
-                            No lab technicians found.
-                        </td>
-                    </tr>
+                    <tr><td colspan="6" class="px-6 py-3 text-center text-sm text-gray-500">No lab technicians found.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
