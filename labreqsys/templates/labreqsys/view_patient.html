@@ -12,16 +12,16 @@
 
     <div class="inline-flex justify-start items-center gap-2">
         {% if user|is_receptionist %}
-        <button onclick="edit()"class="px-4 py-1 bg-myblue-secondary text-myblue-primary font-semibold border-myblue-borderPrimary border rounded-lg" type="button">
+        <button onclick="edit()"class="px-4 py-1 bg-myblue-secondary text-myblue-primary font-medium border-myblue-borderPrimary border rounded-lg" type="button">
             Edit Patient
         </button>
         {% endif %}
         {% if user.is_authenticated and user|is_owner %}
-        <button onclick="password()" class="px-4 py-1 bg-myblue-secondary text-myblue-primary font-semibold border-myblue-borderPrimary border rounded-lg" type="button">
+        <button onclick="password()" class="px-4 py-1 bg-myblue-secondary text-myblue-primary font-medium border-myblue-borderPrimary border rounded-lg" type="button">
             Generate Edit Patient Password
         </button>
         {% endif %}
-        <button class="text-white px-4 py-1 bg-myblue-primary font-semibold rounded-lg" type="button">
+        <button class="text-white px-4 py-1 bg-myblue-primary font-medium border border-myblue-borderPrimary rounded-lg" type="button">
             <a href="{% url 'add_labreq' pk=patient.pk %}" class="text-white no-underline text-sm">Add Request</a>
         </button>
         
@@ -30,7 +30,7 @@
 
 
 <!--Modal-->
-<div id="passwordModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+<div id="passwordModal" class="fixed inset-0 items-center justify-center bg-black bg-opacity-50 z-50 hidden">
     <div class="bg-white p-6 rounded-lg shadow-lg">
     <p>Edit Patient Password.</p>
     <p id="pass">No Password.</p>
@@ -219,9 +219,10 @@
                 <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
                     <th scope="col" class="px-6 py-3">Date Requested</th>
                     <th scope="col" class="px-6 py-3 text-center">Request ID</th>
-                    <th scope="col" class="px-6 py-3">Overall Status</th>
-                    <th scope="col" class="px-6 py-3">Pick-Up Status</th>
-                    <th scope="col" class="px-6 py-3">Email Status</th>
+                    <th scope="col" class="px-6 py-3 text-center">Overall Status</th>
+                    <th scope="col" class="px-6 py-3 text-center">Pick-Up Status</th>
+                    <th scope="col" class="px-6 py-3 text-center">Email Status</th>
+                    <th scope="col" class="px-6 py-3"></th>
                 </tr>   
             </thead>
             
