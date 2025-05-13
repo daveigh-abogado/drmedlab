@@ -48,7 +48,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="testComponents">
                 {% for t in testComponents %}
                     <tr class="border-b border-gray-200 hover:bg-gray-200">
                         <th scope="row" class="px-6 py-3 font-medium text-center">
@@ -73,7 +73,31 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        if (!searchInput) return;
 
+        searchInput.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#testComponents tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td, th');
+                const testCode = cells[1]?.textContent.toLowerCase() || '';
+                const testName = cells[2]?.textContent.toLowerCase() || '';
+                if (
+                    testCode.includes(query) ||
+                    testName.includes(query)
+                ) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
 
 {% endblock content %}
 
