@@ -2,100 +2,99 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-<div class="breadbutton">
-    <ul class="breadcrumb">
-        <li><a href="#">Lab Requests</a></li>
-        <li><a href="{% url 'add_labreq' pk=patient.pk %}">Add Lab Request</a></li>
-        <li><a href="{% url 'add_labreq_details' pk=patient.pk %}">Lab Request Details</a></li>
-        <li><a href="#" class="current">Billing Summary</a></li>
+
+<!--breadcrumb-->
+<div class="breadbutton mb-4">
+    <ul class="breadcrumb text-xs pt-2">
+            <a href="#" class="text-myblue-primary">Lab Request/</a>
+            <a href="{% url 'add_labreq' pk=patient.pk %}" class="text-myblue-primary"> Add Lab Request/</a>
+            <a href="{% url 'add_labreq_details' pk=patient.pk %}" class="text-myblue-primary"> Add Lab Request Details/</a>
+            <a href="#" class="text-myblue-highlight">Billing Summary</a>
+        </li>
     </ul>
 </div>
 
 <!--TABS-->
-<div class="tabs rounded-t-lg inline-flex bg-gray-300">
+<div class="tab-section rounded-t-lg inline-flex mt-2">
     <div class="flex flex-wrap gap-1">
-        <button onclick="showTab(0)" disabled class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-opacity-40  w-80"
+        <button onclick="showTab(0)" disabled class="py-2 px-4 rounded-t-lg text-gray-700 bg-gray-300 bg-opacity-50"
         data-tab-target="#tab1">Package</button>
-        <button onclick="showTab(1)" disabled class="py-2 px-4 rounded-t-lg text-gray-700 font-bold hover:bg-opacity-40  w-80"
+        <button onclick="showTab(1)" disabled class="py-2 px-4 rounded-t-lg text-gray-700 bg-gray-300 bg-opacity-50"
         data-tab-target="#tab1">Component</button>
     </div>
 </div>
 
+<!--CONTENT-->
 <div class="block">
     <div class="bg-white p-8 pt-13 rounded-b-lg rounded-tr-lg shadow" id="tab-0">
         <form method="POST">
             {% csrf_token %}
             <div class="PatientInfo ">
-                <h1 class="text-mm text-blue-900">Patient Information</h1>
+                <h1 class="text-lg text-blue-900 font-semibold">Patient Information</h1>
                 <hr>
 
-                <div class="flex flex-col space-y-4 mt-4">
+                <div class="flex flex-col space-y-4 mt-4 mb-8">
                     <!-- Date Requested -->
                     <div class="flex gap-4 items-center">
-                        <span style="font-weight: 600;" class="text-blue-900 w-40 ">Date Requested</span>
-                        <span class="bg-gray-100 text-gray-800 px-4 py-1 rounded-full">{{ date }}</span>
+                        <span class="text-blue-900 w-40 text-sm font-semibold">Date Requested</span>
+                        <span class="bg-gray-100 text-gray-800 px-4 py-1 rounded-full text-sm">{{ date }}</span>
                     </div>
 
                     <!-- Patient ID -->
                     <div class="flex gap-4 items-center">
-                        <span style="font-weight: 600;" class="font-bold text-blue-900 w-40">Patient ID</span>
-                        <span class="bg-gray-100 text-gray-800 px-4 py-1 rounded-full">{{ patient.pk }}</span>
+                        <span class="text-blue-900 w-40 text-sm font-semibold">Patient ID</span>
+                        <span class="bg-gray-100 text-gray-800 px-4 py-1 rounded-full text-sm">{{ patient.pk }}</span>
                     </div>
 
                     <!-- Patient Name -->
                     <div class="flex gap-4 items-center">
-                        <span style="font-weight: 600;"class="font-bold text-blue-900 w-40">Patient Name</span>
-                        <span>{{ patient.last_name }}, {{ patient.first_name }}</span>
+                        <span class="font-semibold text-blue-900 w-40 text-sm">Patient Name</span>
+                        <span class="text-sm">{{ patient.last_name }}, {{ patient.first_name }}</span>
                     </div>
 
-                    <!-- PWD ID -->
-                    <div class="flex gap-4 items-center">
-                        <span style="font-weight: 600;"class="font-semibold text-blue-900 w-40">PWD ID</span>
-                        <span>{{ patient.pwd_id_num }}</span>
-                    </div>
                 </div>
             </div>
 
-            <div class="LabReqDetails mt-4">
-                <h1 class="text-mm text-blue-900">Lab Request Information</h1>
+            <div class="LabReqDetails">
+                <h1 class="text-lg text-blue-900 font-semibold">Lab Request Information</h1>
                 <hr>
             
-                <div class="flex flex-col space-y-4 mt-4">
+                <div class="flex flex-col space-y-4 mt-4 mb-8">
+                    <!-- Request ID -->
+                    <div class="flex gap-4 items-center">
+                        <span class="font-semibold text-blue-900 w-40 text-sm">Request ID</span>
+                        <span class="bg-gray-100 text-gray-800 px-4 py-1 rounded-full text-left text-sm">{{ request_id }}</span>
+                    </div>
+                    
                     <!-- Physician Name -->
                     <div class="flex gap-4 items-center">
-                        <span style="font-weight: 600;" class="text-blue-900 w-40 ">Physician Name</span>
-                        <span class="text-gray-800 ">{{ physician }}</span>
+                        <span class="text-blue-900 w-40 text-sm font-semibold">Physician Name</span>
+                        <span class="text-gray-800 text-sm">{{ physician }}</span>
                         <input type="hidden" name="physician" value="{{ physician }}">
                     </div>
             
                     <!-- Mode of Delivery -->
                     <div class="flex gap-4 items-center">
-                        <span style="font-weight: 600;" class="text-blue-900 w-40 ">Mode of Delivery</span>
-                        <span class="text-gray-800 ">{{ mode_of_release }}</span>
+                        <span class="text-blue-900 w-40 text-sm font-semibold">Mode of Delivery</span>
+                        <span class="text-gray-800 text-sm">{{ mode_of_release }}</span>
                         <input type="hidden" name="mode_of_release" value="{{ mode_of_release }}">
                     </div>
                     
-            
-                    <!-- Request ID -->
-                    <div class="flex gap-4 items-center">
-                        <span style="font-weight: 600;" class="font-bold text-blue-900 w-40">Request ID</span>
-                        <span class="bg-gray-100 text-gray-800 px-4 py-1 rounded-full text-left">{{ request_id }}</span>
-                    </div>
                 </div>
             </div>
 
             <div class="BillingSummary mt-4">
-                <h1 class="text-mm text-blue-900">Billing Summary</h1>
+                <h1 class="text-lg font-semibold text-blue-900">Billing Summary</h1>
                 <hr>
 
-                <div class="packages-container">
+                <div class="packages-container mt-4 mb-8">
                     {% for p in packages %}
                     <div class="package-item flex justify-between py-2">
                         <div class ="flex items-center">
                             <div class="mr-2 text-blue-900" style="font-weight: 600"> Package No. {{ forloop.counter }}</div>
-                            <div class="">{{ p.package_name }}</div>
+                            <div class="text-sm">{{ p.package_name }}</div>
                         </div>
-                        <div class="">₱ {{ p.package_price }}</div>
+                        <div class="text-sm">₱ {{ p.package_price }}</div>
                     </div>
                     {% endfor %}
                 
@@ -103,56 +102,59 @@
                     <div class="component-item flex justify-between py-2">
                         <div class = "flex items-center">
                             <div class="mr-2 text-blue-900" style="font-weight: 600;"> {{ forloop.counter }}</div>
-                            <div class="">{{ c.test_name }}</div>
+                            <div class="text-sm">{{ c.test_name }}</div>
                         </div>
-                        <div class="">₱ {{ c.component_price }}</div>
+                        <div class="text-sm">₱ {{ c.component_price }}</div>
                     </div>
                     {% endfor %}
-                    <div class="flex justify-between py-2">
-                        <div class="text-m text-blue-900" style="font-weight: 600">Subtotal</div>
-                        <div class="">₱ {{ subtotal }}</div>
-                    </div>
+
                     <hr>
-                </div>
-            </div> 
-            
-            <div>
-                {% if discount_type %}
-                <div class="flex flex-col gap-2 py-2">
-                    <div class="flex justify-between">
-                        <div class="mr-2 text-blue-900" style="font-weight: 600">{{ discount_type }} Discount (20%)</div>
-                        <div class="">₱ {{ discount }}</div>
+
+                    <!--SUBTOTAL-->
+                    <div class="flex justify-between py-2">
+                        <div class="text-sm text-blue-900 font-semibold">Subtotal</div>
+                        <div class="text-sm font-semibold text-blue-900">₱ {{ subtotal }}</div>
                     </div>
-                    {% if discount_type == 'Senior Citizen' %}
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <div class="mr-2">Senior Citizen ID</div>
-                        <div class="">{{ patient.senior_id_num }}</div>
-                    </div>
-                    {% elif discount_type == 'PWD' %}
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <div class="mr-2">PWD ID</div>
-                        <div class="">{{ patient.pwd_id_num }}</div>
+
+                    <!--DISCOUNT-->
+                    {% if discount_type %}
+                    <div class="flex flex-col py-2">
+                        <div class="flex justify-between">
+                            <div class="mr-2 text-gray-900 text-sm">{{ discount_type }} Discount (20%)</div>
+                            <div class="text-sm">₱ {{ discount }}</div>
+                        </div>
+                        {% if discount_type == 'Senior Citizen' %}
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <div class="mr-2">Senior Citizen ID</div>
+                            <div class="text-sm">{{ patient.senior_id_num }}</div>
+                        </div>
+                        {% elif discount_type == 'PWD' %}
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <div class="mr-2">PWD ID</div>
+                            <div class="text-xs text-gray-500">{{ patient.pwd_id_num }}</div>
+                        </div>
+                        {% endif %}
                     </div>
                     {% endif %}
-                </div>
-                {% endif %}
 
-                <div class="component-item flex justify-between py-2 border-2 border rounded-lg p-2 bg-gray-50">
-                    <div class = "flex items-center">
-                        <div class="mr-2 text-blue-900" style="font-weight: bold;">Total</div>
+                    <!--TOTAL-->
+                    <div class="component-item flex justify-between py-2 border rounded-lg p-2 bg-gray-50 border-myblue-borderPrimary mt-4">
+                        <div class = "flex items-center">
+                            <div class="mr-2 text-blue-900 text-m font-semibold">Grand Total</div>
+                        </div>
+                        <div class="text-blue-900 text-m font-semibold">₱ {{ total }}</div>
                     </div>
-                    <div style="font-weight: bold;" class="text-blue-900">₱ {{ total }}</div>
+                    
                 </div>
-
-            </div>
+            </div> 
 
             <!-- Submit and Cancel Buttons -->
             <div class="flex justify-end mt-6 gap-4">
                 <div class="flex gap-2.5">
-                    <button type="submit" name="confirm" value="cancel" class="justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">
+                    <button type="submit" name="confirm" value="cancel" class="justify-center text-blue-900 inline-flex items-center border border-myblue-borderPrimary bg-myblue-secondary bg-opacity-10 hover:bg-gray-200 font-sm rounded-lg text-sm px-5 py-2 text-center no-underline">
                         Cancel
                     </button>
-                    <button type="submit" name="confirm" value="submit" class="justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    <button type="submit" name="confirm" value="submit" class="justify-center text-white inline-flex items-center border border-myblue-borderPrimary bg-myblue-primary hover:bg-primary-800 font-sm rounded-lg text-sm px-5 py-2 text-center no-underline">
                         Submit
                     </button>
                 </div>

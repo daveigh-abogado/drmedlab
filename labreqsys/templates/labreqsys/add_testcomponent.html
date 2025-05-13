@@ -2,85 +2,94 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-<div class="breadbutton my-4">
-    <ul class="breadcrumb">
-        <li><a href="{% url 'testComponents' %}">Test Component List</a></li>
-        <li><a href="#" class="current">Add Test Component</a></li>
+
+<!--BREADCRUMb-->
+<div class="breadbutton mb-4">
+    <ul class="breadcrumb text-xs pt-2">
+        <li>
+            <a href="{% url 'testComponents' %}" class="text-myblue-primary">Test Component/</a>
+            <a href="#" class="text-myblue-highlight"> Add Test Component</a>
+        </li>
     </ul>
 </div>
 
+<!--CONTENT-->
+<div class="h-hug p-8 pt-6 bg-white rounded-lg shadow flex-col justify-start items-start gap-2 overflow-hidden">
+    
+    <!--SECTION-->
+    <div class="w-full self-stretch flex-col justify-start items-start gap-2.5"> <!--section-->
+        <!--Section title: Patient Information-->
+        <div class="self-stretch py-2 border-b border-black/20 justify-center items-center gap-1.5">
+            <div class="flex-1 justify-center text-blue-900 text-lg font-semibold">Add Test Component</div>
+        </div>
 
-
-<div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
-    <!-- Add Test Component Header -->
-    <div class="flex justify-between items-center rounded-t border-b sm:mb-4">
-        <h1 class="text-mm font-semibold text-blue-900">
-            Add Test Component
-        </h1>
-    </div>
-    <div class=""> 
         <!-- Form Body -->
-        <form id="form" method="POST" action="{% url 'create_testcomponent' %}" class="gap-2.5">{% csrf_token %}
+        <form id="form" class="w-full flex flex-col gap-2.5" method="POST" action="{% url 'create_testcomponent' %}" class="gap-2.5">{% csrf_token %}
 
-            <!--TEST COMPONENT DETAILS-->
-            <div class="text-left text-m font-semibold text-blue-900 mb-2 mt-2 
-            uppercase">Test Component Details</div>
+            <div class="self-stretch flex-col justify-start items-start gap-2.5">
+                <!--TEST COMPONENT DETAILS-->
+                <div class="text-left text-m font-semibold text-blue-900 mb-2 mt-2 uppercase">Test Component Details</div>
 
-            <div class="grid gap-2.5 mb-3 sm:grid-cols-4">
-                <div>
-                    <label for="test_code" class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Test Code *</label>
-                    <input type="text" value="{{ form_data.test_code }}" name="test_code" id="test_code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Click and Type Test Code" required="" pattern="^[A-Za-z0-9\s]+$" title="Use letters, numbers, and spaces only.">
+                <div class="w-full flex gap-2.5 mb-3">
+                    <div class="flex-1">
+                        <label for="test_code" class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Test Code *</label>
+                        <input type="text" value="{{ form_data.test_code }}" name="test_code" id="test_code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="e.g. TC000" required="" pattern="^[A-Za-z0-9\s]+$" title="Use letters, numbers, and spaces only.">
+                    </div>
+                    <div class="flex-1">
+                        <label for="test_name" class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Full Test Name *</label>
+                        <input type="text" value="{{ form_data.test_name }}" name="test_name" id="test_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="e.g. Urinalysis" required="" pattern="^[A-Za-z0-9\s]+$" title="Use letters, numbers, and spaces only.">
+                    </div>
+                    <div class="flex-1">
+                        <label for="category" class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Category *</label>
+                        <input type="text" value="{{ form_data.category }}" name="category" id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="e.g. Urine Test" required="" pattern="^[A-Za-z0-9\s]+$" title="Use letters, numbers, and spaces only.">
+                    </div>
+                    <div class="w-32"> 
+                        <label for="price" class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Price *</label>
+                        <input type="text" value="{{ form_data.price }}"name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="₱0" required="" pattern="^\d+(\.\d{2})?$" title="Enter a valid price with exactly 2 decimal places (e.g., 12 or 12.34)">
+                    </div>
                 </div>
-                <div>
-                    <label for="test_name" class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Full Test Name *</label>
-                    <input type="text" value="{{ form_data.test_name }}" name="test_name" id="test_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Click and Type Full Test Name" required="" pattern="^[A-Za-z0-9\s]+$" title="Use letters, numbers, and spaces only.">
-                </div>
-                <div>
-                    <label for="category" class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Category *</label>
-                    <input type="text" value="{{ form_data.category }}" name="category" id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Click and Type Category" required="" pattern="^[A-Za-z0-9\s]+$" title="Use letters, numbers, and spaces only.">
-                </div>
-                <div> <!--TO FRONTEND: adjust price width to be smaller than the other fields plsplspls-->
-                    <label for="price" class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Price *</label>
-                    <input type="text" value="{{ form_data.price }}"name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="00" required="" pattern="^\d+(\.\d{2})?$" title="Enter a valid price with exactly 2 decimal places (e.g., 12 or 12.34)">
-                </div>
-            </div>
-            {% if show_code_warning == 'yes' %}
-                <div class="text-form-warning">*A test component with the test code above already exists.</div>
-            {% endif %}
-            <!--TEMPLATE-->
-            <div class="text-left text-m font-semibold text-blue-900 uppercase mb-2 mt-6">Template</div>
-            {% if template_status == "absent" %}
-                <div class="grid gap-2.5 mb-4"> <!--TO FRONTEND: paayos ng hover-->
-                    {% if show_warning == 'yes' %}
-                    <div class="text-form-warning">*Please make a template for the test component</div>
-                    {% endif %}
-                    <a href="{% url 'add_template' %}" onclick="storeFormToSession()" class="w-full text-sm font-semibold justify-center text-blue-900 inline-flex items-center bg-blue-555 bg-opacity-10 hover:bg-blue-900-10 rounded-lg text-sm px-5 py-2.5 text-center no-underline" style="max-width: 15%;"> <!--TO FRONTEND: BUTTON WIDTH IS HARDCODED-->
-                        <svg class="w-auto h-auto " fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
-                        </svg>
-                        Template
-                    </a>
-                </div>
-            {% elif template_status == "present"%}
-                <div class="grid gap-2.5 mb-4"> <!--TO FRONTEND: paayos ng hover-->
-                    <a href="{% url 'edit_template_details' %}" onclick="storeFormToSession()" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline" style="max-width: 17%;"> <!--TO FRONTEND: BUTTON WIDTH IS HARDCODED-->
-                        Edit Template
-                    </a>
-                </div>
-            {% endif %}
-            <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
-                <div>
-                    <!--TO FRONTEND: paayos ng border color and hover-->
-                    <a href="{% url 'testComponents' %}" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline">
+                {% if show_code_warning == 'yes' %}
+                    <div class="text-form-warning">*A test component with the test code above already exists.</div>
+                {% endif %}
+            
+                <!--TEMPLATE-->
+                <div class="text-left text-m font-semibold text-blue-900 uppercase mb-2 mt-6">Template</div>
+                {% if template_status == "absent" %}
+                    <div class="grid gap-2.5 mb-4"> <!--TO FRONTEND: paayos ng hover-->
+                        {% if show_warning == 'yes' %}
+                        <div class="text-form-warning">*Please make a template for the test component</div>
+                        {% endif %}
+                        <a href="{% url 'add_template' %}" onclick="storeFormToSession()" class="gap-2 text-sm justify-center text-white bg-myblue-primary inline-flex items-center rounded-lg px-5 py-2.5 text-center no-underline">
+                            <svg class="w-5 " fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
+                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            Template
+                        </a>
+                    </div>
+                {% elif template_status == "present"%}
+                    <div class="grid gap-2.5 mb-4">
+                        <a href="{% url 'edit_template_details' %}" onclick="storeFormToSession()" class="w-full gap-2 justify-center text-white bg-myblue-primary inline-flex items-center rounded-lg text-sm px-5 py-2.5 text-center no-underline"> 
+                                       
+                            Edit Template
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="size-5 ">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                            </svg>  
+                        </a>
+                    </div>
+                {% endif %}
+            
+                <!-- BUTTONS -->
+                <div class="flex pb-4 w-full justify-center items-center gap-2.5 mt-4">
+                    <button type="button" onclick="history.back()" class="mt-4 flex-1 flex justify-center border border-myblue-borderPrimary text-myblue-primary items-center bg-myblue-secondary hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >
                         Cancel
-                    </a>
-                </div>
-                <div>
-                    <button type="submit" form="form" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
+                    </button>
+                    
+                    <button type="submit" form="form" class="mt-4 flex flex-1 justify-center border border-myblue-borderPrimary text-white items-center bg-myblue-primary hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
                         Save
                     </button>
                 </div>
             </div>
+            
 
         </form> 
     </div>   

@@ -3,103 +3,94 @@
 
 {% block content %}
 
-
-
-<div class="flex-1 p-3"> <!-- WHOLE SPACE -->
-
-    <!-- TOP BAR -->
-    <div class="container text-center">
-        <div class="row">
-
-
-        <!-- SEARCH -->
-        <div class="col ms-auto">
-            <div class="flex max-w-sm min-w-[200px]">
-                <div class="relative w-full">
-                    <input
-                    id="searchInput"
-                    class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Search Request ID, Last Name, or Given Name" />
-                    
-                    <button type="submit" style="cursor: default;" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700">
-                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                        </svg>
-                        <span class="sr-only">Search</span>
-                    </button>
-                </div>
+<!-- TOP BAR -->
+<div class="container text-center">
+    <div class="flex flex-wrap justify-between items-center gap-4">
+    <!-- SEARCH -->
+        <div class="flex-1 max-w-sm min-w-[200px]">
+            <div class="relative w-full">
+                <input
+                id="searchInput"
+                class="block w-full z-20 text-sm text-gray-700 bg-gray-50 rounded border border-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Search Request ID, Last Name, or Given Name" />
+                
+                <button type="submit" style="cursor: default;" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-myblue-primary rounded-e-lg border border-myblue-borderPrimary">
+                    <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                    <span class="sr-only">Search</span>
+                </button>
             </div>
         </div>
 
 
-          <!-- Sort By Container -->
-          <div class="col ms-auto text-end">
-            <form action="" method="get">
-                <label class="text-sm font-medium text-gray-500 px-2"> Sort by </label> <!--TO FRONTEND: the dropdown is grey aksdhjkasd paconvert to white im losing my mind-->
-                <select name="sortby" onchange="this.form.submit()" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    <option value="latest" {% if request.GET.sortby == 'latest' %}selected{% endif %}>Latest First</option>
-                    <option value="oldest" {% if request.GET.sortby == 'oldest' %}selected{% endif %}>Oldest First</option>
-                </select>
-            </form>
-                
-            </div>
+        <!-- Sort By Container -->
+        <div class="justify-end">                   
+            <label class="text-sm font-medium text-gray-500 px-2"> Sort by </label> <!--TO FRONTEND: the dropdown is grey aksdhjkasd paconvert to white im losing my mind-->
+            <select name="sortby" onchange="this.form.submit()" class="text-white bg-myblue-primary hover:bg-blue-800 font-medium rounded-lg text-sm px-7 py-2 text-center inline-flex items-center">
+                <option value="latest" {% if request.GET.sortby == 'latest' %}selected{% endif %}>Latest First</option>
+                <option value="oldest" {% if request.GET.sortby == 'oldest' %}selected{% endif %}>Oldest First</option>
+            </select>
         </div>
     </div>
+</div>
 
-    {% for date, requests in ordered_lab_requests.items %}
-        {% if date == today %}
-            <div class="dateheader font-normal text-xs text-gray-500 px-3 mt-4">Today</div>
-            <div class="dateheader font-semibold text-m text-gray-500 px-3">{{ date|date:"M d" }}</div>
-        {% elif date == yesterday %}
-            <div class="dateheader font-normal text-xs text-gray-500 mt-4 px-3">Yesterday</div>
-            <div class="dateheader font-semibold text-m text-gray-500 px-3">{{ date|date:"M d" }}</div>
-        {% else %}
-            <div class="dateheader font-semibold text-m text-gray-500 mt-4 px-3">{{ date|date:"M d" }}</div>
-        {% endif %}
-        <div class="labRequestsTable bg-white rounded-3xl shadow-md p-0 mt-3">
-            <div class="relative overflow-x-auto rounded-xl"> <!--TO FRONTEND: the table columns vary in size per table bc i think some patient names being longer affect the length of patient name column-->
-                <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start">
-                    <thead class="uppercase bg-gray-50 text-gray-450 text-xs border-b">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-center">Request ID</th>
-                            <th scope="col" class="px-6 py-3">Patient Name</th>
-                            <th scope="col" class="px-6 py-3 text-center">Overall Status</th>
-                            <th scope="col" class="px-6 py-3 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for l in requests %}
-                        <tr class="border-b border-gray-200 hover:bg-gray-200">
-                            <th scope="row" class="px-6 py-3 font-medium text-center">
-                                {{ l.request_id }}
-                            </th>
-                            <td class="px-6 py-2">{{ l.patient.last_name }}, {{ l.patient.first_name }}{% if l.patient.middle_initial %}, {{ l.patient.middle_initial }}.{% endif %}{% if l.patient.suffix %}, {{ l.patient.suffix }}{% endif %}
-                            </td>
-                            <td class="px-6 py-2 text-center">
-                                {% if l.overall_status == 'Not Started' %}
-                                    <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-gray-100 text-gray-800 shadow-sm border-gray-200 border">
-                                {% elif l.overall_status == 'Completed' %}
-                                    <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-completed text-completed shadow-sm border border-completed">
-                                <!--TO FRONTEND: Released overall status pill needs to be modified-->
-                                {% elif l.overall_status == 'Released' %}
-                                    <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-completed text-completed shadow-sm">
-                                {% else %}
-                                    <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-progress text-progress shadow-sm">
-                                {% endif %}
-                                    {{ l.overall_status }}
-                            </td>
-                            <td class="px-6 py-2 text-view text-center">
-                                <a href="{% url 'view_individual_lab_request' request_id=l.request_id %}" class="no-underline text-view">
-                                    View Request
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+<div class="bg-white rounded-lg mt-4 shadow-md pt-1">
+{% for date, requests in ordered_lab_requests.items %}
+    {% if date == today %}
+        <div class="dateheader font-normal text-xs text-gray-500 px-4 mt-4">Today</div>
+        <div class="dateheader font-semibold text-sm text-gray-500 px-4">{{ date|date:"M d" }}</div>
+    {% elif date == yesterday %}
+        <div class="dateheader font-normal text-xs text-gray-500 mt-4 px-4">Yesterday</div>
+        <div class="dateheader font-semibold text-sm text-gray-500 px-4">{{ date|date:"M d" }}</div>
+    {% else %}
+        <div class="dateheader font-semibold text-sm text-gray-500 mt-4 px-4">{{ date|date:"M d" }}</div>
+    {% endif %}
+    <div class="labRequestsTable bg-white pb-2 mt-3">
+        <div class="relative overflow-x-auto"> <!--TO FRONTEND: the table columns vary in size per table bc i think some patient names being longer affect the length of patient name column-->
+            <table class="w-full bg-white text-left rtl:text-right justify-start text-gray-500 items-start">
+                <thead class="uppercase bg-gray-50 text-gray-450 text-xs border-b">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-center">Request ID</th>
+                        <th scope="col" class="px-6 py-3 w-64">Patient Name</th>
+                        <th scope="col" class="px-6 py-3 text-center">Overall Status</th>
+                        <th scope="col" class="px-6 py-3 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for l in requests %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-200">
+                        <th scope="row" class="px-6 py-3 font-medium text-center">
+                            {{ l.request_id }}
+                        </th>
+                        <td class="px-6 py-2">{{ l.patient.last_name }}, {{ l.patient.first_name }}{% if l.patient.middle_initial %}, {{ l.patient.middle_initial }}.{% endif %}{% if l.patient.suffix %}, {{ l.patient.suffix }}{% endif %}
+                        </td>
+                        <td class="px-6 py-2 text-center">
+                            {% if l.overall_status == 'Not Started' %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-unstarted-secondary text-unstarted-primary shadow-sm border-unstarted-borderPrimary border">
+                            {% elif l.overall_status == 'Completed' %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-complete-secondary text-complete-primary shadow-sm border border-complete-borderPrimary">
+                            <!--TO FRONTEND: Released overall status pill needs to be modified-->
+                            {% elif l.overall_status == 'Released' %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-complete-secondary text-complete-primary border border-complete-borderPrimary shadow-sm">
+                            {% else %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs font-medium bg-progress-secondary border border-progress-borderPrimary text-progress-primary text-progress shadow-sm">
+                            {% endif %}
+                                {{ l.overall_status }}
+                        </td>
+                        <td class="px-6 py-2 text-view text-center">
+                            <a href="{% url 'view_individual_lab_request' request_id=l.request_id %}" class="no-underline text-base text-myblue-highlight">
+                                View Request
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
-{% endfor %}
+    </div>
+    {% endfor %}
+</div>
 
 
 <script>
@@ -154,7 +145,6 @@
     });
 </script>
 
-</div>
 
 
 {% endblock content %}
