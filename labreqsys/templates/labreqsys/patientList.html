@@ -49,7 +49,7 @@
                         <th scope="col" class="p-3 text-center">Patient ID</th>
                         <th scope="col" class="p-3">Last Name</th>
                         <th scope="col" class="p-3">Given Name</th>
-                        <th scope="col" class="p-3 text-center">Email</th>
+                        <th scope="col" class="p-3">Email</th>
                         <th scope="col" class="p-3 text-center">Mobile No.</th>
                         <th scope="col" class="p-3 text-center">Landline No.</th>
                         <th scope="col" class="p-3 text-center">Date Added</th>
@@ -68,14 +68,15 @@
                         <td class="p-3">{{ p.first_name }}</td>
                         <td class="p-3">{{ p.email }}</td>
                         {% if p.mobile_num %}
-                            <td class="p-3">+{{ p.mobile_num|slice:":2" }} {{ p.mobile_num|slice:"2:5" }} {{ p.mobile_num|slice:"5:8" }} {{ p.mobile_num|slice:"8:" }}</td>
+                            <td class="p-3 text-center">+{{ p.mobile_num|slice:":2" }} {{ p.mobile_num|slice:"2:5" }} {{ p.mobile_num|slice:"5:8" }} {{ p.mobile_num|slice:"8:" }}</td>
                         {% else %}
-                            <td class="p-3"></td>
+                            <td class="p-3 text-center"> - </td>
                         {% endif %}
+
                         {% if p.landline_num %}
-                            <td class="p-3">+63 ({{ p.landline_num|slice:":2" }}) {{ p.landline_num|slice:"2:5" }} {{ p.landline_num|slice:"5:" }}</td>
+                            <td class="p-3 text-center">+63 ({{ p.landline_num|slice:":2" }}) {{ p.landline_num|slice:"2:5" }} {{ p.landline_num|slice:"5:" }}</td>
                         {% else %}
-                            <td class="p-3"></td>
+                            <td class="p-3 text-center"> - </td>
                         {% endif %}
                         <td class="p-3 text-center">{{ p.date_added }}</td>
                     </tr>
