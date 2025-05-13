@@ -2,6 +2,7 @@
 {% load static tailwind_tags %}
 
 {% block content %}
+<!--BREADCRUMb-->
 <div class="breadbutton mb-4">
     <ul class="breadcrumb text-xs pt-2">
             <a href="{% url 'patientList' %}" class="text-myblue-primary">Patient List/</a>
@@ -13,7 +14,7 @@
         <button class="px-5 py-1 bg-myblue-secondary text-myblue-primary font-semibold border-myblue-borderPrimary border rounded-lg" type="button">
             <a href ="{% url 'edit_patient' pk=patient.pk %}" class="no-underline text-sm"> Edit Patient </a>
         </button>
-        <button class="text-white px-5 py-1 bg-myblue-primary font-semibold rounded-lg border border-myblue-borderPrimary" type="button">
+        <button class="text-white px-5 py-1 bg-myblue-primary rounded-lg border border-myblue-borderPrimary" type="button">
             <a href="{% url 'add_labreq' pk=patient.pk %}" class="text-white no-underline text-sm">Add Request</a>
         </button>
         
@@ -27,7 +28,7 @@
     <!--PATIENT ID-->
     <div class="inline-flex justify-start items-center gap-1.5">
         <div class="w-36 py-2.5 px-2.5 flex justify-start items-center gap-1.5">
-            <div class="text-blue-900 text-xs"> Patient ID </div>
+            <div class="text-blue-900 text-sm font-semibold"> Patient ID </div>
         </div>
         <div class="px-6 py-1 bg-gray-100 rounded-3xl flex justify-center items-center gap-1.5">
             <div class="justify-center text-black text-xs">{{patient.patient_id}}</div>
@@ -188,9 +189,10 @@
                 <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
                     <th scope="col" class="px-6 py-3">Date Requested</th>
                     <th scope="col" class="px-6 py-3 text-center">Request ID</th>
-                    <th scope="col" class="px-6 py-3">Overall Status</th>
-                    <th scope="col" class="px-6 py-3">Pick-Up Status</th>
-                    <th scope="col" class="px-6 py-3">Email Status</th>
+                    <th scope="col" class="px-6 py-3 text-center">Overall Status</th>
+                    <th scope="col" class="px-6 py-3 text-center">Pick-Up Status</th>
+                    <th scope="col" class="px-6 py-3 text-center">Email Status</th>
+                    <th scope="col" class="px-6 py-3"></th>
                 </tr>   
             </thead>
             

@@ -2,82 +2,84 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-<div class="breadbutton">
-    <ul class="breadcrumb">
-        <li><a href="#">Lab Requests</a></li>
-        <li><a href="{% url 'add_labreq' pk=patient.pk %}">Add Lab Request</a></li>
-        <li><a href="#" class="current">Lab Request Details</a></li>
+<!--breadcrumb-->
+<div class="breadbutton mb-4">
+    <ul class="breadcrumb text-xs pt-2">
+            <a href="#" class="text-myblue-primary">Lab Request/</a>
+            <a href="{% url 'add_labreq' pk=patient.pk %}" class="text-myblue-primary"> Add Lab Request/</a>
+            <a href="#" class="text-myblue-highlight"> Add Lab Request Details</a>
+        </li>
     </ul>
 </div>
 
 <!--TABS-->
 <div class="tab-section rounded-t-lg inline-flex mt-2">
     <div class="flex flex-wrap gap-1">
-        <button onclick="showTab(0)" disabled class="py-2 px-4 rounded-t-lg text-gray-700 hover:bg-white hover:bg-opacity-40 "
+        <button onclick="showTab(0)" disabled class="py-2 px-4 rounded-t-lg text-gray-700 bg-gray-300 bg-opacity-50"
         data-tab-target="#tab1">Package</button>
-        <button onclick="showTab(1)" disabled class="py-2 px-4 rounded-t-lg text-gray-700 hover:bg-white hover:bg-opacity-40 "
+        <button onclick="showTab(1)" disabled class="py-2 px-4 rounded-t-lg text-gray-700 bg-gray-300 bg-opacity-50"
         data-tab-target="#tab1">Component</button>
     </div>
 </div>
 
 <!--CONTENT-->
-<div class="w-full h-hug p-8 pt-6 bg-white rounded-lg shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
-    <div class="gap-2 w-full">
-        <form id="form" method="POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
-            <div class="bg-white self-stretch inline-flex flex-col justify-start items-start gap-2.5">
-                    <div class="self-stretch py-2 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
-                        <div class="flex-1 justify-center text-blue-900 text-lg font-semibold">Lab Request Details</div>
+<div class="self-stretch w-full h-hug p-8 pt-6 bg-white rounded-lg shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
+    <div class="py-2 px-2.5 border-b border-black/20 flex justify-start items-start gap-1.5 w-full">
+        <div class="flex-1 text-start text-blue-900 text-lg font-semibold">
+            Lab Request Details
+        </div>
+    </div>
+
+    <form id="form" class="flex" method="POST" action="{% url 'summarize_labreq' pk=patient.pk %}">{% csrf_token %}
+        <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5">
+
+            <div class="self-stretch inline-flex flex-col justify-center items-start gap-2">
+                <div class="inline-flex justify-center items-center gap-2.5">
+                    <div class="w-52 p-2.5 flex justify-start items-center gap-2.5">
+                    <div class="justify-center text-blue-900 font-semibold text-sm">Physician Name (optional)</div>
                     </div>
+                    <div data-show-label="false" data-state="Default" class="w-[322px] inline-flex flex-col justify-start items-start gap-1.5">
+                        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" type="text" name="physician" id="physician">
+                    </div>
+                </div>
 
-                    <div class="self-stretch inline-flex flex-col justify-center items-start gap-2">
-
-                        <div class="inline-flex justify-center items-center gap-2.5">
-                          <div class="w-52 p-2.5 flex justify-start items-center gap-2.5">
-                            <div class="justify-center text-blue-900 font-semibold text-sm">Physician Name (optional)</div>
-                          </div>
-                          <div data-show-label="false" data-state="Default" class="w-[322px] inline-flex flex-col justify-start items-start gap-1.5">
-                                <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" type="text" name="physician" id="physician">
-                          </div>
-                        </div>
-
-                        <div class="inline-flex justify-center items-center gap-2.5">
-                            <div class="w-52 p-2.5 flex justify-start items-center gap-2.5">
-                                <div class="justify-center text-blue-900 text-sm font-semibold">Mode of Release</div>
-                            </div>
-                            <div class="flex justify-start items-center">
-                                <div class="w-60 inline-flex flex-col justify-start items-start">
-                                    <div class="self-stretch inline-flex justify-start items-center gap-3">
-                                        <div class="flex items-center mr-4">
-                                            <input type="checkbox" name="mode_of_release" id="pickup" value="Pick-up" class="mr-2 rounded-sm">
-                                            <label for="pickup">Pick-up</label>
-                                        </div>
-                                        <div class="flex items-center">
-                                            <input type="checkbox" name="mode_of_release" id="email" value="Email" class="mr-2 rounded-sm">
-                                            <label for="email">Email</label>
-                                        </div>
-                                    </div>
+                <div class="inline-flex justify-center items-center gap-2.5">
+                    <div class="w-52 p-2.5 flex justify-start items-center gap-2.5">
+                        <div class="justify-center text-blue-900 text-sm font-semibold">Mode of Release</div>
+                    </div>
+                    <div class="flex justify-start items-center">
+                        <div class="w-60 inline-flex flex-col justify-start items-start">
+                            <div class="self-stretch inline-flex justify-start items-center gap-3">
+                                <div class="flex items-center mr-4">
+                                    <input type="checkbox" name="mode_of_release" id="pickup" value="Pick-up" class="mr-2 rounded-sm">
+                                    <label for="pickup">Pick-up</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="mode_of_release" id="email" value="Email" class="mr-2 rounded-sm">
+                                    <label for="email">Email</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                <!--BUTTONS-->
-                <div class="inline-flex gap-2.5 mt-4 justify-start w-14">
-                    <div>
-                        <a class="justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-myblue-secondary hover:bg-gray-300 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline" href="{% url 'add_labreq' pk=patient.pk %}">
-                            Back
-                        </a>
-                    </div>
-                    <div>
-                        <button type="submit" class="justify-center text-white inline-flex items-center bg-myblue-primary hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
-                            Next
-                        </button>
-                    </div>
                 </div>
-            
             </div>
-        </form>
-    </div>
+
+            <!--BUTTONS-->
+            <div class="inline-flex gap-2.5 mt-4 justify-start w-14">
+                <div>
+                    <a class="justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-myblue-secondary hover:bg-gray-300 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2 text-center no-underline" href="{% url 'add_labreq' pk=patient.pk %}">
+                        Back
+                    </a>
+                </div>
+                <div>
+                    <button type="submit" class="justify-center text-white inline-flex items-center bg-myblue-primary hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2 text-center ">
+                        Next
+                    </button>
+                </div>
+            </div>
+        
+        </div>
+    </form>
 </div>
 
 <script>
