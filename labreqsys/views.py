@@ -338,6 +338,7 @@ def view_patient(request, pk):
         'requests': request_details
     })
 
+@owner_required
 def store_testcomponent_session(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -1710,7 +1711,8 @@ def create_testcomponent(request):
 
 @owner_required
 def add_template(request):
-    return render(request, 'labreqsys/add_template.html')
+    editing = 'no'
+    return render(request, 'labreqsys/add_template.html', {'editing': editing})
 
 @owner_required
 def add_lab_tech(request):
