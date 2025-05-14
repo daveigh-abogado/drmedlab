@@ -10,7 +10,7 @@ from decimal import Decimal
 from django.utils import timezone
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.urls import reverse
-from .forms import LabTechForm, EditLabTechForm, UserRegistrationForm, CustomAuthenticationForm, EditReceptionistProfileForm, EditLabTechProfileForm
+from .forms import LabTechForm, EditLabTechForm, UserRegistrationFormWithLabTech, CustomAuthenticationForm, EditReceptionistProfileForm, EditLabTechProfileForm
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -18,6 +18,7 @@ from functools import wraps
 from django.template.loader import render_to_string
 from django.db.models import Count
 from django.contrib.auth.forms import PasswordChangeForm
+from django.utils.deprecation import MiddlewareMixin
 
 import pdfkit
 import platform
@@ -1590,16 +1591,21 @@ def user_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            # Role-based redirect
+            # Lab Tech: enforce signature upload
             if hasattr(user, 'userprofile') and user.userprofile.role == 'lab_tech':
-                return redirect('labRequests', requested_status=1) 
+                try:
+                    labtech = LabTech.objects.get(user=user)
+                    if not labtech.signature_path:
+                        return redirect('complete_labtech_profile')
+                except LabTech.DoesNotExist:
+                    pass
+                return redirect('labRequests', requested_status=1)
             elif hasattr(user, 'userprofile') and user.userprofile.role in ['owner', 'receptionist']:
                 return redirect('patientList')
             else:
-                # Default redirect if role not set or unexpected, or for superuser without profile
                 if getattr(user, 'is_superuser', False):
-                    return redirect('patientList') # Superusers go to patientList
-                return redirect('login') # Fallback to login or a generic page
+                    return redirect('patientList')
+                return redirect('login')
     else:
         form = CustomAuthenticationForm()
     return render(request, 'labreqsys/login.html', {'form': form})
@@ -1610,8 +1616,9 @@ def user_logout(request):
 
 @owner_required
 def register_user(request):
+    signature_policy_warning = "Lab Techs will be required to upload their own signature the first time they log in."
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
+        form = UserRegistrationFormWithLabTech(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
@@ -1621,12 +1628,26 @@ def register_user(request):
                 user=user,
                 defaults={'role': role}
             )
-            messages.success(request, 'User registered successfully!')
-            return redirect('patientList')  # Or redirect to a user list page if you create one
-        # If form is not valid, it will fall through to the render below
+            if role == 'lab_tech':
+                LabTech.objects.create(
+                    user=user,
+                    last_name=user.last_name,
+                    first_name=user.first_name,
+                    title=form.cleaned_data['title'],
+                    tech_role=form.cleaned_data['tech_role'],
+                    license_num=form.cleaned_data['license_num'],
+                    signature_path=''
+                )
+            # Redirect to success page with username and role
+            return redirect(reverse('user_registered_success') + f'?username={user.username}&role={role}')
     else:
-        form = UserRegistrationForm()
-    return render(request, 'labreqsys/register.html', {'form': form})
+        form = UserRegistrationFormWithLabTech()
+    return render(request, 'labreqsys/register.html', {'form': form, 'signature_policy_warning': signature_policy_warning})
+
+def user_registered_success(request):
+    username = request.GET.get('username')
+    role = request.GET.get('role')
+    return render(request, 'labreqsys/user_registered_success.html', {'username': username, 'role': role})
 
 @owner_required
 def add_testcomponent(request):
@@ -1906,3 +1927,32 @@ def edit_user_profile(request):
         'user': user,
         'labtech_missing_warning': labtech_missing_warning,
     })
+
+@login_required
+def complete_labtech_profile(request):
+    user = request.user
+    try:
+        labtech = LabTech.objects.get(user=user)
+    except LabTech.DoesNotExist:
+        return redirect('labRequests', requested_status=1)
+    error = None
+    if request.method == 'POST':
+        file = request.FILES.get('signature_path')
+        if not file or not file.name.lower().endswith('.png'):
+            error = 'Please upload a PNG file.'
+        elif file.size > 5 * 1024 * 1024:
+            error = 'Signature file size should be less than 5MB.'
+        else:
+            # Save file to static/signatures/
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            safe_name = ''.join(c for c in labtech.last_name if c.isalnum())
+            filename = f"signature_{safe_name}_{timestamp}.png"
+            file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, 'wb+') as destination:
+                for chunk in file.chunks():
+                    destination.write(chunk)
+            labtech.signature_path = f'signatures/{filename}'
+            labtech.save()
+            return redirect('labRequests', requested_status=1)
+    return render(request, 'labreqsys/complete_labtech_profile.html', {'error': error})

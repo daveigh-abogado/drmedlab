@@ -45,5 +45,7 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     path('edit-user-profile/', views.edit_user_profile, name='edit_user_profile'),
+    path('complete-labtech-profile/', views.complete_labtech_profile, name='complete_labtech_profile'),
+    path('user-registered-success/', views.user_registered_success, name='user_registered_success'),
 ]
 

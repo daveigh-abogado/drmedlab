@@ -1,0 +1,14 @@
+{% extends 'labreqsys/base.html' %}
+{% block content %}
+<div class="relative p-4 w-full max-w-2xl h-full md:h-auto mx-auto mt-10">
+    <div class="relative p-4 bg-white rounded-lg shadow sm:p-5 max-w-md mx-auto text-center">
+        <div class="flex flex-col items-center justify-center">
+            <div class="text-lg font-semibold text-green-700 mb-2">User Registered Successfully!</div>
+            <div class="mb-2 text-gray-700">Username: <span class="font-mono">{{ username }}</span></div>
+            <div class="mb-4 text-gray-700">Role: <span class="capitalize">{{ role|default:'-' }}</span></div>
+            <a href="{% url 'register' %}" class="inline-block bg-myblue-primary text-white rounded-lg px-4 py-2 mr-2 mb-2">Register Another User</a>
+            <a href="{% url 'patientList' %}" class="inline-block bg-gray-200 text-gray-700 rounded-lg px-4 py-2 mb-2">Return to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 
