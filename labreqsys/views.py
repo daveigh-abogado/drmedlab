@@ -925,6 +925,7 @@ def add_lab_result(request, line_item_id):
     lab_request = get_object_or_404(LabRequest, pk=line_item.request_id)
     patient = get_object_or_404(Patient, pk=lab_request.patient_id)
     lab_techs = LabTech.objects.all()
+    full_name = f"{patient.last_name}, {patient.first_name} {patient.middle_initial} {patient.suffix}"
     
     birthdate = patient.birthdate
     today = date.today()
@@ -958,6 +959,7 @@ def add_lab_result(request, line_item_id):
         'patient': patient,
         'request': lab_request,
         'test': test_component,
+        'patient_name': full_name,
         'patient_age': age,
         'patient_address': address,
         'lab_technicians': lab_techs
@@ -1490,6 +1492,7 @@ def pdf(request, pk):
                 'test_component':test_component,
                 'age': age,
                 'address': address,
+                'template_form': template_form,
                 'form' : form,
                 'reviewed_by': reviewed_by,
                 'lab_tech' : reviews               
@@ -1562,8 +1565,119 @@ def view_lab_result(request, pk):
     """
     Display form builder to create a template.
     """
+    
+    line_item = RequestLineItem.objects.get(line_item_id=pk)
+
+    test_component = TestComponent.objects.get(component_id=line_item.component.component_id)
+
+    template_form = TemplateForm.objects.filter(template_id=line_item.component.template.template_id).order_by('-template_id')[0]
+    # Looks for the latest template made
+
+    lab_request = LabRequest.objects.get(request_id=line_item.request.request_id)
+
+    patient = Patient.objects.get(patient_id=lab_request.patient.patient_id)
+
+
+    # [MADS NOTES]: CHAOS ENSUES !
+
+    ''' 
+        !! form 'dict' will look like this:
+        {
+            <TemplateSection 1>: --> Represents a row #1
+                {
+                    TemplateField 1 : Results[],                --> Represents field_value already filled
+                    TemplateField 2 : Results[<ResultValue 1>]  --> Represents field_value filled in by user
+                    TemplateField 3 : Results[]                 --> Ex. Unit, Field_value = g/L
+                    TemplateField 4 : Results[<ResultValue 2>]  --> Ex. Result, Field_value = 12 (INPUT)
+                }
+            <TemplateSection 2>: --> Represents a row #2
+                {
+                    TemplateField 2 : Results[<ResultValue 1>]  --> Ex. Remarks, Field_value = "Neutral" (INPUT)
+                }
+        }
+        
+        This way, its easier to map out results with user input and a lot more dynamic
+    '''
+
+    form = {}
+    fields = []
+    reviewed_by = [] # [MADS TO DO!] When ResultReview starts saving, pass reviewer data here
+
+
+    for section in TemplateSection.objects.filter(template=template_form.template_id):
+        fields.append(TemplateField.objects.filter(section=section.section_id)) # list of all fields per section and appends to fields 'list'
+
+        for column in fields:
+            result_value = {}
+            for field in column:
+                result_value[field] = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)
+        form[section] = result_value # pairs result_value 'dict' to a section 'queryset' 
+
+    results = ResultValue.objects.filter(line_item_id=line_item.line_item_id)
+    reviews = []
+
+    for rs in results:
+        review = ResultReview.objects.filter(result_value=rs)
+        print(f"{rs} + {len(results)}")
+        for lt in review:
+            print(f"review: {lt}")
+            if not reviews:
+                reviews.append(lt)
+                print("yes 1\n")
+            else:
+                for rev in reviews:
+                    print(f"rev : {rev.lab_tech.lab_tech_id}; lt : {lt.lab_tech.lab_tech_id}")
+                    if lt.lab_tech.lab_tech_id != rev.lab_tech.lab_tech_id:
+                        print ("yes 2\n")
+                        reviews.append(lt)
+                    else:
+                        print("no\n")
+                        break
+    print (f"review!: {reviews}")
+
+    age = 0
+    if patient.birthdate:
+        today = date.today()
+        age = today.year - patient.birthdate.year - ((today.month, today.day) < (patient.birthdate.month, patient.birthdate.day))
+    else:
+        age = None
+        
+    address_append = []
+
+    if patient.street:
+        address_append.append(patient.street)
+    if patient.subdivision:
+        address_append.append(patient.subdivision)
+    if patient.baranggay:
+        address_append.append(patient.baranggay)
+    if patient.city:
+        address_append.append(patient.city)
+    if patient.province:
+        address_append.append(patient.province)
+    if patient.zip_code:
+        address_append.append(patient.zip_code)
+    
+    address = ', '.join(address_append) if address_append else None
+    
+    if patient.house_num:
+        address = f"{patient.house_num} {address}"
+
+
+    return render(request, 'labreqsys/view_lab_results.html', 
+                {'lab_request': lab_request, 
+                'patient': patient, 
+                'test_component':test_component,
+                'age': age,
+                'address': address,
+                'template_form': template_form,
+                'form' : form,
+                'reviewed_by': reviewed_by,
+                'lab_tech' : reviews,
+                'line_item' : line_item              
+                })
+    
     line_item = get_object_or_404(RequestLineItem, line_item_id=pk)
-    return render(request, 'labreqsys/view_lab_results.html', {'line_item' : line_item})
+    return render(request, 'labreqsys/view_lab_results.html', {})
 
 
 @owner_required
