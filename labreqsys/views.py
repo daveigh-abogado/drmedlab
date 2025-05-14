@@ -925,7 +925,6 @@ def add_lab_result(request, line_item_id):
     lab_request = get_object_or_404(LabRequest, pk=line_item.request_id)
     patient = get_object_or_404(Patient, pk=lab_request.patient_id)
     lab_techs = LabTech.objects.all()
-    full_name = f"{patient.last_name}, {patient.first_name} {patient.middle_initial} {patient.suffix}"
     
     birthdate = patient.birthdate
     today = date.today()
@@ -959,7 +958,6 @@ def add_lab_result(request, line_item_id):
         'patient': patient,
         'request': lab_request,
         'test': test_component,
-        'patient_name': full_name,
         'patient_age': age,
         'patient_address': address,
         'lab_technicians': lab_techs

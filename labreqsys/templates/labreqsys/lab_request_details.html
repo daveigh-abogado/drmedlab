@@ -52,7 +52,7 @@
                     <div class="w-36 justify-center text-sm font-semibold text-blue-900 ">Patient Name</div>
                 </div>
                 <div class="px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-36 justify-center text-sm text-black font-normal">{{ request_details.patient.first_name }} {{ request_details.patient.last_name }}</div>
+                    <div class="w-36 justify-center text-sm text-black font-normal">{{ request_details.patient.first_name }}{% if request_details.patient.suffix %} {{ request_details.patient.suffix }}{% endif %}{% if request_details.patient.middle_initial %} {{ request_details.patient.middle_initial }}.{% endif %} {{ request_details.patient.last_name }}</div>
                 </div>
             </div>
 

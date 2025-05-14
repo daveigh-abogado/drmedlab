@@ -80,7 +80,7 @@
                         <th scope="row" class="px-6 py-3 text-sm text-center w-32">
                             {{ l.request_id }}
                         </th>
-                        <td class="px-6 py-2 text-sm">{{ l.patient.last_name }}, {{ l.patient.first_name }}{% if l.patient.middle_initial %}, {{ l.patient.middle_initial }}.{% endif %}{% if l.patient.suffix %}, {{ l.patient.suffix }}{% endif %}
+                        <td class="px-6 py-2 text-sm">{{ l.patient.last_name }}, {{ l.patient.first_name }}{% if l.patient.suffix %} {{ l.patient.suffix }}{% endif %}{% if l.patient.middle_initial %}, {{ l.patient.middle_initial }}.{% endif %}
                         </td>
                         <td class="px-6 py-2 text-center">
                             {% if l.overall_status == 'Not Started' %}
