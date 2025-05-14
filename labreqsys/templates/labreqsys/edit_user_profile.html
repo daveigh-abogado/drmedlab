@@ -56,53 +56,13 @@
                             <span class="block text-xs text-gray-500">Current Signature</span><br>
                             {% if labtech_form.instance.signature_path %}
                                 <img src="{% static labtech_form.instance.signature_path %}" alt="Current Signature" class="h-16 mb-2 border rounded">
+                                <span class="block text-xs text-gray-500 mt-1">Your signature is permanent and cannot be changed. Please contact the system administrator if there is an error.</span>
                             {% else %}
                                 <span class="text-gray-400">No signature uploaded</span>
                             {% endif %}
                         </div>
                     </div>
                 {% endif %}
-                <!-- Separate Signature Upload Form -->
-                {% if labtech_form and labtech_form.instance %}
-                <form method="post" enctype="multipart/form-data" class="mb-8 border border-blue-200 rounded-lg p-4 bg-blue-50" autocomplete="off">
-                    {% csrf_token %}
-                    <input type="hidden" name="signature_submit" value="1">
-                    <h4 class="text-base font-bold text-blue-900 mb-2 tracking-wide uppercase">Update Digital Signature</h4>
-                    <p class="text-xs text-gray-600 mb-2">This will update your digital signature on file. <span class="text-red-600 font-semibold">Required for lab results.</span></p>
-                    <div class="mb-4">
-                        <label class="block mb-2 text-left text-sm font-medium text-gray-500">Upload New Signature (PNG) <span class="text-red-600">*</span></label>
-                        <input type="file" name="signature_path" id="editSignatureInput" accept="image/png" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" onchange="previewEditSignature(event)" required>
-                        <div id="editSignaturePreviewContainer" class="mt-2" style="display:none;">
-                            <span class="block text-xs text-gray-500 mb-1">Preview:</span>
-                            <img id="editSignaturePreview" src="#" alt="Signature Preview" class="h-16 border rounded" style="max-width:100%;" />
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 font-semibold rounded-lg text-sm px-5 py-2.5 text-center mt-2">Save New Signature</button>
-                    <p class="text-xs text-gray-500 mt-2">This only updates your signature. Other profile information is not changed.</p>
-                </form>
-                <hr class="my-6 border-blue-200">
-                <script>
-                function previewEditSignature(event) {
-                    const input = event.target;
-                    const previewContainer = document.getElementById('editSignaturePreviewContainer');
-                    const preview = document.getElementById('editSignaturePreview');
-                    if (input.files && input.files[0]) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            preview.src = e.target.result;
-                            preview.style.display = 'block';
-                            previewContainer.style.display = 'block';
-                        }
-                        reader.readAsDataURL(input.files[0]);
-                    } else {
-                        preview.src = '';
-                        preview.style.display = 'none';
-                        previewContainer.style.display = 'none';
-                    }
-                }
-                </script>
-                {% endif %}
-                <!-- End Separate Signature Upload Form -->
                 {% if profile_form %}
                     <h4 class="text-sm font-semibold text-blue-800 mb-2 mt-2 tracking-wide uppercase">User Information</h4>
                     {% for field in profile_form %}
@@ -150,7 +110,7 @@
             {% endif %}
             <button type="submit" name="profile_submit" class="w-full justify-center text-white inline-flex items-center bg-myblue-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">
                 Save Profile Information
-            </button>
+                </button>
             </form>
         <!-- Password Change Form -->
         <form method="post" class="gap-2.5 mt-8" autocomplete="off">
@@ -172,7 +132,7 @@
                     </div>
             <button type="submit" name="password_submit" class="w-full justify-center text-white inline-flex items-center bg-myblue-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">
                 Change Password
-            </button>
+                </button>
             </form>
     </div>
 </div>

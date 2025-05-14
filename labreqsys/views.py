@@ -1910,30 +1910,12 @@ def edit_user_profile(request):
             labtech = None
             labtech_missing_warning = "LabTech profile not found for this user. Please contact admin."
         profile_form = EditReceptionistProfileForm(request.POST or None, instance=user, prefix='profile')
-        labtech_form = EditLabTechProfileForm(request.POST or None, request.FILES or None, instance=labtech, prefix='labtech')
+        labtech_form = EditLabTechProfileForm(request.POST or None, instance=labtech, prefix='labtech')
 
     password_form = PasswordChangeForm(user, request.POST or None, prefix='password')
 
     if request.method == 'POST':
-        if 'signature_submit' in request.POST:
-            # Handle only signature upload
-            if labtech_form and 'signature_path' in request.FILES and request.FILES['signature_path']:
-                file = request.FILES['signature_path']
-                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                safe_name = ''.join(c for c in labtech.last_name if c.isalnum())
-                filename = f"signature_{safe_name}_{timestamp}.png"
-                file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
-                os.makedirs(os.path.dirname(file_path), exist_ok=True)
-                with open(file_path, 'wb+') as destination:
-                    for chunk in file.chunks():
-                        destination.write(chunk)
-                labtech.signature_path = f'signatures/{filename}'
-                labtech.save()
-                messages.success(request, 'Signature updated successfully.')
-            else:
-                messages.error(request, 'Please upload a PNG signature file.')
-            return redirect('edit_user_profile')
-        elif 'profile_submit' in request.POST:
+        if 'profile_submit' in request.POST:
             print('DEBUG: Received profile_submit POST')
             valid_profile = profile_form.is_valid() if profile_form else True
             valid_labtech = labtech_form.is_valid() if labtech_form else True
@@ -1942,28 +1924,7 @@ def edit_user_profile(request):
                 if profile_form:
                     profile_form.save()
                 if labtech_form:
-                    # Only update signature_path if a new file is uploaded
-                    print(f'DEBUG: request.FILES={request.FILES}')
-                    if 'signature_path' in request.FILES and request.FILES['signature_path']:
-                        file = request.FILES['signature_path']
-                        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                        safe_name = ''.join(c for c in labtech.last_name if c.isalnum())
-                        filename = f"signature_{safe_name}_{timestamp}.png"
-                        file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
-                        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-                        with open(file_path, 'wb+') as destination:
-                            for chunk in file.chunks():
-                                destination.write(chunk)
-                        labtech_form.instance.signature_path = f'signatures/{filename}'
-                        print(f'DEBUG: Set signature_path to {labtech_form.instance.signature_path}')
-                    else:
-                        # Prevent the form from overwriting signature_path with blank
-                        if 'signature_path' in labtech_form.cleaned_data:
-                            del labtech_form.cleaned_data['signature_path']
-                        labtech_form.instance.signature_path = labtech.signature_path
-                        print(f'DEBUG: Kept existing signature_path: {labtech.signature_path}')
-                    labtech_form.instance.save()
-                    print('DEBUG: labtech_form.instance.save() called')
+                    labtech_form.save()
                 messages.success(request, 'Profile updated successfully.')
                 return redirect('edit_user_profile')
             else:

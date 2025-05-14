@@ -184,27 +184,16 @@ class EditLabTechProfileForm(forms.ModelForm):
     )
     class Meta:
         model = LabTech
-        fields = ['user', 'title', 'tech_role', 'license_num', 'signature_path']
+        fields = ['user', 'title', 'tech_role', 'license_num']
         widgets = {
             'user': forms.HiddenInput(),
             'license_num': forms.TextInput(attrs={'class': 'form-control'}),
-            'signature_path': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/png'}),
         }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['signature_path'].required = False
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-        # Only update signature_path if a new file is uploaded
-        if self.cleaned_data.get('signature_path'):
-            # The view will handle saving the file and setting the path
-            pass
-        else:
-            # Do not overwrite signature_path if no new file is uploaded
-            if self.instance.pk:
-                orig = LabTech.objects.get(pk=self.instance.pk)
-                instance.signature_path = orig.signature_path
         if commit:
             instance.save()
         return instance 
