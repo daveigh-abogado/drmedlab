@@ -8,7 +8,7 @@
     <ul class="breadcrumb text-sm pt-2">
         <li>
             <a href="{% url 'testComponents' %}" class="text-myblue-primary">Test Component List/</a>
-            <a href="#" class="text-myblue-highlight"> View Test Component </a>
+            <a href="#" class="text-myblue-highlight"> View {{ component.test_name }} Component </a>
         </li>
     </ul>
     <div class="col ms-auto text-end">
@@ -18,106 +18,44 @@
     </div>
 </div>
 
+<!--CONTENT-->
 <div class="w-full h-hug p-8 pt-6 bg-white rounded-lg shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
-    <div class="flex justify-between items-center rounded-t border-b sm:mb-4">
-        <h1 class="text-mm font-semibold text-blue-900">
-            View Test Component
-        </h1>
+    
+    <!--Section title: Test Component Detail-->
+    <div class="self-stretch py-2 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+        <div class="flex-1 justify-center text-blue-900 text-lg font-semibold">View {{ component.test_name }} Template</div>
     </div>
-    <div class="">
-        <div class="gap-2.5">
-            <div class="text-left text-m font-semibold text-blue-900 mb-2 mt-2 uppercase">Test Component Details</div>
 
-            <div class="grid gap-2.5 m-4 sm:grid-cols-4">
-                <div>
-                    <div class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Full Code</div>
-                    <div class="text-sm text-gray-500 block w-full p-2.5 m-3">{{ component.test_code }}</div>
-                </div>
-                <div>
-                    <div class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Full Test Name</div>
-                    <div class="text-sm text-gray-500 block w-full p-2.5 m-3">{{ component.test_name }}</div>
-                </div>
-                <div>
-                    <div class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Category</div>
-                    <div class="text-sm text-gray-500 block w-full p-2.5 m-3">{{ component.category }}</div>
-                </div>
-                <div>
-                    <div class="block mb-2 text-left text-xs font-medium text-black-600 uppercase">Price</div>
-                    <div class="text-sm text-gray-500 block w-full p-2.5 m-3">₱{{ component.component_price }}</div>
-                </div>
-            </div>
+    <!--TEMPLATE VIEW-->
+    <div class=" p-4 w-full h-full md:h-auto bg-white mt-10 rounded-lg">
+        <div>
+            <div class="text-center text-base font-semibold text-blue-900 uppercase mb-2">{{ component.test_name }}</div>
 
-            <div class="text-left text-m font-semibold text-blue-900 uppercase mb-2 mt-6">Template</div>
-            <div class="grid gap-2.5 m-4"> 
+            {% for section_data in sections %}
+            <div class="grid gap-2.5 mb-4 sm:grid-cols-{{ section_data.field_count }} mr-10">
+                {% for f in section_data.fields %}
                 <div>
-                    <div class="relative p-4 w-full max-w-4xl h-full md:h-auto bg-white mx-auto mt-10 rounded-lg shadow-lg">
-                        <div class="flex justify-center border-b border-black/20 ">
-                            <!-- Template Header -->
-                            <div class="self-stretch py-2.5 px-2.5inline-flex justify-center items-center gap-1.5">
-                                <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Add Laboratory Results</div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <div class="text-center text-base font-semibold text-blue-900 uppercase mb-2">{{ component.test_name }}</div>
-                
-                            {% for section_data in sections %}
-                            <div class="grid gap-2.5 mb-4 sm:grid-cols-{{ section_data.field_count }}">
-                                {% for f in section_data.fields %}
-                                <div>
-                                    <label class="block mb-2 text-center text-sm font-medium text-gray-500">{{ f.label_name }}</label>
-                                    {% if f.field_type == "Label" %}
-                                        <div class="text-center">{{ f.field_value }}</div>
-                                    {% elif f.field_type == "Text" %}
-                                        <input disabled type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
-                                    {% elif f.field_type == "Number" %}
-                                        <input disabled type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
-                                    {% elif f.field_type == "Image" %}
-                                        <input disabled type="url" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" name="{{ f.label_name }}" placeholder="Enter image URL" value="{{ f.saved_value|default_if_none:'' }}">
-                                    {% else %}
-                                        <input disabled type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
-                                    {% endif %}
-                                </div>            
-                                {% endfor %}
-                            </div>
-                            {% endfor %}
-                
-                            <!-- Signature Section -->
-                            <div class="w-full self-stretch py-2.5 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
-                                <div class="flex-1 h-9 justify-center text-blue-900 text-mm font-semibold">Add Signature</div>
-                            </div>
-                
-                            <div class="mt-2 justify-center flex gap-5 px-2">
-                                <div>  
-                                    <select disabled id="lab_tech_1" name="lab_tech_1" onchange="updateLabTechInfo('lab_tech_1')" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
-                                        <option value="">Lab Tech Name</option>
-                                        {% for tech in lab_technicians %}
-                                        <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
-                                            {{ tech.first_name }} {{ tech.last_name }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
-                                    <p id="lab_tech_1_info" class="text-base text-blue-900 text-center p-2">Role <br> License Number</p>
-                                </div>
-                                
-                                <div>
-                                    <select disabled id="lab_tech_2" name="lab_tech_2" onchange="updateLabTechInfo('lab_tech_2')" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
-                                        <option value="">Lab Tech Name</option>
-                                        {% for tech in lab_technicians %}
-                                        <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
-                                            {{ tech.first_name }} {{ tech.last_name }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
-                                    <p id="lab_tech_2_info" class="text-base text-blue-900 text-center p-2">Role <br> License Number</p>
-                                </div>   
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    <label class="block mb-2 text-center text-sm font-medium text-gray-500">{{ f.label_name }}</label>
+                    {% if f.field_type == "Label" %}
+                        <div class="text-center">{{ f.field_value }}</div>
+                    {% elif f.field_type == "Text" %}
+                        <input disabled type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
+                    {% elif f.field_type == "Number" %}
+                        <input disabled type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
+                    {% elif f.field_type == "Image" %}
+                        <input disabled type="url" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" name="{{ f.label_name }}" placeholder="Enter image URL" value="{{ f.saved_value|default_if_none:'' }}">
+                    {% else %}
+                        <input disabled type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
+                    {% endif %}
+                </div>            
+                {% endfor %}
             </div>
+            {% endfor %}
+
         </div>
     </div>
+
+
 </div>
 
 
