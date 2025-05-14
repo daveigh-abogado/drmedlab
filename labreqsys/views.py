@@ -1922,8 +1922,19 @@ def edit_user_profile(request):
                 if profile_form:
                     profile_form.save()
                 if labtech_form:
-                    if 'signature_path' in request.FILES:
-                        labtech_form.instance.signature_path = request.FILES['signature_path']
+                    # Only update signature_path if a new file is uploaded
+                    if 'signature_path' in request.FILES and request.FILES['signature_path']:
+                        file = request.FILES['signature_path']
+                        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                        safe_name = ''.join(c for c in labtech.last_name if c.isalnum())
+                        filename = f"signature_{safe_name}_{timestamp}.png"
+                        file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
+                        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                        with open(file_path, 'wb+') as destination:
+                            for chunk in file.chunks():
+                                destination.write(chunk)
+                        labtech_form.instance.signature_path = f'signatures/{filename}'
+                    # else: do not overwrite signature_path
                     labtech_form.save()
                 messages.success(request, 'Profile updated successfully.')
                 return redirect('edit_user_profile')

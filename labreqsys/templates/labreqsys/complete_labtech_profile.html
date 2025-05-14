@@ -32,6 +32,17 @@
             </div>
         </div>
         {% endif %}
+        {% if labtech and labtech.signature_path %}
+            <div class="mb-4">
+                <span class="block text-xs text-gray-500">Current Signature (Debug: {{ labtech.signature_path }})</span><br>
+                <img src="{% static labtech.signature_path %}" alt="Current Signature" class="h-16 mb-2 border rounded">
+            </div>
+        {% else %}
+            <div class="mb-4">
+                <span class="block text-xs text-gray-500">Current Signature (Debug: {{ labtech.signature_path }})</span><br>
+                <span class="text-gray-400">No signature uploaded</span>
+            </div>
+        {% endif %}
         {% if success %}
         <div class="mb-4 p-3 bg-green-100 border-l-4 border-green-500 text-green-800 rounded">
             <strong>Success:</strong> Signature uploaded successfully!<br>

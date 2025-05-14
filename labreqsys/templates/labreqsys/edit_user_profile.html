@@ -1,5 +1,6 @@
 {% extends 'labreqsys/base.html' %}
 {% load widget_tweaks %}
+{% load static %}
 {% block content %}
 <div class="relative p-4 w-full max-w-3xl h-full md:h-auto mx-auto mt-10">
     <div class="relative p-4 bg-white rounded-lg shadow sm:p-5 max-w-lg mx-auto">
@@ -13,20 +14,20 @@
         {% if messages %}
             <ul class="mb-4 flex flex-col items-center">
                 {% for message in messages %}
-                    <li class="w-full flex items-center justify-center px-4 py-2 rounded-lg mb-2 transition-opacity duration-500 fade-in
-                        {% if message.tags == 'success' %}bg-green-500 text-white{% elif message.tags == 'error' %}bg-red-500 text-white{% else %}bg-gray-100 text-gray-800{% endif %}">
+                    <li class="w-full flex items-center justify-center px-4 py-2 rounded mb-2 fade-in
+                        {% if message.tags == 'success' %}bg-green-100 border border-green-400 text-green-800{% elif message.tags == 'error' %}bg-red-100 border border-red-400 text-red-800{% else %}bg-gray-100 border border-gray-300 text-gray-800{% endif %}">
                         {% if message.tags == 'success' %}
-                            <svg class="w-5 h-5 mr-2 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                         {% elif message.tags == 'error' %}
-                            <svg class="w-5 h-5 mr-2 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                         {% endif %}
                         <span class="flex-1 text-center">{{ message }}</span>
-                        <button type="button" onclick="this.parentElement.style.display='none'" class="ml-4 text-white text-lg font-bold focus:outline-none">&times;</button>
+                        <button type="button" onclick="this.parentElement.style.display='none'" class="ml-4 text-lg font-bold focus:outline-none text-gray-500 hover:text-gray-800">&times;</button>
                     </li>
                 {% endfor %}
             </ul>
         {% endif %}
-                </div>
+        </div>
         <!-- Profile Update Form -->
         <form method="post" enctype="multipart/form-data" class="gap-2.5" autocomplete="off">
             {% csrf_token %}
@@ -54,7 +55,7 @@
                         <div class="mb-2">
                             <span class="block text-xs text-gray-500">Current Signature</span><br>
                             {% if labtech_form.instance.signature_path %}
-                                <img src="{% if labtech_form.instance.signature_path.url %}{{ labtech_form.instance.signature_path.url }}{% else %}/static/{{ labtech_form.instance.signature_path }}{% endif %}" alt="Current Signature" class="h-16 mb-2 border rounded">
+                                <img src="{% static labtech_form.instance.signature_path %}" alt="Current Signature" class="h-16 mb-2 border rounded">
                             {% else %}
                                 <span class="text-gray-400">No signature uploaded</span>
                             {% endif %}
@@ -76,26 +77,49 @@
                     {% endfor %}
                 {% endif %}
                 {% if labtech_form %}
-                    <h4 class="text-sm font-semibold text-blue-800 mb-2 mt-6 tracking-wide uppercase">Edit Lab Tech Information</h4>
+                    <h4 class="text-sm font-semibold text-blue-800 mb-2 mt-6 tracking-wide uppercase">Lab Tech Information</h4>
                     {% for field in labtech_form %}
                         {% if field.name == 'signature_path' %}
-                            {% if labtech_form.instance.signature_path %}
-                <div class="mb-4">
-                    <label class="block mb-2 text-left text-sm font-medium text-gray-500">Current Signature</label>
-                                    <img src="{{ labtech_form.instance.signature_path.url }}" alt="Current Signature" class="h-16 mb-2">
-                </div>
-                            {% endif %}
+                            <div class="mb-4">
+                                <label class="block mb-2 text-left text-sm font-medium text-gray-500">Upload New Signature (PNG, Optional)</label>
+                                <input type="file" name="signature_path" id="editSignatureInput" accept="image/png" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" onchange="previewEditSignature(event)">
+                                <div id="editSignaturePreviewContainer" class="mt-2" style="display:none;">
+                                    <span class="block text-xs text-gray-500 mb-1">Preview:</span>
+                                    <img id="editSignaturePreview" src="#" alt="Signature Preview" class="h-16 border rounded" style="max-width:100%;" />
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="mb-4">
+                                <label class="block mb-2 text-left text-sm font-medium text-gray-500">
+                                    {{ field.label }}{% if field.field.required %}<span class="text-red-600">*</span>{% endif %}
+                                </label>
+                                {{ field|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' }}
+                                {% if field.errors %}
+                                    <p class="text-red-500 text-xs mt-1">{{ field.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
                         {% endif %}
-                <div class="mb-4">
-                            <label class="block mb-2 text-left text-sm font-medium text-gray-500">
-                                {{ field.label }}{% if field.field.required %}<span class="text-red-600">*</span>{% endif %}
-                            </label>
-                            {{ field|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' }}
-                            {% if field.errors %}
-                                <p class="text-red-500 text-xs mt-1">{{ field.errors|striptags }}</p>
-                            {% endif %}
-                </div>
                     {% endfor %}
+                    <script>
+                    function previewEditSignature(event) {
+                        const input = event.target;
+                        const previewContainer = document.getElementById('editSignaturePreviewContainer');
+                        const preview = document.getElementById('editSignaturePreview');
+                        if (input.files && input.files[0]) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                preview.src = e.target.result;
+                                preview.style.display = 'block';
+                                previewContainer.style.display = 'block';
+                            }
+                            reader.readAsDataURL(input.files[0]);
+                        } else {
+                            preview.src = '';
+                            preview.style.display = 'none';
+                            previewContainer.style.display = 'none';
+                        }
+                    }
+                    </script>
                 {% endif %}
             {% else %}
                 {% if profile_form %}
