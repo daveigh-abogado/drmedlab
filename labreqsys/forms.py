@@ -154,8 +154,9 @@ class EditLabTechProfileForm(forms.ModelForm):
     )
     class Meta:
         model = LabTech
-        fields = ['title', 'tech_role', 'license_num', 'signature_path']
+        fields = ['user', 'title', 'tech_role', 'license_num', 'signature_path']
         widgets = {
+            'user': forms.HiddenInput(),
             'license_num': forms.TextInput(attrs={'class': 'form-control'}),
             'signature_path': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/png'}),
         }

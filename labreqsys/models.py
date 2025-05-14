@@ -187,6 +187,7 @@ class ResultValue(models.Model):
 
 class LabTech(models.Model):
     lab_tech_id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True, null=True, blank=True)
     last_name = models.CharField(max_length=50)
     first_name = models.CharField(max_length=50)
     title = models.CharField(max_length=30)

@@ -1,8 +1,8 @@
 use drmedlabs;
 
+DROP TABLE IF EXISTS lab_tech;
 DROP TABLE IF EXISTS result_review;
 DROP TABLE IF EXISTS result_value;
-DROP TABLE IF EXISTS lab_tech;
 DROP TABLE IF EXISTS collection_log;
 DROP TABLE IF EXISTS request_line_item;
 DROP TABLE IF EXISTS test_package_component;
@@ -144,15 +144,17 @@ CREATE TABLE collection_log
  CONSTRAINT collection_log_pk PRIMARY KEY (collection_id),
  CONSTRAINT collection_log_fk FOREIGN KEY (request_id) REFERENCES lab_request(request_id));
 
-CREATE TABLE lab_tech
-(lab_tech_id INTEGER NOT NULL auto_increment,
- last_name VARCHAR(50) NOT NULL,
- first_name VARCHAR(50) NOT NULL,
- title VARCHAR(30) NOT NULL,
- tech_role VARCHAR(30) NOT NULL,
- license_num VARCHAR(50) NOT NULL,
- signature_path VARCHAR(255) NOT NULL,
- CONSTRAINT lab_tech_pk PRIMARY KEY (lab_tech_id)
+CREATE TABLE lab_tech (
+    lab_tech_id INTEGER NOT NULL AUTO_INCREMENT,
+    user_id INTEGER UNIQUE,  -- link to auth_user
+    last_name VARCHAR(50) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    title VARCHAR(30) NOT NULL,
+    tech_role VARCHAR(30) NOT NULL,
+    license_num VARCHAR(50) NOT NULL,
+    signature_path VARCHAR(255),
+    CONSTRAINT lab_tech_pk PRIMARY KEY (lab_tech_id),
+    CONSTRAINT lab_tech_user_fk FOREIGN KEY (user_id) REFERENCES auth_user(id)
 );
 
 CREATE TABLE result_review

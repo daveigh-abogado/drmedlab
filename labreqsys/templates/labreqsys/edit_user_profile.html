@@ -31,6 +31,9 @@
         <form method="post" enctype="multipart/form-data" class="gap-2.5" autocomplete="off">
             {% csrf_token %}
             {% if role == 'lab_tech' %}
+                {% if labtech_missing_warning %}
+                    <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">{{ labtech_missing_warning }}</div>
+                {% endif %}
                 {% if profile_form %}
                     <h4 class="text-sm font-semibold text-blue-800 mb-2 mt-2 tracking-wide uppercase">User Information</h4>
                     {% for field in profile_form %}

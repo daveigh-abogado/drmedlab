@@ -4,7 +4,6 @@ DELETE FROM template_field;
 DELETE FROM template_section;
 DELETE FROM request_line_item;
 DELETE FROM collection_log;
-DELETE FROM lab_tech;
 DELETE FROM test_package_component;
 DELETE FROM test_package;
 DELETE FROM test_component;
@@ -117,10 +116,3 @@ VALUES
 (NULL, '3', 'Carlos Reyes', '2025-02-01 12:00:00', 'Pick-up'),
 (NULL, '4', 'Charles Leclerc', '2025-02-18 13:00:00', 'Email'),
 (NULL, '4', 'Charles Leclerc', '2025-02-18 16:20:00', 'Pick-up');
-
-INSERT INTO lab_tech (last_name, first_name, title, tech_role, license_num, signature_path)
-VALUES
-('Smith', 'John', 'Medical Technologist', 'Hematology', 'MT123456', '/signatures/john_smith.png'),
-('Doe', 'Jane', 'Clinical Laboratory Scientist', 'Microbiology', 'CLS789012', '/signatures/jane_doe.png'),
-('Brown', 'Michael', 'Lab Technician', 'Biochemistry', 'LT345678', '/signatures/michael_brown.png'),
-('Johnson', 'Emily', 'Senior Technologist', 'Immunology', 'ST901234', '/signatures/emily_johnson.png');

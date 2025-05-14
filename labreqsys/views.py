@@ -1821,7 +1821,7 @@ def view_lab_techs(request):
             receptionists.append(entry)
         elif profile.role == 'lab_tech':
             try:
-                labtech = LabTech.objects.get(first_name=profile.user.first_name, last_name=profile.user.last_name)
+                labtech = LabTech.objects.get(user=profile.user)
                 entry['labtech'] = labtech
                 labtechs_with_user.add(labtech.lab_tech_id)
             except LabTech.DoesNotExist:
@@ -1829,14 +1829,13 @@ def view_lab_techs(request):
             labtechs.append(entry)
 
     # Add LabTechs with no user account
-    for labtech in LabTech.objects.all():
-        if labtech.lab_tech_id not in labtechs_with_user:
-            labtechs.append({
-                'user': None,
-                'role': 'lab_tech',
-                'labtech': labtech,
-                'has_user_account': False,
-            })
+    for labtech in LabTech.objects.filter(user__isnull=True):
+        labtechs.append({
+            'user': None,
+            'role': 'lab_tech',
+            'labtech': labtech,
+            'has_user_account': False,
+        })
 
     return render(request, 'labreqsys/view_lab_techs.html', {
         'owners': owners,
@@ -1858,6 +1857,7 @@ def edit_user_profile(request):
     profile_form = None
     labtech_form = None
     labtech = None
+    labtech_missing_warning = None
 
     # Receptionist: edit User fields
     if role == 'receptionist' or role == 'owner':
@@ -1865,9 +1865,10 @@ def edit_user_profile(request):
     # Lab Tech: edit User and LabTech fields
     elif role == 'lab_tech':
         try:
-            labtech = LabTech.objects.get(first_name=user.first_name, last_name=user.last_name)
+            labtech = LabTech.objects.get(user=user)
         except LabTech.DoesNotExist:
             labtech = None
+            labtech_missing_warning = "LabTech profile not found for this user. Please contact admin."
         profile_form = EditReceptionistProfileForm(request.POST or None, instance=user, prefix='profile')
         labtech_form = EditLabTechProfileForm(request.POST or None, request.FILES or None, instance=labtech, prefix='labtech')
 
@@ -1903,4 +1904,5 @@ def edit_user_profile(request):
         'password_form': password_form,
         'role': role,
         'user': user,
+        'labtech_missing_warning': labtech_missing_warning,
     })
