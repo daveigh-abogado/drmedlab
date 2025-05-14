@@ -164,6 +164,12 @@
 </div>
 
 
+<script>
+    form.addEventListener('submit', () => {
+        sessionStorage.removeItem('selectedOptions');
+    });
+</script>
+
 {% endblock content %}
 
 {% block styles %}

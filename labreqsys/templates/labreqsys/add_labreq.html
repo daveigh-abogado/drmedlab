@@ -101,7 +101,7 @@
 
             <!--NEXT BUTTON-->
             <div class="mt-4 flex justify-end ">
-                <button disabled class="text-white px-5 py-2 bg-myblue-primary text-sm font-semibold rounded-lg" type="submit">Next</button>
+                <button class="text-white px-5 py-2 bg-myblue-primary text-sm font-semibold rounded-lg" type="submit">Next</button>
             </div>
         </div>          
     </form>
@@ -109,6 +109,24 @@
 
 
 <script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const saved = sessionStorage.getItem('selectedOptions');
+        if (saved) {
+            const values = JSON.parse(saved);
+
+            values.forEach(value => {
+                const matchingOption = document.querySelector(`[value="${value}"]`);
+                if (matchingOption) {
+                    matchingOption.checked = true;
+
+                    // trigger ddOptions() to reflect visual state DO NOT EVER DELETE THIS
+                    addOptions();
+                }
+            });
+        }
+        sessionStorage.removeItem('selectedOptions');
+    });
+
     let counter = 1;
     const packageData = JSON.parse('{{ package_data|escapejs }}');
     let disabledComponents = {};
@@ -355,6 +373,22 @@
         // Update total price (peso symbol is in HTML)
         document.getElementById('totalPrice').textContent = newTotal.toFixed(2);
     }
+
+    document.querySelector('button[type="submit"]').addEventListener('click', function (e) {
+        const selectedInputs = document.querySelectorAll('input[name="selected_packages"], input[name="selected_components"]');
+
+        if (selectedInputs.length === 0) {
+            alert('Please add at least one option before proceeding.');
+            e.preventDefault();
+        } else {
+            document.getElementById('form').submit(); // if manual submit is needed
+        }
+
+        const selectedValues = Array.from(selectedInputs).map(input => input.value);
+        sessionStorage.setItem('selectedOptions', JSON.stringify(selectedValues));
+
+    return true;
+    });
 </script>
 
 {% endblock content %}
