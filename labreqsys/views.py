@@ -110,14 +110,7 @@ def owner_required(view_func):
 def receptionist_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        user = request.user
-        
-        print("User:", user)
-        print("Authenticated:", user.is_authenticated)
-        print("Has profile:", hasattr(user, 'userprofile'))
-        if hasattr(user, 'userprofile'):
-            print("Role:", user.userprofile.role)
-        
+        user = request.user        
         if not user.is_authenticated:
             return render(request, 'labreqsys/forbidden.html', {
                 'message': "You must be logged in to access this page.",

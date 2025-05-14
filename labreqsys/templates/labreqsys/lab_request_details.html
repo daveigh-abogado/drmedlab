@@ -142,7 +142,7 @@
                 <div class="w-7 flex-1 px-2 flex justify-start items-center gap-1.5"> <!--indiv info-->
                     {% if request_details.overall_status == 'Not Started' %}
                         <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-unstarted-secondary text-unstarted-primary border-unstarted-borderPrimary border shadow-sm">
-                    {% elif request_details.overall_status == 'Completed' %}
+                    {% elif request_details.overall_status == 'Completed' or 'Released' %}
                         <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-complete-secondary text-complete-primary border-complete-borderPrimary border shadow-sm">
                     {% else %}
                         <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-progress-secondary text-progress-primary border-progress-borderPrimary border shadow-sm">
