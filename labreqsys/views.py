@@ -1592,7 +1592,7 @@ def user_login(request):
             login(request, user)
             # Role-based redirect
             if hasattr(user, 'userprofile') and user.userprofile.role == 'lab_tech':
-                return redirect('labRequests') 
+                return redirect('labRequests', requested_status=1) 
             elif hasattr(user, 'userprofile') and user.userprofile.role in ['owner', 'receptionist']:
                 return redirect('patientList')
             else:
@@ -1717,6 +1717,7 @@ def create_testcomponent(request):
                 component_price = component_price,
                 category = category
             )
+            delete_unused_templates()
             request.session.pop('testcomponent_form_data', None)
     return redirect('testComponents')
 
