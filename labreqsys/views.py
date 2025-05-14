@@ -111,6 +111,13 @@ def receptionist_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         user = request.user
+        
+        print("User:", user)
+        print("Authenticated:", user.is_authenticated)
+        print("Has profile:", hasattr(user, 'userprofile'))
+        if hasattr(user, 'userprofile'):
+            print("Role:", user.userprofile.role)
+        
         if not user.is_authenticated:
             return render(request, 'labreqsys/forbidden.html', {
                 'message': "You must be logged in to access this page.",
@@ -127,6 +134,8 @@ def receptionist_required(view_func):
             'message': "You do not have receptionist permissions to access this page.",
             'user': user
         }, status=403)
+    
+
     return _wrapped_view
 
 def lab_tech_required(view_func):
@@ -1146,7 +1155,7 @@ def add_patient_details(request):
                     )
         
         p = Patient.objects.get(pk=new_p.patient_id)
-        request.session.flush()
+        request.session.pop('new_patient', None)
         return redirect('view_patient', pk=p.pk)   
     else:
         return render(request, 'labreqsys/add_edit_patient_details.html', {
