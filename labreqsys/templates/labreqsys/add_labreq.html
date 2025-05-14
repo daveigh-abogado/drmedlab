@@ -142,7 +142,6 @@
 
         const selectedList = document.getElementById('selectedList');
         const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-        const next = document.getElementById('next');
 
         console.log("Number of checked checkboxes:", checkboxes.length);
 
@@ -156,7 +155,7 @@
                 const isPackage = checkbox.classList.contains('package-checkbox');
                 const isComponent = checkbox.classList.contains('component-checkbox');
 
-                console.log("Checkbox:", name, id, isPackage, isComponent);
+                console.log("Checkbox:", name, id, isPackage, isComponent, "Price: ", price);
 
                 if (!document.querySelector(`#selectedList li[data-name="${name}"]`)) {
                     console.log("Adding option:", name);
@@ -176,27 +175,19 @@
                     hiddenInput.type = 'hidden';
                     hiddenInput.name = isPackage ? 'selected_packages' : 'selected_components';
                     hiddenInput.value = id;
-                    hiddenInput.id = 'selected';
                     hiddenInput.setAttribute('data-id', id);
                     document.getElementById('form').appendChild(hiddenInput);
-                    const hidden = document.getElementById('selected');
-                    
-                    
-
-                    if (hidden) {
-                        next.disabled = false
-                        console.log(next.disabled);
-                    } else {
-                        next.disabled = true
-                        console.log(next.disabled);
-                    }
 
                     checkbox.checked = false;
                     checkbox.disabled = true;
-            
-            }
-        });
-    }
+                }
+            });
+        }
+
+        const nextBtn = document.querySelector('button[type="submit"]');
+        const hiddenInputs = document.querySelectorAll('input[name="selected_packages"], input[name="selected_components"]');
+        nextBtn.disabled = hiddenInputs.length === 0;
+
         renumberOptions();
         recalculateTotal();
     }
@@ -240,8 +231,21 @@
         const li = trashIcon.closest('li');
         if (!li) return;
 
+        const priceStr = li.getAttribute('data-price');
+        const price = parseFloat(priceStr) || 0;
+
+        // Get current total
+        const totalSpan = document.getElementById('totalPrice');
+        let currentTotal = parseFloat(totalSpan.textContent) || 0;
+
+        // Subtract and update
+        const newTotal = currentTotal - price;
+        totalSpan.textContent = newTotal.toFixed(2);
+
         // Remove the list item
         li.remove();
+
+        renumberOptions();
         
 
         // Remove the hidden input
@@ -275,12 +279,6 @@
             next.disabled = true
             console.log(next.disabled);
         }
-
-        
-
-        // Update the UI
-        renumberOptions();
-        recalculateTotal();
     }
 
     function disableComponentCheckbox(name, disable, packageId) {
@@ -329,6 +327,7 @@
         let newTotal = 0;
         document.querySelectorAll('#selectedList li:not(.package-component)').forEach(li => {
             const priceStr = li.getAttribute('data-price');
+            console.log('Reading price from LI:', priceStr);
             if (priceStr) {
                 try {
                     const price = parseFloat(priceStr);
