@@ -301,7 +301,6 @@ def view_patient(request, pk):
     Display detailed information about a specific patient.
     """
     p = get_object_or_404(Patient, pk=pk)
-    full_name = f"{p.last_name}, {p.first_name} {p.middle_initial} {p.suffix}"
 
     if p.birthdate:
         today = date.today()
@@ -361,7 +360,6 @@ def view_patient(request, pk):
 
     return render(request, 'labreqsys/view_patient.html', {
         'patient': p,
-        'full_name': full_name,
         'age': age,
         'address': address,  # Replace with actual address
         'requests': request_details
@@ -959,7 +957,6 @@ def add_lab_result(request, line_item_id):
         'patient': patient,
         'request': lab_request,
         'test': test_component,
-        'patient_name': full_name,
         'patient_age': age,
         'patient_address': address,
         'lab_technicians': lab_techs
