@@ -1955,7 +1955,7 @@ def complete_labtech_profile(request):
     except LabTech.DoesNotExist:
         return redirect('labRequests', requested_status=1)
     error = None
-    success = False
+
     if request.method == 'POST':
         file = request.FILES.get('signature_path')
         if not file or not file.name.lower().endswith('.png'):
@@ -1974,7 +1974,7 @@ def complete_labtech_profile(request):
                     destination.write(chunk)
             labtech.signature_path = f'signatures/{filename}'
             labtech.save()
-            success = True
-            # Instead of redirecting immediately, show success and redirect after delay in template
-            return render(request, 'labreqsys/complete_labtech_profile.html', {'error': error, 'labtech': labtech, 'success': success, 'redirect_url': reverse('labRequests', kwargs={'requested_status': 1})})
+            # Immediately redirect to dashboard after successful upload
+            return redirect('labRequests', requested_status=1)
+
     return render(request, 'labreqsys/complete_labtech_profile.html', {'error': error, 'labtech': labtech})

@@ -128,6 +128,9 @@ class UserRegistrationFormWithLabTech(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
     license_num = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    first_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = User

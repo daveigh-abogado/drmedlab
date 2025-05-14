@@ -28,9 +28,25 @@
                         </svg>
                     </button>
                     <!--LOGO-->
-                    <a href="/" class="flex ms-2 md:me-24">
-                        <img src="{% static 'images/drmed_full.png' %}" class="h-8 me-3" alt="DRMed Logo" />
-                    </a>
+                    {% if user.is_authenticated %}
+                        {% if user|is_owner or user|is_receptionist %}
+                            <a href="{% url 'patientList' %}" class="flex ms-2 md:me-24">
+                                <img src="{% static 'images/drmed_full.png' %}" class="h-8 me-3" alt="DRMed Logo" />
+                            </a>
+                        {% elif user|is_lab_tech %}
+                            <a href="{% url 'labRequests' requested_status=1 %}" class="flex ms-2 md:me-24">
+                                <img src="{% static 'images/drmed_full.png' %}" class="h-8 me-3" alt="DRMed Logo" />
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="flex ms-2 md:me-24">
+                                <img src="{% static 'images/drmed_full.png' %}" class="h-8 me-3" alt="DRMed Logo" />
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="/" class="flex ms-2 md:me-24">
+                            <img src="{% static 'images/drmed_full.png' %}" class="h-8 me-3" alt="DRMed Logo" />
+                        </a>
+                    {% endif %}
                     </div>
                     <div class="flex items-center">
                         <div class="flex items-center ms-3">
@@ -185,7 +201,7 @@
                     </li>
                     <li>
                         <a href="{% url 'register' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
-                            <span class="ms-5">User Management</span>
+                            <span class="ms-5">Register New User</span>
                         </a>
                     </li>
                     <!-- DEMO: Edit User Profile Mockup Link -->

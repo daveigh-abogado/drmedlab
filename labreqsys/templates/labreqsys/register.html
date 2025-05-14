@@ -7,80 +7,97 @@
     <div class="relative p-4 bg-white rounded-lg shadow sm:p-5 max-w-md mx-auto">
         <div class="flex justify-between items-center pb-2 mb-2 rounded-t border-b sm:mb-5">
             <div class="text-lg font-semibold text-blue-900">
-                Register New User
+                Register a New User Account
             </div>
+        </div>
+        <div class="mb-4 text-sm text-gray-600">
+            <p>Fill out the form below to create a new user account for your staff. Select the appropriate role for the user. Fields marked with <span class="text-red-600">*</span> are required.</p>
         </div>
         <form method="post" enctype="multipart/form-data" autocomplete="off">
             {% csrf_token %}
-            <div class="mb-4">
-                <label class="block mb-2 text-sm font-medium text-gray-500">Username</label>
-                {{ form.username|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
-                {% if form.username.errors %}<p class="text-red-500 text-xs mt-1">{{ form.username.errors|striptags }}</p>{% endif %}
+            <div class="mb-6">
+                <h4 class="text-base font-semibold text-blue-800 mb-2">Basic Information</h4>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-medium text-gray-500">Username <span class="text-red-600">*</span></label>
+                    {{ form.username|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
+                    {% if form.username.errors %}<p class="text-red-500 text-xs mt-1">{{ form.username.errors|striptags }}</p>{% endif %}
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-medium text-gray-500">Password <span class="text-red-600">*</span></label>
+                    {{ form.password|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
+                    {% if form.password.errors %}<p class="text-red-500 text-xs mt-1">{{ form.password.errors|striptags }}</p>{% endif %}
+                </div>
+                <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-500">First Name <span class="text-red-600">*</span></label>
+                        {{ form.first_name|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
+                        {% if form.first_name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.first_name.errors|striptags }}</p>{% endif %}
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-500">Last Name <span class="text-red-600">*</span></label>
+                        {{ form.last_name|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
+                        {% if form.last_name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.last_name.errors|striptags }}</p>{% endif %}
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-medium text-gray-500">Email <span class="text-red-600">*</span></label>
+                    {{ form.email|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
+                    {% if form.email.errors %}<p class="text-red-500 text-xs mt-1">{{ form.email.errors|striptags }}</p>{% endif %}
+                </div>
             </div>
-            <div class="mb-4">
-                <label class="block mb-2 text-sm font-medium text-gray-500">Password</label>
-                {{ form.password|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
-                {% if form.password.errors %}<p class="text-red-500 text-xs mt-1">{{ form.password.errors|striptags }}</p>{% endif %}
-            </div>
-            <div class="mb-4">
-                <label class="block mb-2 text-sm font-medium text-gray-500">First Name</label>
-                {{ form.first_name|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
-                {% if form.first_name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.first_name.errors|striptags }}</p>{% endif %}
-            </div>
-            <div class="mb-4">
-                <label class="block mb-2 text-sm font-medium text-gray-500">Last Name</label>
-                {{ form.last_name|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
-                {% if form.last_name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.last_name.errors|striptags }}</p>{% endif %}
-            </div>
-            <div class="mb-4">
-                <label class="block mb-2 text-sm font-medium text-gray-500">Email</label>
-                {{ form.email|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
-                {% if form.email.errors %}<p class="text-red-500 text-xs mt-1">{{ form.email.errors|striptags }}</p>{% endif %}
-            </div>
-            <div class="mb-4">
-                <label class="block mb-2 text-sm font-medium text-gray-500">Role</label>
-                {{ form.role|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
-                {% if form.role.errors %}<p class="text-red-500 text-xs mt-1">{{ form.role.errors|striptags }}</p>{% endif %}
+            <div class="mb-6">
+                <h4 class="text-base font-semibold text-blue-800 mb-2">Role & Permissions</h4>
+                <div class="mb-2 text-xs text-gray-500">
+                    <ul class="list-disc ml-5">
+                        <li><b>Receptionist</b>: Can manage patients and lab requests.</li>
+                        <li><b>Lab Technician</b>: Can enter and review lab results. Will be required to upload a digital signature on first login.</li>
+                        <li><b>Owner</b>: Full access to all system features.</li>
+                    </ul>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-medium text-gray-500">Role <span class="text-red-600">*</span></label>
+                    {{ form.role|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
+                    {% if form.role.errors %}<p class="text-red-500 text-xs mt-1">{{ form.role.errors|striptags }}</p>{% endif %}
+                </div>
             </div>
             <div id="labtech-fields" style="display:none;">
+                <h4 class="text-base font-semibold text-blue-800 mb-2">Lab Technician Details</h4>
+                <div class="mb-2 text-xs text-gray-500">Required only if the selected role is <b>Lab Technician</b>.</div>
                 <div class="mb-4">
-                    <label class="block mb-2 text-sm font-medium text-gray-500">Title</label>
+                    <label class="block mb-2 text-sm font-medium text-gray-500">Title <span class="text-red-600">*</span></label>
                     {{ form.title|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
                     {% if form.title.errors %}<p class="text-red-500 text-xs mt-1">{{ form.title.errors|striptags }}</p>{% endif %}
                 </div>
                 <div class="mb-4">
-                    <label class="block mb-2 text-sm font-medium text-gray-500">Tech Role</label>
+                    <label class="block mb-2 text-sm font-medium text-gray-500">Tech Role <span class="text-red-600">*</span></label>
                     {{ form.tech_role|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
                     {% if form.tech_role.errors %}<p class="text-red-500 text-xs mt-1">{{ form.tech_role.errors|striptags }}</p>{% endif %}
                 </div>
                 <div class="mb-4">
-                    <label class="block mb-2 text-sm font-medium text-gray-500">License Number</label>
+                    <label class="block mb-2 text-sm font-medium text-gray-500">License Number <span class="text-red-600">*</span></label>
                     {{ form.license_num|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
                     {% if form.license_num.errors %}<p class="text-red-500 text-xs mt-1">{{ form.license_num.errors|striptags }}</p>{% endif %}
                 </div>
+                <div id="labtech-policy-note" class="mb-2 text-xs text-gray-500">
+                    Note: Lab Techs will be required to upload their own signature the first time they log in.
+                </div>
             </div>
-            <div id="labtech-policy-note" class="mb-2 text-xs text-gray-500" style="display:none;">
-                Note: Lab Techs will be required to upload their own signature the first time they log in.
-            </div>
-            <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-myblue-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">Register</button>
+            <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-myblue-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">Register User</button>
         </form>
     </div>
 </div>
 <script>
     function toggleLabTechFields() {
-        var role = document.querySelector('[name=\"role\"]');
+        var role = document.querySelector('[name="role"]');
         var labtechFields = document.getElementById('labtech-fields');
-        var policyNote = document.getElementById('labtech-policy-note');
         if (role && role.value === 'lab_tech') {
             labtechFields.style.display = '';
-            policyNote.style.display = '';
         } else {
             labtechFields.style.display = 'none';
-            policyNote.style.display = 'none';
         }
     }
     document.addEventListener('DOMContentLoaded', function() {
-        var role = document.querySelector('[name=\"role\"]');
+        var role = document.querySelector('[name="role"]');
         if (role) {
             role.addEventListener('change', toggleLabTechFields);
             toggleLabTechFields();
