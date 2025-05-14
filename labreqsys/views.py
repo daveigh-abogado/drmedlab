@@ -1978,3 +1978,9 @@ def complete_labtech_profile(request):
             return redirect('labRequests', requested_status=1)
 
     return render(request, 'labreqsys/complete_labtech_profile.html', {'error': error, 'labtech': labtech})
+
+@owner_required
+def view_users(request):
+    from django.contrib.auth.models import User
+    users = User.objects.select_related('userprofile').all().order_by('last_name', 'first_name')
+    return render(request, 'labreqsys/view_lab_techs.html', {'users': users})
