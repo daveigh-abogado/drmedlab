@@ -185,6 +185,25 @@ def receptionist_or_lab_tech_required(view_func):
 
     return _wrapped_view
 
+def labtech_profile_complete_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        # Only enforce for lab techs (not owners, receptionists, or superusers)
+        if user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'lab_tech':
+            from .models import LabTech
+            try:
+                labtech = LabTech.objects.get(user=user)
+                if not labtech.signature_path and request.resolver_match.url_name not in [
+                    'complete_labtech_profile', 'edit_user_profile', 'logout', 'user_logout']:
+                    return redirect('complete_labtech_profile')
+            except LabTech.DoesNotExist:
+                if request.resolver_match.url_name not in [
+                    'complete_labtech_profile', 'edit_user_profile', 'logout', 'user_logout']:
+                    return redirect('complete_labtech_profile')
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
 # View functions
 def base(request):
     """
@@ -1936,6 +1955,7 @@ def complete_labtech_profile(request):
     except LabTech.DoesNotExist:
         return redirect('labRequests', requested_status=1)
     error = None
+    success = False
     if request.method == 'POST':
         file = request.FILES.get('signature_path')
         if not file or not file.name.lower().endswith('.png'):
@@ -1954,5 +1974,7 @@ def complete_labtech_profile(request):
                     destination.write(chunk)
             labtech.signature_path = f'signatures/{filename}'
             labtech.save()
-            return redirect('labRequests', requested_status=1)
-    return render(request, 'labreqsys/complete_labtech_profile.html', {'error': error})
+            success = True
+            # Instead of redirecting immediately, show success and redirect after delay in template
+            return render(request, 'labreqsys/complete_labtech_profile.html', {'error': error, 'labtech': labtech, 'success': success, 'redirect_url': reverse('labRequests', kwargs={'requested_status': 1})})
+    return render(request, 'labreqsys/complete_labtech_profile.html', {'error': error, 'labtech': labtech})

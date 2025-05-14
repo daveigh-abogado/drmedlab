@@ -99,46 +99,56 @@
                     <!-- RECORDS - Visible to Receptionists and Lab Technicians -->
                     {% if user.is_authenticated %}
                     {% if user|is_receptionist or user|is_lab_tech %}
-                        <li>
-                            <a class="flex text-xs items-center p-2 text-white rounded-lg group no-underline">
-                                <span class="ms-3 no-underline">RECORDS</span>
-                            </a>
-                        </li>
-                        
-                        {% if user|is_receptionist %}
-                        <li>
-                            <a href="{% url 'patientList' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
-                                <span class="ms-5">Patient List</span>
-                            </a>
-                        </li>
+                        {% if user|is_lab_tech and labtech and not labtech.signature_path %}
+                            <!-- Lab Tech must upload signature: disable all except profile/logout -->
+                            <li>
+                                <span class="flex text-xs items-center p-2 text-gray-300 rounded-lg group no-underline cursor-not-allowed">RECORDS</span>
+                            </li>
+                            <li>
+                                <span class="ms-3 no-underline flex items-center p-2 w-64 text-gray-300 rounded-lg cursor-not-allowed">Patient List</span>
+                            </li>
+                            <li>
+                                <span class="ms-3 flex items-center w-64 p-2 text-base text-gray-300 rounded-lg cursor-not-allowed">Lab Requests</span>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a class="flex text-xs items-center p-2 text-white rounded-lg group no-underline">
+                                    <span class="ms-3 no-underline">RECORDS</span>
+                                </a>
+                            </li>
+                            {% if user|is_receptionist %}
+                            <li>
+                                <a href="{% url 'patientList' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
+                                    <span class="ms-5">Patient List</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li>
+                                <button type="button" class="ms-3 flex items-center w-64 p-2 text-base transition duration-100 group text-white rounded-lg hover:bg-myblue-highlight" aria-controls="dropdown-lab-requests" data-collapse-toggle="dropdown-lab-requests">
+                                    <span class="ms-5 text-left rtl:text-right whitespace-nowrap">Lab Requests</span>
+                                    <svg class="w-3 h-3 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                    </svg>
+                                </button>
+                                <ul id="dropdown-lab-requests" class="hidden py-2 space-y-2">
+                                    <li>
+                                        <a href="{% url 'labRequests' requested_status=0 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">All Requests</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'labRequests' requested_status=1 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">Not Started</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'labRequests' requested_status=2 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">In Progress</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'labRequests' requested_status=3 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">Completed</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'labRequests' requested_status=4 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">Released</a>
+                                    </li>
+                                </ul>
+                            </li>
                         {% endif %}
-
-                        <li>
-                            <button type="button" class="ms-3 flex items-center w-64 p-2 text-base transition duration-100 group text-white rounded-lg hover:bg-myblue-highlight" aria-controls="dropdown-lab-requests" data-collapse-toggle="dropdown-lab-requests">
-                                <span class="ms-5 text-left rtl:text-right whitespace-nowrap">Lab Requests</span>
-                                <svg class="w-3 h-3 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                                </svg>
-                            </button>
-                            <ul id="dropdown-lab-requests" class="hidden py-2 space-y-2">
-                                <li>
-                                    <a href="{% url 'labRequests' requested_status=0 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">All Requests</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'labRequests' requested_status=1 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">Not Started</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'labRequests' requested_status=2 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">In Progress</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'labRequests' requested_status=3 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">Completed</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'labRequests' requested_status=4 %}" class="ms-5 no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">Released</a>
-                                </li>
-                                {# Add other lab request filtered views here if needed and protect them accordingly #}
-                            </ul>
-                        </li>
                       {% endif %}{# End of is_receptionist or is_lab_tech #}
                     {% endif %}{# End of is_authenticated #}
                     
