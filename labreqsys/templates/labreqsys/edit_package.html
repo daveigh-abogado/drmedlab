@@ -26,11 +26,11 @@
         
         <!-- Header -->
         <div class="self-stretch py-2 border-b border-black/20 justify-center items-center gap-1.5">
-            <div class="flex-1 justify-center text-blue-900 text-lg font-semibold">Add Package</div>
+            <div class="flex-1 justify-center text-blue-900 text-lg font-semibold">Edit Package</div>
         </div>
 
         <!-- Form Body -->
-        <form id="addPackageform" class="w-full flex flex-col gap-2.5" method="POST" action="{%url 'add_package' %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
+        <form id="editPackageform" class="w-full flex flex-col gap-2.5" method="POST" action="{%url 'add_package' %}" class="gap-2.5">{% csrf_token %} <!--TO BACKEND: CHECK THIS-->
 
             <!--TEST PACKAGE DETAILS-->
             <div class="py-2 mt-4 text-left text-base font-semibold text-blue-900 uppercase">Test Package Details</div>
@@ -38,11 +38,11 @@
             <div class="grid gap-2.5 sm:grid-cols-4 mb-4"> <!--TO BACKEND: don't forget to fill in for=""-->
                 <div>
                     <label for="package_name" class="block mb-2 text-left text-sm font-medium text-gray-500 capitalize">Package Name *</label>
-                    <input type="text" name="package_name" id="package_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="e.g. Dengue Package" required pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
+                    <input type="text" name="package_name" id="package_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="e.g. Dengue Package" required pattern="^[A-Za-z\s]+$" title="Use letters and spaces only." value="{{package.package_name}}">
                 </div>
                 <div> <!--TO FRONTEND: adjust price width to be smaller than the other fields plsplspls-->
                     <label for="price" class="block mb-2 text-left text-sm font-medium text-gray-500 capitalize">Price *</label>
-                    <input type="text" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="00" required="" pattern="^\d+(\.\d{2})?$" title="Enter a valid price with exactly 2 decimal places (e.g., 12 or 12.34)">
+                    <input type="text" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="00" required="" pattern="^\d+(\.\d{2})?$" title="Enter a valid price with exactly 2 decimal places (e.g., 12 or 12.34)"value="{{package.package_price}}">
                 </div>
             </div>
 
@@ -54,29 +54,22 @@
             class="w-full h-8 text-xs border border-gray-300 rounded-lg text-myblue-primary">
 
             <div class="mt-2 space-y-2">
-                {% for t in components%}
+                {% for y in selectedComponents %}
                 <label class="flex items-center space-x-2 gap-1">
-                    <input type="checkbox" name="addComponentCheckbox" id="addComponentCheckbox" 
+                    <input type="checkbox" name="editComponentCheckboxS" id="editComponentCheckboxS" 
                     class="package-checkbox border border-blue-900 rounded-sm"
-                    value={{t.component_id}}>{{t.test_name}}
+                    value="{{y.component_id}}" checked>{{y.test_name}}
                 </label>
                 {% endfor %}
-            </div>
-
-            
-
-            <!--checkboxes-->
-            <div class="mt-2 space-y-2">
-                {% for pa in test_packages %}
+                {% for y in components %}
+                        {% if y not in selectedComponents%}
                 <label class="flex items-center space-x-2 gap-1">
-                    <input type="checkbox" name="packages" value="{{ pa.pk }}" 
+                    <input type="checkbox" name="editComponentCheckboxN" id="editComponentCheckboxN" 
                     class="package-checkbox border border-blue-900 rounded-sm"
-                    data-name="{{ pa.package_name }}" 
-                    data-price="{{ pa.package_price }}" 
-                    data-components='{{ pa.components|safe }}' >
-                    <span class="text-myblue-primary"> {{ pa.package_name }}</span>
+                    value="{{y.component_id}}">{{y.test_name}}
                 </label>
-                {% endfor %}
+                {% endif %}
+            {% endfor %}
             </div>
 
 
@@ -128,14 +121,14 @@
                     const result = await response.json();
                     console.log(result); 
 
-                    if (result.status === 'duplicate') {
-                        modal.classList.remove('hidden');
-                        document.getElementById("error_type").innerHTML = 'Duplicate Package Name Detected.';
-                        document.getElementById("error_message").innerHTML = 'Please change the package name';
-                        console.log(result.status)                        
-                    } else if (result.status === 'success') {
-                        window.location.href = result.redirect_url;
-                        console.log(result.status)
+                    if (result.status === 'duplicate1') {
+                    alert("Duplicate package name. Please change a package name.")                     
+                } else if (result.status === 'duplicate2') {
+                    alert("Duplicate package components. Please change a package components.")                        
+                } else if (result.status === 'success') {
+                    window.location.href = result.redirect_url;
+                    console.log(result.status)
+
 
                     } else {
                         alert("Unexpected response.");

@@ -115,9 +115,7 @@
         const checked = document.querySelectorAll('input[name="addComponentCheckbox"]:checked');
         
         if (checked.length === 0) {
-            modal.classList.remove('hidden');
-            document.getElementById("error_type").innerHTML = 'No package selected.';
-            document.getElementById("error_message").innerHTML = 'Please select a package.';
+            alert("No package selected. Please select a package.")
         } else{
             try {
                 const response = await fetch("{% url 'add_package' %}", {
@@ -131,11 +129,10 @@
                 const result = await response.json();
                 console.log(result); 
 
-                if (result.status === 'duplicate') {
-                    modal.classList.remove('hidden');
-                    document.getElementById("error_type").innerHTML = 'Duplicate Package Name Detected.';
-                    document.getElementById("error_message").innerHTML = 'Please change the package name';
-                    console.log(result.status)                        
+                if (result.status === 'duplicate1') {
+                    alert("Duplicate package name. Please change a package name.")                     
+                } else if (result.status === 'duplicate2') {
+                    alert("Duplicate package components. Please change a package components.")                        
                 } else if (result.status === 'success') {
                     window.location.href = result.redirect_url;
                     console.log(result.status)

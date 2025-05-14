@@ -1562,20 +1562,26 @@ def add_package (request):
     '''
     test_components = TestComponent.objects.all()
     
+    tpc = []
+    for p in TestPackage.objects.all():
+        pc = TestPackageComponent.objects.filter(package=p)
+        cmp = []
+        for c in pc:
+            comp = TestComponent.objects.get(component_id=c.component.component_id).component_id
+            cmp.append(f"{comp}")
+        tpc.append(cmp)
+    
     if request.method == "POST":
         package_name = request.POST.get('package_name')
         price = request.POST.get('price')
         components = request.POST.getlist('addComponentCheckbox')
-        print(components)
         
         if TestPackage.objects.filter(package_name=package_name).exists():
-            return JsonResponse({'status': 'duplicate'})
+            return JsonResponse({'status': 'duplicate1'})
+        elif components in tpc:
+            return JsonResponse({'status': 'duplicate2'})
         else:
-            package = TestPackage.objects.create(
-                package_name=package_name,
-                package_price=price
-                )
-            
+            package = TestPackage.objects.create(package_name=package_name, package_price=price)
             for c in components:
                 component = TestComponent.objects.get(component_id=c)
                 TestPackageComponent.objects.create(
@@ -1594,50 +1600,75 @@ def edit_package(request, pk):
     '''    
 
     package = TestPackage.objects.get(package_id=pk)                  
-    test_components = TestComponent.objects.all()  
+    all_components = TestComponent.objects.all()  
     pc = TestPackageComponent.objects.filter(package__package_id=pk)                      
-    components = []                                                             
-    components.extend(                                                          
+    selected_components = []                                                             
+    selected_components.extend(                                                          
         TestComponent.objects.get(component_id=p.component.component_id)
         for p in pc 
     )
     
+    tpc = []
+    for p in TestPackage.objects.all():
+        packs = TestPackageComponent.objects.filter(package=p)
+        cmp = []
+        for c in packs:
+            comp = TestComponent.objects.get(component_id=c.component.component_id).component_id
+            cmp.append(f"{comp}")
+        tpc.append(cmp)
+    
+    scmp = []
+    for s in selected_components:
+        scmp.append(str(s.component_id))
+    if scmp in tpc:
+        tpc.remove(scmp)
+    
     if request.method == "POST":
         package_name = request.POST.get('package_name')
         price = request.POST.get('price')
+        select = request.POST.getlist('editComponentCheckboxS')
+        print(select)
+        new = request.POST.getlist('editComponentCheckboxN')
+        print(f"edits compons !{new}")
+        
+        all_comp = select + new
+        print (f"yes: {all_comp}")
 
         updated = []
+            
         if package_name != package.package_name and TestPackage.objects.filter(package_name=package_name).exists():
-            return JsonResponse({'status': 'duplicate'})
+            print ("here1")
+            return JsonResponse({'status': 'duplicate1'})
+        elif all_comp in tpc:
+            print ("here2")
+            return JsonResponse({'status': 'duplicate2'})
         else:
             package.package_name = package_name
             package.package_price = price
-            package.save()
-        
-            for c in request.POST.getlist('editComponentCheckboxS'):
+            package.save()  
+            for c in select:
                 component = TestComponent.objects.get(component_id=c)
                 updated.append(component)
-                
-            for p in components:
+                print(f"huhu: {component}")
+        
+            for p in selected_components:
                 if p not in updated:
                     tp = TestPackageComponent.objects.filter(package=package, component=p)
                     tp.delete()
                         
                 
-            for x in request.POST.getlist('editComponentCheckboxN'):
+            for x in new:
                 component = TestComponent.objects.get(component_id=x)
                 TestPackageComponent.objects.create(
                     package=package,
                     component=component
                 )
-        return JsonResponse({'status':'success', 'redirect_url':'/packages'})
-        
+            return JsonResponse({'status':'success', 'redirect_url':'/packages'})
     else:
         return render(request, 'labreqsys/edit_package.html', {
-            'components': test_components, 
-            'selectedComponents' : components,
-            'package':package, 
-            'mode': 'edit'})
+            'components': all_components, 
+            'selectedComponents' : selected_components,
+            'package':package})
 
 def user_login(request):
     if request.method == 'POST':
