@@ -37,11 +37,11 @@
 
             <div class="grid gap-2.5 sm:grid-cols-4 mb-4"> <!--TO BACKEND: don't forget to fill in for=""-->
                 <div>
-                    <label for="package_name" class="block mb-2 text-left text-sm font-medium text-gray-500 uppercase">Package Name *</label>
+                    <label for="package_name" class="block mb-2 text-left text-sm font-medium text-gray-500 capitalize">Package Name *</label>
                     <input type="text" name="package_name" id="package_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="e.g. Dengue Package" required pattern="^[A-Za-z\s]+$" title="Use letters and spaces only.">
                 </div>
                 <div> <!--TO FRONTEND: adjust price width to be smaller than the other fields plsplspls-->
-                    <label for="price" class="block mb-2 text-left text-sm font-medium text-gray-500 uppercase">Price *</label>
+                    <label for="price" class="block mb-2 text-left text-sm font-medium text-gray-500 capitalize">Price *</label>
                     <input type="text" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="00" required="" pattern="^\d+(\.\d{2})?$" title="Enter a valid price with exactly 2 decimal places (e.g., 12 or 12.34)">
                 </div>
             </div>

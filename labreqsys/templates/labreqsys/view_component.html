@@ -2,19 +2,23 @@
 {% load static tailwind_tags %}
 
 {% block content %}
-<div class="breadbutton space-between my-4">
-    <ul class="breadcrumb">
-        <li><a href="{% url 'testComponents' %}">Test Component List</a></li>
-        <li><a href="#" class="current">View Test Component</a></li>
+
+<!--BREADCRUMB-->
+<div class="breadbutton mb-4">
+    <ul class="breadcrumb text-sm pt-2">
+        <li>
+            <a href="{% url 'testComponents' %}" class="text-myblue-primary">Test Component List/</a>
+            <a href="#" class="text-myblue-highlight"> View Test Component </a>
+        </li>
     </ul>
     <div class="col ms-auto text-end">
-        <button class="text-white px-6 py-2 bg-primary-700 font-bold rounded-lg text-ssm" type="button">
+        <button class="text-white px-6 py-2 bg-myblue-primary font-medium rounded-lg text-sm" type="button">
             <a href="{% url 'edit_testcomponent' component_id=component.component_id %}" class="text-white no-underline">Edit Test Component</a>
         </button>
     </div>
 </div>
 
-<div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
+<div class="w-full h-hug p-8 pt-6 bg-white rounded-lg shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
     <div class="flex justify-between items-center rounded-t border-b sm:mb-4">
         <h1 class="text-mm font-semibold text-blue-900">
             View Test Component
@@ -45,7 +49,7 @@
 
             <div class="text-left text-m font-semibold text-blue-900 uppercase mb-2 mt-6">Template</div>
             <div class="grid gap-2.5 m-4"> 
-                <button type="button" id="createTemplatebutton" data-modal-target="templateModal" data-modal-toggle="templateModal" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline" style="max-width: 17%;">
+                <button type="button" id="createTemplatebutton" data-modal-target="templateModal" data-modal-toggle="templateModal" class="w-full justify-center text-white inline-flex items-center bg-myblue-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center no-underline" >
                     View Template
                 </button>
             </div>

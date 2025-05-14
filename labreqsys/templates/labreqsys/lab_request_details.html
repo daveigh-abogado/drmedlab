@@ -156,7 +156,7 @@
                 {% if request_details.overall_status == 'Not Started' or request_details.overall_status == 'In Progress' %}
                 <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
                     <div class="px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                        <div class="w-36 justify-center text-xs font-semibold text-blue-900 ">Collection Status</div>
+                        <div class="w-36 justify-center text-sm font-semibold text-blue-900 ">Collection Status</div>
                     </div>
                     <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
                         <form method ="POST" action="{% url 'change_collection_status' request_id=request_details.request_id %}" id="collection-form">{% csrf_token %}
@@ -244,7 +244,7 @@
                     <th scope="col" class="w-12 px-6 py-3 text-left">
                         <input type="checkbox" id="SelectAllCheckbox" class="selectall h-4 w-4 rounded border-gray-300">
                     </th>
-                    <th scope="col" class="px-6 py-3 text-center">No.</th>
+                    <th scope="col" class="px-6 py-3 text-center w-20">No.</th>
                     <th scope="col" class="px-6 py-3 text-start">Service Type</th>
                     <th scope="col" class="px-6 py-3 text-start">Component</th>
                     <th scope="col" class="px-6 py-3 text-center">Status</th>
@@ -265,12 +265,12 @@
                         {% if forloop.first %}01{% endif %}
                         {% if forloop.counter == 4 %}02{% endif %}
                     </td>
-                    <td class="px-6 py-2 text-center text-gray-500">
+                    <td class="px-6 py-2 text-start text-gray-500">
                         {% if line_item.package %}
                             {{ line_item.package.package_name }}
                         {% endif %}
                     </td>
-                    <td class="px-6 py-2 text-center">
+                    <td class="px-6 py-2 text-start">
                         {{ line_item.component.test_name }}
                     </td>
                     <td id="request_status" class="px-6 py-2 text-center">
@@ -284,7 +284,7 @@
                             {{ line_item.request_status }}
                         </span>
                     </td>
-                    <td class="px-6 py-2 text-center">
+                    <td class="px-6 py-2 text-center w-44">
                         {{ line_item.progress_timestamp|default:"-" }}
                     </td>
                     {% if user|is_lab_tech %}
