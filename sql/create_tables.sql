@@ -1,6 +1,10 @@
 use drmedlabs;
 
-DROP TABLE IF EXISTS lab_tech;
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TRIGGER IF EXISTS set_date_added;
+DROP TRIGGER IF EXISTS set_date_reviewed;
+
 DROP TABLE IF EXISTS result_review;
 DROP TABLE IF EXISTS result_value;
 DROP TABLE IF EXISTS collection_log;
@@ -13,7 +17,10 @@ DROP TABLE IF EXISTS template_section;
 DROP TABLE IF EXISTS template_form;
 DROP TABLE IF EXISTS lab_request;
 DROP TABLE IF EXISTS patient;
+DROP TABLE IF EXISTS lab_tech;
 DROP TABLE IF EXISTS labreqsys_userprofile;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE patient
 (patient_id INTEGER NOT NULL auto_increment,
