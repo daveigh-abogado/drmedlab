@@ -45,6 +45,33 @@
                 </div>
                     {% endfor %}
                 {% endif %}
+                {% if labtech_form and labtech_form.instance %}
+                    <div class="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                        <h4 class="text-sm font-semibold text-blue-800 mb-2 tracking-wide uppercase">Current Lab Tech Information</h4>
+                        <div class="grid gap-2.5 mb-2 sm:grid-cols-2">
+                            <div>
+                                <span class="block text-xs text-gray-500">Title</span>
+                                <span class="font-medium text-gray-900">{{ labtech_form.instance.title|default:'-' }}</span>
+                            </div>
+                            <div>
+                                <span class="block text-xs text-gray-500">Tech Role</span>
+                                <span class="font-medium text-gray-900">{{ labtech_form.instance.tech_role|default:'-' }}</span>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <span class="block text-xs text-gray-500">License Number</span>
+                            <span class="font-medium text-gray-900">{{ labtech_form.instance.license_num|default:'-' }}</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="block text-xs text-gray-500">Current Signature</span><br>
+                            {% if labtech_form.instance.signature_path %}
+                                <img src="{% if labtech_form.instance.signature_path.url %}{{ labtech_form.instance.signature_path.url }}{% else %}/static/{{ labtech_form.instance.signature_path }}{% endif %}" alt="Current Signature" class="h-16 mb-2 border rounded">
+                            {% else %}
+                                <span class="text-gray-400">No signature uploaded</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
                 {% if labtech_form %}
                     <h4 class="text-sm font-semibold text-blue-800 mb-2 mt-6 tracking-wide uppercase">Lab Tech Information</h4>
                     {% for field in labtech_form %}
