@@ -154,7 +154,16 @@
         showTab(0);
     });
 
-
+    function removeComponentFromHiddenInput(componentId) {
+        const hiddenInputs = document.querySelectorAll('#form input[type="hidden"][name="selected_components"]');
+        hiddenInputs.forEach(input => {
+            if (input.value === componentId) {
+                console.log("Removing component hidden input:", componentId);
+                input.remove();
+            }
+        });
+    }
+    
     function addOptions() {
         console.log("addOptions function called");
 
@@ -184,6 +193,7 @@
                         packageData[id].forEach(componentName => {
                             // Remove the component if it was added independently or by another package
                             const existingCompLi = document.querySelector(`#selectedList li[data-name="${componentName}"]:not([data-package-id="${id}"])`);
+                            removeComponentFromHiddenInput(id)
                             if (existingCompLi) {
                                 const pkgId = existingCompLi.getAttribute('data-package-id');
                                 existingCompLi.remove();

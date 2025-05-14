@@ -74,7 +74,8 @@ INSERT INTO test_package_component
 VALUES 
 (1, 2),
 (1, 1),
-(1, 4);
+(1, 4),
+(2, 2);
 
 INSERT INTO request_line_item (request_id, package_id, component_id, request_status, template_used)  
 VALUES

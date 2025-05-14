@@ -165,8 +165,9 @@
 
 
 <script>
-    form.addEventListener('submit', () => {
+    document.querySelector('button[type="submit"]').addEventListener('click', function (e) {
         sessionStorage.removeItem('selectedOptions');
+    return true;
     });
 </script>
 
