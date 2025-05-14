@@ -81,11 +81,16 @@
                     <td>
                     <td colspan="4" class="px-6 py-2">
                         <div class="text-xs pl-28">
+                            <table>
                             {% for component in c %}
-                                {{ component.component.test_name }}<br>
+                                <tr class="py-2 px-3">
+                                <td>{{ component.component.test_name }}</td>
+                                <td>{{ component.component.category }}</td>
+                                </tr>
                             {% empty %}
                                 No components found.
                             {% endfor %}
+                            </table>
                         </div>
                     </td>
                 </tr>
