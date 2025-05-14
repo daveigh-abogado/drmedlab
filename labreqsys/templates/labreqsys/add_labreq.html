@@ -101,7 +101,7 @@
 
             <!--NEXT BUTTON-->
             <div class="mt-4 flex justify-end ">
-                <button class="text-white px-5 py-2 bg-myblue-primary text-sm font-semibold rounded-lg" disabled type="submit">Next</button>
+                <button disabled class="text-white px-5 py-2 bg-myblue-primary text-sm font-semibold rounded-lg" type="submit">Next</button>
             </div>
         </div>          
     </form>
@@ -164,12 +164,24 @@
                     if (isPackage && packageData[id]) {
                         console.log("Adding package components for:", name);
                         packageData[id].forEach(componentName => {
-                            if (!document.querySelector(`#selectedList li[data-name="${componentName}"]`)) {
-                                addSelectedComponent(componentName, id);
-                                disableComponentCheckbox(componentName, true, id);
+                            // Remove the component if it was added independently or by another package
+                            const existingCompLi = document.querySelector(`#selectedList li[data-name="${componentName}"]:not([data-package-id="${id}"])`);
+                            if (existingCompLi) {
+                                const pkgId = existingCompLi.getAttribute('data-package-id');
+                                existingCompLi.remove();
+                                if (pkgId) {
+                                    enableComponentCheckbox(componentName, pkgId);
+                                } else {
+                                    enableComponentCheckbox(componentName);
+                                }
                             }
+
+                            // Now add it under this package
+                            addSelectedComponent(componentName, id);
+                            disableComponentCheckbox(componentName, true, id);
                         });
                     }
+
 
                     const hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
@@ -178,7 +190,7 @@
                     hiddenInput.setAttribute('data-id', id);
                     document.getElementById('form').appendChild(hiddenInput);
 
-                    checkbox.checked = false;
+                    checkbox.checked = true;
                     checkbox.disabled = true;
                 }
             });
@@ -261,7 +273,7 @@
         // Handle package components if it's a package
         if (isPackage) {
             packageData[id].forEach(componentName => {
-                const compLi = document.querySelector(`#selectedList li[data-name="${componentName}"]`);
+                const compLi = document.querySelector(`#selectedList li[data-name="${componentName}"][data-package-id="${id}"]`);
                 if (compLi) {
                     compLi.remove();
                     enableComponentCheckbox(componentName, id);
@@ -284,6 +296,7 @@
     function disableComponentCheckbox(name, disable, packageId) {
         document.querySelectorAll(`input[data-name="${name}"]`).forEach(checkbox => {
             checkbox.disabled = disable;
+            checkbox.checked = true;
             if (disable) {
                 if (!disabledComponents[name]) {
                     disabledComponents[name] = {};
