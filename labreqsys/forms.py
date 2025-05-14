@@ -105,13 +105,46 @@ class EditLabTechForm(LabTechForm):
     class Meta(LabTechForm.Meta):
         fields = ['title', 'tech_role', 'license_num']  # Exclude name fields 
 
-class UserRegistrationForm(forms.ModelForm):
+class UserRegistrationFormWithLabTech(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     role = forms.ChoiceField(choices=UserProfile.ROLE_CHOICES)
+    # Lab Tech extra fields (no signature)
+    title = forms.ChoiceField(
+        choices=[
+            ('', 'Select title'),
+            ('RMT', 'RMT (Registered Medical Technologist)'),
+            ('MD', 'MD (Medical Doctor)'),
+        ],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    tech_role = forms.ChoiceField(
+        choices=[
+            ('', 'Select role'),
+            ('Medical Technologist', 'Medical Technologist'),
+            ('Pathologist', 'Pathologist'),
+        ],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    license_num = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    first_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = User
         fields = ['username', 'password', 'first_name', 'last_name', 'email']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        role = cleaned_data.get('role')
+        # If lab tech, require extra fields
+        if role == 'lab_tech':
+            for field in ['title', 'tech_role', 'license_num']:
+                if not cleaned_data.get(field):
+                    self.add_error(field, 'This field is required for Lab Tech.')
+        return cleaned_data
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
@@ -154,11 +187,16 @@ class EditLabTechProfileForm(forms.ModelForm):
     )
     class Meta:
         model = LabTech
-        fields = ['title', 'tech_role', 'license_num', 'signature_path']
+        fields = ['user', 'title', 'tech_role', 'license_num']
         widgets = {
+            'user': forms.HiddenInput(),
             'license_num': forms.TextInput(attrs={'class': 'form-control'}),
-            'signature_path': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/png'}),
         }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['signature_path'].required = False 
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if commit:
+            instance.save()
+        return instance 

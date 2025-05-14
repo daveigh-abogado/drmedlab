@@ -1,0 +1,95 @@
+{% extends 'labreqsys/base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+<div class="relative p-4 w-full max-w-2xl h-full md:h-auto mx-auto mt-10">
+    <div class="relative p-4 bg-white rounded-lg shadow sm:p-5 max-w-md mx-auto">
+        <div class="text-lg font-semibold text-blue-900 mb-2">Welcome, Lab Tech!</div>
+        <div class="mb-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded">
+            <strong>Action Required:</strong> Please upload your digital signature to activate your account.<br>
+            <span class="block mt-1 text-xs text-yellow-900 ">Note: The signature you upload here will be permanent and cannot be changed later. Please make sure to upload your official and correct signature.</span>
+        </div>
+        {% if labtech %}
+        <div class="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+            <h4 class="text-sm font-semibold text-blue-800 mb-2 tracking-wide uppercase">Current Lab Tech Information</h4>
+            <div class="grid gap-2.5 mb-2 sm:grid-cols-2">
+                <div>
+                    <span class="block text-xs text-gray-500">Name</span>
+                    <span class="font-medium text-gray-900">{{ labtech.first_name }} {{ labtech.last_name }}</span>
+                </div>
+                <div>
+                    <span class="block text-xs text-gray-500">Title</span>
+                    <span class="font-medium text-gray-900">{{ labtech.title|default:'-' }}</span>
+                </div>
+            </div>
+            <div class="grid gap-2.5 mb-2 sm:grid-cols-2">
+                <div>
+                    <span class="block text-xs text-gray-500">Tech Role</span>
+                    <span class="font-medium text-gray-900">{{ labtech.tech_role|default:'-' }}</span>
+                </div>
+                <div>
+                    <span class="block text-xs text-gray-500">License Number</span>
+                    <span class="font-medium text-gray-900">{{ labtech.license_num|default:'-' }}</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if labtech and labtech.signature_path %}
+            <div class="mb-4">
+                <span class="block text-xs text-gray-500">Current Signature</span><br>
+                <img src="{% static labtech.signature_path %}" alt="Current Signature" class="h-16 mb-2 border rounded">
+            </div>
+        {% else %}
+            <div class="mb-4">
+                <span class="block text-xs text-gray-500">Current Signature</span><br>
+                <span class="text-gray-400">No signature uploaded</span>
+            </div>
+        {% endif %}
+        {% if success %}
+        <div class="mb-4 p-3 bg-green-100 border-l-4 border-green-500 text-green-800 rounded">
+            <strong>Success:</strong> Signature uploaded successfully!<br>
+            Redirecting to dashboard...
+        </div>
+        <script>
+        setTimeout(function() {
+            window.location.href = "{{ redirect_url }}";
+        }, 2000);
+        </script>
+        {% endif %}
+        {% if not success %}
+        <form method="post" enctype="multipart/form-data" autocomplete="off">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block mb-2 text-sm font-medium text-gray-500">Signature (PNG)</label>
+                <span class="block mb-1 text-xs text-gray-500">This will be your permanent digital signature for all lab results. You will not be able to change it later.</span>
+                <input type="file" name="signature_path" id="signatureInput" accept="image/png" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" required onchange="previewSignature(event)">
+                {% if error %}<p class="text-red-500 text-xs mt-1">{{ error }}</p>{% endif %}
+                <div id="signaturePreviewContainer" class="mt-2" style="display:none;">
+                    <span class="block text-xs text-gray-500 mb-1">Preview:</span>
+                    <img id="signaturePreview" src="#" alt="Signature Preview" class="h-16 border rounded" style="max-width:100%;" />
+                </div>
+            </div>
+            <button type="submit" class="w-full justify-center text-white inline-flex items-center bg-myblue-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">Submit Signature</button>
+        </form>
+        <script>
+        function previewSignature(event) {
+            const input = event.target;
+            const previewContainer = document.getElementById('signaturePreviewContainer');
+            const preview = document.getElementById('signaturePreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = '#';
+                previewContainer.style.display = 'none';
+            }
+        }
+        </script>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

@@ -35,3 +35,7 @@ drmed_labreqsys/settings.py
 drmed_labreqsys/settings.py
 drmed_labreqsys/settings.py
 /theme/static/css/dist
+*.pyc
+
+# Node.js dependencies
+node_modules/

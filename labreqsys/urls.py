@@ -34,7 +34,7 @@ urlpatterns = [
     path('generatePDF', views.generatePDF, name='generatePDF'),
     path('pdf/<int:pk>', views.pdf, name='pdf'),
     path('add_lab_tech/', views.add_lab_tech, name='add_lab_tech'),
-    path('lab_techs/', views.view_lab_techs, name='view_lab_techs'),
+    path('users/', views.view_users, name='view_users'),
     path('edit_lab_tech/<int:lab_tech_id>/', views.edit_lab_tech, name='edit_lab_tech'),
     path('view_labresult/<int:pk>', views.view_lab_result, name='view_labresult'),
     path('packages', views.packages, name='packages'),
@@ -45,6 +45,8 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     path('edit-user-profile/', views.edit_user_profile, name='edit_user_profile'),
-    path('clear_session/', views.clear_session, name='clear_session')
+    path('clear_session/', views.clear_session, name='clear_session'),
+    path('complete-labtech-profile/', views.complete_labtech_profile, name='complete_labtech_profile'),
+    path('user-registered-success/', views.user_registered_success, name='user_registered_success'),
 ]
 

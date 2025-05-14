@@ -10,7 +10,7 @@ from decimal import Decimal
 from django.utils import timezone
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.urls import reverse
-from .forms import LabTechForm, EditLabTechForm, UserRegistrationForm, CustomAuthenticationForm, EditReceptionistProfileForm, EditLabTechProfileForm
+from .forms import LabTechForm, EditLabTechForm, UserRegistrationFormWithLabTech, CustomAuthenticationForm, EditReceptionistProfileForm, EditLabTechProfileForm
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -18,6 +18,7 @@ from functools import wraps
 from django.template.loader import render_to_string
 from django.db.models import Count
 from django.contrib.auth.forms import PasswordChangeForm
+from django.utils.deprecation import MiddlewareMixin
 
 import pdfkit
 import platform
@@ -182,6 +183,25 @@ def receptionist_or_lab_tech_required(view_func):
                 'user': request.user
             }, status=403)
 
+    return _wrapped_view
+
+def labtech_profile_complete_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        # Only enforce for lab techs (not owners, receptionists, or superusers)
+        if user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'lab_tech':
+            from .models import LabTech
+            try:
+                labtech = LabTech.objects.get(user=user)
+                if not labtech.signature_path and request.resolver_match.url_name not in [
+                    'complete_labtech_profile', 'edit_user_profile', 'logout', 'user_logout']:
+                    return redirect('complete_labtech_profile')
+            except LabTech.DoesNotExist:
+                if request.resolver_match.url_name not in [
+                    'complete_labtech_profile', 'edit_user_profile', 'logout', 'user_logout']:
+                    return redirect('complete_labtech_profile')
+        return view_func(request, *args, **kwargs)
     return _wrapped_view
 
 # View functions
@@ -1676,16 +1696,21 @@ def user_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            # Role-based redirect
+            # Lab Tech: enforce signature upload
             if hasattr(user, 'userprofile') and user.userprofile.role == 'lab_tech':
-                return redirect('labRequests') 
+                try:
+                    labtech = LabTech.objects.get(user=user)
+                    if not labtech.signature_path:
+                        return redirect('complete_labtech_profile')
+                except LabTech.DoesNotExist:
+                    pass
+                return redirect('labRequests', requested_status=1)
             elif hasattr(user, 'userprofile') and user.userprofile.role in ['owner', 'receptionist']:
                 return redirect('patientList')
             else:
-                # Default redirect if role not set or unexpected, or for superuser without profile
                 if getattr(user, 'is_superuser', False):
-                    return redirect('patientList') # Superusers go to patientList
-                return redirect('login') # Fallback to login or a generic page
+                    return redirect('patientList')
+                return redirect('login')
     else:
         form = CustomAuthenticationForm()
     return render(request, 'labreqsys/login.html', {'form': form})
@@ -1696,8 +1721,9 @@ def user_logout(request):
 
 @owner_required
 def register_user(request):
+    signature_policy_warning = "Lab Techs will be required to upload their own signature the first time they log in."
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
+        form = UserRegistrationFormWithLabTech(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
@@ -1707,12 +1733,26 @@ def register_user(request):
                 user=user,
                 defaults={'role': role}
             )
-            messages.success(request, 'User registered successfully!')
-            return redirect('patientList')  # Or redirect to a user list page if you create one
-        # If form is not valid, it will fall through to the render below
+            if role == 'lab_tech':
+                LabTech.objects.create(
+                    user=user,
+                    last_name=user.last_name,
+                    first_name=user.first_name,
+                    title=form.cleaned_data['title'],
+                    tech_role=form.cleaned_data['tech_role'],
+                    license_num=form.cleaned_data['license_num'],
+                    signature_path=''
+                )
+            # Redirect to success page with username and role
+            return redirect(reverse('user_registered_success') + f'?username={user.username}&role={role}')
     else:
-        form = UserRegistrationForm()
-    return render(request, 'labreqsys/register.html', {'form': form})
+        form = UserRegistrationFormWithLabTech()
+    return render(request, 'labreqsys/register.html', {'form': form, 'signature_policy_warning': signature_policy_warning})
+
+def user_registered_success(request):
+    username = request.GET.get('username')
+    role = request.GET.get('role')
+    return render(request, 'labreqsys/user_registered_success.html', {'username': username, 'role': role})
 
 @owner_required
 def add_testcomponent(request):
@@ -1803,6 +1843,7 @@ def create_testcomponent(request):
                 component_price = component_price,
                 category = category
             )
+            delete_unused_templates()
             request.session.pop('testcomponent_form_data', None)
     return redirect('testComponents')
 
@@ -1906,7 +1947,7 @@ def view_lab_techs(request):
             receptionists.append(entry)
         elif profile.role == 'lab_tech':
             try:
-                labtech = LabTech.objects.get(first_name=profile.user.first_name, last_name=profile.user.last_name)
+                labtech = LabTech.objects.get(user=profile.user)
                 entry['labtech'] = labtech
                 labtechs_with_user.add(labtech.lab_tech_id)
             except LabTech.DoesNotExist:
@@ -1914,14 +1955,13 @@ def view_lab_techs(request):
             labtechs.append(entry)
 
     # Add LabTechs with no user account
-    for labtech in LabTech.objects.all():
-        if labtech.lab_tech_id not in labtechs_with_user:
-            labtechs.append({
-                'user': None,
-                'role': 'lab_tech',
-                'labtech': labtech,
-                'has_user_account': False,
-            })
+    for labtech in LabTech.objects.filter(user__isnull=True):
+        labtechs.append({
+            'user': None,
+            'role': 'lab_tech',
+            'labtech': labtech,
+            'has_user_account': False,
+        })
 
     return render(request, 'labreqsys/view_lab_techs.html', {
         'owners': owners,
@@ -1943,6 +1983,7 @@ def edit_user_profile(request):
     profile_form = None
     labtech_form = None
     labtech = None
+    labtech_missing_warning = None
 
     # Receptionist: edit User fields
     if role == 'receptionist' or role == 'owner':
@@ -1950,24 +1991,25 @@ def edit_user_profile(request):
     # Lab Tech: edit User and LabTech fields
     elif role == 'lab_tech':
         try:
-            labtech = LabTech.objects.get(first_name=user.first_name, last_name=user.last_name)
+            labtech = LabTech.objects.get(user=user)
         except LabTech.DoesNotExist:
             labtech = None
+            labtech_missing_warning = "LabTech profile not found for this user. Please contact admin."
         profile_form = EditReceptionistProfileForm(request.POST or None, instance=user, prefix='profile')
-        labtech_form = EditLabTechProfileForm(request.POST or None, request.FILES or None, instance=labtech, prefix='labtech')
+        labtech_form = EditLabTechProfileForm(request.POST or None, instance=labtech, prefix='labtech')
 
     password_form = PasswordChangeForm(user, request.POST or None, prefix='password')
 
     if request.method == 'POST':
         if 'profile_submit' in request.POST:
+            print('DEBUG: Received profile_submit POST')
             valid_profile = profile_form.is_valid() if profile_form else True
             valid_labtech = labtech_form.is_valid() if labtech_form else True
+            print(f'DEBUG: valid_profile={valid_profile}, valid_labtech={valid_labtech}')
             if valid_profile and valid_labtech:
                 if profile_form:
                     profile_form.save()
                 if labtech_form:
-                    if 'signature_path' in request.FILES:
-                        labtech_form.instance.signature_path = request.FILES['signature_path']
                     labtech_form.save()
                 messages.success(request, 'Profile updated successfully.')
                 return redirect('edit_user_profile')
@@ -1988,4 +2030,43 @@ def edit_user_profile(request):
         'password_form': password_form,
         'role': role,
         'user': user,
+        'labtech_missing_warning': labtech_missing_warning,
     })
+
+@login_required
+def complete_labtech_profile(request):
+    user = request.user
+    try:
+        labtech = LabTech.objects.get(user=user)
+    except LabTech.DoesNotExist:
+        return redirect('labRequests', requested_status=1)
+    error = None
+
+    if request.method == 'POST':
+        file = request.FILES.get('signature_path')
+        if not file or not file.name.lower().endswith('.png'):
+            error = 'Please upload a PNG file.'
+        elif file.size > 5 * 1024 * 1024:
+            error = 'Signature file size should be less than 5MB.'
+        else:
+            # Save file to static/signatures/
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            safe_name = ''.join(c for c in labtech.last_name if c.isalnum())
+            filename = f"signature_{safe_name}_{timestamp}.png"
+            file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, 'wb+') as destination:
+                for chunk in file.chunks():
+                    destination.write(chunk)
+            labtech.signature_path = f'signatures/{filename}'
+            labtech.save()
+            # Immediately redirect to dashboard after successful upload
+            return redirect('labRequests', requested_status=1)
+
+    return render(request, 'labreqsys/complete_labtech_profile.html', {'error': error, 'labtech': labtech})
+
+@owner_required
+def view_users(request):
+    from django.contrib.auth.models import User
+    users = User.objects.select_related('userprofile').all().order_by('last_name', 'first_name')
+    return render(request, 'labreqsys/view_lab_techs.html', {'users': users})
