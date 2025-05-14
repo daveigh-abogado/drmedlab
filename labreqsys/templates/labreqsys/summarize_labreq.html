@@ -6,9 +6,9 @@
 <!--breadcrumb-->
 <div class="breadbutton mb-4">
     <ul class="breadcrumb text-xs pt-2">
-            <a href="#" class="text-myblue-primary">Lab Request/</a>
+            <a href="{% url 'view_patient' pk=patient.pk %}" class="text-myblue-primary">Lab Request/</a>
             <a href="{% url 'add_labreq' pk=patient.pk %}" class="text-myblue-primary"> Add Lab Request/</a>
-            <a href="{% url 'add_labreq_details' pk=patient.pk %}" class="text-myblue-primary"> Add Lab Request Details/</a>
+            <a href="javascript:window.history.back();" class="text-myblue-primary"> Add Lab Request Details/</a>
             <a href="#" class="text-myblue-highlight">Billing Summary</a>
         </li>
     </ul>

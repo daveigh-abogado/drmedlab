@@ -5,7 +5,7 @@
 <!--breadcrumb-->
 <div class="breadbutton mb-4">
     <ul class="breadcrumb text-xs pt-2">
-            <a href="#" class="text-myblue-primary">Lab Request/</a>
+            <a href="{% url 'view_patient' pk=patient.pk %}" class="text-myblue-primary">Lab Requests/</a>
             <a href="{% url 'add_labreq' pk=patient.pk %}" class="text-myblue-primary"> Add Lab Request/</a>
             <a href="#" class="text-myblue-highlight"> Add Lab Request Details</a>
         </li>
