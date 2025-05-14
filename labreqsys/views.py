@@ -896,6 +896,32 @@ def add_lab_result(request, line_item_id):
     lab_request = get_object_or_404(LabRequest, pk=line_item.request_id)
     patient = get_object_or_404(Patient, pk=lab_request.patient_id)
     lab_techs = LabTech.objects.all()
+    full_name = f"{patient.last_name}, {patient.first_name} {patient.middle_initial} {patient.suffix}"
+    
+    birthdate = patient.birthdate
+    today = date.today()
+    
+    age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+    
+    address_append = []
+
+    if patient.street:
+        address_append.append(patient.street)
+    if patient.subdivision:
+        address_append.append(patient.subdivision)
+    if patient.baranggay:
+        address_append.append(patient.baranggay)
+    if patient.city:
+        address_append.append(patient.city)
+    if patient.province:
+        address_append.append(patient.province)
+    if patient.zip_code:
+        address_append.append(patient.zip_code)
+    
+    address = ', '.join(address_append) if address_append else None
+    
+    if patient.house_num:
+        address = f"{patient.house_num} {address}"
 
     return render(request, 'labreqsys/add_labresult.html', {
         'line_item': line_item,
@@ -904,9 +930,9 @@ def add_lab_result(request, line_item_id):
         'patient': patient,
         'request': lab_request,
         'test': test_component,
-        'patient_name': 'Name Test',
-        'patient_age': 'Age',
-        'patient_address': 'Test Address',
+        'patient_name': full_name,
+        'patient_age': age,
+        'patient_address': address,
         'lab_technicians': lab_techs
     })
 
@@ -1408,14 +1434,35 @@ def pdf(request, pk):
         today = date.today()
         age = today.year - patient.birthdate.year - ((today.month, today.day) < (patient.birthdate.month, patient.birthdate.day))
     else:
-        age = None                 
+        age = None
+        
+    address_append = []
+
+    if patient.street:
+        address_append.append(patient.street)
+    if patient.subdivision:
+        address_append.append(patient.subdivision)
+    if patient.baranggay:
+        address_append.append(patient.baranggay)
+    if patient.city:
+        address_append.append(patient.city)
+    if patient.province:
+        address_append.append(patient.province)
+    if patient.zip_code:
+        address_append.append(patient.zip_code)
+    
+    address = ', '.join(address_append) if address_append else None
+    
+    if patient.house_num:
+        address = f"{patient.house_num} {address}"
+
 
     return render(request, 'labreqsys/pdf.html', 
                 {'lab_request': lab_request, 
                 'patient': patient, 
                 'test_component':test_component,
                 'age': age,
-                'address': "testing",
+                'address': address,
                 'form' : form,
                 'reviewed_by': reviewed_by,
                 'lab_tech' : reviews               
