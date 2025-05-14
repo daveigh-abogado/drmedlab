@@ -171,7 +171,7 @@
                         {% elif f.field_type == "Text" %}
                             <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}" required = "">
                         {% elif f.field_type == "Number" %}
-                            <input type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}" required = "">
+                            <input type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}" required = "" step="any">
                         {% elif f.field_type == "Image" %}
                             <input type="url" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" placeholder="Enter image URL" value="{{ f.saved_value|default_if_none:'' }}">
                         {% else %}
