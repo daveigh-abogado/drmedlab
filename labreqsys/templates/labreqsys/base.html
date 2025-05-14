@@ -15,9 +15,7 @@
 	</head>
 
     <body class="bg-gray-100 ">
-
-        <!--Sidebar with Navbar-->
-        <nav class="fixed top-0 z-50 w-full bg-white shadow-lg">
+        <nav class="fixed top-0 z-50 w-full bg-white shadow-lg"><!--Sidebar with Navbar-->
             <div class="px-3 py-3 lg:px-5 lg:pl-3">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center justify-start rtl:justify-end">
@@ -105,13 +103,10 @@
                     </div>
                 </div>
             </div>
-        </nav>
-        
-        <!--sidebar-->
+        </nav><!--sidebar-->
         <aside id="sidebar-multi-level-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 bg-gradient-to-tr from-blue-500 to-blue-900 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
             <div class="h-full overflow-y-auto bg-gradient-to-tr from-blue-500 to-blue-900  ">
                 <ul class="space-y-2 font-medium no-underline">
-                    
                     <!-- RECORDS - Visible to Receptionists and Lab Technicians -->
                     {% if user.is_authenticated %}
                     {% if user|is_receptionist or user|is_lab_tech %}
