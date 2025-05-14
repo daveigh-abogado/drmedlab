@@ -269,9 +269,7 @@
             const email = document.getElementById("email").value;
 
             if (!phone && !landline && !email){
-                modal.classList.remove('hidden');
-                document.getElementById("error_type").innerHTML = 'Add atleast one:';
-                document.getElementById("error_message").innerHTML = 'Mobile Number, Landline Number, Email'
+                alert("Add atleast any of the following: Mobile Number, Landline Number or Email")
             } else{
                 try {
                     const response = await fetch("{% url 'add_patient' %}", {
@@ -286,17 +284,11 @@
                     console.log(result); 
 
                     if (result.status === 'duplicate') {
-                        modal.classList.remove('hidden');
-                        const duplicates = result.p_duplicate; 
-                        let duplicatesList = Array.isArray(duplicates) ? duplicates : duplicates.split(',');
-                        document.getElementById("error_type").innerHTML = 'Potential Duplicates with the following:';
-                        document.getElementById("error_message").innerHTML = duplicatesList.join('<br>');
-                        console.log(result.p_duplicate)
+                        const duplicates = result.p_duplicate;
+                        alert("Potential Duplicates with the following: " + duplicates )
                         
                     } else if (result.status === 'ghost') {
-                        modal.classList.remove('hidden');
-                        document.getElementById("error_type").innerHTML = 'Potential Ghost Patient detected.';
-                        document.getElementById("error_message").innerHTML = 'Age of patient can not be more than 150.';
+                        alert("Potential Ghost Patient detected. Age of patient can not be more than 150.")
 
                     } else if (result.status === 'success') {
                         window.location.href = result.redirect_url;

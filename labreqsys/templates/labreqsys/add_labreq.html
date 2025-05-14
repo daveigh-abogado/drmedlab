@@ -130,7 +130,7 @@
     let counter = 1;
     const packageData = JSON.parse('{{ package_data|escapejs }}');
     let disabledComponents = {};
-       
+
 
     function showTab(index) {
         document.querySelectorAll('.tab').forEach((tab, i) => {
@@ -185,6 +185,21 @@
                 console.log("Checkbox:", name, id, isPackage, isComponent, "Price: ", price);
 
                 if (!document.querySelector(`#selectedList li[data-name="${name}"]`)) {
+                    if (isPackage && packageData[id]) {
+                        const conflictingComponent = packageData[id].find(componentName => {
+                            const existingComponentLi = document.querySelector(`#selectedList li[data-name="${componentName}"]`);
+                            return existingComponentLi && existingComponentLi.getAttribute('data-package-id') !== undefined && existingComponentLi.getAttribute('data-package-id') !== id;
+                        });
+
+                        console.log("conflicting: "+ conflictingComponent)
+
+                        if (conflictingComponent) {
+                            alert(`Package "${name}" cannot be selected because it includes component "${conflictingComponent}" that is already part of another selected package.`);
+                            checkbox.checked = false; // uncheck if checked
+                            return; // ❌ Don't proceed
+                        }
+                    }
+
                     console.log("Adding option:", name);
                     addSelectedOption(name, price, id, isPackage);
 
@@ -233,7 +248,7 @@
     }
 
 
-
+    // displays the selection in selection panel and appends to selected
     function addSelectedOption(name, price, id, isPackage) {
         const selectedList = document.getElementById('selectedList');
         const li = document.createElement('li');
@@ -340,6 +355,8 @@
             }
         });
     }
+
+    
 
     function enableComponentCheckbox(name, packageId) {
         if (disabledComponents[name] && disabledComponents[name][packageId]) {

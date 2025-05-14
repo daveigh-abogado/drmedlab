@@ -5,6 +5,7 @@
 
 <div class="breadbutton mb-4">
     <ul class="breadcrumb text-xs pt-2">
+        <li>
             <a href="#" class="text-myblue-primary">View Lab Request/</a>
             <a href="#" class="text-myblue-highlight"> Add Result </a>
         </li>
@@ -151,6 +152,7 @@
 
         <div class="w-full overflow-hidden">
             <form id="resultform" method="POST" action="{% url 'submit_labresults' line_item_id=line_item.line_item_id %}">
+                <input type="hidden" id="submission_type" name="submission_type" value="">
                 {% csrf_token %}
                 <div class="self-stretch py-2 inline-flex px-2.5 justify-center items-center gap-1.5">
                     <div class="flex-1 text-center text-base font-semibold text-blue-900 uppercase mb-2 ">
@@ -167,9 +169,9 @@
                         {% if f.field_type == "Label" %}
                             <div class="text-center">{{ f.field_value }}</div>
                         {% elif f.field_type == "Text" %}
-                            <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
+                            <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}" required = "">
                         {% elif f.field_type == "Number" %}
-                            <input type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
+                            <input type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}" required = "">
                         {% elif f.field_type == "Image" %}
                             <input type="url" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" placeholder="Enter image URL" value="{{ f.saved_value|default_if_none:'' }}">
                         {% else %}
@@ -220,50 +222,37 @@
                         class="flex-1 flex text-myblue-primary items-center justify-center bg-myblue-secondary border border-myblue-borderPrimary rounded-lg text-sm py-2.5 text-center">
                         Save
                     </button>
-                    <button type="" onclick="submitModal()"
+                    <button type="submit" onclick="submitModal()"
                         class="flex-1 flex text-white items-center justify-center bg-myblue-primary hover:bg-primary-900 rounded-lg text-sm py-2.5 text-center">
                         Submit
                     </button>
                 </div>
 
-                <!-- Save Modal -->  
-                <!-- To backend: OLD CODE FOR REFERENCE
-                         
-                <div id="saveModal" class="modal">
-                    <div class="modal-content" style="background-color: white; width: 500px; margin-top: 400px; margin-left: 800px; padding: 50px;">
-                        <div class="text-mm font-semibold text-blue-900">Save results?</div>
-                        <p>You may continue editing this form later.</p>
-                        <div class="modal-buttons">
-                            <button class="btn-confirm" onclick="submitForm()">Yes</button>
-                            <button class="btn-cancel" onclick="closeConfirmModal()">No</button>
-                        </div>
-                    </div>
-                </div>
-                -->
-
-                <!-- Save Modal -->
-                <div id="saveModal" class="relative z-10 hidden modal" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-                    <!-- Backdrop -->
-                    <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true"></div>
                 
-                    <!-- Modal Wrapper -->
+                
+            
+            </form>
+        </div>
+    </div>
+    </div>
+</div>
+
+        <!-- Save Modal-->
+                <div id="saveModal" class="relative z-10 hidden modal" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true"></div>
                     <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-                        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                        
-                            <!-- Modal Panel -->
+                        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">                            
                             <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
                             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 <div class="sm:flex sm:items-start">
                                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                         <h3 class="text-lg font-semibold text-myblue-primary" id="modal-title">Save results?</h3>
                                         <div class="mt-2">
-                                        <p class="text-sm text-gray-500">You may continue editing this form later.</p>
+                                        <p id="message"class="text-sm text-gray-500">You may continue editing this form later.</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Modal Buttons -->
                             <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 modal-buttons">
                                 <button  onclick="submitForm()" class="btn-confirm inline-flex w-full justify-center rounded-md bg-myblue-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto">
                                 Yes
@@ -275,120 +264,62 @@
                         </div>
                     </div>
                 </div>
-  
-            
-                <!-- Confirmation Modal -->
-                <!-- ORIGINAL VERSION
-                <div id="confirmModal" aria-hidden="true" class="modal">
-                    <div class="modal-content hidden" style="background-color: white; width: 500px; margin-top: 400px; margin-left: 800px; padding: 50px;">
-                        <h2>Submit results?</h2>
-                        <p>You cannot edit this form upon submission.</p>
-                        <div class="modal-buttons">
-                            <button class="btn-confirm" onclick="submitForm()">Yes</button>
-                            <button class="btn-cancel" onclick="closeConfirmModal()">No</button>
-                        </div>
-                    </div>
-                </div>
-                -->
 
-                <div id="confirmModal" class="modal relative z-10 hidden modal" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-                    <!-- Backdrop -->
-                    <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true"></div>
-                
-                    <!-- Modal Wrapper -->
-                    <div class="modal-content fixed inset-0 z-10 w-screen overflow-y-auto">
-                        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                        
-                            <!-- Modal Panel -->
-                            <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
-                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                <div class="sm:flex sm:items-start">
-                                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                        <h3 class="text-lg font-semibold text-myblue-primary" id="modal-title">Submit results?</h3>
-                                        <div class="mt-2">
-                                        <p class="text-sm text-gray-500">You won't be able to edit results upon submission.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Modal Buttons -->
-                            <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 modal-buttons">
-                                <button onclick="submitForm()" class="btn-confirm inline-flex w-full justify-center rounded-md bg-myblue-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto">
-                                Yes
-                                </button>
-                                <button onclick="closeConfirmModal()" class="btn-cancel mt-3 inline-flex w-full justify-center rounded-md bg-myblue-secondary px-3 py-2 text-sm font-semibold text-myblue-primary shadow-sm border border-myblue-borderPrimary hover:bg-gray-300 sm:mt-0 sm:w-auto">
-                                No
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-            </form>
-        </div>
-        
-    </div>
-</div>
+<script>
+    let submissionType = "";
+    
+    function updateLabTechInfo(selectId) {
+        var select = document.getElementById(selectId);
+        var selectedOption = select.options[select.selectedIndex];
+        var role = selectedOption.getAttribute("data-role");
+        var license = selectedOption.getAttribute("data-license");
 
-
-
+        var infoElement = document.getElementById(selectId + "_info");
+        if (role && license) {
+            infoElement.innerHTML = role + "<br>" + license;
+        } else {
+            infoElement.innerHTML = "Role <br> License Number";
+        }
+    }
 
     
-</div>
 
+    function submitModal() {
+        submissionType = "submit";
+        document.getElementById('saveModal').style.display = 'block';
+        document.getElementById('message').innerText = "You won't be able to edit results upon submission.";
+    }
 
-    <script>
-        let submissionType = "";
+    function saveModal() {
+        submissionType = "save";
+        document.getElementById('saveModal').style.display = 'block';
         
-        function updateLabTechInfo(selectId) {
-            var select = document.getElementById(selectId);
-            var selectedOption = select.options[select.selectedIndex];
-            var role = selectedOption.getAttribute("data-role");
-            var license = selectedOption.getAttribute("data-license");
+    }
 
-            var infoElement = document.getElementById(selectId + "_info");
-            if (role && license) {
-                infoElement.innerHTML = role + "<br>" + license;
-            } else {
-                infoElement.innerHTML = "Role <br> License Number";
-            }
-        }
+    function closeConfirmModal() {
+        document.getElementById('confirmModal').style.display = 'none';
+    }
 
-        function submitModal() {
-            submissionType = "submit";
-            document.getElementById('confirmModal').style.display = 'block';
-        }
+    function closeSaveModal() {
+        document.getElementById('saveModal').style.display = 'none';
+    }
 
-        function saveModal() {
-            submissionType = "save";
-            document.getElementById('saveModal').style.display = 'block';
-        }
+    function submitForm() {
+        document.getElementById('submission_type').value = submissionType;
+        document.getElementById('resultform').submit();
+    }
 
-        function closeConfirmModal() {
-            document.getElementById('confirmModal').style.display = 'none';
+    window.onclick = function(event) {
+        const modal = document.getElementById('confirmModal');
+        if (event.target === modal) {
+            closeConfirmModal();
         }
-
-        function closeSaveModal() {
-            document.getElementById('saveModal').style.display = 'none';
+        const modalc = document.getElementById('saveModal');
+        if (event.target === modalc) {
+            closeSaveModal();
         }
-
-        function submitForm() {
-            document.getElementById('submission_type').value = submissionType;
-            document.getElementById('resultform').submit();
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('confirmModal');
-            if (event.target === modal) {
-                closeConfirmModal();
-            }
-            const modalc = document.getElementById('saveModal');
-            if (event.target === modalc) {
-                closeSaveModal();
-            }
-        }
-    </script>
+    }
+</script>
 {% endblock content %}
 
 {% block styles %}

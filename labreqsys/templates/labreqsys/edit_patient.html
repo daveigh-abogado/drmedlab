@@ -279,23 +279,14 @@
 
                     const result = await response.json();
                     console.log(result); 
-
                     if (result.status === 'duplicate') {
-                        modal.classList.remove('hidden');
-                        const duplicates = result.p_duplicate; 
-                        let duplicatesList = Array.isArray(duplicates) ? duplicates : duplicates.split(',');
-                        document.getElementById("error_type").innerHTML = 'Potential Duplicates with the following:';
-                        document.getElementById("error_message").innerHTML = duplicatesList.join('<br>');
-                        console.log(result.p_duplicate)
+                        const duplicates = result.p_duplicate;
+                        alert("Potential Duplicates with the following: " + duplicates);
                         
                     } else if (result.status === 'ghost') {
-                        modal.classList.remove('hidden');
-                        document.getElementById("error_type").innerHTML = 'Potential Ghost Patient detected.';
-                        document.getElementById("error_message").innerHTML = 'Age of patient can not be more than 150.';
-
+                        alert("Potential Ghost Patient detected. Age of patient can not be more than 150.");
                     } else if (result.status === 'success') {
                         window.location.href = result.redirect_url;
-
                     } else {
                         alert("Unexpected response.");
                     }

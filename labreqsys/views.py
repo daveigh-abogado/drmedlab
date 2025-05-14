@@ -638,6 +638,14 @@ def add_labreq_details(request, pk):
         request.session['selected_packages'] = selected_packages
     return render(request, 'labreqsys/add_labreq_details.html', {'patient': p})
 
+def clear_session(request):
+    if 'selected_components' in request.session:
+        request.session.pop('selected_components', None)
+    if 'selected_packages' in request.session:
+        request.session.pop('selected_packages', None)
+    return HttpResponse(status=200)  # Return a success response
+
+
 @receptionist_or_lab_tech_required
 def summarize_labreq(request, pk):
     """
