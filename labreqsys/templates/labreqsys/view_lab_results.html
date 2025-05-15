@@ -163,24 +163,33 @@
     
     <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section2-->
         
+        
         <h1 class="text-mm font-semibold text-blue-900 flex items-center">{{template_form.template_name}}</h1>
-        <div>
+        <div class = "relative overflow-x-auto rounded-xl ">
             {% for section, row in form.items %}
                 {{section.section_name}} <!--FOR BACKEND PURPOSE ONLY ! can remove later :)-->
-                <table>
-                    <thead>
-                        {% for field in row %}
-                            <th>{{field.label_name}}</th>
-                        {% endfor %}
+                <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
+                    <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
+                        <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
+                            {% for field in row %}
+                                <th scope="col" class="p-3 text-center">{{field.label_name}}</th>
+                            {% endfor %}
+                        </tr>
                     </thead>
                     <tbody>
                         {% for field, values in row.items %}
                             {% if values %} 
-                                {% for value in values %} 
-                                <td> {{value.field_value}} </td>
+                                {% for value in values %}
+                                    {% if value.field_type == 'Image'%}
+                                    <td>
+                                        <img src = "{% static value.field_value %}" alt ="{{value.field.field_type}}_{{patient.last_name}}_{{lab_request.date_requested}}">
+                                    </td>
+                                    {% else %}
+                                        <td scope="col" class="p-3 text-center"> {{value.field_value}} </td>
+                                    {% endif %}
                                 {% endfor %}
                             {% else %}
-                                <td>{{field.field_value}}</td>
+                                <td scope="col" class="p-3 text-center">{{field.field_value}}</td>
                             {% endif %}                
                         {% endfor %}
                     </tbody>
@@ -192,27 +201,24 @@
     <div class="self-stretch py-2 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
     </div>
     <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section-->
-        <table>
-            {% for tech in lab_tech %}
-                <th>
-                    <img src="{{tech.lab_tech.signature_path}}" alt="{{tech.lab_tech.first_name}}_{{tech.lab_tech.last_name}}_signature">
-                </th>
-                <tr>
-                    <td>
-                        {{tech.lab_tech.first_name}} {{tech.lab_tech.last_name}}
-                    </td>
+        <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
+            <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
+                <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
+                {% for tech in lab_tech %}
+                    <th>
+                        <img class="" src="{% static tech.lab_tech.signature_path %}" alt="{{tech.lab_tech.signature_path}}">
+                    </th>
+                {% endfor %}
                 </tr>
-                <tr>
-                    <td>
-                        {{tech.lab_tech.title}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{tech.lab_tech.license_num}}
-                    </td>
-                </tr>
-            {% endfor%}
+            <tbody>
+                {% for tech in lab_tech %}
+                <td scope="col" class="p-3 text-center">
+                    {{tech.lab_tech.first_name}} {{tech.lab_tech.last_name}}<br>
+                    {{tech.lab_tech.title}}<br>
+                    {{tech.lab_tech.license_num}}<br>
+                </td>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 

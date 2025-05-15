@@ -264,9 +264,7 @@
             const email = document.getElementById("email").value;
 
             if (!phone && !landline && !email){
-                modal.classList.remove('hidden');
-                document.getElementById("error_type").innerHTML = 'Add atleast one:';
-                document.getElementById("error_message").innerHTML = 'Mobile Number, Landline Number, Email'
+                alert("Add atleast one: Mobile Number, Landline Number, or Email");
             } else{
                 try {
                     const response = await fetch("{% url 'edit_patient' pk=patient.pk %}", {
