@@ -35,10 +35,8 @@ def is_receptionist(user):
 
 @register.filter
 def is_lab_tech(user):
-    if hasattr(user, 'is_superuser') and user.is_superuser:
-        return True # Superusers are implicitly all roles
     try:
-        return hasattr(user, 'userprofile') and user.userprofile.role in ['lab_tech', 'owner']
+        return hasattr(user, 'userprofile') and user.userprofile.role == 'lab_tech'
     except (UserProfile.DoesNotExist, AttributeError):
         return False
     except Exception as e:

@@ -14,7 +14,7 @@
 
 	</head>
 
-    <body class="bg-gray-100 ">
+    <body class="bg-gray-100">
         <nav class="fixed top-0 z-50 w-full bg-white shadow-lg"><!--Sidebar with Navbar-->
             <div class="px-3 py-3 lg:px-5 lg:pl-3">
                 <div class="flex items-center justify-between">
@@ -104,112 +104,114 @@
                 </div>
             </div>
         </nav>
-        
-        <!--SIDEBAR-->
-        <aside id="sidebar-multi-level-sidebar" class="fixed top-0 left-0  w-60 h-screen pt-20 bg-blue-900 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-            <div class="h-full overflow-y-auto bg-gradient-to-t from-myblue-highlight to-blue-900 ">
-                <ul class="space-y-2 font-medium no-underline">
-                    <!-- RECORDS - Visible to Receptionists and Lab Technicians -->
-                    {% if user.is_authenticated %}
-                    {% if user|is_receptionist or user|is_lab_tech %}
-                        {% if user|is_lab_tech and labtech and not labtech.signature_path %}
-                            <!-- Lab Tech must upload signature: disable all except profile/logout -->
-                            <li>
-                                <span class="flex text-xs items-center p-2 text-gray-300 rounded-lg group no-underline cursor-not-allowed">RECORDS</span>
-                            </li>
-                            <li>
-                                <span class="ms-3 text-sm no-underline flex items-center p-2 w-64 text-gray-300 rounded-lg cursor-not-allowed">Patient List</span>
-                            </li>
-                            <li>
-                                <span class="ms-3 text-sm flex items-center w-64 p-2 text-gray-300 rounded-lg cursor-not-allowed">Lab Requests</span>
-                            </li>
-                        {% else %}
-                            <li>
-                                <a class="flex text-xs items-center p-2 text-white rounded-lg group no-underline">
-                                    <span class="ms-3 no-underline">RECORDS</span>
-                                </a>
-                            </li>
-                            {% if user|is_receptionist %}
-                            <li>
-                                <a href="{% url 'patientList' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
-                                    <span class="ms-5 text-sm">Patient List</span>
-                                </a>
-                            </li>
+        <div class="flex pt-20">
+            <!--SIDEBAR-->
+            <aside id="sidebar-multi-level-sidebar" class="w-60 h-screen bg-blue-900 flex-shrink-0 fixed top-0 left-0 pt-20 z-40 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+                <div class="h-full overflow-y-auto bg-gradient-to-t from-myblue-highlight to-blue-900 ">
+                    <ul class="space-y-2 font-medium no-underline">
+                        <!-- RECORDS - Visible to Receptionists and Lab Technicians -->
+                        {% if user.is_authenticated %}
+                        {% if user|is_receptionist or user|is_lab_tech %}
+                            {% if user|is_lab_tech and labtech and not labtech.signature_path %}
+                                <!-- Lab Tech must upload signature: disable all except profile/logout -->
+                                <li>
+                                    <span class="flex text-xs items-center p-2 text-gray-300 rounded-lg group no-underline cursor-not-allowed">RECORDS</span>
+                                </li>
+                                <li>
+                                    <span class="ms-3 text-sm no-underline flex items-center p-2 w-64 text-gray-300 rounded-lg cursor-not-allowed">Patient List</span>
+                                </li>
+                                <li>
+                                    <span class="ms-3 text-sm flex items-center w-64 p-2 text-gray-300 rounded-lg cursor-not-allowed">Lab Requests</span>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a class="flex text-xs items-center p-2 text-white rounded-lg group no-underline">
+                                        <span class="ms-3 no-underline">RECORDS</span>
+                                    </a>
+                                </li>
+                                {% if user|is_receptionist %}
+                                <li>
+                                    <a href="{% url 'patientList' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
+                                        <span class="ms-5 text-sm">Patient List</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                <li>
+                                    <button type="button" class="text-sm ms-3 flex items-center w-64 p-2 transition duration-100 group text-white rounded-lg hover:bg-myblue-highlight" aria-controls="dropdown-lab-requests" data-collapse-toggle="dropdown-lab-requests">
+                                        <span class="ms-5 text-left rtl:text-right whitespace-nowrap">Lab Requests</span>
+                                        <svg class="w-2 h-2 ms-20 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                        </svg>
+                                    </button>
+                                    <ul id="dropdown-lab-requests" class="hidden py-2 space-y-2">
+                                        <li>
+                                            <a href="{% url 'labRequests' requested_status=0 %}" class="ms-5 text-sm no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">All Requests</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'labRequests' requested_status=1 %}" class="ms-5 text-sm no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">Not Started</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'labRequests' requested_status=2 %}" class="ms-5 text-sm no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">In Progress</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'labRequests' requested_status=3 %}" class="ms-5 text-sm no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">Completed</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'labRequests' requested_status=4 %}" class="ms-5 text-sm no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">Released</a>
+                                        </li>
+                                    </ul>
+                                </li>
                             {% endif %}
-                            <li>
-                                <button type="button" class="text-sm ms-3 flex items-center w-64 p-2 transition duration-100 group text-white rounded-lg hover:bg-myblue-highlight" aria-controls="dropdown-lab-requests" data-collapse-toggle="dropdown-lab-requests">
-                                    <span class="ms-5 text-left rtl:text-right whitespace-nowrap">Lab Requests</span>
-                                    <svg class="w-2 h-2 ms-20 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                                    </svg>
-                                </button>
-                                <ul id="dropdown-lab-requests" class="hidden py-2 space-y-2">
-                                    <li>
-                                        <a href="{% url 'labRequests' requested_status=0 %}" class="ms-5 text-sm no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">All Requests</a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'labRequests' requested_status=1 %}" class="ms-5 text-sm no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">Not Started</a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'labRequests' requested_status=2 %}" class="ms-5 text-sm no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">In Progress</a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'labRequests' requested_status=3 %}" class="ms-5 text-sm no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">Completed</a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'labRequests' requested_status=4 %}" class="ms-5 text-sm no-underline flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-myblue-highlight hover:text-white">Released</a>
-                                    </li>
-                                </ul>
-                            </li>
+                          {% endif %}{# End of is_receptionist or is_lab_tech #}
+                        {% endif %}{# End of is_authenticated #}
+                        
+                        <!-- OFFERINGS - Visible to Owners -->
+                        {% if user.is_authenticated and user|is_owner %}
+                        <li>
+                            <a class="flex text-xs items-center p-2 text-white rounded-lg group no-underline">
+                                <span class="ms-3 no-underline">OFFERINGS</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'testComponents' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
+                                <span class="ms-5 text-sm">Component</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'packages' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
+                                <span class="ms-5 text-sm">Package</span>
+                            </a>
+                        </li>
                         {% endif %}
-                      {% endif %}{# End of is_receptionist or is_lab_tech #}
-                    {% endif %}{# End of is_authenticated #}
-                    
-                    <!-- OFFERINGS - Visible to Owners -->
-                    {% if user.is_authenticated and user|is_owner %}
-                    <li>
-                        <a class="flex text-xs items-center p-2 text-white rounded-lg group no-underline">
-                            <span class="ms-3 no-underline">OFFERINGS</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'testComponents' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
-                            <span class="ms-5 text-sm">Component</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'packages' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
-                            <span class="ms-5 text-sm">Package</span>
-                        </a>
-                    </li>
-                    {% endif %}
-                    
-                    <!-- STAFF - Visible to Owners -->
-                    {% if user.is_authenticated and user|is_owner %}
-                    <li>
-                        <a class="flex text-xs items-center p-2 text-white rounded-lg group no-underline">
-                            <span class="ms-3 no-underline">STAFF</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'view_users' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
-                            <span class="ms-5 text-sm">Users</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'register' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
-                            <span class="ms-5 text-sm">Register New User</span>
-                        </a>
-                    </li>
-                    <!-- DEMO: Edit User Profile Mockup Link -->
-                    <!-- Removed from sidebar -->
-                    {% endif %}
-                </ul>
-            </div>
-        </aside>
-        <div class="px-8 py-20 sm:ml-60">
-            {% block content %}
-            {% endblock content %}
+                        
+                        <!-- STAFF - Visible to Owners -->
+                        {% if user.is_authenticated and user|is_owner %}
+                        <li>
+                            <a class="flex text-xs items-center p-2 text-white rounded-lg group no-underline">
+                                <span class="ms-3 no-underline">STAFF</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'view_users' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
+                                <span class="ms-5 text-sm">Users</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'register' %}" class="ms-3 no-underline flex items-center p-2 w-64 text-white rounded-lg hover:bg-myblue-highlight group">
+                                <span class="ms-5 text-sm">Register New User</span>
+                            </a>
+                        </li>
+                        <!-- DEMO: Edit User Profile Mockup Link -->
+                        <!-- Removed from sidebar -->
+                        {% endif %}
+                    </ul>
+                </div>
+            </aside>
+            <!-- MAIN CONTENT WRAPPER -->
+            <main class="flex-1 ml-0 sm:ml-60 px-8 py-8 w-full min-h-screen">
+                {% block content %}
+                {% endblock content %}
+            </main>
         </div>
     </body>
     
@@ -224,4 +226,4 @@
     document.getElementById("patientRecordLink").addEventListener("click", function() {
         this.classList.add("bg-blue-300", "text-blue-900");
     });
-</script>
+</script>http://127.0.0.1:8000/lab_request/4/
