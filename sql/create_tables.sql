@@ -166,11 +166,11 @@ CREATE TABLE lab_tech (
 
 CREATE TABLE result_review
 (lab_tech_id INTEGER NOT NULL,
- result_value_id INTEGER NOT NULL,
+ line_item_id INTEGER NOT NULL,
  reviewed_date DATE NOT NULL,
- CONSTRAINT result_review_pk PRIMARY KEY (lab_tech_id, result_value_id),
+ CONSTRAINT result_review_pk PRIMARY KEY (lab_tech_id, line_item_id),
  CONSTRAINT result_review_fk1 FOREIGN KEY (lab_tech_id) REFERENCES lab_tech(lab_tech_id),
- CONSTRAINT result_review_fk2 FOREIGN KEY (result_value_id) REFERENCES result_value(result_value_id)
+ CONSTRAINT result_review_fk2 FOREIGN KEY (line_item_id) REFERENCES request_line_item(line_item_id)
 );
 
 DELIMITER $$
