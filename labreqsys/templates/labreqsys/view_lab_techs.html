@@ -46,7 +46,7 @@
             <tbody id="userTableBody">
             {% for user in users %}
                 <tr class="border-b border-gray-200 hover:bg-gray-200 text-sm">
-                    <td class="p-3">{{ user.last_name }}, {{ user.first_name }}</td>
+                    <td class="p-3 capitalize">{{ user.last_name }}, {{ user.first_name }}</td>
                     <td class="p-3">{{ user.username }}</td>
                     <td class="p-3">{{ user.email }}</td>
                     <td class="p-3">

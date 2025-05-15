@@ -112,7 +112,7 @@
                 <div class="w-7 flex-1 px-2 flex justify-start items-center gap-1.5"> <!--indiv info-->
                     {% if request_details.overall_status == 'Not Started' %}
                         <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-unstarted-secondary text-unstarted-primary border-unstarted-borderPrimary border shadow-sm">
-                    {% elif request_details.overall_status == 'Completed' or 'Released' %}
+                    {% elif request_details.overall_status == 'Completed' or request_details.overall_status == 'Released' %}
                         <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-complete-secondary text-complete-primary border-complete-borderPrimary border shadow-sm">
                     {% else %}
                         <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-progress-secondary text-progress-primary border-progress-borderPrimary border shadow-sm">
@@ -231,19 +231,19 @@
                 {% for line_item in request_details.line_items %}
                 <tr>
                     {% if request.user|is_receptionist %}
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
                         <input type="checkbox" name="line_item-checkbox" value="{{line_item.line_item_id}}" data-status="{{line_item.request_status}}" class="line-item-checkbox h-4 w-4 rounded border-gray-300">
                     </td>
                     {% endif %}
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                         {{forloop.counter}}
                     </td>
-                    <td class="px-6 py-2 text-start text-gray-500">
+                    <td class="px-6 py-2 text-start text-gray-500 text-sm">
                         {% if line_item.package %}
                             {{ line_item.package.package_name }}
                         {% endif %}
                     </td>
-                    <td class="px-6 py-2 text-start">
+                    <td class="px-6 py-2 text-start text-sm">
                         {{ line_item.component.test_name }}
                     </td>
                     <td id="request_status" class="px-6 py-2 text-center">
@@ -257,7 +257,7 @@
                             {{ line_item.request_status }}
                         </span>
                     </td>
-                    <td class="px-6 py-2 text-center w-44">
+                    <td class="px-6 py-2 text-center w-52 text-sm">
                         {{ line_item.progress_timestamp|default:"-" }}
                     </td>
                     {% if user|is_lab_tech %}
@@ -278,7 +278,7 @@
                     <td class="px-6 py-2 font-medium text-blue-500 whitespace-nowrap text-center">
                     {% if line_item.request_status == 'Completed' %}
                         {% if user|is_receptionist or user|is_lab_tech %}
-                        <a href="{% url 'view_labresult' pk=line_item.line_item_id %}" class="text-myblue-highlight no-underline">View</a>
+                        <a href="{% url 'view_labresult' pk=line_item.line_item_id %}" class="text-myblue-highlight no-underline text-sm hover:underline">View</a>
                         {% else %}
                         -
                         {% endif %}
@@ -376,14 +376,14 @@ select {
 
 /* Checkbox custom styles */
 input[type='checkbox'] {
-    color: #00BAFF;
+    color: #274291;
     border-radius: 0.25rem;
     border-color: #D1D5DB;
 }
 
 input[type='checkbox']:checked {
-    background-color: #00BAFF;
-    border-color: #00BAFF;
+    background-color: #274291;
+    border-color: #274291;
 }
 
 /* Table hover effects */

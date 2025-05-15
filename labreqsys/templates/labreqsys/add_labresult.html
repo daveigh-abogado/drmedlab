@@ -3,16 +3,16 @@
 
 {% block content %}
 
-<div class="breadbutton mb-4">
-    <ul class="breadcrumb text-xs pt-2">
-        <li>
+<div class="breadbutton mb-4 flex justify-between items-center">
+    <ul class="breadcrumb text-xs">
+        <li clas="pt-3">
             <a href="{% url 'view_individual_lab_request' request_id=line_item.request_id %}" class="text-myblue-primary">View Lab Request/</a>
             <a href="#" class="text-myblue-highlight"> Add Result </a>
         </li>
     </ul>
 
     <div class="text-end">
-        <a href="{% url 'view_individual_lab_request' request_id=line_item.request_id %}" class="px-4 py-1 bg-myblue-secondary text-myblue-primary font-medium border-myblue-borderPrimary border rounded-lg">
+        <a href="{% url 'view_individual_lab_request' request_id=line_item.request_id %}" class="px-4 py-2 bg-myblue-secondary text-myblue-primary font-medium border-myblue-borderPrimary border rounded-lg">
             Back
         </a>
     </div>
@@ -157,7 +157,8 @@
         </div>
 
         <div class="w-full overflow-hidden">
-            <form id="resultform" method="POST" action="{% url 'submit_labresults' line_item_id=line_item.line_item_id %}">
+            <form id="resultform" method="POST" action="{% url 'submit_labresults' line_item_id=line_item.line_item_id %}"
+            class="px-2">
                 <input type="hidden" id="submission_type" name="submission_type" value="">
                 {% csrf_token %}
                 <div class="self-stretch py-2 inline-flex px-2.5 justify-center items-center gap-1.5">
@@ -191,12 +192,12 @@
                     <div class="flex-1 justify-center text-blue-900 text-lg font-semibold">Add Signature</div>
                 </div>
     
-                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-8 px-4 items-center justify-items-center">
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-8 px-4 items-center justify-items-center capitalize">
                     <div>  
                         <select
                         {% if is_signed_1 and is_the_tech_1 == False or sign2 %}disabled{% endif %}
                         id="lab_tech_1" name="lab_tech_1" onchange="updateLabTechInfo('lab_tech_1')"
-                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5">
+                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5 capitalize">
                         <option value="">Sign Result</option>
                         <option
                         {% if is_signed_1 and is_the_tech_1 %}selected{% endif %}
@@ -218,7 +219,7 @@
                         <select
                         {% if is_signed_2 and is_the_tech_2 == False or sign1 %}disabled{% endif %}
                         id="lab_tech_2" name="lab_tech_2" onchange="updateLabTechInfo('lab_tech_2')"
-                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5">
+                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5 capitalize">
                         <option value="">Sign Result</option>
                         <option
                         {% if is_signed_2 and is_the_tech_2 %}selected{% endif %}

@@ -14,168 +14,173 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <link href="styles.css" rel="stylesheet">
-
+        <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 	</head>
 
-    <body>
-        <div class="result-PDF">
-            <!--fuck this shi am out-->
-            <table class="logo-header" style="width: 100%; border-collapse: collapse;">
-                <tr>
-                    <!-- Logo Column -->
-                    <td style="width: 50%; vertical-align: middle;">
-                    <img class="image" src="{% static 'images/drmed_full.png' %}" />
-                    </td>
-                
-                    <!-- Address Column -->
-                    <td style="width: 50%; text-align: right; vertical-align: middle;">
-                        <div class="element-f-NORTHRIDGE-PLAZA">
-                            <span class="text-wrapper">
-                            4/F NORTHRIDGE PLAZA,<br />
-                            CONGRESSIONAL AVE., QUEZON CITY<br />
-                            </span>
-                            <span class="span">(02) 8355 3517 / (0916) 604 3208</span>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-
-            <!--SECTION 1: PATIENT INFORMATION-->
-            <table class="patient-information" style="width: 100%; border-collapse: collapse;">
-                <tr>
-                  <!-- Patient ID -->
-                  <td class="div-wrapper"><div class="text-wrapper-4">Patient ID</div></td>
-                  <td class="frame-2"><div class="text-wrapper-5">{{patient.patient_id}}</div></td>
-              
-                  <!-- Date Requested -->
-                  <td class="div-wrapper"><div class="text-wrapper-4">Date Requested</div></td>
-                  <td class="frame-2"><div class="text-wrapper-5">{{lab_request.date_requested}}</div></td>
-                </tr>
-
-                <tr>
-                  <!-- Patient Name -->
-                  <td class="div-wrapper"><div class="text-wrapper-4">Patient Name</div></td>
-                  <td class="frame-2"><div class="text-wrapper-5">{{patient.last_name}}, {{patient.first_name}}</div></td>
-              
-                  <!-- Landline No. -->
-                  <td class="div-wrapper"><div class="text-wrapper-4">Landline No.</div></td>
-                  <td class="frame-2"><div class="text-wrapper-5">{{patient.landline_num}}</div></td>
-                </tr>
-              
-                <tr>
-                  <!-- Age -->
-                  <td class="div-wrapper"><div class="text-wrapper-4">Age</div></td>
-                  <td class="frame-2"><div class="text-wrapper-5">{{age}}</div></td>
-              
-                  <!-- Email -->
-                  <td class="div-wrapper"><div class="text-wrapper-4">Email</div></td>
-                  <td class="frame-2"><div class="text-wrapper-5">{{patient.email}}</div></td>
-                </tr>
-              
-                <tr>
-                  <!-- Civil Status -->
-                  <td class="div-wrapper"><div class="text-wrapper-4">Civil Status</div></td>
-                  <td class="frame-2"><div class="text-wrapper-5">{{patient.civil_status}}</div></td>
-              
-                  <!-- Address -->
-                  <td class="div-wrapper"><div class="text-wrapper-4">Address</div></td>
-                  <td class="frame-2"><div class="text-wrapper-5">{{address}}</div></td>
-                </tr>
-              
-                <tr>
-                  <!-- Birthday -->
-                  <td class="div-wrapper"><div class="text-wrapper-4">Birthday</div></td>
-                  <td class="frame-2"><div class="text-wrapper-5">{{patient.birthdate}}</div></td>
-              
-                  <!-- Physician -->
-                  <td class="div-wrapper"><div class="text-wrapper-4">Physician</div></td>
-                  <td class="frame-2"><div class="text-wrapper-5">{{lab_request.physician}}</div></td>
-                </tr>
-              
-                <tr>
-                  <!-- Mobile No. -->
-                  <td class="div-wrapper"><div class="text-wrapper-4">Mobile No.</div></td>
-                  <td class="frame-2"><div class="text-wrapper-5">{{patient.mobile_num}}</div></td>
-              
-                  <!-- Filler column to balance -->
-                  <td></td>
-                  <td></td>
-                </tr>
-            </table>
-
-            <!--LAB RESULTS-->
-            <div class="lab-result">
-                <div class="results">
-                    <div class="results-content-group">
-                        <div class="results-template"> 
-                            <div class="results-content">
-                                <div class="text-wrapper-5">{{template_form.template_name}}</div>
-                                <div class="input-results">
-  
-                                    <!--TO BACKEND: the styling is still unedited :>-->
-                                    {% for section, row in form.items %}
-                                    {{section.section_name}} <!--FOR BACKEND PURPOSE ONLY ! can remove later :)-->
-                                    <table>
-                                        <thead>
-                                            {% for field in row %}
-                                                <th>{{field.label_name}}</th>
-                                            {% endfor %}
-                                        </thead>
-                                        <tbody>
-                                            {% for field, values in row.items %}
-                                                {% if values %} 
-                                                  {% for value in values %} 
-                                                  {% if value.field_type == 'Image'%}
-                                                    <td>
-                                                        <img src = "{% static value.field_value %}" alt ="{{value.field.field_type}}_{{patient.last_name}}_{{lab_request.date_requested}}">
-                                                    </td>
-                                                    {% else %}
-                                                        <td scope="col" class="p-3 text-center"> {{value.field_value}} </td>
-                                                    {% endif %}
-                                                  {% endfor %}
-                                                {% else %}
-                                                    <td>{{field.field_value}}</td>
-                                                {% endif %}                
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                    {% endfor %}
-                                    <p> *** End of Report *** </p>
-                                  </div> <!-- TO FRONTEND: add these end tags cuz i cant see-->
-                                </div> <!-- TO FRONTEND: add these end tags cuz i cant see-->
-                      <table>
-                        <thead>
-                          
-                          <tr>
-                            {% for tech in lab_tech %}
-                            <th>
-                                <img src="{% static tech.lab_tech.signature_path %}" alt="{{tech.lab_tech.first_name}}_{{tech.lab_tech.last_name}}_signature">
-                            </th>
-                            {% endfor %}
-                          </tr>
-                          
-                        </thead>
-                        
-                        <tbody>
-                          <tr>
-                          {% for tech in lab_tech %}
-                          <td>
-                            {{tech.lab_tech.first_name}} {{tech.lab_tech.last_name}}<br>
-                            {{tech.lab_tech.title}}<br>
-                            {{tech.lab_tech.license_num}}<br>
-                            </td>
-                          {% endfor %}
-                        </tr>
-
-                      </table>
-                                </div>
-                            </div>
-                        </div>
+  <body>
+      <div class="result-PDF">
+        <!--fuck this shi am out-->
+        <table class="logo-header" style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <!-- Logo Column -->
+                <td style="width: 50%; vertical-align: middle;">
+                <img class="image" src="{% static 'images/drmed_full.png' %}" />
+                </td>
+            
+                <!-- Address Column -->
+                <td style="width: 50%; text-align: right; vertical-align: middle;">
+                    <div class="element-f-NORTHRIDGE-PLAZA">
+                        <span class="text-wrapper">
+                        4/F NORTHRIDGE PLAZA,<br />
+                        CONGRESSIONAL AVE., QUEZON CITY<br />
+                        </span>
+                        <span class="span">(02) 8355 3517 / (0916) 604 3208</span>
                     </div>
-                </div>
-            </div>
+                </td>
+            </tr>
+        </table>
+
+        <!--PATIENT INFORMATION-->
+        <table class="patient-information" style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <!-- Patient ID -->
+              <td class="div-wrapper"><div class="text-wrapper-4">Patient ID</div></td>
+              <td class="frame-2"><div class="text-wrapper-5">{{patient.patient_id}}</div></td>
+          
+              <!-- Date Requested -->
+              <td class="div-wrapper"><div class="text-wrapper-4">Date Requested</div></td>
+              <td class="frame-2"><div class="text-wrapper-5">{{lab_request.date_requested}}</div></td>
+            </tr>
+
+            <tr>
+              <!-- Patient Name -->
+              <td class="div-wrapper"><div class="text-wrapper-4">Patient Name</div></td>
+              <td class="frame-2"><div class="text-wrapper-5">{{patient.last_name}}, {{patient.first_name}}</div></td>
+          
+              <!-- Landline No. -->
+              <td class="div-wrapper"><div class="text-wrapper-4">Landline No.</div></td>
+              <td class="frame-2"><div class="text-wrapper-5">{{patient.landline_num}}</div></td>
+            </tr>
+          
+            <tr>
+              <!-- Age -->
+              <td class="div-wrapper"><div class="text-wrapper-4">Age</div></td>
+              <td class="frame-2"><div class="text-wrapper-5">{{age}}</div></td>
+          
+              <!-- Email -->
+              <td class="div-wrapper"><div class="text-wrapper-4">Email</div></td>
+              <td class="frame-2"><div class="text-wrapper-5">{{patient.email}}</div></td>
+            </tr>
+          
+            <tr>
+              <!-- Civil Status -->
+              <td class="div-wrapper"><div class="text-wrapper-4">Civil Status</div></td>
+              <td class="frame-2"><div class="text-wrapper-5">{{patient.civil_status}}</div></td>
+          
+              <!-- Address -->
+              <td class="div-wrapper"><div class="text-wrapper-4">Address</div></td>
+              <td class="frame-2"><div class="text-wrapper-5">{{address}}</div></td>
+            </tr>
+          
+            <tr>
+              <!-- Birthday -->
+              <td class="div-wrapper"><div class="text-wrapper-4">Birthday</div></td>
+              <td class="frame-2"><div class="text-wrapper-5">{{patient.birthdate}}</div></td>
+          
+              <!-- Physician -->
+              <td class="div-wrapper"><div class="text-wrapper-4">Physician</div></td>
+              <td class="frame-2"><div class="text-wrapper-5">{{lab_request.physician}}</div></td>
+            </tr>
+          
+            <tr>
+              <!-- Mobile No. -->
+              <td class="div-wrapper"><div class="text-wrapper-4">Mobile No.</div></td>
+              <td class="frame-2"><div class="text-wrapper-5">{{patient.mobile_num}}</div></td>
+          
+              <!-- Filler column to balance -->
+              <td></td>
+              <td></td>
+            </tr>
+        </table>
+
+        <!--LAB RESULTS-->
+        <div style="width: 100%; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 10px; font-family: 'Roboto', sans-serif;">
+    
+          <h1 style="font-size: 1rem; font-weight: 600; color: #1E3A8A; text-align: center;">
+            {{template_form.template_name}}
+          </h1>
+      
+          <div style="position: relative; overflow-x: auto; border-radius: 12px;">
+            {% for section, row in form.items %}
+              <table style="width: 100%; background-color: white; border-radius: 12px; text-align: left; direction: ltr; color: #6B7280; position: relative; overflow-x: auto;">
+                <thead style="flex: 1; justify-content: center; align-items: flex-start; overflow: hidden; text-transform: uppercase;">
+                    <tr style="height: 42px; background-color: #F9FAFB; color: #9CA3AF; border-bottom: 1px solid #E5E7EB; font-size: 12px; display: flex; justify-content: flex-start; gap: 10px;">
+                      {% for field in row %}
+                          <th scope="col" style="padding: 12px; text-align: center;">{{field.label_name}}</th>
+                      {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for field, values in row.items %}
+                        {% if values %} 
+                            {% for value in values %}
+                                {% if value.field_type == 'Image' %}
+                                    <td>
+                                        <img src="{% static value.field_value %}" alt="{{value.field.field_type}}_{{patient.last_name}}_{{lab_request.date_requested}}">
+                                    </td>
+                                {% else %}
+                                    <td scope="col" style="padding: 12px; text-align: center;">{{value.field_value}}</td>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <td scope="col" style="padding: 12px; text-align: center;">{{field.field_value}}</td>
+                        {% endif %}                
+                    {% endfor %}
+                </tbody>
+              </table>
+            {% endfor %}
+          </div>
         </div>
-    </body>
+      
+        <!--SIGNATURE-->
+        <div style="width: 100%; display: flex; flex-direction: column; gap: 20px; font-family: 'Roboto', sans-serif;">
+          <table style="width: 100%; background-color: white; border-radius: 12px; text-align: center; overflow-x: auto;">
+            <thead style="text-transform: uppercase;">
+              <tr style="height: 42px; color: #6B7280; font-size: 12px;">
+                {% for tech in lab_tech %}
+                <td style="padding: 12px; vertical-align: top;">
+                  <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                    <img src="{% static tech.lab_tech.signature_path %}" 
+                         alt="{{ tech.lab_tech.signature_path }}" 
+                         style="display: block; margin: 0 auto; height: 100px; width: 300px; object-fit: contain;">
+                    <div>
+                      <div style="text-decoration: underline; font-size: 14px; color: black; text-transform: capitalize;">
+                        {{ tech.lab_tech.first_name }} {{ tech.lab_tech.last_name }}
+                      </div>
+                      <div style="font-weight: 600; font-size: 14px; color: black;">
+                        {{ tech.lab_tech.title }}
+                      </div>
+                      <div style="font-size: 12px;">
+                        {{ tech.lab_tech.license_num }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                {% endfor %}
+              </tr>
+            </thead>
+          </table>
+        </div>
+        
+
+        <!--END OF REPORT-->
+        <div style="display: flex; justify-content: center; align-items: center; width: 100%;"> <!-- adjust height if needed -->
+          <p style="text-align: center; font-size: 12px; color: #000000; font-weight: 500;">
+            *** End of Report ***
+          </p>
+        </div>
+      </div>
+  </body>
 </html>
 
 <style>

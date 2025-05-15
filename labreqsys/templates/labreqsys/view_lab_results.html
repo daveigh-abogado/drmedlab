@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="breadbuttons my-4 flex justify-between items-center w-full">
-    <nav class="mb-4 flex items-center text-sm">
+    <ul class="mb-4 flex items-center text-xs">
         <a href="{% url 'labRequests' requested_status=0 %}" class="text-gray-600 hover:text-gray-900">Lab Requests</a>
         <span class="mx-2 text-gray-600">/</span>
 
@@ -11,15 +11,15 @@
         <span class="mx-2 text-gray-600">/</span>
 
         <span class="text-[#00BAFF]">View Lab Result</span>
-    </nav>
+    </ul>
     <a href="{% url 'view_individual_lab_request' request_id=line_item.request.request_id %}">
-        <button class="px-4 py-1 no-underline bg-myblue-secondary text-blue-900 font-bold border-blue-900 border rounded-lg" type="button">
+        <button class="px-4 py-2 no-underline bg-myblue-secondary text-blue-900 font-medium text-sm border-myblue-borderPrimary border rounded-lg" type="button">
             Back
         </button>
     </a>
 </div>
 
-<div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
+<div class="w-full h-hug p-8 bg-white rounded-lg shadow-lg inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
     
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start rtl:justify-end">
@@ -161,8 +161,7 @@
         </div>
     </div>
     
-    <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section2-->
-        
+    <div class="self-stretch flex-col justify-start items-start gap-2.5 w-full"> <!--section2-->
         
         <h1 class="text-mm font-semibold text-blue-900 flex items-center">{{template_form.template_name}}</h1>
         <div class = "relative overflow-x-auto rounded-xl ">
@@ -195,39 +194,41 @@
                     </tbody>
                 </table>
                 {% endfor %}
-                <p> *** End of Report *** </p>
         </div>
     </div>
+
     <div class="self-stretch py-2 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
     </div>
+    
+    <!--SIGNATURE-->
     <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section-->
         <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
             <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
-                <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
+                <tr class="self-stretch h-[42px] text-gray-450 gap-2.5 justify-start text-xs">
                 {% for tech in lab_tech %}
-                    <th>
-                        <img class="" src="{% static tech.lab_tech.signature_path %}" alt="{{tech.lab_tech.signature_path}}">
-                    </th>
-                {% endfor %}
-                </tr>
-            <tbody>
-                {% for tech in lab_tech %}
-                <td scope="col" class="p-3 text-center">
-                    {{tech.lab_tech.first_name}} {{tech.lab_tech.last_name}}<br>
-                    {{tech.lab_tech.title}}<br>
-                    {{tech.lab_tech.license_num}}<br>
+                <td class="text-center p-3 align-top">
+                    <div class="flex flex-col items-center justify-center gap-1">
+                        <img class="h-16 w-96 object-contain" src="{% static tech.lab_tech.signature_path %}" alt="{{tech.lab_tech.signature_path}}">
+                        <div>
+                            <div class="underline text-sm text-black capitalize">{{ tech.lab_tech.first_name }} {{ tech.lab_tech.last_name }}</div>
+                            <div class="font-semibold text-sm text-black">{{ tech.lab_tech.title }}</div> <!--how do i make it show the whole title instead?-->
+                            <div class="text-xs">{{ tech.lab_tech.license_num }}</div>
+                        </div>
+                    </div>
                 </td>
                 {% endfor %}
-            </tbody>
+
+                </tr>
+            
         </table>
+    </div>
+
+    <div class="flex justify-center items-center w-full">  <!-- adjust height as needed -->
+        <p class="text-center text-xs text-gray-500 font-medium">*** End of Report ***</p>
     </div>
 
 </div>
 
-
-        
-    </body>
-</html>
 
 {% endblock content %}
 
