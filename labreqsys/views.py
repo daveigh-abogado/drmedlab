@@ -73,6 +73,29 @@ def delete_unused_templates():
     for obj in unused_forms:
         obj.delete()
 
+def get_patient_address(patient):
+    address_append = []
+
+    if patient.street:
+        address_append.append(patient.street)
+    if patient.subdivision:
+        address_append.append(patient.subdivision)
+    if patient.baranggay:
+        address_append.append(patient.baranggay)
+    if patient.city:
+        address_append.append(patient.city)
+    if patient.province:
+        address_append.append(patient.province)
+    if patient.zip_code:
+        address_append.append(patient.zip_code)
+    
+    address = ', '.join(address_append) if address_append else None
+    
+    if patient.house_num:
+        address = f"{patient.house_num} {address}"
+    
+    return address
+
 # Decorators
 def owner_required(view_func):
     @wraps(view_func)
@@ -878,8 +901,6 @@ def change_collection_status(request, request_id):
                 c.time_collected=timezone.now()
                 c.save()
         
-        
-        
         if lab_request.mode_of_release == 'Both':
             c = CollectionLog.objects.get(request=lab_request, mode_of_collection='Pick-up')
             e = CollectionLog.objects.get(request=lab_request, mode_of_collection='Email')
@@ -915,33 +936,59 @@ def add_lab_result(request, line_item_id):
 
     lab_request = get_object_or_404(LabRequest, pk=line_item.request_id)
     patient = get_object_or_404(Patient, pk=lab_request.patient_id)
-    lab_techs = LabTech.objects.all()
-    full_name = f"{patient.last_name}, {patient.first_name} {patient.middle_initial} {patient.suffix}"
+    
+    user = request.user
+
+    # Account Details
+    lab_tech = LabTech.objects.get(user=user)
+    sign1 = False
+    sign2 = False
+
+    if lab_tech.tech_role == 'Medical Technologist':
+        sign1 = True
+    else:
+        sign2 = True
+
+    ######
+    
+    # Check Reviews
+    is_signed_1 = False
+    is_signed_2 = False
+    is_the_tech_1 = True
+    is_the_tech_2 = True
+
+    lab_tech_1 = None
+    lab_tech_2 = None
+
+
+    if ResultReview.objects.filter(line_item=line_item, lab_tech__tech_role='Medical Technologist'):
+        is_signed_1 = True
+        lab_tech_1 = ResultReview.objects.filter(line_item=line_item, lab_tech__tech_role='Medical Technologist').first()
+        if lab_tech_1.lab_tech != lab_tech:
+            is_the_tech_1 = False
+    
+    if ResultReview.objects.filter(line_item=line_item, lab_tech__tech_role='Pathologist'):
+        is_signed_2 = True
+        lab_tech_2 = ResultReview.objects.filter(line_item=line_item, lab_tech__tech_role='Pathologist').first()
+        if lab_tech_2.lab_tech != lab_tech:
+            is_the_tech_2 = False
+
+    #Check involvement
+    is_involved = False
+    if lab_tech.tech_role == 'Pathologist':
+        if not is_the_tech_2:
+            is_involved = True
+    else:
+        if not is_the_tech_1:
+            is_involved = True
+
     
     birthdate = patient.birthdate
     today = date.today()
     
     age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
     
-    address_append = []
-
-    if patient.street:
-        address_append.append(patient.street)
-    if patient.subdivision:
-        address_append.append(patient.subdivision)
-    if patient.baranggay:
-        address_append.append(patient.baranggay)
-    if patient.city:
-        address_append.append(patient.city)
-    if patient.province:
-        address_append.append(patient.province)
-    if patient.zip_code:
-        address_append.append(patient.zip_code)
-    
-    address = ', '.join(address_append) if address_append else None
-    
-    if patient.house_num:
-        address = f"{patient.house_num} {address}"
+    address = get_patient_address(patient)
 
     return render(request, 'labreqsys/add_labresult.html', {
         'line_item': line_item,
@@ -952,12 +999,38 @@ def add_lab_result(request, line_item_id):
         'test': test_component,
         'patient_age': age,
         'patient_address': address,
-        'lab_technicians': lab_techs
+        'tech': lab_tech,
+        'sign1': sign1,
+        'sign2': sign2,
+        'lab_tech_1': lab_tech_1,
+        'lab_tech_2': lab_tech_2,
+        'is_signed_1': is_signed_1,
+        'is_signed_2': is_signed_2,
+        'is_the_tech_1': is_the_tech_1,
+        'is_the_tech_2': is_the_tech_2,
+        'is_involved': is_involved
     })
 
 @lab_tech_required
 def submit_labresults(request, line_item_id):
     results = ResultValue.objects.filter(line_item_id=line_item_id)
+    user = request.user
+    labtech = LabTech.objects.get(user=user)
+
+    line_item = RequestLineItem.objects.get(line_item_id=results.first().line_item_id)
+    lab = LabRequest.objects.get(request_id=line_item.request_id)
+
+    is_signed_1 = False
+    is_signed_2 = False
+
+    if ResultReview.objects.filter(line_item=line_item, lab_tech__tech_role='Medical Technologist'):
+        is_signed_1 = True
+        lab_tech_1 = ResultReview.objects.filter(line_item=line_item, lab_tech__tech_role='Medical Technologist').first()
+    
+    if ResultReview.objects.filter(line_item=line_item, lab_tech__tech_role='Pathologist'):
+        is_signed_2 = True
+        lab_tech_2 = ResultReview.objects.filter(line_item=line_item, lab_tech__tech_role='Pathologist').first()
+
 
     if request.method == "POST":
         for r in results:
@@ -966,9 +1039,6 @@ def submit_labresults(request, line_item_id):
             r.field_value = new_value
             r.save()
         submission_type = request.POST.get('submission_type')
-
-    line_item = RequestLineItem.objects.get(line_item_id=results.first().line_item_id)
-    lab = LabRequest.objects.get(request_id=line_item.request_id)
     
     if submission_type == 'submit':
         line_item.request_status = 'Completed'
@@ -990,7 +1060,32 @@ def submit_labresults(request, line_item_id):
     else:
         line_item.request_status = 'In Progress'
         line_item.save()
-            
+
+        if request.POST.get('lab_tech_1'):
+            if not is_signed_1:
+                ResultReview.objects.create(
+                    lab_tech = labtech,
+                    line_item = line_item,
+                    reviewed_date = timezone.now()
+                )
+        else:
+            if is_signed_1:
+                if lab_tech_1.lab_tech == labtech:
+                    lab_tech_1.delete()
+
+        if request.POST.get('lab_tech_2'):
+            if not is_signed_2:
+                ResultReview.objects.create(
+                    lab_tech = labtech,
+                    line_item = line_item,
+                    reviewed_date = timezone.now()
+                )
+        else:
+            print('UMABOT DITO')
+            if is_signed_2:
+                if lab_tech_2.lab_tech == labtech:
+                    lab_tech_2.delete()
+        
         if lab.overall_status == 'Not Started':
             lab.overall_status = 'In Progress'
             lab.save()
@@ -1455,26 +1550,7 @@ def pdf(request, pk):
     else:
         age = None
         
-    address_append = []
-
-    if patient.street:
-        address_append.append(patient.street)
-    if patient.subdivision:
-        address_append.append(patient.subdivision)
-    if patient.baranggay:
-        address_append.append(patient.baranggay)
-    if patient.city:
-        address_append.append(patient.city)
-    if patient.province:
-        address_append.append(patient.province)
-    if patient.zip_code:
-        address_append.append(patient.zip_code)
-    
-    address = ', '.join(address_append) if address_append else None
-    
-    if patient.house_num:
-        address = f"{patient.house_num} {address}"
-
+    address = get_patient_address(patient)
 
     return render(request, 'labreqsys/pdf.html', 
                 {'lab_request': lab_request, 
@@ -1632,26 +1708,7 @@ def view_lab_result(request, pk):
     else:
         age = None
         
-    address_append = []
-
-    if patient.street:
-        address_append.append(patient.street)
-    if patient.subdivision:
-        address_append.append(patient.subdivision)
-    if patient.baranggay:
-        address_append.append(patient.baranggay)
-    if patient.city:
-        address_append.append(patient.city)
-    if patient.province:
-        address_append.append(patient.province)
-    if patient.zip_code:
-        address_append.append(patient.zip_code)
-    
-    address = ', '.join(address_append) if address_append else None
-    
-    if patient.house_num:
-        address = f"{patient.house_num} {address}"
-
+    address = get_patient_address(patient)
 
     return render(request, 'labreqsys/view_lab_results.html', 
                 {'lab_request': lab_request, 

@@ -201,13 +201,13 @@ class LabTech(models.Model):
 
 class ResultReview(models.Model):
     lab_tech = models.OneToOneField(LabTech, models.DO_NOTHING, primary_key=True)  # The composite primary key (lab_tech_id, result_value_id) found, that is not supported. The first column is selected.
-    result_value = models.ForeignKey('ResultValue', models.DO_NOTHING)
+    line_item = models.ForeignKey(RequestLineItem, models.DO_NOTHING)
     reviewed_date = models.DateField()
 
     class Meta:
         managed = False
         db_table = 'result_review'
-        unique_together = (('lab_tech', 'result_value'),)
+        unique_together = (('lab_tech', 'line_item'),)
 
 class UserProfile(models.Model):
     ROLE_CHOICES = [

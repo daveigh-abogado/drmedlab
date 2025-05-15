@@ -6,10 +6,16 @@
 <div class="breadbutton mb-4">
     <ul class="breadcrumb text-xs pt-2">
         <li>
-            <a href="#" class="text-myblue-primary">View Lab Request/</a>
+            <a href="{% url 'view_individual_lab_request' request_id=line_item.request_id %}" class="text-myblue-primary">View Lab Request/</a>
             <a href="#" class="text-myblue-highlight"> Add Result </a>
         </li>
     </ul>
+
+    <div class="text-end">
+        <a href="{% url 'view_individual_lab_request' request_id=line_item.request_id %}" class="px-4 py-1 bg-myblue-secondary text-myblue-primary font-medium border-myblue-borderPrimary border rounded-lg">
+            Back
+        </a>
+    </div>
 </div>
 
 <div class="w-full h-hug p-8 bg-white rounded-lg shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
@@ -173,7 +179,7 @@
                         {% elif f.field_type == "Number" %}
                             <input type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}" required = "" step="any">
                         {% elif f.field_type == "Image" %}
-                            <input type="url" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" placeholder="Enter image URL" value="{{ f.saved_value|default_if_none:'' }}">
+                            <input type="file" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" placeholder="Enter image URL" value="{{ f.saved_value|default_if_none:'' }}">
                         {% else %}
                             <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
                         {% endif %}
@@ -187,57 +193,80 @@
                     <div class="flex-1 justify-center text-blue-900 text-lg font-semibold">Add Signature</div>
                 </div>
     
-                <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-8 px-4 items-center justify-items-center">
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-8 px-4 items-center justify-items-center">
                     <div>  
-                        <select id="lab_tech_1" name="lab_tech_1" onchange="updateLabTechInfo('lab_tech_1')" required
+                        <select
+                        {% if is_signed_1 and is_the_tech_1 == False or sign2 %}disabled{% endif %}
+                        id="lab_tech_1" name="lab_tech_1" onchange="updateLabTechInfo('lab_tech_1')"
                         class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5">
                         <option value="">Sign Result</option>
-                        {% for tech in lab_technicians %}
-                            <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
-                                {{ tech.first_name }} {{ tech.last_name }}
+                        <option
+                        {% if is_signed_1 and is_the_tech_1 %}selected{% endif %}
+                        value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
+                            {{ tech.first_name }} {{ tech.last_name }}
+                        </option>
+                        {% if is_signed_1 and is_the_tech_1 == False %}
+                            <option selected
+                            value="{{ lab_tech_1.lab_tech.lab_tech_id }}" data-role="{{ lab_tech_1.lab_tech.title }}" data-license="{{ lab_tech_1.lab_tech.license_num }}">
+                                {{ lab_tech_1.lab_tech.first_name }} {{ lab_tech_1.lab_tech.last_name }}
                             </option>
-                        {% endfor %}
+                        {% endif %}
                         </select>
     
                         <p id="lab_tech_1_info" class="text-base text-blue-900 text-center p-2">Role <br> License Number</p>
                     </div>
                     
                     <div>
-                        <select id="lab_tech_2" name="lab_tech_2" onchange="updateLabTechInfo('lab_tech_2')" required
-                        class="w-40 bg-gray-50 justify-center border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5">
-                            <option value="">Sign Result</option>
-                            {% for tech in lab_technicians %}
-                                <option value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
-                                    {{ tech.first_name }} {{ tech.last_name }}
-                                </option>
-                            {% endfor %}
+                        <select
+                        {% if is_signed_2 and is_the_tech_2 == False or sign1 %}disabled{% endif %}
+                        id="lab_tech_2" name="lab_tech_2" onchange="updateLabTechInfo('lab_tech_2')"
+                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5">
+                        <option value="">Sign Result</option>
+                        <option
+                        {% if is_signed_2 and is_the_tech_2 %}selected{% endif %}
+                        value="{{ tech.lab_tech_id }}" data-role="{{ tech.title }}" data-license="{{ tech.license_num }}">
+                            {{ tech.first_name }} {{ tech.last_name }}
+                        </option>
+                        {% if is_signed_2 and is_the_tech_2 == False %}
+                            <option selected
+                            value="{{ lab_tech_2.lab_tech.lab_tech_id }}" data-role="{{ lab_tech_2.lab_tech.title }}" data-license="{{ lab_tech_2.lab_tech.license_num }}">
+                                {{ lab_tech_2.lab_tech.first_name }} {{ lab_tech_2.lab_tech.last_name }}
+                            </option>
+                        {% endif %}
                         </select>
                         <p id="lab_tech_2_info" class="text-base text-blue-900 text-center p-2">Role <br> License Number</p>
-                    </div>   
+                    </div>  
                 </div>
                 
                 <!-- Modal Trigger Button -->
-                <div class="w-full flex flex-row gap-2.5">
-                    <button type="button" onclick="saveModal()"
-                        class="flex-1 flex text-myblue-primary items-center justify-center bg-myblue-secondary border border-myblue-borderPrimary rounded-lg text-sm py-2.5 text-center">
-                        Save
-                    </button>
-                    <button type="submit" onclick="submitModal()"
-                        class="flex-1 flex text-white items-center justify-center bg-myblue-primary hover:bg-primary-900 rounded-lg text-sm py-2.5 text-center">
-                        Submit
-                    </button>
-                </div>
-
-                
-                
-            
+                {% if not is_involved %}
+                    <div class="w-full flex flex-row gap-2.5 mt-4">
+                        {% if is_signed_1 and not is_the_tech_1 and not sign2 %}
+                        {% else %}
+                        <button type="button" onclick="saveModal()"
+                                {% if sign2 %}
+                                    class="flex-1 flex text-myblue-primary items-center justify-center bg-myblue-secondary border border-myblue-borderPrimary rounded-lg text-sm py-2.5 text-center">
+                                {% else %}
+                                    class="flex-1 flex text-white items-center justify-center bg-myblue-primary hover:bg-primary-900 rounded-lg text-sm py-2.5 text-center">
+                                {% endif %}
+                                Save
+                            </button>
+                        {% endif %}
+                        {% if sign2 %}
+                        <button type="button" onclick="submitModal()"
+                            class="flex-1 flex text-white items-center justify-center bg-myblue-primary hover:bg-primary-900 rounded-lg text-sm py-2.5 text-center">
+                            Submit
+                        </button>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </form>
         </div>
     </div>
     </div>
 </div>
 
-        <!-- Save Modal-->
+                <!-- Save Modal-->
                 <div id="saveModal" class="relative z-10 hidden modal" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                     <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true"></div>
                     <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -254,10 +283,38 @@
                                 </div>
                             </div>
                             <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 modal-buttons">
-                                <button  onclick="submitForm()" class="btn-confirm inline-flex w-full justify-center rounded-md bg-myblue-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto">
+                                <button onclick="submitForm()" class="btn-confirm inline-flex w-full justify-center rounded-md bg-myblue-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto">
                                 Yes
                                 </button>
                                 <button onclick="closeSaveModal()" class="btn-cancel mt-3 inline-flex w-full justify-center rounded-md bg-myblue-secondary px-3 py-2 text-sm font-semibold text-myblue-primary shadow-sm border border-myblue-borderPrimary hover:bg-gray-300 sm:mt-0 sm:w-auto">
+                                No
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Modal-->
+                <div id="submitModal" class="relative z-10 hidden modal" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true"></div>
+                    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">                            
+                            <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div class="sm:flex sm:items-start">
+                                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                        <h3 class="text-lg font-semibold text-myblue-primary" id="modal-title">Submit results?</h3>
+                                        <div class="mt-2">
+                                        <p id="message"class="text-sm text-gray-500">You can not edit this form upon submission.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 modal-buttons">
+                                <button onclick="submitForm()" class="btn-confirm inline-flex w-full justify-center rounded-md bg-myblue-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto">
+                                Yes
+                                </button>
+                                <button onclick="closeSubmitModal()" class="btn-cancel mt-3 inline-flex w-full justify-center rounded-md bg-myblue-secondary px-3 py-2 text-sm font-semibold text-myblue-primary shadow-sm border border-myblue-borderPrimary hover:bg-gray-300 sm:mt-0 sm:w-auto">
                                 No
                                 </button>
                             </div>
@@ -282,12 +339,22 @@
         }
     }
 
-    
+    window.addEventListener('DOMContentLoaded', () => {
+        const tech1 = document.getElementById('lab_tech_1');
+
+        if (tech1 && tech1.value) {
+            updateLabTechInfo('lab_tech_1');
+        }
+
+        const tech2 = document.getElementById('lab_tech_2');
+        if (tech2 && tech2.value) {
+            updateLabTechInfo('lab_tech_2');
+        }    
+    });
 
     function submitModal() {
         submissionType = "submit";
-        document.getElementById('saveModal').style.display = 'block';
-        document.getElementById('message').innerText = "You won't be able to edit results upon submission.";
+        document.getElementById('submitModal').style.display = 'block';
     }
 
     function saveModal() {
@@ -296,8 +363,8 @@
         
     }
 
-    function closeConfirmModal() {
-        document.getElementById('confirmModal').style.display = 'none';
+    function closeSubmitModal() {
+        document.getElementById('submitModal').style.display = 'none';
     }
 
     function closeSaveModal() {
@@ -310,9 +377,9 @@
     }
 
     window.onclick = function(event) {
-        const modal = document.getElementById('confirmModal');
+        const modal = document.getElementById('submitModal');
         if (event.target === modal) {
-            closeConfirmModal();
+            closeSubmitModal();
         }
         const modalc = document.getElementById('saveModal');
         if (event.target === modalc) {
@@ -320,6 +387,20 @@
         }
     }
 </script>
+{% if is_involved %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("resultform");
+        if (form) {
+            const inputs = form.querySelectorAll("input, select, textarea, button");
+            inputs.forEach(el => {
+                el.disabled = true;
+            });
+        }
+    });
+</script>
+{% endif %}
+
 {% endblock content %}
 
 {% block styles %}
