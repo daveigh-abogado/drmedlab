@@ -111,7 +111,7 @@
                             <div class="results-content">
                                 <div class="text-wrapper-5">{{template_form.template_name}}</div>
                                 <div class="input-results">
-                                    
+  
                                     <!--TO BACKEND: the styling is still unedited :>-->
                                     {% for section, row in form.items %}
                                     {{section.section_name}} <!--FOR BACKEND PURPOSE ONLY ! can remove later :)-->
@@ -124,9 +124,15 @@
                                         <tbody>
                                             {% for field, values in row.items %}
                                                 {% if values %} 
-                                                    {% for value in values %} 
-                                                    <td> {{value.field_value}} </td>
-                                                    {% endfor %}
+                                                  {% for value in values %} 
+                                                  {% if value.field_type == 'Image'%}
+                                                    <td>
+                                                        <img src = "{% static value.field_value %}" alt ="{{value.field.field_type}}_{{patient.last_name}}_{{lab_request.date_requested}}">
+                                                    </td>
+                                                    {% else %}
+                                                        <td scope="col" class="p-3 text-center"> {{value.field_value}} </td>
+                                                    {% endif %}
+                                                  {% endfor %}
                                                 {% else %}
                                                     <td>{{field.field_value}}</td>
                                                 {% endif %}                
@@ -135,28 +141,33 @@
                                     </table>
                                     {% endfor %}
                                     <p> *** End of Report *** </p>
-                                    <table>
-                                      {% for tech in lab_tech %}
-                                      <th>
-                                          <img src="{{tech.lab_tech.signature_path}}" alt="{{tech.lab_tech.first_name}}_{{tech.lab_tech.last_name}}_signature">
-                                      </th>
-                                      <tr>
-                                          <td>
-                                              {{tech.lab_tech.first_name}} {{tech.lab_tech.last_name}}
-                                          </td>
-                                      </tr>
-                                      <tr>
-                                          <td>
-                                              {{tech.lab_tech.title}}
-                                          </td>
-                                      </tr>
-                                      <tr>
-                                          <td>
-                                              {{tech.lab_tech.license_num}}
-                                          </td>
-                                      </tr>
-                                      {% endfor%}
-                                    </table>
+                                  </div> <!-- TO FRONTEND: add these end tags cuz i cant see-->
+                                </div> <!-- TO FRONTEND: add these end tags cuz i cant see-->
+                      <table>
+                        <thead>
+                          
+                          <tr>
+                            {% for tech in lab_tech %}
+                            <th>
+                                <img src="{% static tech.lab_tech.signature_path %}" alt="{{tech.lab_tech.first_name}}_{{tech.lab_tech.last_name}}_signature">
+                            </th>
+                            {% endfor %}
+                          </tr>
+                          
+                        </thead>
+                        
+                        <tbody>
+                          <tr>
+                          {% for tech in lab_tech %}
+                          <td>
+                            {{tech.lab_tech.first_name}} {{tech.lab_tech.last_name}}<br>
+                            {{tech.lab_tech.title}}<br>
+                            {{tech.lab_tech.license_num}}<br>
+                            </td>
+                          {% endfor %}
+                        </tr>
+
+                      </table>
                                 </div>
                             </div>
                         </div>

@@ -1515,8 +1515,6 @@ def pdf(request, pk):
 
     form = {}
     fields = []
-    reviewed_by = [] # [MADS TO DO!] When ResultReview starts saving, pass reviewer data here
-
 
     for section in TemplateSection.objects.filter(template=template_form.template_id):
         fields.append(TemplateField.objects.filter(section=section.section_id)) # list of all fields per section and appends to fields 'list'
@@ -1527,27 +1525,8 @@ def pdf(request, pk):
                 result_value[field] = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)
         form[section] = result_value # pairs result_value 'dict' to a section 'queryset' 
 
-    results = ResultValue.objects.filter(line_item_id=line_item.line_item_id)
+    results = ResultReview.objects.filter(line_item_id=line_item.line_item_id)
     reviews = []
-
-    for rs in results:
-        review = ResultReview.objects.filter(result_value=rs)
-        print(f"{rs} + {len(results)}")
-        for lt in review:
-            print(f"review: {lt}")
-            if not reviews:
-                reviews.append(lt)
-                print("yes 1\n")
-            else:
-                for rev in reviews:
-                    print(f"rev : {rev.lab_tech.lab_tech_id}; lt : {lt.lab_tech.lab_tech_id}")
-                    if lt.lab_tech.lab_tech_id != rev.lab_tech.lab_tech_id:
-                        print ("yes 2\n")
-                        reviews.append(lt)
-                    else:
-                        print("no\n")
-                        break
-    print (f"review!: {reviews}")
 
     age = 0
     if patient.birthdate:
@@ -1566,8 +1545,7 @@ def pdf(request, pk):
                 'address': address,
                 'template_form': template_form,
                 'form' : form,
-                'reviewed_by': reviewed_by,
-                'lab_tech' : reviews               
+                'lab_tech' : results               
                 })
 
 
@@ -1684,28 +1662,10 @@ def view_lab_result(request, pk):
             for field in column:
                 result_value[field] = ResultValue.objects.filter(line_item_id=line_item.line_item_id, field__field_id=field.field_id)
         form[section] = result_value # pairs result_value 'dict' to a section 'queryset' 
-
-    results = ResultValue.objects.filter(line_item_id=line_item.line_item_id)
+    
+    
+    results = ResultReview.objects.filter(line_item_id=line_item.line_item_id)
     reviews = []
-
-    for rs in results:
-        review = ResultReview.objects.filter(result_value=rs)
-        print(f"{rs} + {len(results)}")
-        for lt in review:
-            print(f"review: {lt}")
-            if not reviews:
-                reviews.append(lt)
-                print("yes 1\n")
-            else:
-                for rev in reviews:
-                    print(f"rev : {rev.lab_tech.lab_tech_id}; lt : {lt.lab_tech.lab_tech_id}")
-                    if lt.lab_tech.lab_tech_id != rev.lab_tech.lab_tech_id:
-                        print ("yes 2\n")
-                        reviews.append(lt)
-                    else:
-                        print("no\n")
-                        break
-    print (f"review!: {reviews}")
 
     age = 0
     if patient.birthdate:
@@ -1724,8 +1684,8 @@ def view_lab_result(request, pk):
                 'address': address,
                 'template_form': template_form,
                 'form' : form,
-                'reviewed_by': reviewed_by,
-                'lab_tech' : reviews,
+                'reviewed_by': 'reviewed_by',
+                'lab_tech' : results,
                 'line_item' : line_item              
                 })
     
@@ -2034,7 +1994,6 @@ def add_lab_tech(request):
             try:
                 lab_tech = form.save(commit=False)
                 signature = form.cleaned_data['signature']
-                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
                 safe_name = "".join(c for c in lab_tech.last_name if c.isalnum())
                 filename = f"signature_{safe_name}_{timestamp}.png"
                 file_path = os.path.join('labreqsys', 'static', 'signatures', filename)
