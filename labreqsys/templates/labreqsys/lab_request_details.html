@@ -8,7 +8,7 @@
 <!-- Breadcrumb -->
 <div class="breadbutton mb-4">
     <ul class="breadcrumb text-xs pt-2">
-            <a href="{% url 'labRequests' requested_status=0 %}" class="text-gray-600 hover:text-gray-900">Lab Requests/</a>
+            <a href="{% url 'labRequests' requested_status=0 %}" class="text-myblue-primary">Lab Requests/</a>
             <a href="#" class="text-myblue-highlight"> View Lab Request</a>
         </li>
     </ul>
@@ -40,7 +40,7 @@
                     <div class="px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
                         <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Date requested</div>
                     </div>
-                    <div class="px-6 py-1 bg-gray-100 rounded-3xl flex justify-start items-center gap-1.5"> <!--indiv info-->
+                    <div class="px-6 py-1.5 bg-gray-100 rounded-3xl flex justify-start items-center gap-1.5"> <!--indiv info-->
                         <div class="justify-center text-black text-xs">{{ request_details.date_requested }}</div>
                     </div>
                 </div>
@@ -48,20 +48,11 @@
             
 
             <div class="self-stretch inline-flex justify-start items-center gap-2.5"> <!--info row-->
-                <div class="px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                <div class="px-2.5 py-1 flex justify-start items-center gap-1.5"> <!--indiv info-->
                     <div class="w-36 justify-center text-sm font-semibold text-blue-900 ">Patient Name</div>
                 </div>
                 <div class="px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
                     <div class="w-36 justify-center text-sm text-black font-normal">{{ request_details.patient.first_name }}{% if request_details.patient.suffix %} {{ request_details.patient.suffix }}{% endif %}{% if request_details.patient.middle_initial %} {{ request_details.patient.middle_initial }}.{% endif %} {{ request_details.patient.last_name }}</div>
-                </div>
-            </div>
-
-            <div class="self-stretch inline-flex justify-start items-center gap-2.5"> <!--info row-->
-                <div class="px-2.5 py-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-36 justify-center text-sm font-semibold text-blue-900 ">PWD ID</div>
-                </div>
-                <div class="px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
-                    <div class="w-36 justify-center text-sm text-black font-normal">{{ request_details.patient.pwd_id_num }}</div>
                 </div>
             </div>
             
