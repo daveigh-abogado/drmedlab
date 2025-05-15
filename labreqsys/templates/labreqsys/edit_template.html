@@ -60,7 +60,7 @@
 
     function createField(sectionIndex, fieldIndex, fieldData = {}) {
         const { label = '', type = '', fixed_value = '' } = fieldData;
-        const isFixedDisabled = ['Text', 'Number', 'Image'].includes(type) ? 'disabled' : '';
+        const isFixedDisabled = ['Text', 'Number'].includes(type) ? 'disabled' : '';
 
         return `
         <div class="border border-gray-300 rounded p-2 mt-3 field-group" id="field-${sectionIndex}-${fieldIndex}" data-field-index="${fieldIndex}">
@@ -75,7 +75,6 @@
                         <option value="">Select field type</option>
                         <option value="Label" ${type === 'Label' ? 'selected' : ''}>Label</option>
                         <option value="Text" ${type === 'Text' ? 'selected' : ''}>Text</option>
-                        <option value="Image" ${type === 'Image' ? 'selected' : ''}>Image</option>
                         <option value="Number" ${type === 'Number' ? 'selected' : ''}>Number</option>
                     </select>
                 </div>
@@ -189,7 +188,7 @@
             const fieldGroup = e.target.closest('.field-group');
             const fixedValueInput = fieldGroup.querySelector('input[name*="[fixed_value]"]');
 
-            if (['Text', 'Image', 'Number'].includes(selectedType)) {
+            if (['Text', 'Number'].includes(selectedType)) {
                 fixedValueInput.disabled = true;
                 fixedValueInput.value = ''; //clears the value
             } else {
@@ -292,8 +291,6 @@
                     previewHTML += `<input disabled type="text" class="bg-gray-50 border border-gray-300 text-center text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">`;
                 } else if ((field.type == 'Number')) {
                     previewHTML += `<input disabled type="number" class="bg-gray-50 border border-gray-300 text-center text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">`;
-                } else if ((field.type == 'Image')) {
-                    previewHTML += `<input disabled type="file" class="bg-gray-50 border border-gray-300 text-center text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">`;
                 }
                 previewHTML += `</div>`;
             });

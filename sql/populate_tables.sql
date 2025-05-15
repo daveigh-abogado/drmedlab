@@ -91,7 +91,7 @@ INSERT INTO template_section (template_id, section_name)
 VALUES
 (5, 'Albumin Results'),
 (5, 'Remarks'),
-(4, 'X-Ray Image'),
+(4, 'X-Ray Notes'),
 (4, 'X-Ray Remarks');
 
 INSERT INTO template_field (section_id, label_name, field_type, field_required, field_value)  
@@ -100,7 +100,7 @@ VALUES
 (1, 'Result', 'Number', 'Yes', NULL),
 (1, 'Unit', 'Label', 'Yes', 'g/dL'),
 (1, 'Range', 'Text', 'Yes', NULL),
-(3, 'X-Ray Image', 'Image', 'Yes', NULL),
+(3, 'X-Ray Image', 'Text', 'Yes', NULL),
 (4, 'Remarks', 'Text', 'Yes', NULL);
 
 INSERT INTO result_value (line_item_id, field_id, field_value)  

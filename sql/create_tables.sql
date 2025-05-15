@@ -125,7 +125,7 @@ CREATE TABLE template_field
 (field_id INTEGER NOT NULL auto_increment,
 section_id INTEGER NOT NULL,
 label_name VARCHAR(255) NOT NULL,
-field_type ENUM('Label', 'Text', 'Image', 'Number') NOT NULL DEFAULT 'Label',
+field_type ENUM('Label', 'Text', 'Number') NOT NULL DEFAULT 'Label',
 field_required ENUM('Yes', 'No') NOT NULL DEFAULT 'Yes',
 field_value VARCHAR(255),
 CONSTRAINT template_field_pk PRIMARY KEY (field_id),

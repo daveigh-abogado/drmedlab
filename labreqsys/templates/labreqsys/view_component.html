@@ -42,8 +42,6 @@
                         <input disabled type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
                     {% elif f.field_type == "Number" %}
                         <input disabled type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
-                    {% elif f.field_type == "Image" %}
-                        <input disabled type="url" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" name="{{ f.label_name }}" placeholder="Enter image URL" value="{{ f.saved_value|default_if_none:'' }}">
                     {% else %}
                         <input disabled type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" name="{{ f.label_name }}" value="{{ f.saved_value|default_if_none:'' }}">
                     {% endif %}
