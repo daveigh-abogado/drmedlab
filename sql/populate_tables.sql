@@ -17,8 +17,8 @@ VALUES
 (NULL, 'Dela Cruz', 'Juan', 'M', 'Jr.', 'Male', '1990-05-15', '639171234567', '028123456', 'PWD123456789', 'SC987654321', 'juan.delacruz@email.com', '123', 'Rizal Street', 'Sunshine Village', 'Barangay 1', 'Manila', 'Metro Manila', '1000', 'Married', NULL),
 (NULL, 'Garcia', 'Maria', 'L', NULL, 'Female', '1985-08-22', '639189876543', '027654321', NULL, 'SC123456789', 'maria.garcia@email.com', '56B', 'Quezon Avenue', NULL, 'Barangay 5', 'Quezon City', 'Metro Manila', '1100', 'Widowed', NULL),
 (NULL, 'Reyes', 'Carlos', NULL, NULL, 'Male', '1989-12-13', NULL, NULL, NULL, NULL, 'carlos.reyes@email.com', NULL, NULL, NULL, NULL, 'Cebu City', NULL, NULL, 'Married', NULL),
-(NULL, 'Leclerc', 'Charles', NULL, NULL, 'Male', '2000-02-15', NULL, NULL, NULL, NULL, 'leclerc.charles@email.com', NULL, NULL, NULL, NULL, 'Naga City', NULL, NULL, 'Single', NULL),
-(NULL, 'Miya', 'Atsumu', NULL, NULL, 'Male', '1980-01-22', NULL, NULL, NULL, NULL, 'atsumumiya@email.com', NULL, NULL, NULL, NULL, 'Hyogo', NULL, '1281', 'Single', NULL),
+(NULL, 'Santos', 'Roberto', NULL, NULL, 'Male', '2000-02-15', NULL, NULL, NULL, NULL, 'roberto.santos@email.com', NULL, NULL, NULL, NULL, 'Naga City', NULL, NULL, 'Single', NULL),
+(NULL, 'Mendoza', 'Aileen', NULL, NULL, 'Female', '1980-01-22', NULL, NULL, NULL, NULL, 'aileen.mendoza@email.com', NULL, NULL, NULL, NULL, 'Davao City', NULL, '8000', 'Single', NULL),
 (NULL, 'Santos', 'Ana', 'M', NULL, 'Female', '1992-07-10', '639181112222', '028765432', NULL, 'SC222333444', 'ana.santos@email.com', '45', 'Mabini St.', NULL, 'Barangay 2', 'Pasig', 'Metro Manila', '1600', 'Single', NULL),
 (NULL, 'Torres', 'Miguel', 'D', NULL, 'Male', '1987-11-20', '639171111111', '027123456', NULL, NULL, 'miguel.torres@email.com', '90', 'Roxas Blvd', 'Palm Residences', 'Barangay 10', 'Parañaque', 'Metro Manila', '1700', 'Married', NULL),
 (NULL, 'Lim', 'Catherine', 'S', NULL, 'Female', '1995-03-02', '639183334444', NULL, NULL, NULL, 'catherine.lim@email.com', '12A', 'Bonifacio High Street', NULL, 'Barangay 8', 'Taguig', 'Metro Manila', '1630', 'Single', NULL),
@@ -43,10 +43,10 @@ VALUES
 -- LAB REQUESTS
 INSERT INTO lab_request
 VALUES 
-(NULL, '1', '2025-02-06', 'Dr. Adams', 'Email', 'Not Started'),
-(NULL, '2', '2025-02-06', 'Dr. Baker', 'Pick-up', 'In Progress'),
-(NULL, '3', '2025-02-06', 'Dr. Carter', 'Both', 'Released'),
-(NULL, '4', '2025-02-06', 'Dr. House', 'Both', 'Not Started');
+(NULL, '1', '2025-02-06', 'Dr. Santos', 'Email', 'Not Started'),
+(NULL, '2', '2025-02-06', 'Dr. Dela Cruz', 'Pick-up', 'In Progress'),
+(NULL, '3', '2025-02-06', 'Dr. Reyes', 'Both', 'Released'),
+(NULL, '4', '2025-02-06', 'Dr. Lim', 'Both', 'Not Started');
 
 INSERT INTO template_form
 VALUES 
@@ -58,16 +58,16 @@ VALUES
 
 INSERT INTO test_component (template_id, test_code, test_name, component_price, category)
 VALUES 
-(1, 'TC001', 'Urinalysis', 100.00, 'Urine Test'),
-(2, 'TC002', 'CBC w/ Platelet', 200.00, 'Blood Test'),
-(3, 'TC003', 'Fecalysis', 300.00, 'Stool Test'),
-(4, 'TC004', 'Xray - Chest PA', 400.00, 'Radiology'),
-(5, 'TC005', 'Albumin', 500.00, 'Blood');
+(1, 'TC001', 'Urinalysis', 120.00, 'Urine Test'),
+(2, 'TC002', 'CBC w/ Platelet', 250.00, 'Blood Test'),
+(3, 'TC003', 'Fecalysis', 180.00, 'Stool Test'),
+(4, 'TC004', 'Xray - Chest PA', 500.00, 'Radiology'),
+(5, 'TC005', 'Albumin', 350.00, 'Blood');
 
 INSERT INTO test_package (package_name, package_price)
 VALUES 
 ('Basic Package', 900.00),
-('Dengue Package', 2215.00);
+('Dengue Package', 1800.00);
 
 INSERT INTO test_package_component
 VALUES 
@@ -110,9 +110,9 @@ VALUES
 
 INSERT INTO collection_log
 VALUES 
-(NULL, '1', 'Jo March', '2025-01-30 10:30:00', 'Email'),
-(NULL, '2', 'Elizabeth Bennett', '2025-01-30 10:30:00', 'Pick-up'),
+(NULL, '1', 'Joan Dela Cruz', '2025-01-30 10:30:00', 'Email'),
+(NULL, '2', 'Elena Garcia', '2025-01-30 10:30:00', 'Pick-up'),
 (NULL, '3', 'Carlos Reyes', '2025-01-30 10:30:00', 'Email'),
 (NULL, '3', 'Carlos Reyes', '2025-02-01 12:00:00', 'Pick-up'),
-(NULL, '4', 'Charles Leclerc', '2025-02-18 13:00:00', 'Email'),
-(NULL, '4', 'Charles Leclerc', '2025-02-18 16:20:00', 'Pick-up');
+(NULL, '4', 'Roberto Santos', '2025-02-18 13:00:00', 'Email'),
+(NULL, '4', 'Roberto Santos', '2025-02-18 16:20:00', 'Pick-up');
