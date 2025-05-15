@@ -4,74 +4,77 @@
 
 {% block content %}
 
-<div class="pt-3">
-    <!-- TOP BAR -->
-    <div class="container text-center">
-        <div class="flex flex-wrap justify-between items-center gap-4">
-            <!-- SEARCH -->
-            <div class="flex-1 max-w-sm min-w-[200px]">
-                <div class="relative w-full">
-                    <input
-                    id="searchInput"
-                    class="block w-full z-20 text-xs text-gray-700 bg-gray-50 rounded border border-gray-200 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Search User Name or Email" />
-                    <button type="submit" style="cursor: default;" class="absolute top-0 end-0 p-2.5 text-xs font-medium h-full text-white bg-myblue-primary rounded-e-lg border border-myblue-borderPrimary">
-                        <svg class="w-3 h-3 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                        </svg>
-                        <span class="sr-only">Search</span>
-                    </button>
-                </div>
+<div class="text-xl font-semibold text-myblue-primary pb-1"> Users </div>
+<div class="text-xs font-base text-gray-500 mb-4"> Manage your users</div>
+
+
+<!-- TOP BAR -->
+<div class="container text-center">
+    <div class="flex flex-wrap justify-between items-center gap-4">
+        <!-- SEARCH -->
+        <div class="flex-1 max-w-sm min-w-[200px]">
+            <div class="relative w-full">
+                <input
+                id="searchInput"
+                class="block w-full z-20 text-xs text-gray-700 bg-gray-50 rounded border border-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Search User Name or Email" />
+                <button type="submit" style="cursor: default;" class="absolute top-0 end-0 p-2.5 text-xs font-medium h-full text-white bg-myblue-primary rounded-e-lg border border-myblue-borderPrimary">
+                    <svg class="w-3 h-3 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                    <span class="sr-only">Search</span>
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="bg-white rounded-3xl mt-4 p-0 shadow-md">
-        <!-- TABLE -->
-        <div class="relative overflow-x-auto rounded-xl">
-            <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
-                <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
-                    <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
-                        <th scope="col" class="p-3">Name</th>
-                        <th scope="col" class="p-3">Username</th>
-                        <th scope="col" class="p-3">Email</th>
-                        <th scope="col" class="p-3">Role</th>
-                        <th scope="col" class="p-3">Date Joined</th>
-                        <th scope="col" class="p-3 text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="userTableBody">
-                {% for user in users %}
-                    <tr class="border-b border-gray-200 hover:bg-gray-200 text-sm">
-                        <td class="p-3">{{ user.last_name }}, {{ user.first_name }}</td>
-                        <td class="p-3">{{ user.username }}</td>
-                        <td class="p-3">{{ user.email }}</td>
-                        <td class="p-3">
-                            {% if user.is_superuser %}
-                                Superuser (Owner)
-                            {% elif user.userprofile %}
-                                {{ user.userprofile.get_role_display }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        <td class="p-3">{{ user.date_joined|date:'Y-m-d' }}</td>
-                        <td class="p-3 text-center">
-                            <span class="text-gray-400 cursor-not-allowed">-</span>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="5" class="p-3 text-center text-sm text-gray-500">
-                            No users found.
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<div class="bg-white rounded-3xl mt-4 p-0 shadow-md">
+    <!-- TABLE -->
+    <div class="relative overflow-x-auto rounded-xl">
+        <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
+            <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
+                <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
+                    <th scope="col" class="p-3">Name</th>
+                    <th scope="col" class="p-3">Username</th>
+                    <th scope="col" class="p-3">Email</th>
+                    <th scope="col" class="p-3">Role</th>
+                    <th scope="col" class="p-3">Date Joined</th>
+                    <th scope="col" class="p-3 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+            {% for user in users %}
+                <tr class="border-b border-gray-200 hover:bg-gray-200 text-sm">
+                    <td class="p-3">{{ user.last_name }}, {{ user.first_name }}</td>
+                    <td class="p-3">{{ user.username }}</td>
+                    <td class="p-3">{{ user.email }}</td>
+                    <td class="p-3">
+                        {% if user.is_superuser %}
+                            Superuser (Owner)
+                        {% elif user.userprofile %}
+                            {{ user.userprofile.get_role_display }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="p-3">{{ user.date_joined|date:'Y-m-d' }}</td>
+                    <td class="p-3 text-center">
+                        <span class="text-gray-400 cursor-not-allowed">-</span>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="p-3 text-center text-sm text-gray-500">
+                        No users found.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

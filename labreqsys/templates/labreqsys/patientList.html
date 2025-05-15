@@ -4,88 +4,84 @@
 
 {% block content %}
 
+<div class="text-xl font-semibold text-myblue-primary mb-2"> Patient List</div>
 
-
-<div class="pt-3"> <!-- WHOLE SPACE -->
-
-    <!-- TOP BAR -->
-    <div class="container text-center">
-        <div class="flex flex-wrap justify-between items-center gap-4">
-            <!-- SEARCH -->
-            <div class="flex-1 max-w-sm min-w-[200px]">
-                <div class="relative w-full">
-                    <input
-                    id="searchInput"
-                    class="block w-full z-20 text-xs text-gray-700 bg-gray-50 rounded border border-gray-200 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Search Patient ID, Last Name, or Given Name" />
-                    
-                    <button type="submit" style="cursor: default;" class="absolute top-0 end-0 p-2.5 text-xs font-medium h-full text-white bg-myblue-primary rounded-e-lg border border-myblue-borderPrimary">
-                        <svg class="w-3 h-3 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                        </svg>
-                        <span class="sr-only">Search</span>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="justify-end">
-                <!-- data-modal-target="defaultModal" data-modal-toggle="defaultModal"  -->
-                <button id="addPatientButton" class="text-white px-6 py-2 bg-myblue-primary font-medium rounded-lg text-sm" type="button">
-                    <a href="{% url 'add_patient' %}" class="text-white no-underline">Add Patient</a>
+<!-- TOP BAR -->
+<div class="container text-center">
+    <div class="flex flex-wrap justify-between items-center gap-4">
+        <!-- SEARCH -->
+        <div class="flex-1 max-w-sm min-w-[200px]">
+            <div class="relative w-full">
+                <input
+                id="searchInput"
+                class="block w-full z-20 text-xs text-gray-700 bg-gray-50 rounded border border-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Search Patient ID, Last Name, or Given Name" />
+                
+                <button type="submit" style="cursor: default;" class="absolute top-0 end-0 p-2.5 text-xs font-medium h-full text-white bg-myblue-primary rounded-e-lg border border-myblue-borderPrimary">
+                    <svg class="w-3 h-3 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                    <span class="sr-only">Search</span>
                 </button>
             </div>
-        </div>     
-    </div>
-    
-    
-
-    <div class="bg-white rounded-3xl mt-4 p-0 shadow-md">
-
-        <!-- TABLE -->
-        <div class = "relative overflow-x-auto rounded-xl ">
-            <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
-                <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
-                    <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
-                        <th scope="col" class="p-3 text-center">Patient ID</th>
-                        <th scope="col" class="p-3">Last Name</th>
-                        <th scope="col" class="p-3">Given Name</th>
-                        <th scope="col" class="p-3">Email</th>
-                        <th scope="col" class="p-3 text-center">Mobile No.</th>
-                        <th scope="col" class="p-3 text-center">Landline No.</th>
-                        <th scope="col" class="p-3 text-center">Date Added</th>
-                    </tr>
-                </thead>
-
-                <tbody id="patientTableBody">
-                {% for p in patients %}
-                    <tr class="border-b border-gray-200 hover:bg-gray-200 text-sm">
-                        <th scope="row" class="px-6 py-3 font-medium text-myblue-highlight text-center">
-                            <a href="{% url 'view_patient' pk=p.pk %}" class = "text-myblue-highlight hover:underline focus:underline">
-                                {{ p.patient_id }}
-                            </a>
-                        </th>
-                        <td class="p-3">{{ p.last_name }}</td>
-                        <td class="p-3">{{ p.first_name }}</td>
-                        <td class="p-3">{{ p.email }}</td>
-                        {% if p.mobile_num %}
-                            <td class="p-3 text-center">+{{ p.mobile_num|slice:":2" }} {{ p.mobile_num|slice:"2:5" }} {{ p.mobile_num|slice:"5:8" }} {{ p.mobile_num|slice:"8:" }}</td>
-                        {% else %}
-                            <td class="p-3 text-center"> - </td>
-                        {% endif %}
-
-                        {% if p.landline_num %}
-                            <td class="p-3 text-center">+63 ({{ p.landline_num|slice:":2" }}) {{ p.landline_num|slice:"2:5" }} {{ p.landline_num|slice:"5:" }}</td>
-                        {% else %}
-                            <td class="p-3 text-center"> - </td>
-                        {% endif %}
-                        <td class="p-3 text-center">{{ p.date_added }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
         </div>
+        
+        <div class="justify-end">
+            <!-- data-modal-target="defaultModal" data-modal-toggle="defaultModal"  -->
+            <button id="addPatientButton" class="text-white px-6 py-2 bg-myblue-primary font-medium rounded-lg text-sm" type="button">
+                <a href="{% url 'add_patient' %}" class="text-white no-underline">Add Patient</a>
+            </button>
+        </div>
+    </div>     
+</div>
+
+<div class="bg-white rounded-3xl mt-4 p-0 shadow-md">
+
+    <!-- TABLE -->
+    <div class = "relative overflow-x-auto rounded-xl ">
+        <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
+            <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
+                <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
+                    <th scope="col" class="p-3 text-center">Patient ID</th>
+                    <th scope="col" class="p-3">Last Name</th>
+                    <th scope="col" class="p-3">Given Name</th>
+                    <th scope="col" class="p-3">Email</th>
+                    <th scope="col" class="p-3 text-center">Mobile No.</th>
+                    <th scope="col" class="p-3 text-center">Landline No.</th>
+                    <th scope="col" class="p-3 text-center">Date Added</th>
+                </tr>
+            </thead>
+
+            <tbody id="patientTableBody">
+            {% for p in patients %}
+                <tr class="border-b border-gray-200 hover:bg-gray-200 text-sm">
+                    <th scope="row" class="px-6 py-3 font-medium text-myblue-highlight text-center">
+                        <a href="{% url 'view_patient' pk=p.pk %}" class = "text-myblue-highlight hover:underline focus:underline">
+                            {{ p.patient_id }}
+                        </a>
+                    </th>
+                    <td class="p-3">{{ p.last_name }}</td>
+                    <td class="p-3">{{ p.first_name }}</td>
+                    <td class="p-3">{{ p.email }}</td>
+                    {% if p.mobile_num %}
+                        <td class="p-3 text-center">+{{ p.mobile_num|slice:":2" }} {{ p.mobile_num|slice:"2:5" }} {{ p.mobile_num|slice:"5:8" }} {{ p.mobile_num|slice:"8:" }}</td>
+                    {% else %}
+                        <td class="p-3 text-center"> - </td>
+                    {% endif %}
+
+                    {% if p.landline_num %}
+                        <td class="p-3 text-center">+63 ({{ p.landline_num|slice:":2" }}) {{ p.landline_num|slice:"2:5" }} {{ p.landline_num|slice:"5:" }}</td>
+                    {% else %}
+                        <td class="p-3 text-center"> - </td>
+                    {% endif %}
+                    <td class="p-3 text-center">{{ p.date_added }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
+
 
 
 <script>
