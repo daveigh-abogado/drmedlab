@@ -69,34 +69,13 @@
         </div>
     </div>
 
-    <!--MODALS HERE TO FRONTEND: PLS ADJUST AS NEEDED-->
-    <div id="collection-confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
-        <div class="bg-white p-6 rounded-xl w-80 shadow-lg">
-            <div class="text-sm font-semibold text-blue-900">Are you sure you want to mark this request as Collected?</div>
-            <div class="text-sm text-gray-700 mb-4">This action cannot be undone</div>
-            <div class="flex justify-end gap-2">
-            <button onclick="closeModal('collection-confirmation-modal')" class="px-4 py-2 text-sm bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-            <button onclick="submitConfirmedForm('collection-confirmation-modal')" class="px-4 py-2 rounded text-white font-medium bg-blue-900 text-xs cursor-not-allowed no-underline">Yes</button>
-            </div>
-        </div>
-        </div>
-
-        <div id="email-confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
-        <div class="bg-white p-6 rounded-xl w-80 shadow-lg">
-            <div class="text-sm font-semibold text-blue-900">Are you sure you want to change the Email Status?</div>
-            <div class="text-sm text-gray-700 mb-4">This action cannot be undone</div>
-            <div class="flex justify-end gap-2">
-            <button onclick="closeModal('email-confirmation-modal')" class="px-4 py-2 text-sm bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-            <button onclick="submitConfirmedForm('email-confirmation-modal')" class="px-4 py-2 rounded text-white font-medium bg-blue-900 text-xs cursor-not-allowed no-underline">Yes</button>
-            </div>
-        </div>
-        </div>
+    
         
     <!-- Lab Request Tracker Section -->
     <div class="mb-8 w-full">
         <div class="flex items-center justify-between px-2.5 py-2.5 border-b border-black/20">
             <div class="flex-1 h-9 pt-2 justify-center text-blue-900 text-lg font-semibold">Lab Request Tracker</div>
-            {% if request.user|is_receptionist or request.user|is_lab_tech %}
+            {% if request.user|is_receptionist %}
                 {% if request_details.overall_status == 'Completed' %}
                     <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-sm text-white bg-myblue-primary" onclick="downloadPDF()">
                         <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,7 +121,7 @@
                 <div class="w-7 flex-1 px-2 flex justify-start items-center gap-1.5"> <!--indiv info-->
                     {% if request_details.overall_status == 'Not Started' %}
                         <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-unstarted-secondary text-unstarted-primary border-unstarted-borderPrimary border shadow-sm">
-                    {% elif request_details.overall_status == 'Completed' %}
+                    {% elif request_details.overall_status == 'Completed' or 'Released' %}
                         <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-complete-secondary text-complete-primary border-complete-borderPrimary border shadow-sm">
                     {% else %}
                         <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-progress-secondary text-progress-primary border-progress-borderPrimary border shadow-sm">
@@ -241,9 +220,11 @@
         <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
             <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
                 <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
+                    {% if request.user|is_receptionist %}
                     <th scope="col" class="w-12 px-6 py-3 text-left">
                         <input type="checkbox" id="SelectAllCheckbox" class="selectall h-4 w-4 rounded border-gray-300">
                     </th>
+                    {% endif %}
                     <th scope="col" class="px-6 py-3 text-center w-20">No.</th>
                     <th scope="col" class="px-6 py-3 text-start">Service Type</th>
                     <th scope="col" class="px-6 py-3 text-start">Component</th>
@@ -258,12 +239,13 @@
             <tbody>
                 {% for line_item in request_details.line_items %}
                 <tr>
+                    {% if request.user|is_receptionist %}
                     <td class="px-6 py-4 whitespace-nowrap">
                         <input type="checkbox" name="line_item-checkbox" value="{{line_item.line_item_id}}" data-status="{{line_item.request_status}}" class="line-item-checkbox h-4 w-4 rounded border-gray-300">
                     </td>
+                    {% endif %}
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                        {% if forloop.first %}01{% endif %}
-                        {% if forloop.counter == 4 %}02{% endif %}
+                        {{forloop.counter}}
                     </td>
                     <td class="px-6 py-2 text-start text-gray-500">
                         {% if line_item.package %}
@@ -318,7 +300,71 @@
                 {% endfor %}
             </tbody>
         </table>
+        <!--MODALS HERE TO FRONTEND: PLS ADJUST AS NEEDED-->
+    
+    
     </div>
+    <div id="email-confirmation-modal" class="relative z-10 hidden modal"            aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true"></div>
+                    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">                            
+                            <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div class="sm:flex sm:items-start">
+                                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                        <h3 class="text-lg font-semibold text-myblue-primary" id="modal-title">Email Status</h3>
+                                        <div class="mt-2">
+                                        <div class="text-sm font-semibold text-blue-900">Are you sure you want to change the Email Status?</div>
+                                        <div class="text-sm text-gray-700 mb-4">This action cannot be undone</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 modal-buttons">
+                                <button  onclick="submitConfirmedForm('email-confirmation-modal')" class="btn-confirm inline-flex w-full justify-center rounded-md bg-myblue-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto">
+                                Yes
+                                </button>
+                                <button onclick="closeModal('email-confirmation-modal')" class="btn-cancel mt-3 inline-flex w-full justify-center rounded-md bg-myblue-secondary px-3 py-2 text-sm font-semibold text-myblue-primary shadow-sm border border-myblue-borderPrimary hover:bg-gray-300 sm:mt-0 sm:w-auto">
+                                No
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <div id="collection-confirmation-modal" class="relative z-10 hidden modal"            aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true"></div>
+                    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">                            
+                            <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div class="sm:flex sm:items-start">
+                                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                        <h3 class="text-lg font-semibold text-myblue-primary" id="modal-title">Collection Status</h3>
+                                        <div class="mt-2">
+                                        <div class="text-sm font-semibold text-blue-900">Are you sure you want to change the Collection Status?</div>
+                                        <div class="text-sm text-gray-700 mb-4">This action cannot be undone</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 modal-buttons">
+                                <button  onclick="submitConfirmedForm('collection-confirmation-modal')" class="btn-confirm inline-flex w-full justify-center rounded-md bg-myblue-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto">
+                                Yes
+                                </button>
+                                <button onclick="closeModal('collection-confirmation-modal')" class="btn-cancel mt-3 inline-flex w-full justify-center rounded-md bg-myblue-secondary px-3 py-2 text-sm font-semibold text-myblue-primary shadow-sm border border-myblue-borderPrimary hover:bg-gray-300 sm:mt-0 sm:w-auto">
+                                No
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+    
+
+    
 </div>
 
 {% endblock %}

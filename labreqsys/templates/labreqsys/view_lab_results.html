@@ -19,12 +19,210 @@
     </a>
 </div>
 
-<!--lab results content-->
+<div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
+    
+        <div class="flex items-center justify-between">
+            <div class="flex items-center justify-start rtl:justify-end">
+            <!--LOGO-->                    
+                <img src="{% static 'images/drmed_full.png' %}" class="h-10 me-3" alt="DRMed Logo" />  
+            </div>
+            <div class="flex items-center">
+                <div class="flex items-center ms-3">
+                <div>
+                    <span class="text-wrapper">
+                            4/F NORTHRIDGE PLAZA,<br />
+                            CONGRESSIONAL AVE., QUEZON CITY<br />
+                    </span>
+                </div>               
+                </div>
+            </div>
+        </div>
+        
 
-<iframe src="{% url 'pdf' pk=line_item.line_item_id %}" 
-    name="pdf"
-    width="100%" 
-    height="800px">
+    <!--SECTION 1: PATIENT INFORMATION-->
+    <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section1-->
+        <!--Section title: Patient Information-->
+        <div class="self-stretch py-2 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+        </div>
+
+        <!--Section Content-->
+        <div class="self-stretch inline-flex justify-start items-start gap-4"> <!--both columns-->
+            <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--indiv column-->
+                <!--PATIENT ID-->
+                <div class="inline-flex justify-start items-center gap-1.5">
+                    <div class="w-36 py-2.5 px-2.5 flex justify-start items-center gap-1.5">
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900"> Patient ID </div>
+                    </div>
+                    <div class="px-6 py-1 bg-gray-100 rounded-3xl flex justify-center items-center gap-1.5">
+                        <div class="justify-center text-black text-xs">{{patient.patient_id}}</div>
+                    </div>
+                </div>
+
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900">Patient Name</div>
+                    </div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-36 justify-center text-sm text-black font-normal">{{patient.last_name}}, {{patient.first_name}}{% if patient.suffix %} {{patient.suffix}}{% endif %}{% if patient.middle_initial %}, {{patient.middle_initial}}.{% endif %}</div>
+                    </div>
+                </div>
+
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Age</div>
+                    </div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-36 justify-center text-sm text-black font-normal">{{age}}</div>
+                    </div>
+                </div>
+
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Civil Status</div>
+                    </div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-36 justify-center text-sm text-black font-normal">{{patient.civil_status}}</div>
+                    </div>
+                </div>
+
+                
+
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Birthday</div>
+                    </div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-36 justify-center text-sm text-black font-normal">{{patient.birthdate}}</div>
+                    </div>
+                </div>
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Mobile No.</div>
+                    </div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-72 justify-center text-sm text-black font-normal">{{patient.mobile_num}}</div>
+                    </div>
+                </div>
+                
+
+            </div>
+            
+
+            <!--COLUMN 2-->
+            <div class="inline-flex flex-col justify-start items-start gap-1.5"> <!--indiv column: Column 2-->
+
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Date Requested</div>
+                    </div>
+                    <div class="px-6 py-1 bg-gray-100 rounded-3xl flex justify-center items-center gap-1.5">
+                        <div class="justify-center text-black text-xs">{{lab_request.date_requested}}</div>
+                    </div>
+                </div>
+
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Landline No.</div>
+                    </div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-72 justify-center text-sm text-black font-normal">{{patient.landline_num}}</div>
+                    </div>
+                </div>
+
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Email</div>
+                    </div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-72 justify-center text-sm text-black font-normal">{{patient.email}}</div>
+                    </div>
+                </div>
+
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Address</div>
+                    </div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-72 justify-center text-sm text-black font-normal text-start">{{address}}</div>
+                    </div>
+                </div>
+
+                <div class="inline-flex justify-start items-start gap-1.5"> <!--info row-->
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-28 justify-center text-sm font-semibold text-blue-900 ">Physician</div>
+                    </div>
+                    <div class="flex-1 px-2.5 flex justify-start items-center gap-1.5"> <!--indiv info-->
+                        <div class="w-72 justify-center text-sm text-black font-normal text-start">{{lab_request.physician}}</div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <div class="self-stretch py-2 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+        </div>
+    </div>
+    
+    <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section2-->
+        
+        <h1 class="text-mm font-semibold text-blue-900 flex items-center">{{template_form.template_name}}</h1>
+        <div>
+            {% for section, row in form.items %}
+                {{section.section_name}} <!--FOR BACKEND PURPOSE ONLY ! can remove later :)-->
+                <table>
+                    <thead>
+                        {% for field in row %}
+                            <th>{{field.label_name}}</th>
+                        {% endfor %}
+                    </thead>
+                    <tbody>
+                        {% for field, values in row.items %}
+                            {% if values %} 
+                                {% for value in values %} 
+                                <td> {{value.field_value}} </td>
+                                {% endfor %}
+                            {% else %}
+                                <td>{{field.field_value}}</td>
+                            {% endif %}                
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endfor %}
+                <p> *** End of Report *** </p>
+        </div>
+    </div>
+    <div class="self-stretch py-2 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
+    </div>
+    <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section-->
+        <table>
+            {% for tech in lab_tech %}
+                <th>
+                    <img src="{{tech.lab_tech.signature_path}}" alt="{{tech.lab_tech.first_name}}_{{tech.lab_tech.last_name}}_signature">
+                </th>
+                <tr>
+                    <td>
+                        {{tech.lab_tech.first_name}} {{tech.lab_tech.last_name}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{tech.lab_tech.title}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{tech.lab_tech.license_num}}
+                    </td>
+                </tr>
+            {% endfor%}
+        </table>
+    </div>
+
+</div>
+
+
+        
+    </body>
+</html>
+
 {% endblock content %}
 
 {% block styles %}

@@ -7,6 +7,7 @@
 <!--BREADCRUMBS-->
 <div class="breadbutton mb-4">
     <ul class="breadcrumb text-xs pt-2">
+        <li>
             <a href="{% url 'patientList' %}" class="text-myblue-primary">Patient List/</a>
             <a href="#" class="text-myblue-highlight"> View Patient</a>
         </li>
@@ -26,34 +27,70 @@
         <button class="text-white px-4 py-1 bg-myblue-primary font-medium border border-myblue-borderPrimary rounded-lg" type="button">
             <a href="{% url 'add_labreq' pk=patient.pk %}" class="text-white no-underline text-sm">Add Request</a>
         </button>
-        
     </div>  
 </div>
+        <div id="passwordModal" class="relative z-10 hidden modal"aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true"></div>
+                <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">                            
+                        <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                            <div class="sm:flex sm:items-start">
+                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                    <h3 class="text-lg font-semibold text-myblue-primary" id="modal-title">Edit Patient Password</h3>
+                                    <div class="mt-2">
+                                    <div class="text-sm text-gray-700 mb-4">This password will be deleted in 5 minutes.</div>
+                                    <div id="pass" class="text-center font-semibold text-blue-900">No Password.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 modal-buttons">
+                                <button  onclick="closePassModal()" class="btn-confirm inline-flex w-full justify-center rounded-md bg-myblue-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto">
+                                OK
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-
-<!--Modal-->
-<div id="passwordModal" class="fixed inset-0 items-center justify-center bg-black bg-opacity-50 z-50 hidden">
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-    <p>Edit Patient Password.</p>
-    <p id="pass">No Password.</p>
-    <button onclick="closePassModal()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">OK</button>
-    </div>
-</div>
-
-<div id="editModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-        <p>Edit Patient</p>
-        <form id="editForm" method="POST" action="{% url 'password' pk=patient.patient_id %}" class="gap-2.5">{% csrf_token %} 
-            <label for="password" class="block mb-2 text-left text-sm font-medium text-gray-500">Ask Owner for Password</label>    
-            <input type="number" name="password_input" id="password_input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" maxlength="5">
-            <p id="error_type" name="error_type" class="hidden"> Error Message. </p>
-            <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Confirm</button>
-        </form>
-    <button onclick="closeEditModal()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Cancel</button>
     
-    </div>
-</div>
 
+            <div id="editModal" class="relative z-10 hidden modal" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true"></div>
+                <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"> 
+                        <form id="editForm" method="POST" action="{% url 'password' pk=patient.patient_id %}" class="gap-2.5">{% csrf_token %}                            
+                        <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                            <div class="sm:flex sm:items-start">
+                                
+                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                    <h3 class="text-lg font-semibold text-myblue-primary" id="modal-title">Edit Patient Password</h3>
+                                    <div class="mt-2">
+                                    
+                                            <label for="password" class="block mb-2 text-left text-sm font-medium text-gray-500">Ask Owner for Password.</label>    
+                                            <input type="number" name="password_input" id="password_input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" maxlength="5">
+                                            <p id="error_type" name="error_type" class="hidden"> Error Message. </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 modal-buttons">
+                            <button  type="submit" class="btn-confirm inline-flex w-full justify-center rounded-md bg-myblue-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto">
+                            Yes
+                            </button>
+                            <button type="button" onclick="closeEditModal()" class="btn-cancel mt-3 inline-flex w-full justify-center rounded-md bg-myblue-secondary px-3 py-2 text-sm font-semibold text-myblue-primary shadow-sm border border-myblue-borderPrimary hover:bg-gray-300 sm:mt-0 sm:w-auto">
+                            No
+                            </button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
 
 <div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
     
@@ -346,8 +383,9 @@
     }
     function closeEditModal() {
         editModal.classList.add('hidden');
-        document.getElementById("password_input").classList.remove('hidden');
-        document.getElementById("error_type").classList.add('hidden');
+        document.getElementById('error_type').classList.add('hidden');
+        document.getElementById('password_input').value = '';
+        console.log('what')
     }
 </script>
 
