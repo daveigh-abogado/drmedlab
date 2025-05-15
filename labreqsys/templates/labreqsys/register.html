@@ -3,20 +3,20 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="relative p-4 w-full max-w-6xl h-full md:h-auto mx-auto mt-10">
-    <div class="relative p-4 bg-white rounded-lg shadow sm:p-5 max-w-md mx-auto">
-        <div class="flex justify-between items-center pb-2 mb-2 rounded-t border-b sm:mb-5">
+<div class="relative p-2 w-full h-full md:h-auto mx-auto mt-1">
+    <div class="relative p-4 bg-white rounded-lg shadow sm:p-5 max-w-screen-md mx-auto">
+        <div class="flex justify-between items-center rounded-t pb-2">
             <div class="text-lg font-semibold text-blue-900">
-                Register a New User Account
+                Register New User
             </div>
         </div>
-        <div class="mb-4 text-sm text-gray-600">
-            <p>Fill out the form below to create a new user account for your staff. Select the appropriate role for the user. Fields marked with <span class="text-red-600">*</span> are required.</p>
+        <div class="mb-4 pb-4 text-xs text-gray-600 border-b">
+            <p>Fill out the form to create a new account for your staff.</p>
         </div>
         <form method="post" enctype="multipart/form-data" autocomplete="off">
             {% csrf_token %}
             <div class="mb-6">
-                <h4 class="text-base font-semibold text-blue-800 mb-2">Basic Information</h4>
+                <h4 class="text-base font-semibold text-myblue-primary mb-2">User Credentials</h4>
                 <div class="mb-4">
                     <label class="block mb-2 text-sm font-medium text-gray-500">Username <span class="text-red-600">*</span></label>
                     {{ form.username|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
@@ -27,6 +27,7 @@
                     {{ form.password|add_class:'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5' }}
                     {% if form.password.errors %}<p class="text-red-500 text-xs mt-1">{{ form.password.errors|striptags }}</p>{% endif %}
                 </div>
+                <h4 class="text-base font-semibold text-myblue-primary mb-2">User Information</h4>
                 <div class="grid gap-2.5 mb-4 sm:grid-cols-2">
                     <div>
                         <label class="block mb-2 text-sm font-medium text-gray-500">First Name <span class="text-red-600">*</span></label>
@@ -47,10 +48,12 @@
             </div>
             <div class="mb-6">
                 <h4 class="text-base font-semibold text-blue-800 mb-2">Role & Permissions</h4>
+                <p class="text-xs text-gray-600 pb-2">Select the appropriate role for the user.</p>
+
                 <div class="mb-2 text-xs text-gray-500">
                     <ul class="list-disc ml-5">
                         <li><b>Receptionist</b>: Can manage patients and lab requests.</li>
-                        <li><b>Lab Technician</b>: Can enter and review lab results. Will be required to upload a digital signature on first login.</li>
+                        <li><b>Lab Technician</b>: Can enter and review lab results.</li>
                         <li><b>Owner</b>: Full access to all system features.</li>
                     </ul>
                 </div>
