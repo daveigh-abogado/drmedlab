@@ -118,13 +118,13 @@ def owner_required(view_func):
             else:
                 # Has profile but not owner role
                 return render(request, 'labreqsys/forbidden.html', {
-                    'message': "You do not have Owner permissions for this page.",
+                    'message': "You do not have Admin permissions for this page.",
                     'user': request.user
                 }, status=403)
         except (UserProfile.DoesNotExist, AttributeError):
             # No profile found or attribute error
             return render(request, 'labreqsys/forbidden.html', {
-                'message': "User profile not found or inaccessible; Owner permissions required.",
+                'message': "User profile not found or inaccessible; Admin permissions required.",
                 'user': request.user
             }, status=403)
             
@@ -136,7 +136,7 @@ def receptionist_required(view_func):
         user = request.user        
         if not user.is_authenticated:
             return render(request, 'labreqsys/forbidden.html', {
-                'message': "You must be logged in to access this page.",
+                'message': "Oops! Log in to access this page.",
                 'user': user
             }, status=403)
         if getattr(user, 'is_superuser', False):
@@ -160,7 +160,7 @@ def lab_tech_required(view_func):
         user = request.user
         if not user.is_authenticated:
             return render(request, 'labreqsys/forbidden.html', {
-                'message': "You must be logged in to access this page.",
+                'message': "Oops! Log in to access this page.",
                 'user': user
             }, status=403)
         if getattr(user, 'is_superuser', False):

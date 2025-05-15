@@ -15,89 +15,82 @@
 
     <div class="inline-flex justify-start items-center gap-2">
         {% if user|is_receptionist %}
-        <button onclick="edit()"class="px-4 py-1 bg-myblue-secondary text-myblue-primary font-medium border-myblue-borderPrimary border rounded-lg" type="button">
+        <button onclick="edit()"class="px-4 py-1 bg-myblue-secondary text-myblue-primary text-sm font-medium border-myblue-borderPrimary border rounded-lg" type="button">
             Edit Patient
         </button>
         {% endif %}
         {% if user.is_authenticated and user|is_owner %}
-        <button onclick="password()" class="px-4 py-1 bg-myblue-secondary text-myblue-primary font-medium border-myblue-borderPrimary border rounded-lg" type="button">
+        <button onclick="password()" class="px-4 py-1 bg-myblue-secondary text-myblue-primary text-sm font-medium border-myblue-borderPrimary border rounded-lg" type="button">
             Generate Edit Patient Password
         </button>
         {% endif %}
-        <button class="text-white px-4 py-1 bg-myblue-primary font-medium border border-myblue-borderPrimary rounded-lg" type="button">
+        <button class="text-white px-4 py-1 bg-myblue-primary text-sm font-medium border border-myblue-borderPrimary rounded-lg" type="button">
             <a href="{% url 'add_labreq' pk=patient.pk %}" class="text-white no-underline text-sm">Add Request</a>
         </button>
     </div>  
 </div>
-        <div id="passwordModal" class="relative z-10 hidden modal"aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true"></div>
-                <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-                    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">                            
-                        <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                            <div class="sm:flex sm:items-start">
-                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                    <h3 class="text-lg font-semibold text-myblue-primary" id="modal-title">Edit Patient Password</h3>
-                                    <div class="mt-2">
-                                    <div class="text-sm text-gray-700 mb-4">This password will be deleted in 5 minutes.</div>
-                                    <div id="pass" class="text-center font-semibold text-blue-900">No Password.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                            <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 modal-buttons">
-                                <button  onclick="closePassModal()" class="btn-confirm inline-flex w-full justify-center rounded-md bg-myblue-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto">
-                                OK
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-    
-
-            <div id="editModal" class="relative z-10 hidden modal" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-                <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true"></div>
-                <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-                    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"> 
-                        <form id="editForm" method="POST" action="{% url 'password' pk=patient.patient_id %}" class="gap-2.5">{% csrf_token %}                            
-                        <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                            <div class="sm:flex sm:items-start">
-                                
-                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                    <h3 class="text-lg font-semibold text-myblue-primary" id="modal-title">Edit Patient Password</h3>
-                                    <div class="mt-2">
-                                    
-                                            <label for="password" class="block mb-2 text-left text-sm font-medium text-gray-500">Ask Owner for Password.</label>    
-                                            <input type="number" name="password_input" id="password_input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" maxlength="5">
-                                            <p id="error_type" name="error_type" class="hidden"> Error Message. </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 modal-buttons">
-                            <button  type="submit" class="btn-confirm inline-flex w-full justify-center rounded-md bg-myblue-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto">
-                            Yes
-                            </button>
-                            <button type="button" onclick="closeEditModal()" class="btn-cancel mt-3 inline-flex w-full justify-center rounded-md bg-myblue-secondary px-3 py-2 text-sm font-semibold text-myblue-primary shadow-sm border border-myblue-borderPrimary hover:bg-gray-300 sm:mt-0 sm:w-auto">
-                            No
-                            </button>
-                        </div>
-                    </form>
-                    </div>
-                </div>
+<div id="passwordModal" class="fixed inset-0 z-10 hidden overflow-y-auto bg-black/50 modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="flex min-h-full items-center justify-center p-4 text-center">
+      <div class="relative w-full max-w-md transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all">
+        
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-myblue-primary mb-2" id="modal-title">
+                    Edit Patient Password
+                </h3>
+                <p class="text-sm text-gray-700 mb-4">This password will be regenerated in 5 minutes.</p>
+                <div id="pass" class="text-center text-lg border border-myblue-borderPrimary bg-myblue-secondary rounded-md font-semibold text-blue-900 mb-6">No Password.</div>
+        
+                <button onclick="closePassModal()" class="btn-confirm w-full rounded-md bg-myblue-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900">
+                    OK
+                </button>
             </div>
+  
         </div>
+    </div>
+</div>
+
+<!--EDIT MODAL-->
+<div id="editModal" class="relative z-10 hidden modal" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true"></div>
+  
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"> 
+            <form id="editForm" method="POST" action="{% url 'password' pk=patient.patient_id %}" class="sm:my-8 sm:w-full sm:max-w-64 ">{% csrf_token %}
+    
+                <div class="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all p-6">
+                    <h3 class="text-lg font-semibold text-myblue-primary mb-2" id="modal-title">Edit Patient Password</h3>
+        
+                    <label for="password_input" class="block text-sm font-medium text-gray-500 mb-2">Contact Admin for password.</label>    
+                    <input type="number" name="password_input" id="password_input" maxlength="5"
+                        class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    
+                    <p id="error_type" name="error_type" class="hidden text-red-600 text-sm mb-4">Error Message.</p>
+        
+                    <div class="flex gap-2">
+                        <button type="button" onclick="closeEditModal()" class="btn-cancel w-full rounded-md bg-myblue-secondary px-4 py-2 text-sm font-semibold text-myblue-primary shadow-sm border border-myblue-borderPrimary hover:bg-gray-300">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-confirm w-full rounded-md bg-myblue-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900">
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+    
+            </form>
+        </div>
+    </div>
+</div>
+  
+
         
 
-<div class="w-full h-hug p-8 pt-6 bg-white rounded-m shadow inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
+<div class="w-full h-hug p-8 pt-6 bg-white rounded-lg shadow-lg inline-flex flex-col justify-start items-start gap-2 overflow-hidden">
     
     <!--PATIENT ID-->
     <div class="inline-flex justify-start items-center gap-1.5">
         <div class="w-36 py-2.5 px-2.5 flex justify-start items-center gap-1.5">
-            <div class="text-blue-900 text-xs"> Patient ID </div>
+            <div class="text-blue-900 text-xs font-semibold"> Patient ID </div>
         </div>
         <div class="px-6 py-1 bg-gray-100 rounded-3xl flex justify-center items-center gap-1.5">
             <div class="justify-center text-black text-xs">{{patient.patient_id}}</div>
@@ -108,7 +101,7 @@
     <div class="self-stretch inline-flex flex-col justify-start items-start gap-2.5"> <!--section-->
         <!--Section title: Patient Information-->
         <div class="self-stretch py-2 px-2.5 border-b border-black/20 inline-flex justify-center items-center gap-1.5">
-            <div class="flex-1 justify-center text-blue-900 text-lg font-semibold">Patient Information</div>
+            <div class="flex-1 justify-center text-blue-900 text-lg test-lg font-semibold">Patient Information</div>
         </div>
 
         <!--Section Content-->
@@ -252,10 +245,10 @@
         </div>
 
         <!--Section Content-->
-        <table class="w-full bg-white rounded-xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
+        <table class="w-full bg-white rounded-3xl text-left rtl:text-right justify-start text-gray-500 items-start relative overflow-x-auto">
             
-            <thead class="flex-1 justify-center items-start overflow-hidden uppercase">
-                <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs">
+            <thead class="flex-1 justify-center items-start overflow-hidden uppercase rounded-t-3xl">
+                <tr class="self-stretch h-[42px] bg-gray-50 text-gray-450 border-b gap-2.5 justify-start text-xs rounded-t-3xl">
                     <th scope="col" class="px-6 py-3">Date Requested</th>
                     <th scope="col" class="px-6 py-3 text-center">Request ID</th>
                     <th scope="col" class="px-6 py-3 text-center">Overall Status</th>
@@ -268,22 +261,52 @@
             <tbody>
                 {% for r in requests %}
                     <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="px-6 py-3">
+                        <td class="px-6 py-3 text-sm">
                             {{ r.date_requested }}
                         </td>
-                        <td class="px-6 py-3 text-center">
+                        <td class="px-6 py-3 text-center w-32 text-sm">
                             {{ r.request_id }}
                         </td>
-                        <td class="px-6 py-3">
-                            {{ r.overall_status }}
+                        <td class="px-6 py-3 item-center text-center">
+                            {% if r.overall_status == 'Not Started' %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-unstarted-secondary text-unstarted-primary border-unstarted-borderPrimary border shadow-sm">
+                            {% elif r.overall_status == 'Completed' %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-complete-secondary text-complete-primary border-complete-borderPrimary border shadow-sm">
+                            {% elif r.overall_status == 'Released' %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-complete-secondary text-complete-primary border-complete-borderPrimary border shadow-sm">
+                            {% else %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-progress-secondary text-progress-primary border-progress-borderPrimary border shadow-sm">
+                            {% endif %}
+                                {{ r.overall_status }}
+                            </span>
                         </td>
-                        <td class="px-6 py-3">
-                            {{ r.pickup_status }}
+
+                        <td class="px-6 py-3 text-center">
+                            {% if r.pickup_status == 'Uncollected' %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-unstarted-secondary text-unstarted-primary border-unstarted-borderPrimary border shadow-sm">
+                            {% elif r.pickup_status == 'Collected' %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-complete-secondary text-complete-primary border-complete-borderPrimary border shadow-sm">
+                            {% else %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-progress-secondary text-progress-primary border-progress-borderPrimary border shadow-sm">
+                            {% endif %}
+                                {{ r.pickup_status }}
+                            </span>
                         </td>
-                        <td class="px-6 py-3">
-                            {{ r.email_status }}
+
+                        <td class="px-6 py-3 text-center">
+                            {% if r.email_status == 'Unsent' %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-unstarted-secondary text-unstarted-primary border-unstarted-borderPrimary border shadow-sm">
+                            {% elif r.email_status == 'Sent' %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-complete-secondary text-complete-primary border-complete-borderPrimary border shadow-sm">
+                            {% else %}
+                                <span class="inline-flex items-center px-8 py-2 rounded-full text-xs bg-progress-secondary text-progress-primary border-progress-borderPrimary border shadow-sm">
+                            {% endif %}
+                                {{ r.email_status }}
+                            </span>
+                            
                         </td>
-                        <td class="px-6 py-3 text-myblue-highlight text-center">
+
+                        <td class="px-6 py-3 text-myblue-highlight text-center text-sm font-medium hover:underline">
                             <a href="{% url 'view_individual_lab_request' request_id=r.request_id %}" class="lab-request-link">
                                 View
                             </a>

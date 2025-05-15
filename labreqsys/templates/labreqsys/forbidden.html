@@ -1,23 +1,143 @@
-{% extends 'labreqsys/base.html' %}
-{% block content %}
-<div class="relative p-4 w-full max-w-6xl h-full md:h-auto mx-auto mt-10">
-    <div class="relative p-4 bg-white rounded-lg shadow sm:p-5 max-w-md mx-auto">
-        <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
-            <h3 class="text-mm font-semibold text-blue-900">
-                Access Forbidden
-            </h3>
+
+{% load static tailwind_tags %} <!--make sure you have a tailwind tag here-->
+{% load user_tags %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <title>Patient record</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		{% tailwind_css %} <!--make sure you have a tailwind tag here-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
+        <script src="{% static 'flowbite/flowbite.min.js' %}"></script>
+        <link href="styles.css" rel="stylesheet">
+
+	</head>
+
+    <body class="bg-gray-100 ">
+        <nav class="fixed top-0 z-50 w-full bg-white shadow-lg"><!--Sidebar with Navbar-->
+            <div class="px-3 py-3 lg:px-5 lg:pl-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-start rtl:justify-end">
+                    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+                        <span class="sr-only">Open sidebar</span>
+                        <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+                        </svg>
+                    </button>
+                    <!--LOGO-->
+                    {% if user.is_authenticated %}
+                        {% if user|is_owner or user|is_receptionist %}
+                            <a href="{% url 'patientList' %}" class="flex ms-2 md:me-24">
+                                <img src="{% static 'images/drmed_full.png' %}" class="h-8 me-3" alt="DRMed Logo" />
+                            </a>
+                        {% elif user|is_lab_tech %}
+                            <a href="{% url 'labRequests' requested_status=1 %}" class="flex ms-2 md:me-24">
+                                <img src="{% static 'images/drmed_full.png' %}" class="h-8 me-3" alt="DRMed Logo" />
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="flex ms-2 md:me-24">
+                                <img src="{% static 'images/drmed_full.png' %}" class="h-8 me-3" alt="DRMed Logo" />
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="/" class="flex ms-2 md:me-24">
+                            <img src="{% static 'images/drmed_full.png' %}" class="h-8 me-3" alt="DRMed Logo" />
+                        </a>
+                    {% endif %}
+                    </div>
+                    <div class="flex items-center">
+                        <div class="flex items-center ms-3">
+                        <div>
+                            <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-2 focus:ring-myblue-highlight" aria-expanded="false" data-dropdown-toggle="dropdown-user">
+                            <span class="sr-only">Open user menu</span>
+                            <!-- User initial as icon -->
+                            {% if user.is_authenticated %}
+                                <span class="w-8 h-8 flex items-center justify-center rounded-full bg-myblue-primary text-white text-lg uppercase">
+                                    {{ user.username|first|default:"U" }}
+                                </span>
+                            {% else %}
+                                <span class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 text-gray-600">
+                                    <!-- Guest SVG icon -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196zM15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </span>
+                            {% endif %}
+                            </button>
+                        </div>
+
+                        <div class="z-50 hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg min-w-[200px]" id="dropdown-user">
+                            <div class="px-4 py-3" role="none">
+                            {% if user.is_authenticated %}
+                                <p class="text-base font-semibold text-gray-900 capitalize" role="none">
+                                    {{ user.username }}
+                                </p>
+                                {% if user.is_superuser %}
+                                    <p class="text-sm text-gray-500 mb-1">Role: <span class="text-sm"> Superuser(Owner)</span></p>
+                                {% elif user|has_profile %}
+                                    <p class="text-sm text-gray-500 mb-1">Role: <span class="text-sm">{{ user.userprofile.get_role_display }}</span></p>
+                                {% endif %}
+                            {% else %}
+                                <p class="text-base font-semibold text-gray-900" role="none">
+                                    Guest
+                            </p>
+                            {% endif %}
+                            </div>
+                            <ul class="" role="none">
+                            {% if user.is_authenticated %}
+                                <li>
+                                    <a href="/edit-user-profile/" class="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-100" role="menuitem">Edit Profile</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100" role="menuitem">Sign out</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="{% url 'login' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100" role="menuitem">Login</a>
+                                </li>
+                            {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="mt-44 relative p-4 bg-white rounded-lg shadow-xl sm:p-5 max-w-64 mx-auto">
+            <div class="flex justify-center items-center pb-4 mb-4 rounded-t border-b sm:mb-5 text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+                class="size-5 text-myblue-primary me-2 pt-0.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                </svg>                  
+                <h3 class="text-lg font-semibold text-blue-900 text-center">
+                    Access Forbidden
+                </h3>
+            </div>
+            <div class="mb-8 mt-6 text-gray-600 text-center text-sm">
+                {{ message }}
+            </div>
+            <div class="flex justify-center gap-4">
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'login' %}" class="w-full justify-center text-white inline-flex items-center bg-myblue-primary font-medium rounded-lg text-sm px-5 py-2 text-center transition">Login</a>
+                {% else %}
+                    <a href="{% url 'logout' %}" class="w-full justify-center text-white inline-flex items-center bg-myblue-primary font-medium rounded-lg text-sm px-5 py-2 text-center transition">Logout</a>
+                {% endif %}
+            </div>
         </div>
-        <div class="mb-8 mt-6 text-gray-700 text-center text-base font-medium">
-            {{ message }}
-        </div>
-        <div class="flex justify-center gap-4">
-            {% if not user.is_authenticated %}
-                <a href="{% url 'login' %}" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition">Login</a>
-            {% else %}
-                <a href="{% url 'logout' %}" class="w-full justify-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition">Logout</a>
-            {% endif %}
-            <a href="/" class="w-full justify-center text-blue-900 inline-flex items-center border border-blue-900 bg-blue-900-10 bg-opacity-10 hover:bg-blue-900-10 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition">Go Home</a>
-        </div>
-    </div>
-</div>
-{% endblock %} 
+
+    </body>
+    
+	
+</html>
+
+
+{% block styles %}
+{% endblock %}
+
+<script>
+    document.getElementById("patientRecordLink").addEventListener("click", function() {
+        this.classList.add("bg-blue-300", "text-blue-900");
+    });
+</script>
