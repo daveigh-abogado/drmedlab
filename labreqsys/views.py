@@ -1022,6 +1022,8 @@ def submit_labresults(request, line_item_id):
 
     is_signed_1 = False
     is_signed_2 = False
+    lab_tech_1 = None
+    lab_tech_2 = None
 
     if ResultReview.objects.filter(line_item=line_item, lab_tech__tech_role='Medical Technologist'):
         is_signed_1 = True
@@ -1041,6 +1043,12 @@ def submit_labresults(request, line_item_id):
         submission_type = request.POST.get('submission_type')
     
     if submission_type == 'submit':
+        if not is_signed_2:
+            ResultReview.objects.create(
+                lab_tech = labtech,
+                line_item = line_item,
+                reviewed_date = timezone.now()
+            )
         line_item.request_status = 'Completed'
         line_item.progress_timestamp = timezone.now()
         line_item.save()
@@ -1055,9 +1063,8 @@ def submit_labresults(request, line_item_id):
                 lab.save()
             elif lab.overall_status == 'Not Started':
                 lab.overall_status = 'In Progress'
-                lab.save()
-        
-    else:
+                lab.save()   
+    elif submission_type=='save':
         line_item.request_status = 'In Progress'
         line_item.save()
 
@@ -1081,7 +1088,6 @@ def submit_labresults(request, line_item_id):
                     reviewed_date = timezone.now()
                 )
         else:
-            print('UMABOT DITO')
             if is_signed_2:
                 if lab_tech_2.lab_tech == labtech:
                     lab_tech_2.delete()
@@ -1636,8 +1642,8 @@ def view_lab_result(request, pk):
 
     test_component = TestComponent.objects.get(component_id=line_item.component.component_id)
 
-    template_form = TemplateForm.objects.filter(template_id=line_item.component.template.template_id).order_by('-template_id')[0]
-    # Looks for the latest template made
+    template_form = TemplateForm.objects.get(template_id=line_item.template_used)
+    # Looks for the template that was available upon creation of lab request
 
     lab_request = LabRequest.objects.get(request_id=line_item.request.request_id)
 
