@@ -78,15 +78,16 @@
     </div>
 </div>
 
-
 <script>
     let sectionCount = 0;
-
     const sectionsContainer = document.getElementById('sections-container');
     const addSectionBtn = document.getElementById('add-section-btn');
     const createTemplateButton = document.getElementById('createTemplatebutton');
     const modalPreviewContent = document.getElementById('modal-preview-content');
     const form = document.getElementById('form');
+
+    // Track field count per section
+    const sectionFieldCounters = {};
 
     function createField(sectionIndex, fieldIndex, fieldData = {}) {
         const { label = '', type = '', fixed_value = '' } = fieldData;
@@ -97,12 +98,12 @@
             <div class="grid gap-2.5 mb-2 sm:grid-cols-4">
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-800 uppercase">Label *</label>
-                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][label]" value="${label}" placeholder="Column header"
+                    <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][label]" value="${label}"
                     class="bg-gray-50 border border-gray-300 text-gray-800 text-sm rounded-lg block w-full p-2.5" required>
                 </div>
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-800 uppercase">Type *</label>
-                    <select name="sections[${sectionIndex}][fields][${fieldIndex}][type]" class="bg-gray-50 border border-gray-300 text-gray-800 text-sm rounded-lg block w-full p-2.5" required>
+                    <select name="sections[${sectionIndex}][fields][${fieldIndex}][type]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
                         <option value="">Select field type</option>
                         <option value="Label" ${type === 'Label' ? 'selected' : ''}>Label</option>
                         <option value="Text" ${type === 'Text' ? 'selected' : ''}>Text</option>
@@ -114,8 +115,7 @@
                     <input type="text" name="sections[${sectionIndex}][fields][${fieldIndex}][fixed_value]" value="${fixed_value}" class="bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg block w-full p-2.5" ${isFixedDisabled}>
                 </div>
                 <div class="flex items-center pt-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="34" width="25" viewBox="0 0 20 20" fill="currentColor" 
-                    class="trash-icon cursor-pointer text-red-500 hover:text-red-700 pt-3" title="Delete Field" onclick="this.closest('.field-group').remove()">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="34" width="34" viewBox="0 0 20 20" fill="currentColor" class="trash-icon cursor-pointer text-red-500 hover:text-red-700 delete-field-btn" title="Delete Field">
                         <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" />
                     </svg>
                 </div>
@@ -125,24 +125,27 @@
 
     function createSection(sectionIndex, sectionData = {}) {
         const { name = '', fields = [] } = sectionData;
+        sectionFieldCounters[sectionIndex] = 0;
+
         let sectionHTML = `
         <div class="section border-b mb-4 pb-4" data-section-index="${sectionIndex}">
-            <div class="flex justify-between mb-2">
-                <div class="text-m font-semibold text-blue-900">Section ${sectionIndex + 1}</div>
-
+            <div class="flex justify-between">
+                <h2 class="text-mm font-semibold text-blue-900">Section ${sectionIndex + 1}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" 
                 class="size-6 delete-section-btn text-myblue-primary cursor-pointer">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
+
+                
             </div>
-            
-            <label class="block mb-2 text-sm font-medium text-gray-800 uppercase">Table Name *</label>
-            <input type="text" name="sections[${sectionIndex}][name]" value="${name}" placeholder="Leave blank to add row in the same table"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mb-2" required>
+            <label class="block mb-2 text-sm font-medium text-gray-500 uppercase">Section Name *</label>
+            <input type="text" name="sections[${sectionIndex}][name]" value="${name}" class="bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg block w-full p-2.5 mb-2" required>
             <div class="text-myblue-primary text-xs"> * Press 'Add Column' to add columns</div>
             <div class="fields-container">`;
+        
 
-        fields.forEach((field, fieldIndex) => {
+        fields.forEach((field) => {
+            const fieldIndex = sectionFieldCounters[sectionIndex]++;
             sectionHTML += createField(sectionIndex, fieldIndex, field);
         });
 
@@ -154,41 +157,6 @@
         return sectionHTML;
     }
 
-    function reindexSections() {
-        const sections = sectionsContainer.querySelectorAll('.section');
-        sections.forEach((section, newIndex) => {
-            section.dataset.sectionIndex = newIndex;
-
-            //update section header
-            const heading = section.querySelector('h2');
-            heading.textContent = `Section ${newIndex + 1}`;
-
-            //update section name
-            const sectionNameInput = section.querySelector('input[type="text"]');
-            sectionNameInput.name = `sections[${newIndex}][name]`;
-
-            //update all fields in this section
-            const fields = section.querySelectorAll('.field-group');
-            fields.forEach((field, fieldIndex) => {
-                field.dataset.fieldIndex = fieldIndex;
-
-                const inputs = field.querySelectorAll('input, select');
-                inputs.forEach(input => {
-                    if (input.name.includes('[label]')) {
-                        input.name = `sections[${newIndex}][fields][${fieldIndex}][label]`;
-                    } else if (input.name.includes('[type]')) {
-                        input.name = `sections[${newIndex}][fields][${fieldIndex}][type]`;
-                    } else if (input.name.includes('[fixed_value]')) {
-                        input.name = `sections[${newIndex}][fields][${fieldIndex}][fixed_value]`;
-                    }
-                });
-            });
-        });
-
-        //reset overall sectionCount
-        sectionCount = sections.length;
-    }
-
     addSectionBtn.addEventListener('click', () => {
         const sectionHTML = document.createElement('div');
         sectionHTML.innerHTML = createSection(sectionCount);
@@ -196,7 +164,6 @@
         sectionCount++;
     });
 
-    //event listener
     sectionsContainer.addEventListener('click', function (e) {
         const target = e.target;
 
@@ -204,40 +171,37 @@
             const section = target.closest('.section');
             const sectionIndex = section.dataset.sectionIndex;
             const fieldsContainer = section.querySelector('.fields-container');
-            const fieldIndex = fieldsContainer.children.length;
+            const fieldIndex = sectionFieldCounters[sectionIndex]++;
             const fieldHTML = document.createElement('div');
             fieldHTML.innerHTML = createField(sectionIndex, fieldIndex);
             fieldsContainer.appendChild(fieldHTML);
         }
 
         if (target.classList.contains('delete-field-btn')) {
-            target.closest('.field-group').remove();
+            const fieldGroup = target.closest('.field-group');
+            if (fieldGroup) {
+                fieldGroup.remove();
+                reindexSections();
+            }
         }
 
         if (target.classList.contains('delete-section-btn')) {
-            target.closest('.section').remove();
-            reindexSections();;
+            const section = target.closest('.section');
+            const index = parseInt(section.dataset.sectionIndex);
+            section.remove();
+            delete sectionFieldCounters[index];
+            reindexSections();
         }
     });
 
-    // field value input based on type
-    sectionsContainer.addEventListener('change', function (e) {
-        if (e.target.tagName === 'SELECT' && e.target.name.includes('[type]')) {
-            const selectedType = e.target.value;
-            const fieldGroup = e.target.closest('.field-group');
-            const fixedValueInput = fieldGroup.querySelector('input[name*="[fixed_value]"]');
-
-            if (['Text', 'Number'].includes(selectedType)) {
-                fixedValueInput.disabled = true;
-                fixedValueInput.value = ''; //clears the value
-            } else {
-                fixedValueInput.disabled = false;
-            }
-        }
-    });
-    
     createTemplateButton.addEventListener('click', (event) => {
         event.preventDefault(); // Prevent the default form submission
+
+        const allInputs = form.querySelectorAll('input, textarea');
+        console.log("=== ALL INPUTS BEFORE SUBMIT ===");
+        allInputs.forEach(input => {
+            console.log(`${input.name}: ${input.value}`);
+        });
 
         let isValid = true;
         const errors = [];
@@ -285,7 +249,7 @@
         }
 
         if (!isValid) {
-            alert(errors.join('\n'));  // Display all errors in a simple alert
+            alert(errors.join('\n'));
             return; // Do not show modal
         }
 
@@ -310,7 +274,7 @@
 
         // build preview content
         let previewHTML = `<div class="flex justify-between items-center rounded-t border-b sm:mb-5">
-                <h3 class="text-lg font-semibold text-blue-900 uppercase py-2">
+                <h3 class="text-mm font-semibold text-blue-900 uppercase">
                     ${templateName}
                 </h3>
             </div>`;
@@ -319,7 +283,7 @@
             section.fields.forEach(field => {
                 field_number++;
             });
-            previewHTML += `<div class="self-stretch py-2 justify-center font-semibold text-sm text-myblue-primary mb-2">${section.name}</div>
+            previewHTML += `<div class="self-stretch py-2 justify-center font-semibold text-sm text-myblue-primary mb-2>${section.name}</div>
             <div class="grid gap-2.5 sm:grid-cols-${field_number}">`;
             section.fields.forEach(field => {
                 previewHTML += `<div>`;
@@ -344,16 +308,24 @@
         }
     });
 
-    document.getElementById('backToEditingBtn').addEventListener('click', function () {
-        document.getElementById('templateModal').classList.add('hidden');
-    });
-    
-    // Handle the final form submission when "Confirm Create" is clicked
-    const confirmSubmitButton = document.getElementById('confirmSubmit');
-    confirmSubmitButton.addEventListener('click', () => {
-        form.action = "{% url 'add_testcomponent' %}";
-        form.submit();
-    });
+
+    function reindexSections() {
+        const sections = document.querySelectorAll('.section');
+        sectionCount = 0;
+        sections.forEach((section, sectionIndex) => {
+            section.dataset.sectionIndex = sectionIndex;
+            section.querySelector('input[name$="[name]"]').name = `sections[${sectionIndex}][name]`;
+            sectionFieldCounters[sectionIndex] = 0;
+
+            const fieldGroups = section.querySelectorAll('.field-group');
+            fieldGroups.forEach((fieldGroup, fieldIndex) => {
+                sectionFieldCounters[sectionIndex] = Math.max(sectionFieldCounters[sectionIndex], fieldIndex + 1);
+                fieldGroup.querySelector('input[name*="[label]"]').name = `sections[${sectionIndex}][fields][${fieldIndex}][label]`;
+                fieldGroup.querySelector('select[name*="[type]"]').name = `sections[${sectionIndex}][fields][${fieldIndex}][type]`;
+                fieldGroup.querySelector('input[name*="[fixed_value]"]').name = `sections[${sectionIndex}][fields][${fieldIndex}][fixed_value]`;
+            });
+        });
+    }
 
     function populateExistingTemplate() {
         const templateData = JSON.parse('{{ initial_template_json|escapejs }}');
@@ -366,10 +338,19 @@
             sectionCount++;
         });
     }
-    
+
+    document.getElementById('backToEditingBtn').addEventListener('click', function () {
+        document.getElementById('templateModal').classList.add('hidden');
+    });
+
+    const confirmSubmitButton = document.getElementById('confirmSubmit');
+    confirmSubmitButton.addEventListener('click', () => {
+        form.action = "{% url 'add_testcomponent' %}";
+        form.submit();
+    });
+
     // Initial load
     populateExistingTemplate();
-
 </script>
 
 {% endblock content %}
